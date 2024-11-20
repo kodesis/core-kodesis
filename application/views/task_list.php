@@ -33,7 +33,7 @@
   <style>
     .col-xs-3 {
       width: 25%;
-      background-color: #2980b9;
+      background-color: #004e81;
     }
 
     .row {
@@ -280,25 +280,25 @@
         <table class="table table-stripped">
           <thead>
             <tr>
-              <th bgcolor="#2980b9">
+              <th bgcolor="#004e81">
                 <font color="white">No.</font>
               </th>
-              <th width="300" bgcolor="#2980b9">
+              <th width="300" bgcolor="#004e81">
                 <font color="white">Task Name</font>
               </th>
-              <!-- <th width="300" bgcolor="#2980b9">
+              <!-- <th width="300" bgcolor="#004e81">
                 <font color="white">Member Name</font>
               </th> -->
-              <th bgcolor="#2980b9">
+              <th bgcolor="#004e81">
                 <font color="white">PIC</font>
               </th>
-              <th bgcolor="#2980b9">
+              <th bgcolor="#004e81">
                 <font color="white">Created</font>
               </th>
-              <th bgcolor="#2980b9">
+              <th bgcolor="#004e81">
                 <font color="white">#</font>
               </th>
-              <!--th bgcolor="#2980b9"><font color="white">Status</font></th-->
+              <!--th bgcolor="#004e81"><font color="white">Status</font></th-->
             </tr>
           </thead>
           <?php

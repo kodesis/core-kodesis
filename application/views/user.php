@@ -59,7 +59,7 @@
     }
 
     tr>th {
-      background-color: #2980b9;
+      background-color: #004e81;
       color: white;
     }
   </style>

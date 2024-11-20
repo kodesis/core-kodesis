@@ -108,7 +108,7 @@
 
          <br>
          <div class="text-center">
-            <font color="white">IT Andara &copy;2024 <br> AOC 1.0</font>
+            <font color="white">IT KODESIS &copy;2024 <br> KODESIS 1.0</font>
          </div>
 
 

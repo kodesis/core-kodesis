@@ -58,7 +58,10 @@
       padding-top: 37px;
     }
 
-    body {}
+    tr>th {
+      background-color: #2980b9;
+      color: white;
+    }
   </style>
 </head>
 
@@ -292,7 +295,7 @@
             </form>
           </div>
           <div class="table-responsive" style="margin:10px 0;">
-            <table class="table table-striped jambo_table bulk_action" width="100%" id="myTable">
+            <table class="table table-striped" width="100%" id="myTable">
               <thead>
                 <tr>
                   <th>No.</th>

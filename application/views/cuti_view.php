@@ -45,6 +45,11 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet" />
 
 	<style>
+		.column-title {
+			background-color: #2980b9;
+			color: white;
+		}
+
 		.btn_on {
 			position: fixed;
 			bottom: 20px;
@@ -294,7 +299,7 @@
 					<div class="tab-content">
 						<div class="tab-pane fade in active" id="all">
 							<div class="table-responsive" style="margin-top: 2em;">
-								<table id="table-all" class="table table-striped jambo_table bulk_action" width="100%">
+								<table id="table-all" class="table table-striped" width="100%">
 									<thead>
 										<tr class="headings">
 											<th class="column-title">No.</th>

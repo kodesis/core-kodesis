@@ -313,15 +313,15 @@
 							<div class="table-responsive">
 								<table class="center table table-striped">
 									<thead>
-										<th>Card Name</th>
-										<th>Responsible</th>
+										<th bgcolor="#2980b9" style="color:white">Card Name</th>
+										<th bgcolor="#2980b9" style="color:white">Responsible</th>
 										<!-- <th>Description</th> -->
-										<th>Start Date</th>
-										<th>Due Date</th>
+										<th bgcolor="#2980b9" style="color:white">Start Date</th>
+										<th bgcolor="#2980b9" style="color:white">Due Date</th>
 										<!-- <th>Attachment</th>  -->
-										<th>Activity</th>
+										<th bgcolor="#2980b9" style="color:white">Activity</th>
 										<!-- <th>Comment</th> -->
-										<th width="200">Action</th>
+										<th width="200" bgcolor="#2980b9" style="color:white">Action</th>
 									</thead>
 									<?php foreach ($task_detail as $x) {
 										$nip = $this->session->userdata('nip');

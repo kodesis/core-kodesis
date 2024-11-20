@@ -33,7 +33,7 @@
 	<style>
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #2980b9;
 		}
 
 		.row {
@@ -282,29 +282,29 @@
 				<table class="table table-striped" width="100%">
 					<thead>
 						<tr>
-							<th bgcolor="#008080">
+							<th bgcolor="#2980b9">
 								<font color="white">No.</font>
 							</th>
-							<!-- <th bgcolor="#008080">
+							<!-- <th bgcolor="#2980b9">
 								<font color="white">No.Memo</font>
 							</th> -->
-							<th bgcolor="#008080">
+							<th bgcolor="#2980b9">
 								<font color="white">Judul</font>
 							</th>
-							<th bgcolor="#008080">
+							<th bgcolor="#2980b9">
 								<font color="white">Tanggal</font>
 							</th>
 							<?php if ($this->uri->segment(2) == 'send_memo' or $this->uri->segment(2) == 'send_cari') { ?>
-								<th bgcolor="#008080">
+								<th bgcolor="#2980b9">
 									<font color="white">Kepada</font>
 								</th>
 							<?php } else { ?>
-								<th bgcolor="#008080">
+								<th bgcolor="#2980b9">
 									<font color="white">Dari</font>
 								</th>
 							<?php } ?>
-							<!--th bgcolor="#008080"><font color="white">Status</font></th-->
-							<!-- <th bgcolor="#008080">
+							<!--th bgcolor="#2980b9"><font color="white">Status</font></th-->
+							<!-- <th bgcolor="#2980b9">
 								<font color="white">Detail</font>
 							</th> -->
 						</tr>

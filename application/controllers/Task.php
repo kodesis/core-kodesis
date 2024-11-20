@@ -331,8 +331,8 @@ class Task extends CI_Controller
 				$name = time() . $files['file']['name'][$i];
 				$name_xx = $files['file']['name'][$i];
 
-				$ext = end((explode(".", $name_xx)));
-				$att_name = time() . '.' . $ext;
+				$ext = explode(".", $name_xx);
+				$att_name = time() . '.' . end($ext);
 
 				$_FILES['file']['name'] = $name;
 				$_FILES['file']['type'] = $files['file']['type'][$i];

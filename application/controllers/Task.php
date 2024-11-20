@@ -761,7 +761,7 @@ class Task extends CI_Controller
 					$nama_filee[] = str_replace(' ', '', time() . '_' . $_FILES['att']['name'][$xx]);
 				}
 			} else {
-				$nama_filee = null;
+				$nama_filee[] = null;
 			}
 			if ($this->input->post('project_name') != '') {
 				// if (count($_FILES['att'.$i]['name']) >= 0) {

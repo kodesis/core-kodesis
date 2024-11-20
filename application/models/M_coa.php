@@ -168,6 +168,7 @@ class M_coa extends CI_Model
                 coa.no_sbb, coa.nama_perkiraan, coa.posisi, coa.table_source,
                 SUM(
                     CASE 
+                        WHEN jn.akun_debit = jn.akun_kredit THEN 0
                         WHEN coa.posisi = 'AKTIVA' AND jn.akun_debit = coa.no_sbb THEN jn.jumlah_debit
                         WHEN coa.posisi = 'AKTIVA' AND jn.akun_kredit = coa.no_sbb THEN -jn.jumlah_kredit
                         WHEN coa.posisi = 'PASIVA' AND jn.akun_kredit = coa.no_sbb THEN jn.jumlah_kredit
@@ -210,6 +211,7 @@ class M_coa extends CI_Model
                 coa.no_sbb, coa.nama_perkiraan, coa.posisi,
                 SUM(
                     CASE 
+                        WHEN jn.akun_debit = jn.akun_kredit THEN 0
                         WHEN coa.posisi = 'AKTIVA' AND jn.akun_debit = coa.no_sbb THEN jn.jumlah_debit
                         WHEN coa.posisi = 'AKTIVA' AND jn.akun_kredit = coa.no_sbb THEN -jn.jumlah_kredit
                         ELSE 0
@@ -234,6 +236,7 @@ class M_coa extends CI_Model
                 coa.no_sbb, coa.nama_perkiraan, coa.posisi,
                 SUM(
                     CASE 
+                        WHEN jn.akun_debit = jn.akun_kredit THEN 0
                         WHEN coa.posisi = 'PASIVA' AND jn.akun_kredit = coa.no_sbb THEN jn.jumlah_kredit
                         WHEN coa.posisi = 'PASIVA' AND jn.akun_debit = coa.no_sbb THEN -jn.jumlah_debit
                         ELSE 0

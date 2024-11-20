@@ -59,6 +59,11 @@ class Financial extends CI_Controller
         $coa_debit = $this->input->post('neraca_debit');
         $coa_kredit = $this->input->post('neraca_kredit');
 
+        if ($coa_debit == $coa_kredit) {
+            $this->session->set_flashdata('message_error', 'CoA Debit dan Kredit tidak boleh sama');
+            redirect('financial/financial_entry');
+        }
+
         $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('input_nominal'));
         $keterangan = trim($this->input->post('input_keterangan'));
         $tanggal = $this->input->post('tanggal');
@@ -965,17 +970,8 @@ class Financial extends CI_Controller
 
         if ($inv) {
             // update 24 Juni 2024 jam 17:07
-            // Jurnal 1: Persediaan (sesuai pilihan) bertambah sebesar total_biaya, 13010 - Piutang Usaha berkurang (dari total_biaya)
-            $coa_debit = $coa_persediaan;
-            $coa_kredit = ($jenis == "khusus") ? "20509" : "13010";
 
-            $this->posting($coa_debit, $coa_kredit, $keterangan, $total_biaya, $tgl_void);
-
-            // Jurnal 2: 41101 - PAD-Operasional Lainnya berkurang sebesar pendapatan, 13010 - Piutang Usaha bertambah (pendapatan)
-            $coa_debit = "41101";
-            $coa_kredit = "13010";
-
-            $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal_pendapatan, $tgl_void);
+            $this->posting($inv['coa_kredit'], $inv['coa_debit'], $keterangan, $nominal_pendapatan, $tgl_void);
 
             $this->m_invoice->update_invoice($inv['Id'], $data_void);
 

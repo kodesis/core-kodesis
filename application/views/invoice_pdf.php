@@ -181,11 +181,10 @@
         <table id="table">
             <thead>
                 <tr>
-                    <th>No.</th>
-                    <th style="width: 20%">Date</th>
-                    <th style="width: 40%">Keterangan</th>
+                    <th style="width: 10%">No.</th>
+                    <th style="width: 50%">Keterangan</th>
+                    <th style="width: 20%">Item</th>
                     <th>Total Amount</th>
-                    <th>Keterangan</th>
                 </tr>
             </thead>
             <tbody>
@@ -195,10 +194,9 @@
                 ?>
                     <tr>
                         <td><?= $no++ ?>.</td>
-                        <td><?= format_indo($d->item_date) ?></td>
                         <td><?= $d->item ?></td>
+                        <td><?= ($d->qty) ?></td>
                         <td class="text-right"><?= number_format($d->total_amount) ?></td>
-                        <td class="text-right"></td>
                     </tr>
                 <?php
                 endforeach;
@@ -206,21 +204,18 @@
                 <tr>
                     <td class="" colspan="3"><strong>SUBTOTAL</strong></td>
                     <td class="text-right"><?= number_format($invoice['subtotal']) ?></td>
-                    <td></td>
                 </tr>
                 <tr>
                     <!-- <td class="" colspan="3"><strong>VAT <?= $invoice['ppn'] * 100 ?>%</strong></td> -->
                     <td class="" colspan="3"><strong>PPN 11%</strong></td>
                     <td class="text-right"><?= number_format($invoice['besaran_ppn']) ?></td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td class="" colspan="3"><strong>GRAND TOTAL</strong></td>
                     <td class="text-right"><?= number_format($invoice['total_nonpph']) ?></td>
-                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="5"><strong><?= terbilang($invoice['total_nonpph']) ?> Rupiah</strong></td>
+                    <td colspan="4"><strong><?= terbilang($invoice['total_nonpph']) ?> Rupiah</strong></td>
                 </tr>
             </tbody>
         </table>

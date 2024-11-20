@@ -997,6 +997,24 @@
 
             });
 
+            $('#neraca_debit, #neraca_kredit').change(function() {
+                var debit = $('#neraca_debit').find(":selected").val();
+                var kredit = $('#neraca_kredit').find(":selected").val();
+                disabledSubmit(debit, kredit);
+            });
+
+            function disabledSubmit(debit, kredit) {
+                if (debit && kredit) {
+                    if (debit == kredit) {
+                        console.log('sama');
+                        $('.btn-success').prop('disabled', true);
+                    } else {
+                        console.log('tidak sama');
+                        $('.btn-success').prop('disabled', false);
+                    }
+                }
+            }
+
         });
 
 

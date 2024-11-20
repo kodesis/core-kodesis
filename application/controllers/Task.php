@@ -482,7 +482,11 @@ class Task extends CI_Controller
 					$this->api_whatsapp->wa_notif($msg, $send_wa);
 
 					$this->session->set_userdata('msg_memo', $xx);
-					$countfiles = count(array_filter($_FILES['file']['name']));
+					if ($_FILES) {
+						$countfiles = count(array_filter($_FILES['file']['name']));
+					}
+
+
 
 					$this->session->set_userdata('id_task', $xx);
 					redirect('task/detail_task/' . $xx);
@@ -545,7 +549,9 @@ class Task extends CI_Controller
 					$last_id = $this->db->insert_id();
 					$xx = $last_id;
 					$this->session->set_userdata('msg_memo', $xx);
-					$countfiles = count(array_filter($_FILES['file']['name']));
+					if ($_FILES) {
+						$countfiles = count(array_filter($_FILES['file']['name']));
+					}
 
 					$this->session->set_userdata('id_task', $xx);
 					redirect('task/task');

@@ -834,6 +834,7 @@ class Task extends CI_Controller
 					"due_date" => $this->input->post('end'),
 					"activity" => $this->input->post('activity'),
 					"attachment" => $file_i,
+					"read" => 0,
 					"comment" => $this->input->post('comment'),
 				];
 				$this->db->insert('task_detail', $data);

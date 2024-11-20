@@ -342,7 +342,7 @@ class Task extends CI_Controller
 				$this->load->library('upload');
 				$this->upload->initialize($this->set_upload_options('upload/task_comment'));
 				if (!($this->upload->do_upload('file')) || $files['file']['error'][$i] != 0) {
-					// print_r($this->upload->display_errors());
+					print_r($this->upload->display_errors());
 				} else {
 					$arr_att[] = $att_name;
 					$arr_name[] = $name;

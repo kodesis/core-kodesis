@@ -689,7 +689,9 @@
 								title: 'success...',
 								text: 'Update Card berhasil!',
 							})
-						<?php } ?>
+
+						<?php $this->session->unset_userdata('msg_memo');
+						} ?>
 
 						$('a#btn-close-task').click(function(e) {
 							e.preventDefault();

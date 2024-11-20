@@ -321,7 +321,7 @@ class Task extends CI_Controller
 	function activity_comment()
 	{
 		// Looping all files
-		if (isset($_FILES['file']['name'][0])) {
+		if ($_FILES['file']['name'][0] != "") {
 			$files = $_FILES;
 			$cpt = count($_FILES['file']['name']);
 
@@ -345,50 +345,47 @@ class Task extends CI_Controller
 				} else {
 					$arr_att[] = $att_name;
 					$arr_name[] = $name;
-					if ($this->upload->data()['file_size'] < 10000) {
-						$id_detail = $this->input->post('id_detail');
-						$get_task_detail = $this->db->query("SELECT * FROM task as a left join task_detail as b on(a.id=b.id_task) where b.id_detail='$id_detail'")->row_array();
-						$phone_x = explode(';', $get_task_detail['member']);
 
-						$data = [
-							"id_task_detail" => $this->input->post('id_detail'),
-							"comment_member" => $this->input->post('commentt'),
-							"attachment" => implode(';', $arr_att),
-							"attachment_name" => implode(';', str_replace(' ', '_', $arr_name)),
-							"member" => $this->session->userdata('nip')
+					$id_detail = $this->input->post('id_detail');
+					$get_task_detail = $this->db->query("SELECT * FROM task as a left join task_detail as b on(a.id=b.id_task) where b.id_detail='$id_detail'")->row_array();
+					$phone_x = explode(';', $get_task_detail['member']);
 
-						];
+					$data = [
+						"id_task_detail" => $this->input->post('id_detail'),
+						"comment_member" => $this->input->post('commentt'),
+						"attachment" => implode(';', $arr_att),
+						"attachment_name" => implode(';', str_replace(' ', '_', $arr_name)),
+						"member" => $this->session->userdata('nip')
 
-						$this->db->insert('task_detail_comment', $data);
+					];
 
-						// update task detail
-						$this->db->set('read', '0');
-						$this->db->where('id_detail', $id_detail);
-						$this->db->update('task_detail');
+					$this->db->insert('task_detail_comment', $data);
 
-						//Update Task
-						$task_detail = $this->db->get_where('task_detail', ['id_detail' => $id_detail])->row();
-						$task = $this->db->get_where('task', ['id' => $task_detail->id_task])->row();
+					// update task detail
+					$this->db->set('read', '0');
+					$this->db->where('id_detail', $id_detail);
+					$this->db->update('task_detail');
 
-						$this->db->set('read', '0');
-						$this->db->where('id', $task->id);
-						$this->db->update('task');
+					//Update Task
+					$task_detail = $this->db->get_where('task_detail', ['id_detail' => $id_detail])->row();
+					$task = $this->db->get_where('task', ['id' => $task_detail->id_task])->row();
 
-						// print_r($phone_x);
-						// exit;
-						foreach ($phone_x as $k) { //member card kirim ke wa
-							$get_user = $this->db->get_where('users', ['nip' => $k])->row_array();
-							if ($get_user) {
-								$task_name = $get_task_detail['task_name'];
-								$nama_member = $get_user["nama"];
-								$comment = $this->input->post("commentt");
-								$nama_session = $this->session->userdata('nama');
-								$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";
-								$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
-							}
+					$this->db->set('read', '0');
+					$this->db->where('id', $task->id);
+					$this->db->update('task');
+
+					// print_r($phone_x);
+					// exit;
+					foreach ($phone_x as $k) { //member card kirim ke wa
+						$get_user = $this->db->get_where('users', ['nip' => $k])->row_array();
+						if ($get_user) {
+							$task_name = $get_task_detail['task_name'];
+							$nama_member = $get_user["nama"];
+							$comment = $this->input->post("commentt");
+							$nama_session = $this->session->userdata('nama');
+							$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";
+							$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
 						}
-					} else {
-						echo "<script>alert('File Tidak boleh lebih dari 10Mb !');window.history.back();</>";
 					}
 				}
 			}
@@ -396,8 +393,6 @@ class Task extends CI_Controller
 			$id_detail = $this->input->post('id_detail');
 			$get_task_detail = $this->db->query("SELECT * FROM task as a left join task_detail as b on(a.id=b.id_task) where b.id_detail='$id_detail'")->row_array();
 			$phone_x = explode(';', $get_task_detail['member']);
-			// print_r($phone_x);
-			// exit;
 
 			$data = [
 				"id_task_detail" => $this->input->post('id_detail'),

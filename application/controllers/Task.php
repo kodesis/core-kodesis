@@ -357,7 +357,7 @@ class Task extends CI_Controller
 				foreach ($phone_x as $k) { //member card kirim ke wa
 					$get_user = $this->db->get_where('users', ['nip' => $k])->row_array();
 					$task_name = $get_task_detail['task_name'];
-					$nama_member = $get_user["nama"];
+					// $nama_member = $get_user["nama"];
 					$comment = $this->input->post("commentt");
 					$nama_session = $this->session->userdata('nama');
 					$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";

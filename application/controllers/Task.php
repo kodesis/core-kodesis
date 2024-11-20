@@ -354,14 +354,18 @@ class Task extends CI_Controller
 				$id_detail = $this->input->post('id_detail');
 				$get_task_detail = $this->db->query("SELECT * FROM task as a left join task_detail as b on(a.id=b.id_task) where b.id_detail='$id_detail'")->row_array();
 				$phone_x = explode(';', $get_task_detail['member']);
+				// print_r($phone_x);
+				// exit;
 				foreach ($phone_x as $k) { //member card kirim ke wa
 					$get_user = $this->db->get_where('users', ['nip' => $k])->row_array();
-					$task_name = $get_task_detail['task_name'];
-					// $nama_member = $get_user["nama"];
-					$comment = $this->input->post("commentt");
-					$nama_session = $this->session->userdata('nama');
-					$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";
-					$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
+					if ($get_user) {
+						$task_name = $get_task_detail['task_name'];
+						$nama_member = $get_user["nama"];
+						$comment = $this->input->post("commentt");
+						$nama_session = $this->session->userdata('nama');
+						$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";
+						$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
+					}
 				}
 
 				$data = [

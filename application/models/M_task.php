@@ -47,7 +47,7 @@ class M_task extends CI_Model
         $query = $this->db->query($sql);
         return $query->num_rows();
     }
-    function task_cari_count($st = NULL, $nip)
+    function task_cari_count($st, $nip)
     {
         if ($st == "NIL") $st = "";
         $sql = "SELECT id FROM task WHERE (name LIKE '%$st%' AND pic LIKE '%$nip%')";

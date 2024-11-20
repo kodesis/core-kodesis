@@ -690,7 +690,7 @@
 								text: 'Update Card berhasil!',
 							})
 
-						<?php unset($_SESSION['success_edit']);;
+						<?php unset($_SESSION['msg']);;
 						} ?>
 
 						$('a#btn-close-task').click(function(e) {

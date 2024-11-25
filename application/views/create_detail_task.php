@@ -311,8 +311,8 @@
 									<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
 									<div class="col-md-6 col-sm-6 col-xs-12">
 
-										<select required style="border-radius: 5px;" class="form-control" name="member_task">
-											<option disabled selected>Select Responsible</option>
+										<select required style="border-radius: 5px;" class="form-control" name="member_task" required>
+											<option value="">Select Responsible</option>
 											<?php foreach ($ss as $data) {
 												if ($data->nip != '') {
 											?>
@@ -461,7 +461,7 @@
 										<div class="col-md-6 col-sm-6 col-xs-12">
 
 											<select required style="border-radius: 5px;" class="form-control" name="member_task">
-												<option disabled selected>Select Responsible</option>
+												<option value="">Select Responsible</option>
 												<?php foreach ($ss as $data) {
 													if ($data->nip != '') {
 												?>

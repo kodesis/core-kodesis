@@ -477,46 +477,20 @@
             <!-- page content -->
 
             <div class="right_col" role="main">
-
-                <!--div class="pull-left">
-
-				<font color='Grey'>Create New E-Memo </font>
-
-			</div-->
-
                 <div class="clearfix"></div>
 
-
-
                 <!-- Start content-->
-
                 <div class="row">
-
                     <div class="col-md-12 col-sm-12 col-xs-12">
-
                         <div class="x_panel card">
-
                             <div class="x_title">
-
                                 <h2>Financial entry
-
-                                    <small>Please fill below
-
-                                    </small>
-
+                                    <small>Please fill below</small>
                                 </h2>
-
                                 <ul class="nav navbar-right panel_toolbox">
-                                    <li class="dropdown">
-                                        <a class="btn btn-warning btn-sm" href="<?= base_url('src/format/format_data.xlsx') ?>" download style="font-size: 12px;padding: 5px 10px;color: white;">
-                                            Download Format Data
-                                        </a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <button class="btn btn-success btn-sm" data-toggle="modal"
-                                            data-target="#upload_modal" type="button" style="color: white;">
-                                            Upload Data
-                                        </button>
+                                    <li>
+                                        <button class="btn btn-primary btn-sm" onclick="document.location='<?= base_url('financial/financial_entry') ?>'">Single</button>
+                                        <!-- <a href="<?= base_url('financial/financial_entry') ?>" class="btn btn-primary dropdown-toggle">Single</a> -->
                                     </li>
                                     <li class="dropdown">
                                         <button class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="color: white;">
@@ -533,174 +507,98 @@
                                             </li>
                                         </ul>
                                     </li>
-                                    <li>
-
-                                        <a class="collapse-link">
-
-                                            <i class="fa fa-chevron-up">
-
-                                            </i>
-
-                                        </a>
-
-                                    </li>
-
-                                    <li class="dropdown">
-
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-
-                                            <i class="fa fa-wrench">
-
-                                            </i>
-
-                                        </a>
-
-                                        <ul class="dropdown-menu" role="menu">
-
-                                            <li>
-
-                                                <a href="#">Settings 1
-
-                                                </a>
-
-                                            </li>
-
-                                            <li>
-
-                                                <a href="#">Settings 2
-
-                                                </a>
-
-                                            </li>
-
-                                        </ul>
-
-                                    </li>
-
-                                    <li>
-
-                                        <a class="close-link">
-
-                                            <i class="fa fa-close">
-
-                                            </i>
-
-                                        </a>
-
-                                    </li>
-
                                 </ul>
-
-                                <!-- <div class="clearfix">
-
-                                </div> -->
-
                             </div>
-
                             <div class="x_content">
-
                                 <!-- <br> -->
+                                <form class="form-label-left input_mask" method="POST" action="<?= base_url('financial/store_financial_entry/multi_debit') ?>" enctype="multipart/form-data">
 
-                                <form class="form-label-left input_mask" method="POST" action="<?= base_url('financial/process_financial_entry') ?>">
 
-
-                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
-
-                                        <label for="" class="form-label">Debit</label>
-
-                                        <select name="neraca_debit" id="neraca_debit" class="form-control select2" style="width: 100%;" required>
-
-                                            <option value="">-- Pilih pos neraca debit</option>
-
-                                            <?php
-
-                                            foreach ($coa as $c) :
-
-                                            ?>
-
-                                                <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>" data-posisi="<?= $c->posisi ?>"><?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?></option>
-
-                                            <?php
-
-                                            endforeach; ?>
-
-                                        </select>
-
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Coa Debit</th>
+                                                <th>Nominal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="journal-entries">
+                                            <tr>
+                                                <td>
+                                                    <select name="accounts[]" class="form-control select2" style="width: 100%" required>
+                                                        <option value="">:: Pilih akun</option>
+                                                        <?php foreach ($coa as $c) : ?>
+                                                            <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>"><?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control uang nominal-input" name="nominals[]" placeholder="Nominal" required>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" class="text-right">
+                                                    <button type="button" class="btn btn-secondary" id="add-row">Tambah Baris</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                            <label for="" class="form-label">Coa Kredit</label>
+                                            <select name="neraca_kredit" id="neraca_kredit" class="form-control select2" style="width: 100%" required>
+                                                <option value="">:: Pilih pos neraca kredit</option>
+                                                <?php foreach ($coa as $c) : ?>
+                                                    <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>" data-posisi="<?= $c->posisi ?>">
+                                                        <?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
                                     </div>
-
-                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
-
-                                        <label for="" class="form-label">Kredit</label>
-
-                                        <select name="neraca_kredit" id="neraca_kredit" class="form-control select2" style="width: 100%;" required>
-
-                                            <option value="">-- Pilih pos neraca kredit</option>
-
-                                            <?php
-
-                                            foreach ($coa as $c) :
-
-                                            ?>
-
-                                                <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>" data-posisi="<?= $c->posisi ?>"><?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?> </option>
-
-                                            <?php
-
-                                            endforeach; ?>
-
-                                        </select>
-
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                            <label for="" class="form-label">Tanggal</label>
+                                            <input type="date" name="tanggal" id="tanggal" value="<?= date('Y-m-d') ?>" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                            <label for="" class="form-label">Keterangan</label>
+                                            <textarea name="input_keterangan" id="input_keterangan" class="form-control" placeholder="Keterangan" oninput="this.value = this.value.toUpperCase()" rows="3" required></textarea>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                            <label for="file_upload" class="form-label">Upload file (opsional)</label>
+                                            <input type="file" name="file_upload" id="file_upload" class="form-control">
+                                        </div>
                                     </div>
-                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
-
-                                        <label for="" class="form-label">Nominal</label>
-
-                                        <!-- <input type="text" class="form-control" name="input_nominal" id="input_nominal" placeholder="Nominal" oninput="format_angka()" onkeypress="return onlyNumberKey(event)" autofocus required> -->
-
-                                        <input type="text" class="form-control uang" name="input_nominal" id="input_nominal" placeholder="Nominal" autofocus required>
-
-                                    </div>
-
-                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
-
-                                        <label for="" class="form-label">Keterangan</label>
-
-                                        <input type="text" class="form-control" name="input_keterangan" id="input_keterangan" placeholder="Keterangan" oninput="this.value = this.value.toUpperCase()" required>
-
-                                    </div>
-
-                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
-
-                                        <label for="" class="form-label">Tanggal</label>
-
-                                        <input type="date" name="tanggal" id="tanggal" value="<?= date('Y-m-d') ?>" class="form-control" required>
-
-                                    </div>
+                                    <!-- <div class="col-md-6 col-xs-12 form-group has-feedback">
+                            <label for="" class="form-label">Kredit</label>
+                            <select name="neraca_kredit" id="neraca_kredit" class="form-control select2" required>
+                                <option value="">:: Pilih pos neraca kredit</option>
+                                <?php
+                                foreach ($coa as $c) :
+                                ?>
+                                    <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>" data-posisi="<?= $c->posisi ?>"><?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?> </option>
+                                <?php
+                                endforeach; ?>
+                            </select>
+                        </div> -->
+                                    <!-- <div class="col-md-6 col-xs-12 form-group has-feedback">
+                            <label for="" class="form-label">Nominal</label>
+                            <input type="text" class="form-control uang" name="input_nominal" id="input_nominal" placeholder="Nominal" autofocus required>
+                        </div> -->
 
                                     <div class="form-group row">
-
                                         <div class="col-md-9 col-sm-9  offset-md-3">
-
-                                            <button type="button" class="btn btn-primary">Cancel</button>
-
                                             <button class="btn btn-primary" type="reset">Reset</button>
-
                                             <button type="submit" class="btn btn-success">Submit</button>
-
                                         </div>
-
                                     </div>
-
                                 </form>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
 
 
@@ -725,31 +623,7 @@
 
     </div>
 
-    <div class="modal fade" id="upload_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Upload Financial Entry</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <form id="upload_file_fe">
-                            <div class="col-md-12 col-sm-12  offset-md-3 mt-3">
-                                <label for="" class="form-label">File Format Data</label>
-                                <input class="form-control" type="file" name="format_data" id="format_data">
-                            </div>
-                        </form>
-                    </div>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="upload_fe()">Save</button>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- jQuery -->
 
@@ -849,321 +723,106 @@
 
 
 
+    <script src="<?php echo base_url(); ?>assets/vendors/jquery/dist/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/select2/css/select2.min.css">
+    <script type="text/javascript" src="<?= base_url(); ?>assets/select2/js/select2.min.js"></script>
+
+    <script src="<?= base_url(); ?>assets/js/jquery.mask.js"></script>
     <script>
-        function reset_form() {
-
-            document.getElementById("form_input").reset();
-
-            document.getElementById("ckeditor").value = '';
-
-        }
-
         $(document).ready(function() {
-
             $('.uang').mask('000.000.000.000.000', {
-
                 reverse: true
-
             });
-
-
-
-            <?php if ($this->session->userdata('msg') == 'error2') { ?>
-
-                Swal.fire({
-
-                    icon: 'error',
-
-                    title: 'Oops...',
-
-                    text: 'Error Input!',
-
-                })
-
-            <?php
-
-                $this->session->unset_userdata('msg');
-            } else if ($this->session->userdata('msg_memo')) { ?>
-
-                Swal.fire({
-
-                    icon: 'success',
-
-                    title: 'Success input',
-
-                    text: 'Create & Send Success to ID <?= $this->session->userdata('msg_memo') ?>',
-
-                })
-
-            <?php
-
-                $this->session->unset_userdata('msg_memo');
-            } else ?>
-
-
-
-            $("#submit-memo").on('click', function(e) {
-
-                Swal.fire({
-
-                    title: 'Are you sure?',
-
-                    text: "You want to submit the form?",
-
-                    icon: 'warning',
-
-                    showCancelButton: true,
-
-                    confirmButtonColor: '#3085d6',
-
-                    cancelButtonColor: '#d33',
-
-                    confirmButtonText: 'Yes'
-
-                }).then((result) => {
-
-                    if (result.isConfirmed) {
-
-                        $("#form_input").submit();
-
-                    } else {
-
-                        e.preventDefault();
-
-                    }
-
-                })
-
-            });
-
-
-
-            $("#form_input").on('submit', () => {
-
-                $("#submit-memo").attr('disabled', true);
-
-                $("#submit-memo").html('Sending...');
-
-                Swal.fire({
-
-                    title: 'Sending...',
-
-                    timerProgressBar: true,
-
-                    allowOutsideClick: false,
-
-                    didOpen: () => {
-
-                        Swal.showLoading()
-
-                    },
-
-                })
-
-            });
-
-
-
-        });
-
-
-
-        function simpan() {
-
-            if (!confirm("Yes, send it!")) {
-
-                alert('Canceled!');
-
-                return false;
-
-            } else {
-
-                form.submit();
-
-            }
-
-        }
-
-
-
-        $('#save_memo1').on('click', function(e) {
-
-            e.preventDefault();
-
-            var form = $(this).parents('form');
-
-            swal({
-
-                title: "Are you sure?",
-
-                text: "Send Memo!",
-
-                type: "warning",
-
-                showCancelButton: true,
-
-                confirmButtonColor: "#DD6B55",
-
-                confirmButtonText: "Yes, send it!",
-
-                closeOnConfirm: false
-
-            }, function(isConfirm) {
-
-                if (isConfirm) form.submit();
-
-            });
-
-        });
-
-
-
-        $(document).ready(function() {
-
-            $('.js-example-basic-multiple').select2();
-
             $('.select2').select2();
 
-
-
             $("form").on("submit", function() {
-
                 Swal.fire({
-
                     title: "Loading...",
-
                     timerProgressBar: true,
-
                     allowOutsideClick: false,
-
                     didOpen: () => {
-
                         Swal.showLoading()
-
                     },
-
                 });
-
             });
 
-            $('#neraca_debit, #neraca_kredit').change(function() {
-                var debit = $('#neraca_debit').find(":selected").val();
-                var kredit = $('#neraca_kredit').find(":selected").val();
-                disabledSubmit(debit, kredit);
+            // Fungsi untuk menambahkan baris baru
+            $('#add-row').click(function() {
+                let newRow = `
+            <tr>
+                <td>
+                    <select name="accounts[]" class="form-control select2" style="width: 100%" required>
+                        <option value="">:: Pilih akun</option>
+                        <?php foreach ($coa as $c) : ?>
+                            <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>"><?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" class="form-control uang nominal-input" name="nominals[]" placeholder="Nominal" required>
+                </td>
+            </tr>`;
+                $('#journal-entries').append(newRow);
+                $('.select2').select2();
+                $('.uang').mask('000.000.000.000.000', {
+                    reverse: true
+                });
             });
 
-            function disabledSubmit(debit, kredit) {
-                if (debit && kredit) {
-                    if (debit == kredit) {
-                        console.log('sama');
-                        $('.btn-success').prop('disabled', true);
-                    } else {
-                        console.log('tidak sama');
-                        $('.btn-success').prop('disabled', false);
-                    }
+            function formatState(state, colorAktiva, colorPasiva, signAktiva, signPasiva) {
+                // console.log(state)
+                if (!state.id) {
+                    return state.text;
                 }
+
+                var color = state.element.dataset.posisi == "AKTIVA" ? colorAktiva : colorPasiva;
+                var sign = state.element.dataset.posisi == "AKTIVA" ? signAktiva : signPasiva;
+
+                var $state = $('<span style="background-color: ' + color + ';"><strong>' + state.text + ' ' + sign + '</strong></span>');
+
+                return $state;
+            };
+
+            function formatStateDebit(state) {
+                // console.log(state)
+                return formatState(state, '#2ecc71', '#ff7675', '(+)', '(-)');
             }
 
+            function formatStateKredit(state) {
+                return formatState(state, '#ff7675', '#2ecc71', '(-)', '(+)');
+            }
+            $('#neraca_debit').select2({
+                // templateResult: formatStateDebit,
+                templateSelection: formatStateDebit
+            });
+
+            $('#neraca_kredit').select2({
+                // templateResult: formatStateKredit,
+                templateSelection: formatStateKredit
+            });
         });
 
+        // const flashdata = $(".flash-data").data("flashdata");
+        // if (flashdata) {
+        //     Swal.fire({
+        //         title: "Success!! ",
+        //         text: '<?= $this->session->flashdata('message_name') ?>',
+        //         type: "success",
+        //         icon: "success",
+        //     });
+        // }
 
-
-
-
-
-
-        function formatNumber(number) {
-
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-        }
-
-
-
-        function format_angka() {
-
-            var nominal = document.getElementById('input_nominal').value;
-
-
-
-            var formattedValue = formatNumber(parseFloat(nominal.split('.').join('')));
-
-
-
-            document.getElementById('input_nominal').value = formattedValue;
-
-        }
-
-
-
-        function onlyNumberKey(evt) {
-
-
-
-            // Only ASCII character in that range allowed
-
-            let ASCIICode = (evt.which) ? evt.which : evt.keyCode
-
-            if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
-
-                return false;
-
-            return true;
-
-        }
-
-
-
-
-
-        <?php
-
-        if ($this->session->flashdata('message_name')) {
-
-        ?>
-
-            Swal.fire({
-
-                title: "Success!! ",
-
-                text: '<?= $this->session->flashdata('message_name') ?>',
-
-                type: "success",
-
-                icon: "success",
-
-            });
-
-        <?php
-
-            // $this->session->sess_destroy('message_name');
-
-            unset($_SESSION['message_name']);
-        } ?>
-
-
-
-        // const flashdata_error = $('<?= $this->session->flashdata("message_error") ?>').data("flashdata");
-
-        const flashdata_error = $(".flash-data-error").data("flashdata");
-
-        // const flashdata_error = $('.flash-data').data('flashdata');
-
-        if (flashdata_error) {
-
-            Swal.fire({
-
-                title: "Error!! ",
-
-                text: flashdata_error,
-
-                type: "error",
-
-                icon: "error",
-
-            });
-
-        }
+        // const flashdata_error = $(".flash-data-error").data("flashdata");
+        // // const flashdata_error = $('.flash-data').data('flashdata');
+        // if (flashdata_error) {
+        //     Swal.fire({
+        //         title: "Error!! ",
+        //         text: flashdata_error,
+        //         type: "error",
+        //         icon: "error",
+        //     });
+        // }
     </script>
 
 

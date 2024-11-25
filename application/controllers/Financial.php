@@ -28,9 +28,7 @@ class Financial extends CI_Controller
     //     $this->M_Logging->add_log($user_id, $action, $tableName, $record_id);
     // }
 
-    public function index()
-    {
-    }
+    public function index() {}
 
     public function financial_entry()
     {
@@ -54,30 +52,139 @@ class Financial extends CI_Controller
         $this->load->view('financial_entry', $data);
     }
 
-    public function process_financial_entry()
+    public function process_financial_entry($jenis = Null)
     {
-        $coa_debit = $this->input->post('neraca_debit');
-        $coa_kredit = $this->input->post('neraca_kredit');
+        if ($jenis == "multi_kredit") {
+            $coa_debit = $this->input->post('neraca_debit');
+            $coa_kredit = $this->input->post('accounts');
+            $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('nominals'));
+            $jenis_fe = $jenis;
+        } else if ($jenis == "multi_debit") {
+            $coa_debit = $this->input->post('accounts');
+            $coa_kredit = $this->input->post('neraca_kredit');
+            $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('nominals'));
+            $jenis_fe = $jenis;
+        } else {
+            $coa_debit = $this->input->post('neraca_debit');
+            $coa_kredit = $this->input->post('neraca_kredit');
 
-        if ($coa_debit == $coa_kredit) {
-            $this->session->set_flashdata('message_error', 'CoA Debit dan Kredit tidak boleh sama');
-            redirect('financial/financial_entry');
+            if ($coa_debit == $coa_kredit) {
+                $this->session->set_flashdata('message_error', 'CoA Debit dan Kredit tidak boleh sama');
+                redirect('financial/financial_entry');
+            }
+            $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('input_nominal'));
+            $jenis_fe = "single";
         }
 
-        $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('input_nominal'));
+        // $coa_debit = $this->input->post('neraca_debit');
+        // $coa_kredit = $this->input->post('neraca_kredit');
+
+        // if ($coa_debit == $coa_kredit) {
+        //     $this->session->set_flashdata('message_error', 'CoA Debit dan Kredit tidak boleh sama');
+        //     redirect('financial/financial_entry');
+        // }
+        // $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('input_nominal'));
+
         $keterangan = trim($this->input->post('input_keterangan'));
         $tanggal = $this->input->post('tanggal');
 
         if (!$this->input->post()) {
             $this->session->set_flashdata('message_error', 'Gagal Input');
         } else {
-            $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal);
+            $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $jenis_fe);
 
             $this->session->set_flashdata('message_name', 'Financial entry success.');
         }
 
-
         redirect('financial/financial_entry');
+    }
+
+    public function upload_financial_entry()
+    {
+        $this->load->library('upload');
+        require APPPATH . 'third_party/autoload.php';
+
+        // Include PhpSpreadsheet from third_party
+        require APPPATH . 'third_party/psr/simple-cache/src/CacheInterface.php';
+
+
+        // Configure upload settings
+        $config['upload_path'] = FCPATH . 'upload/financial_entry';
+        $config['allowed_types'] = 'xls|xlsx|csv'; // Allowed file types
+        $this->upload->initialize($config);
+
+        if (!$this->upload->do_upload('format_data')) {
+            // If the upload fails, show the error
+            $error = $this->upload->display_errors();
+            echo json_encode(['status' => false, 'message' => $error, 'upload_path' => $config['upload_path']]);
+            return;
+        }
+
+        // File upload success
+        $file_data = $this->upload->data();
+        $file_path = $file_data['full_path'];
+
+        try {
+            // Load the spreadsheet using PhpSpreadsheet
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file_path);
+            $worksheet = $spreadsheet->getActiveSheet();
+
+            // Get total rows
+            $totalRows = iterator_count($worksheet->getRowIterator());
+            $totalRows -= 2; // Adjust for headers
+            $insertedRows = 0;
+
+            // Process rows
+            foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+                // Skip header rows
+                if ($rowIndex < 3) continue;
+
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $data = [];
+                foreach ($cellIterator as $cell) {
+                    $data[] = $cell->getValue();
+                }
+
+                // Extract and process row data
+                $coa_debit = isset($data[0]) ? (string)$data[0] : null;
+                $coa_kredit = isset($data[1]) ? (string)$data[1] : null;
+                $nominal = isset($data[2]) ? (string)$data[2] : null;
+                $tanggal = isset($data[3]) ? $this->processDate($data[3]) : null;
+                $keterangan = isset($data[4]) ? $data[4] : null;
+
+                $this->posting(
+                    $coa_debit,
+                    $coa_kredit,
+                    $keterangan,
+                    $nominal,
+                    $tanggal,
+                    $jenis_fe = 'single',
+                );
+
+                $insertedRows++;
+                $progress = round(($insertedRows / $totalRows) * 100);
+                echo "data: " . json_encode(['progress' => $progress, 'currentRow' => $insertedRows, 'totalRows' => $totalRows]) . "\n\n";
+                ob_flush();
+                flush();
+            }
+
+            // Commit transaction
+            if ($this->db->trans_status() === FALSE) {
+                $this->db->trans_rollback();
+                echo json_encode(['status' => false, 'message' => 'Database error']);
+            } else {
+                $this->db->trans_commit();
+                echo json_encode(['status' => true, 'message' => 'File processed successfully']);
+            }
+        } catch (Exception $e) {
+            // Handle exceptions
+            echo json_encode(['status' => false, 'message' => $e->getMessage()]);
+        } finally {
+            // Cleanup uploaded file
+            if (file_exists($file_path)) unlink($file_path);
+        }
     }
 
     public function invoice()

@@ -81,11 +81,7 @@
 </head>
 
 <header class="header_area sticky-header">
-    <?php
-    if ($this->session->flashdata('message_name')) {
-    ?>
-        <div class="flash-data" data-flashdata="<?= $this->session->flashdata('message_name') ?>"></div>
-    <?php } ?>
+    <div class="flash-data" data-flashdata="<?= $this->session->flashdata('message_name') ?>"></div>
     <div class="flash-data-error" data-flashdata="<?= $this->session->flashdata('message_error') ?>"></div>
     <!-- footer menu -->
     <div class="footer_panel">
@@ -220,6 +216,7 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
+
                             <div class="x_title">
                                 <h2>Neraca per tanggal <?= format_indo($per_tanggal) ?> </h2>
                             </div>
@@ -227,7 +224,7 @@
                                 <div class="row">
                                     <div class="col-md-4 col-xs-12">
                                         <h5>
-                                            Neraca: <strong>Rp <?= (isset($neraca)) ? number_format($neraca) : 0 ?></strong>
+                                            Laba berjalan: <strong>Rp <?= number_format($total_pendapatan) ?></strong>
                                         </h5>
                                     </div>
                                     <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/reportByDate') ?>">
@@ -249,7 +246,6 @@
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-xs-12 text-right">
-
                                             <div class="form-group row">
                                                 <button type="submit" name="button_sbm" class="btn btn-primary btn-sm" value="lihat">Lihat</button>
                                                 <button type="submit" name="button_sbm" class="btn btn-success btn-sm" value="excel"><i class='fa fa-file'></i> Excel</button>
@@ -259,8 +255,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 col-xs-12">
-                                        <h2 class="text-center">Activa</h2>
-                                        <p class="text-right">Total: <strong><?= (isset($sum_activa)) ? number_format($sum_activa) : 0 ?></strong></p>
+                                        <h2 class="text-center">Biaya</h2>
+                                        <p class="text-right">Total: <strong><?= number_format($sum_biaya) ?></strong></p>
                                         <div class="table-responsive">
                                             <table id="" class="table" style="width:100%">
                                                 <thead>
@@ -272,33 +268,23 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                    if (isset($activa)) :
-                                                        foreach ($activa as $a) :
-                                                            $coa = $this->m_coa->getCoa($a->no_sbb);
-
-                                                            if ($coa['table_source'] == "t_coa_sbb" && $coa['posisi'] == 'AKTIVA' && $a->saldo_awal != '0') : ?>
-                                                                <tr>
-                                                                    <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></button></td>
-                                                                    <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
-                                                                </tr>
-                                                        <?php
-                                                            endif;
-                                                        endforeach;
-                                                    else : ?>
+                                                    foreach ($biaya as $a) :
+                                                        $coa = $this->m_coa->getCoaBB($a->no_bb); ?>
                                                         <tr>
-                                                            <td colspan="3">Tidak ada activa yang ditampilkan</td>
+                                                            <td><?= $a->no_bb ?></td>
+                                                            <td><?= $coa['nama_perkiraan'] ?></td>
+                                                            <td class="text-right"><?= number_format($a->saldo_aktiva) ?></td>
                                                         </tr>
                                                     <?php
-                                                    endif; ?>
+                                                    endforeach; ?>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-xs-12">
                                         <div class="row justify-content-between">
-                                            <h2 class="text-center">Pasiva</h2>
-                                            <p class="text-right">Total: <strong><?= (isset($sum_pasiva)) ? number_format($sum_pasiva) : 0 ?></strong></p>
+                                            <h2 class="text-center">Pendapatan</h2>
+                                            <p class="text-right">Total: <strong><?= number_format($sum_pendapatan) ?></strong></p>
                                         </div>
                                         <div class="table-responsive">
                                             <table id="" class="table" style="width:100%">
@@ -311,31 +297,15 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                    if (isset($pasiva)) :
-                                                        foreach ($pasiva as $a) :
-                                                            $coa = $this->m_coa->getCoa($a->no_sbb);
-
-                                                            if ($coa['table_source'] == "t_coa_sbb" && $coa['posisi'] == 'PASIVA' && $a->saldo_awal != '0') : ?>
-                                                                <tr>
-                                                                    <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></td>
-                                                                    <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
-                                                                </tr>
-                                                        <?php
-                                                            endif;
-                                                        endforeach; ?>
+                                                    foreach ($pendapatan as $a) :
+                                                        $coa = $this->m_coa->getCoaBB($a->no_bb); ?>
                                                         <tr>
-                                                            <td>3103001</td>
-                                                            <td>LABA TAHUN BERJALAN</td>
-                                                            <td class="text-right"><?= number_format($laba) ?></td>
+                                                            <td><?= $a->no_bb ?></td>
+                                                            <td><?= $coa['nama_perkiraan'] ?></td>
+                                                            <td class="text-right"><?= number_format($a->saldo_pasiva) ?></td>
                                                         </tr>
                                                     <?php
-                                                    else : ?>
-                                                        <tr>
-                                                            <td colspan="3">Tidak ada pasiva yang ditampilkan</td>
-                                                        </tr>
-                                                    <?php
-                                                    endif; ?>
+                                                    endforeach; ?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -363,7 +333,7 @@
                                     </div>
                                     <div class="col-md-6 col-xs-12">
                                         <label for="tgl_sampai" class="form-label">Sampai</label>
-                                        <input type="date" class="form-control" name="tgl_sampai" value="<?= date('Y-m-d') ?>" required>
+                                        <input type="date" class="form-control" name="tgl_sampai" required>
                                     </div>
                                 </div>
                             </div>
@@ -399,15 +369,15 @@
 
         <!-- /footer content -->
 
-        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="simpanNeraca">
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="simpanLR">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="myModalLabel">
-                            Simpan neraca
+                            Simpan Laba Rugi
                         </h4>
                     </div>
-                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/simpanNeraca') ?>">
+                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/simpanLR') ?>">
                         <div class="modal-body">
                             <div class="form-group row">
                                 <div class="col-xs-12">
@@ -493,44 +463,6 @@
             });
         });
 
-        $(document).ready(function() {
-            // $('#simpan_neraca').click(function() {
-            //     $.ajax({
-            //         url: '<?php echo base_url('financial/simpanNeraca'); ?>',
-            //         type: 'GET',
-            //         dataType: 'json',
-            //         contentType: "application/json; charset=utf-8",
-            //         headers: {
-            //             'Access-Control-Allow-Origin': '*',
-            //         },
-
-            //         success: function(response) {
-            //             console.log(response);
-            //             if (response.status == 'success') {
-            //                 Swal.fire({
-            //                     title: "Success!! ",
-            //                     text: 'Laporan neraca berhasil disimpan!',
-            //                     icon: "success",
-            //                 });
-            //             } else {
-            //                 Swal.fire({
-            //                     title: "Error!! ",
-            //                     text: 'Gagal menyimpan laporan neraca.',
-            //                     icon: "error",
-            //                 });
-            //             }
-            //         },
-            //         error: function(xhr, status, error) {
-            //             console.log(xhr);
-            //             Swal.fire({
-            //                 title: "Error!! ",
-            //                 text: 'Terjadi kesalahan: ' + error,
-            //                 icon: "error",
-            //             });
-            //         }
-            //     });
-            // });
-        });
 
 
         function formatNumber(number) {
@@ -551,23 +483,12 @@
             Swal.fire({
                 title: "Success!! ",
                 text: '<?= $this->session->flashdata('message_name') ?>',
+                type: "success",
                 icon: "success",
             });
         <?php
             // $this->session->sess_destroy('message_name');
             unset($_SESSION['message_name']);
-        } ?>
-        <?php
-        if ($this->session->flashdata('message_error')) {
-        ?>
-            Swal.fire({
-                title: "Error!! ",
-                text: '<?= $this->session->flashdata('message_error') ?>',
-                icon: "error",
-            });
-        <?php
-            // $this->session->sess_destroy('message_error');
-            unset($_SESSION['message_error']);
         } ?>
 
         // const flashdata_error = $('<?= $this->session->flashdata("message_error") ?>').data("flashdata");

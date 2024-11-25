@@ -81,6 +81,16 @@ class M_coa extends CI_Model
         return $this->cb->where('no_sbb', $no_coa)->get('v_coa_all')->row_array();
     }
 
+    public function getCoaBB($no_coa)
+    {
+        if ($no_coa == "ALL") {
+            $this->cb->select('nama_perkiraan, no_bb');
+            return $this->cb->get('v_coabb_all')->result();
+        } else {
+            return $this->cb->where('no_bb', $no_coa)->get('v_coabb_all')->row_array();
+        }
+    }
+
     public function getCoaByCode($code = NULL)
     {
         if ($code) {
@@ -146,6 +156,11 @@ class M_coa extends CI_Model
     public function insert_saldo_awal($data)
     {
         return $this->cb->insert('saldo_awal', $data);
+    }
+
+    public function update_saldo_awal($periode, $data)
+    {
+        return $this->cb->where('periode', $periode)->update('saldo_awal', $data);
     }
 
     // Fungsi untuk mendapatkan saldo awal berdasarkan bulan tertentu

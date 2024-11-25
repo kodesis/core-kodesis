@@ -221,7 +221,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
                             <div class="x_title">
-                                <h2>Neraca per tanggal <?= format_indo($per_tanggal) ?> </h2>
+                                <h2>Neraca BB per tanggal <?= format_indo($per_tanggal) ?> </h2>
                             </div>
                             <div class="x_content">
                                 <div class="row">
@@ -274,16 +274,13 @@
                                                     <?php
                                                     if (isset($activa)) :
                                                         foreach ($activa as $a) :
-                                                            $coa = $this->m_coa->getCoa($a->no_sbb);
-
-                                                            if ($coa['table_source'] == "t_coa_sbb" && $coa['posisi'] == 'AKTIVA' && $a->saldo_awal != '0') : ?>
-                                                                <tr>
-                                                                    <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></button></td>
-                                                                    <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
-                                                                </tr>
+                                                            $coa = $this->m_coa->getCoaBB($a->no_bb); ?>
+                                                            <tr>
+                                                                <td><?= $a->no_bb ?></td>
+                                                                <td><?= $coa['nama_perkiraan'] ?></td>
+                                                                <td class="text-right"><?= number_format($a->saldo_aktiva) ?></td>
+                                                            </tr>
                                                         <?php
-                                                            endif;
                                                         endforeach;
                                                     else : ?>
                                                         <tr>
@@ -313,19 +310,16 @@
                                                     <?php
                                                     if (isset($pasiva)) :
                                                         foreach ($pasiva as $a) :
-                                                            $coa = $this->m_coa->getCoa($a->no_sbb);
-
-                                                            if ($coa['table_source'] == "t_coa_sbb" && $coa['posisi'] == 'PASIVA' && $a->saldo_awal != '0') : ?>
-                                                                <tr>
-                                                                    <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></td>
-                                                                    <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
-                                                                </tr>
+                                                            $coa = $this->m_coa->getCoaBB($a->no_bb); ?>
+                                                            <tr>
+                                                                <td><?= $a->no_bb ?></td>
+                                                                <td><?= $coa['nama_perkiraan'] ?></td>
+                                                                <td class="text-right"><?= number_format($a->saldo_pasiva) ?></td>
+                                                            </tr>
                                                         <?php
-                                                            endif;
                                                         endforeach; ?>
                                                         <tr>
-                                                            <td>3103001</td>
+                                                            <td>3103</td>
                                                             <td>LABA TAHUN BERJALAN</td>
                                                             <td class="text-right"><?= number_format($laba) ?></td>
                                                         </tr>
@@ -363,7 +357,7 @@
                                     </div>
                                     <div class="col-md-6 col-xs-12">
                                         <label for="tgl_sampai" class="form-label">Sampai</label>
-                                        <input type="date" class="form-control" name="tgl_sampai" value="<?= date('Y-m-d') ?>" required>
+                                        <input type="date" class="form-control" name="tgl_sampai" required>
                                     </div>
                                 </div>
                             </div>

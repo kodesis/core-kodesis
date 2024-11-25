@@ -93,11 +93,11 @@ class M_task extends CI_Model
         //     $this->db->where('id', $id);
         //     $this->db->update('task', $data_update1);
         // }
-        $sql = "
+        $sql2 = "
             SELECT * FROM task where id='$id'";
         //$query = $this->db->query($sql);
         //return $query->result();
-        $query = $this->db->query($sql);
+        $query = $this->db->query($sql2);
         return $query->row();
     }
 }

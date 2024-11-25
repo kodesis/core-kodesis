@@ -194,6 +194,8 @@ class Task extends CI_Controller
 							$this->db->where('b.id_task', $this->uri->segment(3));
 							$this->db->from('users as a');
 							$this->db->join('task_detail as b', 'a.nip=b.responsible');
+							$this->db->order_by('activity', 'ASC');
+							$this->db->order_by('date_created', 'DESC');
 							$data['task_detail'] = $this->db->get()->result();
 
 							$this->db->select('*,c.activity as status_task,b.activity,b.comment as comment,b.date_created');

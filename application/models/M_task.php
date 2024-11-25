@@ -70,7 +70,7 @@ class M_task extends CI_Model
     function task_get_detail($id)
     {
         $nip = $this->session->userdata('nip');
-        $sql = "SELECT task.read FROM task WHERE task.read NOT LIKE '%$nip%' AND task.id='$id'";
+        $sql = "SELECT task.read FROM task WHERE task.read NOT LIKE '%$nip%' OR task.id='$id'";
         $query = $this->db->query($sql);
         $result = $query->row();
         $kalimat = $result->read;

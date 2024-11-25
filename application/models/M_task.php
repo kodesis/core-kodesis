@@ -70,12 +70,12 @@ class M_task extends CI_Model
     function task_get_detail($id)
     {
         $nip = $this->session->userdata('nip');
-        $sql = "select task.read FROM task WHERE id=$id";
+        $sql = "SELECT task.read FROM task WHERE task.read NOT LIKE '%$nip%' AND task.id='$id'";
         $query = $this->db->query($sql);
         $result = $query->row();
         $kalimat = $result->read;
 
-        if (preg_match("/$nip/i", $kalimat) == false) {
+        if ($result) {
             $kalimat1 = $kalimat . ' ' . $nip;
             $data_update1    = array(
                 'read'    => $kalimat1
@@ -83,6 +83,15 @@ class M_task extends CI_Model
             $this->db->where('id', $id);
             $this->db->update('task', $data_update1);
         }
+
+        // if (preg_match("/$nip/i", $kalimat) == false) {
+        //     $kalimat1 = $kalimat . ' ' . $nip;
+        //     $data_update1    = array(
+        //         'read'    => $kalimat1
+        //     );
+        //     $this->db->where('id', $id);
+        //     $this->db->update('task', $data_update1);
+        // }
         // if (preg_match("/$nip/i", $kalimat)) {
         //     // return 0;
         // } else {

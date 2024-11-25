@@ -75,7 +75,7 @@ class M_task extends CI_Model
         $result = $query->row();
         $kalimat = $result->read;
         if (preg_match("/$nip/i", $kalimat)) {
-            return false;
+            // return 0;
         } else {
             $kalimat1 = $kalimat . ' ' . $nip;
             $data_update1    = array(

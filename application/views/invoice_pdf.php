@@ -153,8 +153,8 @@
                         <hr>
                         <p>
                             Pembayaran Transfer ke rekening berikut: <br>
-                            PT. Baris Kode Indonesia<br>
-                            79 7070 7004 - Bank Syariah Indonesia (BSI)
+                            Bank BCA 3753002304<br>
+                            PT. Kode Sistem Indonesia
                         </p>
                     </td>
                     <td class="text-end" style="width: 25%; vertical-align: top">

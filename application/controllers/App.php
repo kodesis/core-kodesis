@@ -1302,13 +1302,13 @@ class App extends CI_Controller
 			// }
 		}
 	}
-	public function absen_wfh()
-	{
-		$a = $this->session->userdata('level');
-		if (strpos($a, '302') !== false) {
-			$this->load->view('absen_wfh');
-		}
-	}
+	// public function absen_wfh()
+	// {
+	// 	$a = $this->session->userdata('level');
+	// 	if (strpos($a, '302') !== false) {
+	// 		$this->load->view('absen_wfh');
+	// 	}
+	// }
 	public function cetak_gaji()
 	{
 		$a = $this->session->userdata('level');
@@ -3534,5 +3534,207 @@ class App extends CI_Controller
 
 		$this->session->set_flashdata('msg', 'Tanggal berhasil dihapus!');
 		redirect('app/user');
+	}
+	public function absen_wfh()
+	{
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			//inbox notif
+			$nip = $this->session->userdata('nip');
+			$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+			$sql2 = "SELECT * FROM asset_ruang";
+			$sql3 = "SELECT * FROM asset_lokasi";
+			$query = $this->db->query($sql);
+			$query2 = $this->db->query($sql2);
+			$query3 = $this->db->query($sql3);
+			$res2 = $query->result_array();
+			$asset_ruang = $query2->result();
+			$asset_lokasi = $query3->result();
+			$result = $res2[0]['COUNT(Id)'];
+			$data['count_inbox'] = $result;
+			$data['asset_ruang'] = $asset_ruang;
+			$data['asset_lokasi'] = $asset_lokasi;
+
+			// Tello
+			$sql4 = "SELECT COUNT(Id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+			$query4 = $this->db->query($sql4);
+			$res4 = $query4->result_array();
+			$result4 = $res4[0]['COUNT(Id)'];
+			$data['count_inbox2'] = $result4;
+
+			$this->load->model(
+				'Absen_m',
+				'user'
+			);
+			$data['data_user'] = $this->user->get_user();
+			$this->load->view('absen_wfh_view', $data);
+		}
+	}
+	public function fetch_user()
+	{
+		$this->load->model('Absen_m', 'user');
+		$users = $this->user->get_user(); // Fetch all users from the database
+
+		if ($users) {
+			// Load the user table view and capture its output
+			$data['users'] = $users;
+			$tableHTML = $this->load->view('userTable', $data, TRUE);
+
+			echo json_encode([
+				'status' => 'success',
+				'data' => $users,
+				'html' => $tableHTML
+			]);
+		} else {
+			echo json_encode([
+				'status' => 'error',
+				'message' => 'No records found'
+			]);
+		}
+	}
+	public function user_photo()
+	{
+
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			$a = $this->session->userdata('level');
+			if (strpos($a, '401') !== false) {
+				$data['user'] = $this->m_app->user_get_detail($this->uri->segment(3));
+				if (empty($data['user'])) {
+					echo "<script>alert('Unauthorize Privilage!');window.history.back();</script>";
+				} else {
+					//inbox notif
+					$nip = $this->session->userdata('nip');
+					$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+					$query = $this->db->query($sql);
+					$res2 = $query->result_array();
+					$result = $res2[0]['COUNT(Id)'];
+					$data['count_inbox'] = $result;
+
+					$sql3 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+					$query3 = $this->db->query($sql3);
+					$res3 = $query3->result_array();
+					$result3 = $res3[0]['COUNT(id)'];
+					$data['count_inbox2'] = $result3;
+
+					$this->load->view('user_view_photo', $data);
+				}
+			}
+		}
+	}
+	public function add_photo()
+	{
+		$this->load->model('Absen_m', 'user');
+		$id_edit = $this->input->post('id');
+		$username = $this->input->post('username');
+
+		$imageFileNames = [];
+		$folderPath = FCPATH . "resources/labels/{$username}/";
+
+		if (!is_dir($folderPath)) {
+			mkdir($folderPath, 0777, true);
+		}
+
+		// Process images
+		for ($i = 1; $i <= 5; $i++) {
+			$capturedImage = $this->input->post("capturedImage{$i}");
+			if ($capturedImage) {
+				$base64Data = explode(',', $capturedImage)[1];
+				$imageData = base64_decode($base64Data);
+				$labelName = "{$i}.png";
+				file_put_contents("{$folderPath}{$labelName}", $imageData);
+				$imageFileNames[] = $labelName;
+			}
+		}
+
+		$imagesJson = json_encode($imageFileNames);
+
+		// Check for duplicate registration number
+
+		// Save the student
+		$edit_data = [
+			'userImage' => $imagesJson,
+		];
+		$this->db->where(
+			'id',
+			$id_edit
+		);
+		$this->db->update('users', $edit_data);
+		$this->session->set_flashdata('message', "Student: $username added successfully!");
+		echo "Student: $username added successfully!";
+
+
+
+		redirect('app/user');
+	}
+	public function recordAttendance()
+	{
+		$this->load->model('Absen_m', 'user');
+
+		// Only allow POST requests
+		if ($this->input->server('REQUEST_METHOD') !== 'POST') {
+			show_error('Method Not Allowed', 405);
+			return;
+		}
+
+		$attendanceData = json_decode(file_get_contents("php://input"), true);
+
+		if (!$attendanceData) {
+			echo json_encode([
+				'status' => 'error',
+				'message' => 'No attendance data received.'
+			]);
+			return;
+		}
+
+		$response = $this->user->insertAttendance($attendanceData);
+
+		echo json_encode($response);
+	}
+	public function delete_user_images()
+	{
+		// Get JSON input
+		$input = json_decode(file_get_contents('php://input'), true);
+
+		if (!isset($input['username']) || empty($input['username'])) {
+			echo json_encode(['status' => 'error', 'message' => 'Username is required.']);
+			return;
+		}
+
+		$username = $input['username'];
+
+		// Fetch user data
+		$user = $this->db->get_where('users', ['username' => $username])->row();
+
+		if (!$user || empty($user->userImage)) {
+			echo json_encode(['status' => 'error', 'message' => 'No images found for this user.']);
+			return;
+		}
+
+		$images = json_decode($user->userImage, true); // Decode JSON array
+		$path = FCPATH . 'resources/labels/' . $username . '/';
+
+		// Delete all images in the directory
+		foreach ($images as $image) {
+			$file = $path . $image;
+			if (is_file($file)) {
+				unlink($file); // Delete each image
+			}
+		}
+
+		// Clear userImage field by setting it to NULL
+		$this->db->where('username', $username);
+		$this->db->set('userImage', 'NULL', false);
+		$this->db->update('users');
+
+		if ($this->db->affected_rows() > 0) {
+			echo json_encode(['status' => 'success', 'message' => 'All images deleted and userImage set to NULL successfully.']);
+		} else {
+			echo json_encode(['status' => 'error', 'message' => 'Failed to update userImage field to NULL.']);
+		}
+
+		echo json_encode(['status' => 'success', 'message' => 'All images deleted and userImage set to NULL successfully.']);
 	}
 }

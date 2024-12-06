@@ -407,6 +407,7 @@
 							</form> -->
                       <a class="btn btn-dark btn-xs" href="<?= base_url('app/user_view/' . $data->id) ?>">Open</a>
                       <a class="btn btn-warning btn-xs" href="<?= base_url('app/user_edit/' . $data->id . '/e') ?>">Edit</a>
+                      <a class="btn btn-primary btn-xs" href="<?= base_url('app/user_photo/' . $data->id . '/e') ?>">Photo</a>
                       <a class="btn btn-success btn-xs" href="<?= base_url('app/user_resetpass/' . $data->id) ?>" id="btn-reset-pass">Reset Password</a>
                     </td>
 

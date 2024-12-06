@@ -336,20 +336,19 @@
 									</tr>
 									<?php if (!empty($user->userImage)) { ?>
 										<tr>
-											<div id="image-gallery" class="image-box">
+											<div id="image-gallery" class="row">
 												<?php
 												$images = json_decode($user->userImage, true); // Decode the JSON array
 												$imagePath = 'resources/labels/' . $user->username . '/';
 												foreach ($images as $image): ?>
-													<div class="user-image">
+													<div class="user-image col-md-2">
 														<img src="<?= base_url($imagePath . $image) ?>" alt="User Image" style="width: 100px; margin: 5px;">
 													</div>
 												<?php endforeach; ?>
-												<img src="<?= base_url() ?>resources/images/default.png" alt="Default Image">
+												<!-- <img src="<?= base_url() ?>resources/images/default.png" alt="Default Image"> -->
 											</div>
 										</tr>
 									<?php } else { ?>
-
 										<tr>
 											<div>
 												<div class="form-title-image">
@@ -362,7 +361,10 @@
 											</div>
 										</tr>
 									<?php } ?>
-
+									<!-- Delete all images button -->
+									<?php if (!empty($user->userImage)) { ?>
+										<a id="delete-images" class="btn btn-danger" onclick="deleteUserImages('<?= $user->username ?>')">Delete All Images</a>
+									<?php } ?>
 									<tr>
 										<th>
 											<a href="<?= base_url('app/user') ?>" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
@@ -564,6 +566,35 @@
 			context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
 			return canvas.toDataURL("image/png");
+		}
+
+		function deleteUserImages(username) {
+			if (!confirm("Are you sure you want to delete all images for this user?")) {
+				return;
+			}
+
+			fetch('<?= base_url('app/delete_user_images') ?>', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						username: username
+					})
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'success') {
+						alert(data.message);
+						location.reload(); // Refresh the page to update the image gallery
+					} else {
+						alert("Error: " + data.message);
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('Failed to delete images. Please try again.');
+				});
 		}
 	</script>
 </body>

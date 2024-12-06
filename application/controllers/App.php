@@ -1133,7 +1133,9 @@ class App extends CI_Controller
 							"nama_jabatan" => $this->input->post('nama_jabatan'),
 							"supervisi" => $this->input->post('supervisi'),
 							"tmt" => $this->input->post('tmt'),
-							"cuti" => $this->input->post('cuti')
+							"cuti" => $this->input->post('cuti'),
+							"jam_masuk" => $this->input->post('jam_masuk'),
+							"jam_keluar" => $this->input->post('jam_keluar')
 						];
 						$this->db->insert('users', $add);
 						$this->session->set_flashdata('msg', '<div class="alert alert-success">Registrasi User ' . $this->input->post('nama') . '</div>');
@@ -1188,7 +1190,9 @@ class App extends CI_Controller
 							"bagian" => $this->input->post('bagian'),
 							"nama_jabatan" => $this->input->post('nama_jabatan'),
 							"supervisi" => $this->input->post('supervisi'),
-							"cuti" => $this->input->post('cuti')
+							"cuti" => $this->input->post('cuti'),
+							"jam_masuk" => $this->input->post('jam_masuk'),
+							"jam_keluar" => $this->input->post('jam_keluar')
 						];
 						$this->db->where('id', $id_edit);
 						$this->db->update('users', $edit_data);
@@ -3731,8 +3735,10 @@ class App extends CI_Controller
 
 		if ($this->db->affected_rows() > 0) {
 			echo json_encode(['status' => 'success', 'message' => 'All images deleted and userImage set to NULL successfully.']);
+			return;
 		} else {
 			echo json_encode(['status' => 'error', 'message' => 'Failed to update userImage field to NULL.']);
+			return;
 		}
 
 		echo json_encode(['status' => 'success', 'message' => 'All images deleted and userImage set to NULL successfully.']);

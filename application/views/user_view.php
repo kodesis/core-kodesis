@@ -274,7 +274,14 @@
 									<th>Nama Jabatan</th>
 									<td>: <?= $user->nama_jabatan ?></td>
 								</tr>
-
+								<tr>
+									<th>Jam Masuk</th>
+									<td>: <?= $user->jam_masuk ?></td>
+								</tr>
+								<tr>
+									<th>Jam Keluar</th>
+									<td>: <?= $user->jam_keluar ?></td>
+								</tr>
 								<tr>
 									<th>Supervisi</th>
 									<td>:
@@ -454,6 +461,14 @@
 										<td><input type="number" name="cuti" class="form-control"></td>
 									</tr>
 									<tr>
+										<th>Jam Masuk</th>
+										<td><input type="time" name="jam_masuk" class="form-control"></td>
+									</tr>
+									<tr>
+										<th>Jam Keluar</th>
+										<td><input type="time" name="jam_keluar" class="form-control"></td>
+									</tr>
+									<tr>
 										<th>
 											<a class="btn btn-warning" href="<?= base_url('app/user') ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
 										</th>
@@ -573,6 +588,18 @@
 										<th>Cuti</th>
 										<td>
 											<input type="number" name="cuti" class="form-control" value="<?= $user->cuti ?>">
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Masuk</th>
+										<td>
+											<input type="time" name="jam_masuk" class="form-control" value="<?= $user->jam_masuk ?>">
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Keluar</th>
+										<td>
+											<input type="time" name="jam_keluar" class="form-control" value="<?= $user->jam_keluar ?>">
 										</td>
 									</tr>
 									<tr>

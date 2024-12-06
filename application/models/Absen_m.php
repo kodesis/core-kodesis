@@ -7,7 +7,6 @@ class Absen_m extends CI_Model
         $this->db->select('*'); // Fetch only these columns
         $this->db->from('users'); // Table name
         $this->db->where('userImage !=', NULL);
-        $this->db->where('userImage !=', '');
         $query = $this->db->get();
 
         return $query->result_array(); // Return the result as an array
@@ -21,15 +20,57 @@ class Absen_m extends CI_Model
     {
         $response = ['status' => 'error', 'message' => 'No data provided'];
 
+
         if (!empty($attendanceData)) {
             try {
                 foreach ($attendanceData as $data) {
-                    $this->db->insert('tblattendance', [
-                        'username' => $data['username'],
-                        'nama' => $data['nama'],
-                        'attendanceStatus' => $data['attendanceStatus'],
-                        'date' => date("Y-m-d")
-                    ]);
+                    // Fetch the user's jam_masuk and jam_keluar values
+                    $this->db->select('jam_masuk, jam_keluar');
+                    $this->db->from('users');
+                    $this->db->where('username', $data['username']);
+                    $jam = $this->db->get()->row();
+
+                    // Ensure we have both jam_masuk and jam_keluar
+                    if ($jam) {
+                        // Get current time and time ranges
+                        $currentTime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+
+                        // Parse jam_masuk and jam_keluar as DateTime objects
+                        $startOfDay = new DateTime($jam->jam_masuk); // Assuming format is H:i:s
+                        $endOfDay = new DateTime($jam->jam_keluar);
+                        $startOfDay->modify('+2 hours');
+                        $endOfDay->modify('+2 hours');
+
+                        // Debug outputs
+                        // echo "Current Time: " . $currentTime->format('H:i:s') . "<br>";
+                        // echo "Start of Day: " . $startOfDay->format('H:i:s') . "<br>";
+                        // echo "End of Day: " . $endOfDay->format('H:i:s') . "<br>";
+
+                        // Check the time and set 'tipe' based on current time
+                        if ($currentTime->format('H:i:s') < $startOfDay->format('H:i:s')) {
+                            // Before jam_masuk, it is 'Masuk'
+                            $tipe = 'Masuk';
+                        } elseif ($currentTime->format('H:i:s') >= $startOfDay->format('H:i:s') && $currentTime->format('H:i:s') < $endOfDay->format('H:i:s')) {
+                            // Between jam_masuk and jam_keluar, it is 'Keluar'
+                            $tipe = 'Keluar';
+                        } elseif ($currentTime->format('H:i:s') >= $endOfDay->format('H:i:s')) {
+                            // After jam_keluar, it is 'Pulang'
+                            $tipe = 'Pulang';
+                        }
+
+                        // Insert the attendance record
+                        $this->db->insert('tblattendance', [
+                            'username' => $data['username'],
+                            'nama' => $data['nama'],
+                            'attendanceStatus' => $data['attendanceStatus'],
+                            'date' => date("Y-m-d"),
+                            'tipe' => $tipe
+                        ]);
+                    } else {
+                        $response['status'] = 'error';
+                        $response['message'] = "User not found for username: " . $data['username'];
+                        return $response;
+                    }
                 }
 
                 $response['status'] = 'success';

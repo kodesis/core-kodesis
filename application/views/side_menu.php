@@ -72,7 +72,7 @@
 						<li><a href="<?php echo base_url(); ?>app/asset_list">Asset List</a></li>
 					<?php } ?>
 					<!-- <?php $a = $this->session->userdata('level');
-								if (strpos($a, '501') !== false) { ?>
+							if (strpos($a, '501') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>app/abk_list">Mobil List</a></li>
 				<?php } ?>
 				<?php $a = $this->session->userdata('level');
@@ -175,6 +175,11 @@
 					<?php }
 					if (strpos($a, '801') !== false) { ?>
 						<li>
+							<a href="<?= base_url(); ?>financial/outstanding">Outs. Inv</a>
+						</li>
+					<?php }
+					if (strpos($a, '801') !== false) { ?>
+						<li>
 							<a href="<?= base_url(); ?>customer">Customer</a>
 						</li>
 					<?php }
@@ -196,11 +201,6 @@
 					if (strpos($a, '801') !== false) { ?>
 						<li>
 							<a href="<?= base_url(); ?>pengajuan/list">List Pengajuan</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
-							<a href="<?= base_url(); ?>financial/outstanding">Outstanding</a>
 						</li>
 					<?php }
 					if (strpos($a, '801') !== false) { ?>
@@ -231,7 +231,7 @@
          </ul>
       </li>
       <?php //if ($this->session->userdata('level')==1) {
-			?>
+		?>
 	  <li>
          <a><i class="fa fa-desktop"></i> Admin Board <span class="fa fa-chevron-down"></span></a>
          <ul class="nav child_menu">

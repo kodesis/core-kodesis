@@ -3581,15 +3581,32 @@ class App extends CI_Controller
 		$users = $this->user->get_user(); // Fetch all users from the database
 
 		if ($users) {
-			// Load the user table view and capture its output
-			$data['users'] = $users;
-			$tableHTML = $this->load->view('userTable', $data, TRUE);
+			// If using result_array(), users will be an array, even if there's only one user
+			$hasPicture = false;
 
-			echo json_encode([
-				'status' => 'success',
-				'data' => $users,
-				'html' => $tableHTML
-			]);
+			// Iterate over users (even if it's just one user) to check if 'userImage' is not null
+			foreach ($users as $user) {
+				if (!empty($user['userImage'])) {
+					$hasPicture = true; // If 'userImage' is not empty, set flag to true
+					break; // No need to continue looping if we find a picture
+				}
+			}
+
+			if (!$hasPicture) {
+				echo json_encode([
+					'status' => 'No Picture'
+				]);
+			} else {
+				// Load the user table view and capture its output
+				$data['users'] = $users;
+				$tableHTML = $this->load->view('userTable', $data, TRUE);
+
+				echo json_encode([
+					'status' => 'success',
+					'data' => $users,
+					'html' => $tableHTML
+				]);
+			}
 		} else {
 			echo json_encode([
 				'status' => 'error',
@@ -3742,5 +3759,11 @@ class App extends CI_Controller
 		}
 
 		echo json_encode(['status' => 'success', 'message' => 'All images deleted and userImage set to NULL successfully.']);
+	}
+	public function tes()
+	{
+
+
+		$this->load->view('tes_aja');
 	}
 }

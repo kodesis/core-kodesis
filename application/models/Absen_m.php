@@ -6,9 +6,11 @@ class Absen_m extends CI_Model
     {
         $this->db->select('*'); // Fetch only these columns
         $this->db->from('users'); // Table name
-        $this->db->where('userImage !=', NULL);
+        // $this->db->where('userImage !=', NULL);
+        $this->db->where('username', $this->session->userdata('username'));
         $query = $this->db->get();
 
+        // return $query->result_array(); // Return the result as an array
         return $query->result_array(); // Return the result as an array
     }
     public function check_registration_exists($username)

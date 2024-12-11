@@ -57,7 +57,6 @@
 			padding-top: 37px;
 		}
 
-		body {}
 
 		.justify-content-center {
 			display: flex;
@@ -275,16 +274,16 @@
 				<div class="container">
 					<div class="main--content">
 						<div id="messageDiv" class="messageDiv" style="display:none;"> </div>
-						<p style="font:80px; font-weight:400; color:blue; text-align:center; padding-top:2px;">Please select course, unit, and venue first. Before Launching Facial Recognition</p>
-						<button class="btn" id="ShowUser" onclick="updateTable()">Tampilkan User</button>
+						<button class="btn" id="ShowUser" onclick="getLocation()">Tampilkan Posisi</button>
+						<!-- <button class="btn" id="ShowUser" onclick="updateTable()">Tampilkan User</button> -->
 						<div class="attendance-button">
 							<button id="startButton" class="add">Launch Facial Recognition</button>
 							<button id="endButton" class="add" style="display:none">End Attendance Process</button>
 							<button id="endAttendance" class="add">END Attendance Taking</button>
 						</div>
 
-						<div class="video-container" style="display:none;">
-							<video id="video" width="600" height="450" autoplay></video>
+						<div class="video-container">
+							<video id="video" class="video-class" width="320" height="240" autoplay muted></video>
 							<canvas id="overlay"></canvas>
 						</div>
 
@@ -295,7 +294,7 @@
 							</div>
 
 						</div>
-
+						<p id="location"></p>
 					</div>
 				</div>
 
@@ -348,6 +347,9 @@
 		<!-- Custom Theme Scripts -->
 		<script src="<?php echo base_url(); ?>src/build/js/custom.min.js"></script>
 		<script src="<?php echo base_url(); ?>src/build/js/owl.carousel.min.js"></script>
+
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 		<script>
 			$('.owl-carousel').owlCarousel({
 				loop: true,
@@ -372,6 +374,94 @@
 			})
 		</script>
 		<script>
+			const locations = [{
+					name: "Graha Dirgantara",
+					latitude: -6.2559536,
+					longitude: 106.8826187,
+					radius: 0.5, // Radius in kilometers
+				},
+				{
+					name: "Parkir Bandes",
+					latitude: -6.2586284,
+					longitude: 106.8820789,
+					radius: 0.5, // Radius in kilometers
+				},
+				{
+					name: "Mlejit",
+					latitude: -6.2638584,
+					longitude: 106.8856266,
+					radius: 0.5, // Radius in kilometers
+				},
+			];
+
+			function getLocation() {
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(showPosition, showError, {
+						enableHighAccuracy: true
+					});
+				} else {
+					Swal.fire('Error', 'Geolocation is not supported by this browser.', 'error');
+				}
+			}
+
+			function showPosition(position) {
+				const userLatitude = position.coords.latitude;
+				const userLongitude = position.coords.longitude;
+
+				let isWithinRange = false;
+				let locationName = "";
+
+				// Check each location
+				for (const location of locations) {
+					if (isWithinRadius(userLatitude, userLongitude, location.latitude, location.longitude, location.radius)) {
+						isWithinRange = true;
+						locationName = location.name;
+						break;
+					}
+				}
+
+				if (isWithinRange) {
+					Swal.fire('Success', `You are within range of ${locationName}. Updating table...`, 'success');
+					updateTable();
+				} else {
+					Swal.fire('Alert', 'You are not in the correct location.', 'warning');
+				}
+			}
+
+			function showError(error) {
+				switch (error.code) {
+					case error.PERMISSION_DENIED:
+						Swal.fire('Error', 'Permission to access location was denied.', 'error');
+						break;
+					case error.POSITION_UNAVAILABLE:
+						Swal.fire('Error', 'Location information is unavailable.', 'error');
+						break;
+					case error.TIMEOUT:
+						Swal.fire('Error', 'The request to get your location timed out.', 'error');
+						break;
+					case error.UNKNOWN_ERROR:
+						Swal.fire('Error', 'An unknown error occurred.', 'error');
+						break;
+				}
+			}
+
+			// Function to calculate distance between two coordinates
+			function isWithinRadius(lat1, lon1, lat2, lon2, radiusInKm) {
+				const toRadians = (degrees) => degrees * (Math.PI / 180);
+				const earthRadiusKm = 6371;
+
+				const dLat = toRadians(lat2 - lat1);
+				const dLon = toRadians(lon2 - lon1);
+				const a =
+					Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+					Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+					Math.sin(dLon / 2) * Math.sin(dLon / 2);
+				const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+				const distance = earthRadiusKm * c;
+				return distance <= radiusInKm;
+			}
+
 			function updateTable() {
 				var xhr = new XMLHttpRequest();
 				xhr.open("POST", "fetch_user", true);
@@ -383,9 +473,13 @@
 						if (response.status === "success") {
 							students = response.data; // Store the student data
 							labels = students.map(student => student.username);
+							console.log(labels);
 							updateOtherElements();
 
 							document.getElementById("studentTableContainer").innerHTML = response.html;
+						} else if (response.status === "No Picture") {
+							Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+
 						} else {
 							console.error("Error:", response.message);
 						}
@@ -432,18 +526,17 @@
 				});
 
 				function startWebcam() {
-					navigator.mediaDevices
-						.getUserMedia({
-							video: true,
-							audio: false,
-						})
-						.then((stream) => {
-							video.srcObject = stream;
-							videoStream = stream;
-						})
-						.catch((error) => {
-							console.error(error);
-						});
+					navigator.mediaDevices.getUserMedia({
+						video: true,
+						audio: false
+					}).then((stream) => {
+						video.srcObject = stream;
+						videoStream = stream;
+					}).catch((error) => {
+						console.error("Error accessing webcam:", error);
+						alert("Please allow webcam access.");
+					});
+
 				}
 
 				async function getLabeledFaceDescriptions() {

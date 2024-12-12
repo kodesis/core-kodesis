@@ -29,3 +29,12 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.sublime-project
 /tests/tests/
 /tests/results/
+application/config/database.php
+application/config/database aa.php
+application/config/database.php
+resources/labels/085157563305/1.png
+resources/labels/085157563305/2.png
+resources/labels/085157563305/3.png
+resources/labels/085157563305/4.png
+resources/labels/085157563305/5.png
+application/config/database a.php

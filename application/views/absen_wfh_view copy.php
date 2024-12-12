@@ -375,39 +375,25 @@
 			})
 		</script>
 		<script>
-			let isWithinRange = false;
-			let locationName = "";
-			const locations = [
-				<?php
-				if ($lokasi_absensi) {
-					foreach ($lokasi_absensi as $l) { ?> {
-							name: "<?= addslashes($l['nama_lokasi']) ?>", // Ensure the name is properly escaped and quoted
-							latitude: <?= $l['latitude'] ?>,
-							longitude: <?= $l['longitude'] ?>,
-							radius: <?= $l['radius'] ?> // Radius in kilometers
-						},
-					<?php }
-				} else { ?> {
-						name: "Graha Dirgantara",
-						latitude: -6.2559536,
-						longitude: 106.8826187,
-						radius: 0.5 // Radius in kilometers
-					},
-					{
-						name: "Parkir Bandes",
-						latitude: -6.2586284,
-						longitude: 106.8820789,
-						radius: 0.5 // Radius in kilometers
-					},
-					{
-						name: "Mlejit",
-						latitude: -6.2638584,
-						longitude: 106.8856266,
-						radius: 0.5 // Radius in kilometers
-					}
-				<?php } ?>
+			const locations = [{
+					name: "Graha Dirgantara",
+					latitude: -6.2559536,
+					longitude: 106.8826187,
+					radius: 0.5, // Radius in kilometers
+				},
+				{
+					name: "Parkir Bandes",
+					latitude: -6.2586284,
+					longitude: 106.8820789,
+					radius: 0.5, // Radius in kilometers
+				},
+				{
+					name: "Mlejit",
+					latitude: -6.2638584,
+					longitude: 106.8856266,
+					radius: 0.5, // Radius in kilometers
+				},
 			];
-
 
 			function getLocation() {
 				if (navigator.geolocation) {
@@ -423,6 +409,8 @@
 				const userLatitude = position.coords.latitude;
 				const userLongitude = position.coords.longitude;
 
+				let isWithinRange = false;
+				let locationName = "";
 
 				// Check each location
 				for (const location of locations) {
@@ -438,9 +426,7 @@
 					Swal.fire('Success', `You are within range of ${locationName}. Updating table...`, 'success');
 					updateTable();
 				} else {
-					$('#lokasi_sekarang').text('Lokasi Sekarang Di Luar Jangkauan');
-					Swal.fire('Success', `You are not within range. Updating table...`, 'success');
-					updateTable();
+					Swal.fire('Alert', 'You are not in the correct location.', 'warning');
 				}
 			}
 
@@ -507,25 +493,9 @@
 
 			function markAttendance(detectedFaces) {
 				document.querySelectorAll("#studentTableContainer tr").forEach((row) => {
-
 					const username = row.cells[0].innerText.trim();
-
 					if (detectedFaces.includes(username)) {
-						if (isWithinRange) {
-							row.cells[3].innerText = "present";
-							row.cells[4].innerText = locationName;
-						} else {
-							row.cells[3].innerText = "pending";
-							row.cells[4].innerText = "Di Luar";
-						}
-						const currentDate = new Date(); // Get the current date
-
-						// Format the date as "YYYY-MM-DD"
-						const formattedDate = currentDate.toISOString().split("T")[0];
-
-
-						row.cells[5].innerText = formattedDate;
-
+						row.cells[2].innerText = "present";
 						Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
 						sendAttendanceDataToServer();
 						const videoContainer = document.querySelector(".video-container");
@@ -681,18 +651,13 @@
 					.forEach((row, index) => {
 						if (index === 0) return;
 						const username = row.cells[0].innerText.trim();
-						const nip = row.cells[1].innerText.trim();
-						const nama = row.cells[2].innerText.trim();
-						const attendanceStatus = row.cells[3].innerText.trim();
-						const lokasiAttendance = row.cells[4].innerText.trim();
-						const tanggalAttendance = row.cells[5].innerText.trim();
+						const nama = row.cells[1].innerText.trim();
+						const attendanceStatus = row.cells[2].innerText.trim();
 
 						attendanceData.push({
 							username,
-							nip,
 							nama,
-							attendanceStatus,
-							lokasiAttendance,
+							attendanceStatus
 						});
 					});
 
@@ -762,17 +727,8 @@
 				videoContainer.style.display = "none";
 				stopWebcam();
 			});
-			<?php
-			if (empty($cek_user)) {
-			?>
-				const callOnceLocation = getLocation();
-			<?php
-			} else {
-			?>
-				Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
-			<?php
-			}
-			?>
+
+			const callOnceLocation = getLocation();
 
 			callOnceLocation();
 		</script>

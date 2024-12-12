@@ -3571,6 +3571,9 @@ class App extends CI_Controller
 				'Absen_m',
 				'user'
 			);
+			$data['cek_user'] = $this->user->cek_user();
+			$data['lokasi_absensi'] = $this->user->get_location();
+
 			$data['data_user'] = $this->user->get_user();
 			$this->load->view('absen_wfh_view', $data);
 		}

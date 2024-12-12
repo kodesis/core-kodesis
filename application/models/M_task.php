@@ -37,7 +37,8 @@ class M_task extends CI_Model
         // $sql = $this->db->get('task');
         // $sql = "SELECT * FROM task limit ".$start. ", ".$limit." ";
         $pic = $this->session->userdata('nip');
-        $sql = "SELECT * from task where member like '%$nip%' or pic like '%$pic%' ORDER BY activity asc , date_created desc limit " . $start . ", " . $limit;
+        // $sql = "SELECT * from task where member like '%$nip%' or pic like '%$pic%' ORDER BY activity asc ,date_created desc limit " . $start . ", " . $limit;
+        $sql = "SELECT *, (SELECT count(id_task) FROM task_detail WHERE task.Id = task_detail.id_task and task_detail.due_date >= now()) as TOTAL from task where member like '%$nip%' or pic like '%$pic%' ORDER BY activity asc,TOTAL DESC, date_created desc LIMIT " . $start . ", " . $limit;
         $query = $this->db->query($sql);
         return $query->result();
     }

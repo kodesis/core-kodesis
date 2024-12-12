@@ -355,7 +355,7 @@
 												</td>
 											</tr>
 										<?php } else {
-											if ($x->activity == '1') {
+											if ($x->activity == '1' && $x->due_date > date('Y-m-d')) {
 												$color = '#00b894';
 											} else if ($x->activity == '2') {
 												$color = '#0984e3';

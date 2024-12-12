@@ -139,7 +139,7 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '302') !== false) { ?>
 						<!--li><a href="<?php echo base_url(); ?>app/slip_gaji_pdf">Slip Gaji</a></li-->
-						<li><a href="<?php echo base_url(); ?>app/absen_wfa">Absen WFA</a></li>
+						<li><a href="<?php echo base_url();  ?>app/absen_wfa">Absen WFA</a></li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '303') !== false) { ?>

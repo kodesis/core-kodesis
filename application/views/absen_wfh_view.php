@@ -280,7 +280,7 @@
 						<div class="attendance-button">
 							<button hidden id="startButton" class="add">Launch Facial Recognition</button>
 							<button id="endButton" class="add" style="display:none">End Attendance Process</button>
-							<button id="endAttendance" class="add">END Attendance Taking</button>
+							<button hidden id="endAttendance" class="add">END Attendance Taking</button>
 						</div>
 
 						<div class="video-container">
@@ -496,6 +496,10 @@
 					const username = row.cells[0].innerText.trim();
 					if (detectedFaces.includes(username)) {
 						row.cells[2].innerText = "present";
+						sendAttendanceDataToServer();
+						const videoContainer = document.querySelector(".video-container");
+						videoContainer.style.display = "none";
+						stopWebcam();
 					}
 				});
 			}

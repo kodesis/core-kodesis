@@ -274,10 +274,11 @@
 				<div class="container">
 					<div class="main--content">
 						<div id="messageDiv" class="messageDiv" style="display:none;"> </div>
-						<button class="btn" id="ShowUser" onclick="getLocation()">Tampilkan Posisi</button>
+						<h5 id="lokasi_sekarang"></h5>
+						<!-- <button class="btn" id="ShowUser" onclick="getLocation()">Tampilkan Posisi</button> -->
 						<!-- <button class="btn" id="ShowUser" onclick="updateTable()">Tampilkan User</button> -->
 						<div class="attendance-button">
-							<button id="startButton" class="add">Launch Facial Recognition</button>
+							<button hidden id="startButton" class="add">Launch Facial Recognition</button>
 							<button id="endButton" class="add" style="display:none">End Attendance Process</button>
 							<button id="endAttendance" class="add">END Attendance Taking</button>
 						</div>
@@ -397,7 +398,7 @@
 			function getLocation() {
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(showPosition, showError, {
-						enableHighAccuracy: true
+						enableHighAccuracy: false
 					});
 				} else {
 					Swal.fire('Error', 'Geolocation is not supported by this browser.', 'error');
@@ -421,6 +422,7 @@
 				}
 
 				if (isWithinRange) {
+					$('#lokasi_sekarang').text('Lokasi Sekarang ' + locationName);
 					Swal.fire('Success', `You are within range of ${locationName}. Updating table...`, 'success');
 					updateTable();
 				} else {
@@ -513,6 +515,11 @@
 					.then(() => {
 						modelsLoaded = true;
 						console.log("models loaded successfully");
+						videoContainer.style.display = "flex";
+						if (!webcamStarted && modelsLoaded) {
+							startWebcam();
+							webcamStarted = true;
+						}
 					})
 					.catch(() => {
 						alert("models not loaded, please check your model folder location");
@@ -715,6 +722,10 @@
 				videoContainer.style.display = "none";
 				stopWebcam();
 			});
+
+			const callOnceLocation = getLocation();
+
+			callOnceLocation();
 		</script>
 		<script src='<?= base_url() ?>resources/assets/javascript/active_link.js'></script>
 		<!-- <script src='<?= base_url() ?>resources/assets/javascript/face_logics/script.js'></script> -->

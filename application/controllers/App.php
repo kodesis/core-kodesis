@@ -3539,7 +3539,7 @@ class App extends CI_Controller
 		$this->session->set_flashdata('msg', 'Tanggal berhasil dihapus!');
 		redirect('app/user');
 	}
-	public function absen_wfh()
+	public function absen_wfa()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
 			redirect('home');

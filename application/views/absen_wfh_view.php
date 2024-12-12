@@ -496,6 +496,7 @@
 					const username = row.cells[0].innerText.trim();
 					if (detectedFaces.includes(username)) {
 						row.cells[2].innerText = "present";
+						Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
 						sendAttendanceDataToServer();
 						const videoContainer = document.querySelector(".video-container");
 						videoContainer.style.display = "none";

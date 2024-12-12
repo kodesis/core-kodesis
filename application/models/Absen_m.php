@@ -63,8 +63,10 @@ class Absen_m extends CI_Model
                         // Insert the attendance record
                         $this->db->insert('tblattendance', [
                             'username' => $data['username'],
+                            'nip' => $data['nip'],
                             'nama' => $data['nama'],
                             'attendanceStatus' => $data['attendanceStatus'],
+                            'lokasiAttendance' => $data['lokasiAttendance'],
                             'date' => date("Y-m-d"),
                             'tipe' => $tipe
                         ]);
@@ -84,5 +86,24 @@ class Absen_m extends CI_Model
         }
 
         return $response;
+    }
+    public function get_location()
+    {
+        $this->db->select('*'); // Fetch all columns
+        $this->db->from('lokasi_presensi'); // Table name
+        $query = $this->db->get();
+
+        return $query->result_array(); // Return the result as an array
+    }
+    public function cek_user()
+    {
+        $this->db->select('*'); // Fetch all columns
+        $this->db->from('tblattendance'); // Table name
+        $this->db->where('username', $this->session->userdata('username'));
+        $this->db->where('DATE(date)', date('Y-m-d')); // Add condition for today's date
+        $query = $this->db->get();
+
+        // return $query->result_array(); // Return the result as an array
+        return $query->row(); // Return the result as an array
     }
 }

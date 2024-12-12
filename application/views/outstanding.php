@@ -261,8 +261,6 @@
                                             <th>Out 2</th>
                                             <th>Out 3</th>
                                             <th>Out 4</th>
-                                            <th>
-                                                < 2023</th>
                                             <th>Total</th>
                                         </tr>
                                     </thead>
@@ -286,7 +284,6 @@
                                                     <td class="text-right"><?= number_format($i['out2']) ?></td>
                                                     <td class="text-right"><?= number_format($i['out3']) ?></td>
                                                     <td class="text-right"><?= number_format($i['out4']) ?></td>
-                                                    <td class="text-right"><?= number_format($i['out5']) ?></td>
                                                     <td class="text-right"><?= number_format($i['total']) ?></td>
                                                 </tr>
 
@@ -296,7 +293,6 @@
                                                 $total_out2 += $i['out2'];
                                                 $total_out3 += $i['out3'];
                                                 $total_out4 += $i['out4'];
-                                                $total_out5 += $i['out5'];
                                                 $total += $i['total'];
                                             endforeach;
                                             $total_outstanding = $total_out1 + $total_out2 + $total_out3 + $total_out4 + $total_out5; ?>
@@ -307,18 +303,17 @@
                                                 <td class="text-right"><strong><?= number_format($total_out2) ?></strong></td>
                                                 <td class="text-right"><strong><?= number_format($total_out3) ?></strong></td>
                                                 <td class="text-right"><strong><?= number_format($total_out4) ?></strong></td>
-                                                <td class="text-right"><strong><?= number_format($total_out5) ?></strong></td>
                                                 <td class="text-right" rowspan="2"><strong><?= number_format($total) ?></strong></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="5" class="text-center"><strong><?= number_format($total_outstanding) ?></td>
+                                                <td colspan="4" class="text-center"><strong><?= number_format($total_outstanding) ?></td>
                                             </tr>
                                         <?php
 
                                         } else {
                                         ?>
                                             <tr>
-                                                <td colspan="7">Tidak ada data yang ditampilkan</td>
+                                                <td colspan="6">Tidak ada data yang ditampilkan</td>
                                             </tr>
                                         <?php
                                         } ?>

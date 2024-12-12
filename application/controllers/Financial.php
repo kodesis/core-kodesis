@@ -1802,7 +1802,7 @@ class Financial extends CI_Controller
             // Proses pengelompokan, penjumlahan, dan group-ing no_bb Aktiva
             $bbActiva = [];
             foreach ($combinedActiva as $item) {
-                $key = substr($item->no_sbb, 0, 4);
+                $key = substr($item->no_sbb, 0, 3);
                 $bbActiva[$key] = ($bbActiva[$key] ?? 0) + $item->saldo_awal;
             }
 
@@ -1816,7 +1816,7 @@ class Financial extends CI_Controller
             // Proses pengelompokan, penjumlahan, dan group-ing no_bb pasiva
             $bbPasiva = [];
             foreach ($combinedPasiva as $item) {
-                $key = substr($item->no_sbb, 0, 4);
+                $key = substr($item->no_sbb, 0, 3);
                 $bbPasiva[$key] = ($bbPasiva[$key] ?? 0) + $item->saldo_awal;
             }
 
@@ -2007,7 +2007,7 @@ class Financial extends CI_Controller
             // Proses pengelompokan, penjumlahan, dan group-ing no_bb Aktiva
             $bbActiva = [];
             foreach ($combinedBeban as $item) {
-                $key = substr($item->no_sbb, 0, 4);
+                $key = substr($item->no_sbb, 0, 3);
                 $bbActiva[$key] = ($bbActiva[$key] ?? 0) + $item->saldo_awal;
             }
 
@@ -2021,7 +2021,7 @@ class Financial extends CI_Controller
             // Proses pengelompokan, penjumlahan, dan group-ing no_bb pasiva
             $bbPasiva = [];
             foreach ($combinedPendapatan as $item) {
-                $key = substr($item->no_sbb, 0, 4);
+                $key = substr($item->no_sbb, 0, 3);
                 $bbPasiva[$key] = ($bbPasiva[$key] ?? 0) + $item->saldo_awal;
             }
 

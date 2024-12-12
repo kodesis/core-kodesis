@@ -165,42 +165,45 @@
 					<?php
 					if (strpos($a, '801') !== false) { ?>
 						<li>
-							<a href="<?= base_url(); ?>financial/financial_entry">Financial Entry</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
-							<a href="<?= base_url(); ?>financial/invoice">Invoice</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
-							<a href="<?= base_url(); ?>customer">Customer</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
 							<a href="<?= base_url(); ?>financial/reportByDate">Neraca L/R</a>
 						</li>
 					<?php }
 					if (strpos($a, '801') !== false) { ?>
 						<li>
+							<a href="<?= base_url(); ?>financial/financial_entry">Financial Entry</a>
+						</li>
+					<?php }
+					if (strpos($a, '801') !== false) { ?>
+						<li>
+							<a>
+								Invoice<span class="fa fa-chevron-down"></span>
+							</a>
+							<ul class="nav child_menu">
+								<li class="sub_menu"><a href="<?= base_url(); ?>financial/invoice">Daftar Invoice</a>
+								</li>
+								<li><a href="<?= base_url(); ?>financial/outstanding">Outstanding</a>
+								</li>
+								<li><a href="<?= base_url(); ?>customer">Customer</a>
+								</li>
+							</ul>
+						</li>
+					<?php }
+					if (strpos($a, '801') !== false) { ?>
+						<li>
+							<a>
+								Pengajuan<span class="fa fa-chevron-down"></span>
+							</a>
+							<ul class="nav child_menu">
+								<li class="sub_menu"><a href="<?= base_url(); ?>pengajuan/list">Daftar Pengajuan</a>
+								</li>
+								<li><a href="<?= base_url(); ?>pengajuan/create">Buat Pengajuan</a>
+								</li>
+							</ul>
+						</li>
+					<?php }
+					if (strpos($a, '801') !== false) { ?>
+						<li>
 							<a href="<?= base_url(); ?>financial/coa_report">Arus Kas</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
-							<a href="<?= base_url(); ?>pengajuan/create">Create Biaya</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
-							<a href="<?= base_url(); ?>pengajuan/list">List Pengajuan</a>
-						</li>
-					<?php }
-					if (strpos($a, '801') !== false) { ?>
-						<li>
-							<a href="<?= base_url(); ?>financial/outstanding">Outstanding</a>
 						</li>
 					<?php }
 					if (strpos($a, '801') !== false) { ?>

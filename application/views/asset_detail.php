@@ -58,7 +58,7 @@
 
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #004e81;
 		}
 
 		.row {
@@ -368,22 +368,22 @@
 								<table class="table table-striped">
 									<thead>
 										<tr>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">No.</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Kode</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Ruangan</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Lokasi</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Tanggal</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Remarks</font>
 											</th>
 										</tr>

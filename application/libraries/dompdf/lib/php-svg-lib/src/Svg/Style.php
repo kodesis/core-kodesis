@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package php-svg-lib
  * @link    http://github.com/PhenX/php-svg-lib
@@ -84,7 +85,8 @@ class Style
         }
     }
 
-    public function inherit(AbstractTag $tag) {
+    public function inherit(AbstractTag $tag)
+    {
         $group = $tag->getParentGroup();
         if ($group) {
             $parent_style = $group->getStyle();
@@ -97,7 +99,8 @@ class Style
         }
     }
 
-    public function fromStyleSheets(AbstractTag $tag, $attributes) {
+    public function fromStyleSheets(AbstractTag $tag, $attributes)
+    {
         $class = isset($attributes["class"]) ? preg_split('/\s+/', trim($attributes["class"])) : null;
 
         $stylesheets = $tag->getDocument()->getStyleSheets();
@@ -177,8 +180,7 @@ class Style
 
         if (count($parts) == 2) {
             $color = $parts[1];
-        }
-        else {
+        } else {
             $color = $parts[0];
         }
 
@@ -282,7 +284,8 @@ class Style
         return null;
     }
 
-    static function getTriplet($color, $percent = false) {
+    static function getTriplet($color, $percent = false)
+    {
         $i = strpos($color, "(");
         $j = strpos($color, ")");
 
@@ -303,12 +306,10 @@ class Style
             if ($percent) {
                 if ($triplet[$c][strlen($triplet[$c]) - 1] === "%") {
                     $triplet[$c] = floatval($triplet[$c]) / 100;
-                }
-                else {
+                } else {
                     $triplet[$c] = $triplet[$c] / 255;
                 }
-            }
-            else {
+            } else {
                 if ($triplet[$c][strlen($triplet[$c]) - 1] === "%") {
                     $triplet[$c] = round(floatval($triplet[$c]) * 2.55);
                 }
@@ -365,7 +366,8 @@ class Style
      *
      * @return float|null
      */
-    static function convertSize($size, $referenceSize = 11.0, $dpi = 96.0) {
+    static function convertSize($size, $referenceSize = 11.0, $dpi = 96.0)
+    {
         $size = trim(strtolower($size));
 
         if (is_numeric($size)) {
@@ -473,7 +475,7 @@ class Style
         'springgreen'          => '#00FF7F',
         'steelblue'            => '#4682B4',
         'tan'                  => '#D2B48C',
-        'teal'                 => '#008080',
+        'teal'                 => '#004e81',
         'thistle'              => '#D8BFD8',
         'turquoise'            => '#40E0D0',
         'violetred'            => '#D02090',

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package php-svg-lib
  * @link    http://github.com/dompdf/php-svg-lib
@@ -43,7 +44,8 @@ class Style
     public $fontStyle = 'normal';
     public $textAnchor = 'start';
 
-    public function __construct($document = null) {
+    public function __construct($document = null)
+    {
         if ($document !== null) {
             $this->_document = $document;
         }
@@ -92,7 +94,8 @@ class Style
         }
     }
 
-    public function inherit(AbstractTag $tag) {
+    public function inherit(AbstractTag $tag)
+    {
         $group = $tag->getParentGroup();
         if ($group) {
             $parent_style = $group->getStyle();
@@ -105,7 +108,8 @@ class Style
         }
     }
 
-    public function fromStyleSheets(AbstractTag $tag, $attributes) {
+    public function fromStyleSheets(AbstractTag $tag, $attributes)
+    {
         $class = isset($attributes["class"]) ? preg_split('/\s+/', trim($attributes["class"])) : null;
 
         $stylesheets = $tag->getDocument()->getStyleSheets();
@@ -321,7 +325,8 @@ class Style
         return null;
     }
 
-    static function getQuad($color, $percent = false) {
+    static function getQuad($color, $percent = false)
+    {
         $i = strpos($color, "(");
         $j = strpos($color, ")");
 
@@ -373,7 +378,7 @@ class Style
             if (isset($hex[7])) {
                 $alpha = substr($hex, 7, 2);
                 if (ctype_xdigit($alpha)) {
-                    $c[3] = round(hexdec($alpha)/255, 2);
+                    $c[3] = round(hexdec($alpha) / 255, 2);
                 }
             }
         } else {
@@ -383,7 +388,7 @@ class Style
 
             if (isset($hex[4])) {
                 if (ctype_xdigit($hex[4])) {
-                    $c[3] = round(hexdec($hex[4] . $hex[4])/255, 2);
+                    $c[3] = round(hexdec($hex[4] . $hex[4]) / 255, 2);
                 }
             }
         }
@@ -487,7 +492,7 @@ class Style
         'springgreen'          => '#00FF7F',
         'steelblue'            => '#4682B4',
         'tan'                  => '#D2B48C',
-        'teal'                 => '#008080',
+        'teal'                 => '#004e81',
         'thistle'              => '#D8BFD8',
         'turquoise'            => '#40E0D0',
         'violetred'            => '#D02090',

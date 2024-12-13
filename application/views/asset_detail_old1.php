@@ -10,34 +10,34 @@
 	<link rel="icon" href="images/favicon.ico" type="image/ico" />
 	<title>BDL CORE | Business Development</title>
 	<!-- Bootstrap -->
-	<link href="<?php echo base_url();?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Font Awesome -->
-	<link href="<?php echo base_url();?>src/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 	<!-- NProgress -->
-	<link href="<?php echo base_url();?>src/vendors/nprogress/nprogress.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/nprogress/nprogress.css" rel="stylesheet">
 	<!-- iCheck -->
-	<link href="<?php echo base_url();?>src/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 
 	<!-- bootstrap-progressbar -->
-	<link href="<?php echo base_url();?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
 		rel="stylesheet">
 	<!-- JQVMap -->
-	<link href="<?php echo base_url();?>src/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
+	<link href="<?php echo base_url(); ?>src/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
 	<!-- bootstrap-daterangepicker -->
-	<link href="<?php echo base_url();?>src/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 	<!-- bootstrap-datetimepicker -->
-	<link href="<?php echo base_url();?>src/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css"
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css"
 		rel="stylesheet">
 	<!-- Custom Theme Style -->
-	<link href="<?php echo base_url();?>src/build/css/custom.min.css" rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/build/css/custom.min.css" rel="stylesheet">
 	<!-- footer menu -->
-	<link rel="stylesheet" href="<?php echo base_url();?>src/css/mobile_menu/header.css">
-	<link rel="stylesheet" href="<?php echo base_url();?>src/css/mobile_menu/icons.css">
+	<link rel="stylesheet" href="<?php echo base_url(); ?>src/css/mobile_menu/header.css">
+	<link rel="stylesheet" href="<?php echo base_url(); ?>src/css/mobile_menu/icons.css">
 	<!-- Sweetalert -->
-	<script src="<?php echo base_url();?>src/build/js/sweetalert.js"></script>
-	<link rel="stylesheet" href="<?php echo base_url();?>src/build/css/sweetalert.css" />
+	<script src="<?php echo base_url(); ?>src/build/js/sweetalert.js"></script>
+	<link rel="stylesheet" href="<?php echo base_url(); ?>src/build/css/sweetalert.css" />
 
-	<link href="<?php echo base_url();?>src/build/css/select2.min.css" rel="stylesheet" />
+	<link href="<?php echo base_url(); ?>src/build/css/select2.min.css" rel="stylesheet" />
 
 	<style>
 		.select2-dropdown {
@@ -60,7 +60,7 @@
 
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #004e81;
 		}
 
 		.row {
@@ -85,7 +85,6 @@
 			width: 100%;
 
 		}
-
 	</style>
 </head>
 
@@ -96,7 +95,7 @@
 			<div class="row">
 
 				<div class="col-xs-3 btn_footer_panel">
-					<a href="<?php echo base_url();?>app/antrian_input">
+					<a href="<?php echo base_url(); ?>app/antrian_input">
 						<i class="la-i la-i-m la-i-home"></i>
 						<div class="tag_">
 							<font color="white">Create</font>
@@ -104,7 +103,7 @@
 					</a>
 				</div>
 				<div class="col-xs-3 btn_footer_panel">
-					<a href="<?php echo base_url();?>app/antrian_panggil">
+					<a href="<?php echo base_url(); ?>app/antrian_panggil">
 						<i class="la-i la-i-m la-i-order"></i>
 						<div class="tag_">
 							<font color="white">Manage</font>
@@ -112,7 +111,7 @@
 					</a>
 				</div>
 				<div class="col-xs-3 btn_footer_panel">
-					<a href="<?php echo base_url();?>app/antrian_monitor">
+					<a href="<?php echo base_url(); ?>app/antrian_monitor">
 						<i class="la-i la-i-m la-i-notif">
 						</i>
 						<div class="tag_">
@@ -121,7 +120,7 @@
 					</a>
 				</div>
 				<div class="col-xs-3 btn_footer_panel">
-					<a href="<?php echo base_url();?>login/logout">
+					<a href="<?php echo base_url(); ?>login/logout">
 						<i class="la-i la-i-m la-i-akun"></i>
 						<div class="tag_">
 							<font color="white">Logout</font>
@@ -141,8 +140,8 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url();?>" class="site_title"><img
-								src="<?php echo base_url();?>img/boc_logo.png" alt="..." height="42" width="60"><span>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img
+								src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span>
 								Bangun Desa</span></a>
 					</div>
 
@@ -151,12 +150,12 @@
 					<!-- menu profile quick info -->
 					<div class="profile clearfix">
 						<div class="profile_pic">
-							<img src="<?php echo base_url();?>src/images/img.jpg" alt="..."
+							<img src="<?php echo base_url(); ?>src/images/img.jpg" alt="..."
 								class="img-circle profile_img">
 						</div>
 						<div class="profile_info">
 							<span>Welcome,</span>
-							<h2><?php echo $this->session->userdata('nama');?></h2>
+							<h2><?php echo $this->session->userdata('nama'); ?></h2>
 						</div>
 					</div>
 					<!-- /menu profile quick info -->
@@ -187,8 +186,8 @@
 							<li class="">
 								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
 									aria-expanded="false">
-									<img src="<?php echo base_url();?>src/images/img.jpg"
-										alt=""><?php echo $this->session->userdata('nama');?>
+									<img src="<?php echo base_url(); ?>src/images/img.jpg"
+										alt=""><?php echo $this->session->userdata('nama'); ?>
 									<span class=" fa fa-angle-down"></span>
 								</a>
 								<ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -200,19 +199,19 @@
 										</a>
 									</li>
 									<li><a href="javascript:;">Help</a></li>
-									<li><a href="<?php echo base_url();?>login/logout"><i
+									<li><a href="<?php echo base_url(); ?>login/logout"><i
 												class="fa fa-sign-out pull-right"></i> Log Out</a></li>
 								</ul>
 							</li>
 
 							<li role="presentation" class="dropdown">
-								<a href="<?php echo base_url()."app/inbox"; ?>" class="dropdown-toggle info-number">
+								<a href="<?php echo base_url() . "app/inbox"; ?>" class="dropdown-toggle info-number">
 									<i class="fa fa-envelope-o"></i>
-									<?php if ($count_inbox==0) {?>
-									<span class="badge bg-green"><?php echo $count_inbox;?></span>
-									<?php }else{?>
-									<span class="badge bg-red"><?php echo $count_inbox;?></span>
-									<?php }?>
+									<?php if ($count_inbox == 0) { ?>
+										<span class="badge bg-green"><?php echo $count_inbox; ?></span>
+									<?php } else { ?>
+										<span class="badge bg-red"><?php echo $count_inbox; ?></span>
+									<?php } ?>
 								</a>
 							</li>
 						</ul>
@@ -231,7 +230,7 @@
 						<h2>
 							<button class="btn btn-success collapse-link" type="button">Image</button>
 							<a class="btn btn-success" href="<?= base_url('app/asset_list') ?>">Go Back</a>
-							<!--button class="btn btn-primary" type="button" onclick="window.location.href='<?php echo base_url();?>home';">Lihat Surat Kuasa</button-->
+							<!--button class="btn btn-primary" type="button" onclick="window.location.href='<?php echo base_url(); ?>home';">Lihat Surat Kuasa</button-->
 							<br>
 							<!--small>Silahkan isi form dibawah &raquo;</small-->
 						</h2>
@@ -241,8 +240,8 @@
 
 					<div class="x_content collapse" style="width:100%;">
 						<br />
-						<img src="<?= base_url('upload/asset/'.$asset_list->pic) ?>" alt="">
-						<!-- <?php echo "<img src='upload/asset/".$asset_list->pic."'>"; ?> -->
+						<img src="<?= base_url('upload/asset/' . $asset_list->pic) ?>" alt="">
+						<!-- <?php echo "<img src='upload/asset/" . $asset_list->pic . "'>"; ?> -->
 					</div>
 				</div>
 
@@ -289,12 +288,13 @@
 												<label class="col-form-label col-md-3 col-sm-3 label-align">Update
 													Terakhir <span class="required">*</span>
 												</label>
-												<?php $date = $asset_list->last_update; echo $newDate = date("d F Y", strtotime($date));?>
+												<?php $date = $asset_list->last_update;
+												echo $newDate = date("d F Y", strtotime($date)); ?>
 											</div>
 										</td>
 										<td>
 											<div class="polaroid">
-												<img src="<?php echo base_url();?>app/qrcode_view/<?php echo $asset_list->Id;?>"
+												<img src="<?php echo base_url(); ?>app/qrcode_view/<?php echo $asset_list->Id; ?>"
 													alt="5 Terre" style="width:100%">
 											</div>
 										</td>
@@ -324,46 +324,46 @@
 								<table class="table table-striped">
 									<thead>
 										<tr>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">No.</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Kode</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Ruangan</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Lokasi</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Tanggal</font>
 											</th>
-											<th bgcolor="#008080">
+											<th bgcolor="#004e81">
 												<font color="white">Remarks</font>
 											</th>
 										</tr>
 									</thead>
 									<?php
-							$no=1;
-							foreach ($asset_history as $data):
-							?>
-									<!--content here-->
-									<tbody>
-										<tr>
-											<td><?php echo $no; ?></td>
-											<td><?php echo $data->kode; ?></td>
-											<td><?php echo $data->ruangan; ?></td>
-											<td><?php echo $data->lokasi; ?></td>
-											<td><?php echo $data->tanggal; ?></td>
-											<td><?php echo $data->remark; ?></td>
-										</tr>
-									</tbody>
+									$no = 1;
+									foreach ($asset_history as $data):
+									?>
+										<!--content here-->
+										<tbody>
+											<tr>
+												<td><?php echo $no; ?></td>
+												<td><?php echo $data->kode; ?></td>
+												<td><?php echo $data->ruangan; ?></td>
+												<td><?php echo $data->lokasi; ?></td>
+												<td><?php echo $data->tanggal; ?></td>
+												<td><?php echo $data->remark; ?></td>
+											</tr>
+										</tbody>
 
 									<?php
-							$no++;
-							endforeach; 
-							?>
+										$no++;
+									endforeach;
+									?>
 								</table>
 							</div>
 
@@ -377,7 +377,7 @@
 
 
 			<!-- /page content -->
-			<form data-parsley-validate enctype="multipart/form-data" action="<?php echo base_url();?>app/simpan_update"
+			<form data-parsley-validate enctype="multipart/form-data" action="<?php echo base_url(); ?>app/simpan_update"
 				method="post" name="form_fullpayment" id="form_fullpayment" class="form-horizontal form-label-left">
 				<div class="modal fade" id="myModal1" role="dialog">
 					<div class="modal-dialog">
@@ -417,18 +417,18 @@
 										<br><br>
 									</div>
 								</div>
-								<?php if(!file_exists(base_url('upload/asset/'.$asset_list->pic))){ ?>
-								<div class="form-group">
-									<div class="item form-group">
-										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Foto
-											View <span class="required">*</span>
-										</label>
-										<div class="col-md-9 col-sm-9 col-xs-12">
-											<img src="<?= base_url('upload/asset/'.$asset_list->pic) ?>" alt="">
+								<?php if (!file_exists(base_url('upload/asset/' . $asset_list->pic))) { ?>
+									<div class="form-group">
+										<div class="item form-group">
+											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Foto
+												View <span class="required">*</span>
+											</label>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<img src="<?= base_url('upload/asset/' . $asset_list->pic) ?>" alt="">
+											</div>
+											<br><br>
 										</div>
-										<br><br>
 									</div>
-								</div>
 								<?php } ?>
 								<div class="form-group">
 									<div class="item form-group">
@@ -457,13 +457,13 @@
 											<select class="js-example-basic-single" style="width:100%;" name="ruangan"
 												id="ruangan" required="required">
 												<?php foreach ($asset_ruang as $data):
-							if ($data->keterangan==$asset_list->ruangan) {?>
-												<option value="<?php echo $data->keterangan; ?>" selected>
-													<?php echo $data->keterangan; ?></option>
-												<?php } else{?>
-												<option value="<?php echo $data->keterangan; ?>">
-													<?php echo $data->keterangan; ?></option>
-												<?php }?>
+													if ($data->keterangan == $asset_list->ruangan) { ?>
+														<option value="<?php echo $data->keterangan; ?>" selected>
+															<?php echo $data->keterangan; ?></option>
+													<?php } else { ?>
+														<option value="<?php echo $data->keterangan; ?>">
+															<?php echo $data->keterangan; ?></option>
+													<?php } ?>
 												<?php endforeach; ?>
 											</select>
 										</div>
@@ -485,13 +485,13 @@
 											<select class="form-control js-example-basic-single" style="width:100%;"
 												name="lokasi" id="lokasi" required="required">
 												<?php foreach ($asset_lokasi as $data):
-												if ($data->keterangan==$asset_list->lokasi) {?>
-												<option value="<?php echo $data->keterangan; ?>" selected>
-													<?php echo $data->keterangan; ?></option>
-												<?php } else{?>
-												<option value="<?php echo $data->keterangan; ?>">
-													<?php echo $data->keterangan; ?></option>
-												<?php }?>
+													if ($data->keterangan == $asset_list->lokasi) { ?>
+														<option value="<?php echo $data->keterangan; ?>" selected>
+															<?php echo $data->keterangan; ?></option>
+													<?php } else { ?>
+														<option value="<?php echo $data->keterangan; ?>">
+															<?php echo $data->keterangan; ?></option>
+													<?php } ?>
 												<?php endforeach; ?>
 											</select>
 										</div>
@@ -519,8 +519,8 @@
 									<input id="kode" name="kode" type="hidden" required="required"
 										value="<?php echo $asset_list->kode; ?>">
 									<?php
-					echo form_submit('Submit', 'Simpan', 'onclick="return clicked();", class="btn btn-primary"');
-				  ?>
+									echo form_submit('Submit', 'Simpan', 'onclick="return clicked();", class="btn btn-primary"');
+									?>
 									<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 								</div>
 							</div>
@@ -539,55 +539,55 @@
 	</div>
 
 	<!-- jQuery -->
-	<script src="<?php echo base_url();?>src/vendors/jquery/dist/jquery.min.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/jquery/dist/jquery.mask.js"></script>
-	<script src="<?php echo base_url();?>src/build/js/select2.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/jquery/dist/jquery.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/jquery/dist/jquery.mask.js"></script>
+	<script src="<?php echo base_url(); ?>src/build/js/select2.min.js"></script>
 	<!-- Bootstrap -->
-	<script src="<?php echo base_url();?>src/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
 	<!-- FastClick -->
-	<script src="<?php echo base_url();?>src/vendors/fastclick/lib/fastclick.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/fastclick/lib/fastclick.js"></script>
 	<!-- NProgress -->
-	<script src="<?php echo base_url();?>src/vendors/nprogress/nprogress.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/nprogress/nprogress.js"></script>
 	<!-- Chart.js -->
-	<script src="<?php echo base_url();?>src/vendors/Chart.js/dist/Chart.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/Chart.js/dist/Chart.min.js"></script>
 	<!-- gauge.js -->
-	<script src="<?php echo base_url();?>src/vendors/gauge.js/dist/gauge.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/gauge.js/dist/gauge.min.js"></script>
 	<!-- bootstrap-progressbar -->
-	<script src="<?php echo base_url();?>src/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
 	<!-- iCheck -->
-	<script src="<?php echo base_url();?>src/vendors/iCheck/icheck.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/iCheck/icheck.min.js"></script>
 	<!-- Skycons -->
-	<script src="<?php echo base_url();?>src/vendors/skycons/skycons.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/skycons/skycons.js"></script>
 	<!-- Flot -->
-	<script src="<?php echo base_url();?>src/vendors/Flot/jquery.flot.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/Flot/jquery.flot.pie.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/Flot/jquery.flot.time.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/Flot/jquery.flot.stack.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/Flot/jquery.flot.resize.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/Flot/jquery.flot.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/Flot/jquery.flot.pie.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/Flot/jquery.flot.time.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/Flot/jquery.flot.stack.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/Flot/jquery.flot.resize.js"></script>
 	<!-- Flot plugins -->
-	<script src="<?php echo base_url();?>src/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/flot.curvedlines/curvedLines.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/flot.curvedlines/curvedLines.js"></script>
 	<!-- DateJS -->
-	<script src="<?php echo base_url();?>src/vendors/DateJS/build/date.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/DateJS/build/date.js"></script>
 	<!-- JQVMap -->
-	<script src="<?php echo base_url();?>src/vendors/jqvmap/dist/jquery.vmap.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/jqvmap/dist/jquery.vmap.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
 	<!-- bootstrap-daterangepicker -->
-	<script src="<?php echo base_url();?>src/vendors/moment/min/moment.min.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/moment/min/moment.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 	<!-- bootstrap-datetimepicker -->
-	<script src="<?php echo base_url();?>src/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js">
+	<script src="<?php echo base_url(); ?>src/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js">
 	</script>
 
 	<!-- Custom Theme Scripts -->
-	<script src="<?php echo base_url();?>src/build/js/custom.min.js"></script>
-	<script src="<?php echo base_url();?>src/vendors/validator/validator.js"></script>
+	<script src="<?php echo base_url(); ?>src/build/js/custom.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/validator/validator.js"></script>
 
 </body>
 <script type="text/javascript">
-	$(document).ready(function () {
+	$(document).ready(function() {
 		$('.js-example-basic-single').select2({
 			dropdownParent: $('#myModal1 .modal-content')
 		});
@@ -601,7 +601,6 @@
 	$('#myDatepicker').datetimepicker({
 		format: 'YYYY-MM'
 	});
-
 </script>
 <script>
 	$('#myDatepicker2').datetimepicker({
@@ -614,7 +613,7 @@
 	}
 
 	//sweet alert
-	$('#btn-submit1').on('click', function (e) {
+	$('#btn-submit1').on('click', function(e) {
 		e.preventDefault();
 		var form = $(this).parents('form');
 		swal({
@@ -625,7 +624,7 @@
 			confirmButtonColor: "#DD6B55",
 			confirmButtonText: "iYes!",
 			closeOnConfirm: false
-		}, function (isConfirm) {
+		}, function(isConfirm) {
 			if (isConfirm) form.submit();
 			swal.close();
 			//var form  = document.getElementById('form_input');//retrieve the form as a DOM element
@@ -635,7 +634,6 @@
 			//form.submit();//send with added input
 		});
 	});
-
 </script>
 
 </html>

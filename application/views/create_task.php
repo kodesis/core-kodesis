@@ -36,7 +36,7 @@
 	<style>
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #004e81;
 		}
 
 		.row {
@@ -503,17 +503,17 @@
 						title: 'Oops...',
 						text: 'Error Input!',
 					}) <?php
-							$this->session->unset_userdata('msg');
-						} else if ($this->session->userdata('msg_memo')) {
-							?>
+						$this->session->unset_userdata('msg');
+					} else if ($this->session->userdata('msg_memo')) {
+						?>
 					Swal.fire({
 						icon: 'success',
 						title: 'Success input',
 						text: 'Create & Send Success to ID <?php echo $this->session->userdata('
 							msg_memo ') ?>',
 					}) <?php
-							$this->session->unset_userdata('msg_memo');
-						} ?>
+						$this->session->unset_userdata('msg_memo');
+					} ?>
 					$("#submit-memo").on('click', function(e) {
 						if (!confirm('Are you sure that you want to submit the form')) {
 							event.preventDefault();

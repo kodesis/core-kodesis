@@ -53,7 +53,7 @@
 
         .col-xs-3 {
             width: 25%;
-            background-color: #008080;
+            background-color: #004e81;
         }
 
         .container-fluid {

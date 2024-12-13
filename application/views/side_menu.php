@@ -154,6 +154,10 @@
 					if (strpos($a, '302') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>absensi">Absensi</a></li>
 					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '302') !== false) { ?>
+						<li><a href="<?php echo base_url(); ?>tesseract">Tesseract-OCR</a></li>
+					<?php } ?>
 				</ul>
 			</li>
 		<?php } ?>

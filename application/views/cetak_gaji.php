@@ -52,7 +52,7 @@
 
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #004e81;
 		}
 
 		.row {
@@ -275,13 +275,13 @@
 												<td class=" "><?php echo date("m-Y", strtotime(date($data->bulan_gaji))); ?></td>
 												<td class=" "><?php echo $data->hari_kerja; ?></td>
 												<td class=" "><?php
-																			if (!empty($data->periode_gaji)) {
-																				echo $data->periode_gaji;
-																			} ?></td>
+																if (!empty($data->periode_gaji)) {
+																	echo $data->periode_gaji;
+																} ?></td>
 												<td class=" "><?php echo $data->tidak_hadir; ?></td>
 												<td class=" "><?php $number = $data->net_gaji;
-																			$nom = number_format($number);
-																			echo $nom; ?>.-</td>
+																$nom = number_format($number);
+																echo $nom; ?>.-</td>
 												<td>
 													<a href="<?php echo base_url() . 'app/slip_gaji_pdf/' . $data->Id; ?>" class="alert-success tile-stats" style="text-align: center;" target="_blank">review</a>
 												</td>

@@ -3604,9 +3604,16 @@ class App extends CI_Controller
 			$query = $this->db->get(); // Execute the query
 			$result3 = $query->result_array(); // Fetch results
 
+			$this->db->select('*');
+			$this->db->from('users');
+			$this->db->where('username', $this->session->userdata('username')); // Filter by username
+			$query = $this->db->get(); // Execute the query
+			$lokasi_presensi_user = $query->row(); // Fetch results
+
 			$data['result1'] = $result1;
 			$data['result2'] = $result2;
 			$data['result3'] = $result3;
+			$data['lokasi_presensi_user'] = $lokasi_presensi_user;
 
 			$data['cek_user'] = $this->user->cek_user();
 			$data['lokasi_absensi'] = $this->user->get_location();
@@ -3648,7 +3655,7 @@ class App extends CI_Controller
 					$this->db->from('tblattendance'); // Table name
 					$this->db->where('username', $this->session->userdata('username'));
 					$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-					$this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
+					$this->db->where('tipe', 'Masuk'); // Check for records under jam_keluar_plus_two
 					$users = $this->db->get()->result_array();
 
 					$data['users'] = $users;
@@ -3657,7 +3664,7 @@ class App extends CI_Controller
 					$this->db->from('tblattendance'); // Table name
 					$this->db->where('username', $this->session->userdata('username'));
 					$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-					$this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
+					$this->db->where('tipe', 'Pulang'); // Check for records under jam_keluar_plus_two
 					$users = $this->db->get()->result_array();
 					// return $query->result_array(); // Return the result as an array
 
@@ -3667,8 +3674,7 @@ class App extends CI_Controller
 					$this->db->from('tblattendance');
 					$this->db->where('username', $this->session->userdata('username')); // Filter by username
 					$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-					$this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
-					$this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
+					$this->db->where_in('tipe', ['Masuk', 'Telat']);
 					$users = $this->db->get()->result_array();
 					$data['users'] = $users;
 				} else {

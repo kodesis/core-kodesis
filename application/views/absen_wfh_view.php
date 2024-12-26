@@ -380,13 +380,15 @@
 			const locations = [
 				<?php
 				if ($lokasi_absensi) {
-					foreach ($lokasi_absensi as $l) { ?> {
-							name: "<?= addslashes($l['nama_lokasi']) ?>", // Ensure the name is properly escaped and quoted
-							latitude: <?= $l['latitude'] ?>,
-							longitude: <?= $l['longitude'] ?>,
-							radius: <?= $l['radius'] ?> // Radius in kilometers
-						},
+					foreach ($lokasi_absensi as $l) {
+						if ($l['id'] == $lokasi_presensi_user->id_lokasi_presensi) { ?> {
+								name: "<?= addslashes($l['nama_lokasi']) ?>", // Ensure the name is properly escaped and quoted
+								latitude: <?= $l['latitude'] ?>,
+								longitude: <?= $l['longitude'] ?>,
+								radius: <?= $l['radius'] ?> // Radius in kilometers
+							},
 					<?php }
+					}
 				} else { ?> {
 						name: "Graha Dirgantara",
 						latitude: -6.2559536,
@@ -439,8 +441,17 @@
 					updateTable();
 				} else {
 					$('#lokasi_sekarang').text('Lokasi Sekarang Di Luar Jangkauan');
-					Swal.fire('Success', `You are not within range. Updating table...`, 'success');
-					updateTable();
+					// Swal.fire('Alert', `You are not within range. Updating table...`, 'warning');
+					Swal.fire({
+						title: 'You are not within range! Ingin Tetap Absen?',
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText: 'Ya, Absen',
+						cancelButtonText: 'Tidak',
+						reverseButtons: true
+					}).then((result) => {
+						updateTable();
+					});
 				}
 			}
 
@@ -910,7 +921,6 @@
 						updateTablePulang(); // Call function
 					<?php } ?>
 				<?php } else { ?>
-
 					<?php if (empty($result1) && empty($result3)) { ?>
 						console.log('ada2');
 						getLocation(); // Call function

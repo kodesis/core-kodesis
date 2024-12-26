@@ -911,7 +911,7 @@
 					<?php } ?>
 				<?php } else { ?>
 
-					<?php if (empty($result3)) { ?>
+					<?php if (empty($result1) && empty($result3)) { ?>
 						console.log('ada2');
 						getLocation(); // Call function
 					<?php } else { ?>

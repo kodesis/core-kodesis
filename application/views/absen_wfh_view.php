@@ -487,12 +487,102 @@
 					if (xhr.readyState === 4 && xhr.status === 200) {
 						var response = JSON.parse(xhr.responseText);
 						if (response.status === "success") {
+
 							students = response.data; // Store the student data
 							labels = students.map(student => student.username);
 							console.log(labels);
 							updateOtherElements();
 
 							document.getElementById("studentTableContainer").innerHTML = response.html;
+
+
+						} else if (response.status === "No Picture") {
+							Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+
+						} else {
+							console.error("Error:", response.message);
+						}
+					}
+				};
+
+				xhr.send();
+			}
+
+			function updateTableMasuk() {
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "fetch_user/masuk", true);
+				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						var response = JSON.parse(xhr.responseText);
+						if (response.status === "success") {
+							document.getElementById("studentTableContainer").innerHTML = response.html;
+							const videoContainer = document.querySelector(".video-container");
+							videoContainer.style.display('none');
+
+							students = response.data; // Store the student data
+							labels = students.map(student => student.username);
+							console.log(labels);
+
+						} else if (response.status === "No Picture") {
+							Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+
+						} else {
+							console.error("Error:", response.message);
+						}
+					}
+				};
+
+				xhr.send();
+			}
+
+			function updateTablePulang() {
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "fetch_user/pulang", true);
+				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						var response = JSON.parse(xhr.responseText);
+						if (response.status === "success") {
+							document.getElementById("studentTableContainer").innerHTML = response.html;
+							const videoContainer = document.querySelector(".video-container");
+							videoContainer.style.display('none');
+
+							students = response.data; // Store the student data
+							labels = students.map(student => student.username);
+							console.log(labels);
+
+						} else if (response.status === "No Picture") {
+							Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+
+						} else {
+							console.error("Error:", response.message);
+						}
+					}
+				};
+
+				xhr.send();
+			}
+
+			function updateTableAbsensi() {
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "fetch_user/absensi", true);
+				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						var response = JSON.parse(xhr.responseText);
+						if (response.status === "success") {
+							document.getElementById("studentTableContainer").innerHTML = response.html;
+							const videoContainer = document.querySelector(".video-container");
+							videoContainer.style.display('none');
+
+							students = response.data; // Store the student data
+							labels = students.map(student => student.username);
+							console.log(labels);
+
 						} else if (response.status === "No Picture") {
 							Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
 
@@ -510,21 +600,50 @@
 
 					const username = row.cells[0].innerText.trim();
 
+					<?php
+
+					date_default_timezone_set('Asia/Jakarta');
+					$current_time = new DateTime();
+					$jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+2 hours');
+					$jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+2 hours');
+					?>
 					if (detectedFaces.includes(username)) {
 						if (isWithinRange) {
-							row.cells[3].innerText = "present";
-							row.cells[4].innerText = locationName;
+							<?php
+							if ($current_time <= $jam_masuk_plus_two || $current_time >= $jam_keluar_plus_two) {
+							?>
+								row.cells[3].innerText = "Present";
+								row.cells[4].innerText = locationName;
+							<?php
+							} else {
+							?>
+								row.cells[3].innerText = "Pending";
+								row.cells[4].innerText = locationName;
+							<?php
+							}
+							?>
 						} else {
-							row.cells[3].innerText = "pending";
+							row.cells[3].innerText = "Pending";
 							row.cells[4].innerText = "Di Luar";
 						}
-						const currentDate = new Date(); // Get the current date
+						const currentDate = new Date(); // Get the current date and time (UTC by default)
 
-						// Format the date as "YYYY-MM-DD"
-						const formattedDate = currentDate.toISOString().split("T")[0];
+						// Calculate the time offset for Indonesia (UTC+7 for WIB, UTC+8 for WITA, UTC+9 for WIT)
+						const indonesiaTimeOffset = 7; // Change to 8 or 9 for WITA or WIT, respectively
+						const indonesiaTime = new Date(currentDate.getTime() + indonesiaTimeOffset * 60 * 60 * 1000);
 
+						// Format the date and time as "YYYY-MM-DD HH:MM:SS"
+						const formattedDateTime = indonesiaTime.toISOString().replace("T", " ").split(".")[0];
 
-						row.cells[5].innerText = formattedDate;
+						// Format only the date as "YYYY-MM-DD"
+						const formattedDateOnly = indonesiaTime.toISOString().split("T")[0];
+
+						// Update the element with id='tanggal' to display the full date and time
+						row.cells[5].innerText = formattedDateTime;
+
+						// Update the element with id='tanggalonly' to display only the date
+						row.cells[6].innerText = formattedDateOnly;
+
 
 						Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
 						sendAttendanceDataToServer();
@@ -607,6 +726,7 @@
 										descriptions.push(detections.descriptor);
 									} else {
 										console.log(`No face detected in ${label}/${i}.png`);
+										Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
 									}
 								} catch (error) {
 									console.error(`Error processing ${label}/${i}.png:`, error);
@@ -763,18 +883,44 @@
 				stopWebcam();
 			});
 			<?php
-			if (empty($cek_user)) {
+			if (empty($data_users)) {
 			?>
-				const callOnceLocation = getLocation();
+				getLocation();
 			<?php
 			} else {
+				date_default_timezone_set('Asia/Jakarta');
+				$current_time = new DateTime();
+				$jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+2 hours');
+				$jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+2 hours');
 			?>
-				Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
-			<?php
-			}
-			?>
+				<?php if ($current_time <= $jam_masuk_plus_two) { ?>
+					<?php if (empty($result1)) { ?>
+						console.log('ada1');
+						getLocation(); // Call function
+					<?php } else { ?>
+						Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Masuk', 'warning');
+						updateTableMasuk(); // Call function
+					<?php } ?>
+				<?php } else if ($current_time >= $jam_keluar_plus_two) { ?>
+					<?php if (empty($result2)) { ?>
+						console.log('ada2');
+						getLocation(); // Call function
+					<?php } else { ?>
+						Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Pulang', 'warning');
+						updateTablePulang(); // Call function
+					<?php } ?>
+				<?php } else { ?>
 
-			callOnceLocation();
+					<?php if (empty($result3)) { ?>
+						console.log('ada2');
+						getLocation(); // Call function
+					<?php } else { ?>
+						Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
+						updateTableAbsensi(); // Call function
+					<?php } ?> <?php } ?>
+			<?php } ?>
+			const currentTime = new Date("<?php echo $current_time->format('Y-m-d H:i:s'); ?>");
+			console.log('Current time:', currentTime);
 		</script>
 		<script src='<?= base_url() ?>resources/assets/javascript/active_link.js'></script>
 		<!-- <script src='<?= base_url() ?>resources/assets/javascript/face_logics/script.js'></script> -->

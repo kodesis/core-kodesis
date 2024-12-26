@@ -3571,6 +3571,43 @@ class App extends CI_Controller
 				'Absen_m',
 				'user'
 			);
+
+			$data['data_users'] = $this->user->data_user();
+
+			// Access properties using '->' because $cek_user is an object
+			$data_user = $this->user->data_user();
+			$jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+2 hours')->format('H:i:s');
+			$jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+2 hours')->format('H:i:s');
+
+			$this->db->select('*');
+			$this->db->from('tblattendance');
+			$this->db->where('username', $this->session->userdata('username')); // Filter by username
+			$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+			$this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
+			$query = $this->db->get(); // Execute the query
+			$result1 = $query->result_array(); // Fetch results
+
+			$this->db->select('*');
+			$this->db->from('tblattendance');
+			$this->db->where('username', $this->session->userdata('username')); // Filter by username
+			$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+			$this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
+			$query = $this->db->get(); // Execute the query
+			$result2 = $query->result_array(); // Fetch results
+
+			$this->db->select('*');
+			$this->db->from('tblattendance');
+			$this->db->where('username', $this->session->userdata('username')); // Filter by username
+			$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+			$this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
+			$this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
+			$query = $this->db->get(); // Execute the query
+			$result3 = $query->result_array(); // Fetch results
+
+			$data['result1'] = $result1;
+			$data['result2'] = $result2;
+			$data['result3'] = $result3;
+
 			$data['cek_user'] = $this->user->cek_user();
 			$data['lokasi_absensi'] = $this->user->get_location();
 
@@ -3578,10 +3615,16 @@ class App extends CI_Controller
 			$this->load->view('absen_wfh_view', $data);
 		}
 	}
-	public function fetch_user()
+	public function fetch_user($tipe = null)
 	{
 		$this->load->model('Absen_m', 'user');
 		$users = $this->user->get_user(); // Fetch all users from the database
+		$data['tipe'] = $tipe;
+
+		// Access properties using '->' because $cek_user is an object
+		$data_user = $this->user->data_user();
+		$jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+2 hours')->format('H:i:s');
+		$jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
 
 		if ($users) {
 			// If using result_array(), users will be an array, even if there's only one user
@@ -3600,12 +3643,41 @@ class App extends CI_Controller
 					'status' => 'No Picture'
 				]);
 			} else {
-				// Load the user table view and capture its output
-				$data['users'] = $users;
-				$tableHTML = $this->load->view('userTable', $data, TRUE);
+				if ($tipe == 'masuk') {
+					$this->db->select('*'); // Fetch only these columns
+					$this->db->from('tblattendance'); // Table name
+					$this->db->where('username', $this->session->userdata('username'));
+					$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+					$this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
+					$users = $this->db->get()->result_array();
 
+					$data['users'] = $users;
+				} else if ($tipe == 'pulang') {
+					$this->db->select('*'); // Fetch only these columns
+					$this->db->from('tblattendance'); // Table name
+					$this->db->where('username', $this->session->userdata('username'));
+					$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+					$this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
+					$users = $this->db->get()->result_array();
+					// return $query->result_array(); // Return the result as an array
+
+					$data['users'] = $users;
+				} else if ($tipe == 'absensi') {
+					$this->db->select('*');
+					$this->db->from('tblattendance');
+					$this->db->where('username', $this->session->userdata('username')); // Filter by username
+					$this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+					$this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
+					$this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
+					$users = $this->db->get()->result_array();
+					$data['users'] = $users;
+				} else {
+					$data['users'] = $users;
+				}
+				$tableHTML = $this->load->view('userTable', $data, TRUE);
 				echo json_encode([
 					'status' => 'success',
+					'tipe' => $tipe,
 					'data' => $users,
 					'html' => $tableHTML
 				]);

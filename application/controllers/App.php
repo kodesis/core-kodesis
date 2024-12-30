@@ -3790,10 +3790,44 @@ class App extends CI_Controller
 			]);
 			return;
 		}
+		$folderPath = FCPATH . "upload/attendance/";
 
-		$response = $this->user->insertAttendance($attendanceData);
+		// Ensure the directory exists
+		if (!is_dir($folderPath)) {
+			mkdir($folderPath, 0755, true);
+		}
 
-		echo json_encode($response);
+		// Process and save the image
+		$base64Data = explode(',', $attendanceData['capturedImage'])[1];
+		$imageData = base64_decode($base64Data);
+		$filename = 'Attendance_' . uniqid() . '.png';
+
+		if (file_put_contents($folderPath . $filename, $imageData)) {
+			// Save attendance data to the database
+			$attendance = [
+				'username' => $attendanceData['username'],
+				'nip' => $attendanceData['nip'],
+				'nama' => $attendanceData['nama'],
+				'attendanceStatus' => $attendanceData['attendanceStatus'],
+				'lokasiAttendance' => $attendanceData['lokasiAttendance'],
+				'tanggalAttendance' => $attendanceData['tanggalAttendance'],
+				'image' => $filename
+			];
+
+			// Call the method to insert attendance
+			$response = $this->user->insertAttendance($attendance);
+
+			// Return the response to the client
+			// echo json_encode($response);
+
+
+			echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
+		} else {
+			echo json_encode(['status' => 'error', 'message' => 'Failed to save image.']);
+		}
+		// $response = $this->user->insertAttendance($attendanceData);
+
+		// echo json_encode($response);
 	}
 	public function delete_user_images()
 	{

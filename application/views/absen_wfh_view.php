@@ -666,14 +666,27 @@
 					// Update the element with id='tanggalonly' to display only the date
 					row.cells[6].innerText = formattedDateOnly;
 
+					const capturedImage = captureImage(video);
+
 
 					Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
-					sendAttendanceDataToServer();
+					sendAttendanceDataToServer(capturedImage);
 					const videoContainer = document.querySelector(".video-container");
 					videoContainer.style.display = "none";
 					stopWebcam();
 				}
 			});
+		}
+
+		function captureImage(video) {
+			const canvas = document.createElement("canvas");
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			const context = canvas.getContext("2d");
+
+			context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+			return canvas.toDataURL("image/png");
 		}
 
 		function updateOtherElements() {
@@ -815,7 +828,7 @@
 
 		}
 
-		function sendAttendanceDataToServer() {
+		function sendAttendanceDataToServer(capturedImage) {
 			const attendanceData = [];
 
 			document
@@ -835,6 +848,7 @@
 						nama,
 						attendanceStatus,
 						lokasiAttendance,
+						capturedImage
 					});
 				});
 

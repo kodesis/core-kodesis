@@ -667,11 +667,11 @@
 					row.cells[6].innerText = formattedDateOnly;
 
 
-					// Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
-					// sendAttendanceDataToServer();
-					// const videoContainer = document.querySelector(".video-container");
-					// videoContainer.style.display = "none";
-					// stopWebcam();
+					Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
+					sendAttendanceDataToServer();
+					const videoContainer = document.querySelector(".video-container");
+					videoContainer.style.display = "none";
+					stopWebcam();
 				}
 			});
 		}

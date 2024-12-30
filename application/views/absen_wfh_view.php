@@ -59,7 +59,7 @@
 
 
 		.justify-content-center {
-			display: flex;
+			display: block;
 			justify-content: center;
 		}
 
@@ -74,6 +74,16 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
+		}
+
+		/* Styles for mobile devices */
+		@media (max-width: 768px) {
+			.video-container {
+				display: block;
+				/* Or you can omit this if you don't want flex behavior */
+				margin-left: 20px;
+				/* Adjust the margin as needed */
+			}
 		}
 
 		#video {
@@ -270,7 +280,7 @@
 			<!-- /top navigation -->
 
 			<!-- page content -->
-			<div class="right_col" role="main">
+			<div class="right_col" role="main" style="height:600px">
 				<div class="container">
 					<div class="main--content">
 						<div id="messageDiv" class="messageDiv" style="display:none;"> </div>
@@ -283,7 +293,7 @@
 							<button hidden id="endAttendance" class="add">END Attendance Taking</button>
 						</div>
 
-						<div class="video-container">
+						<div class="video-container" style="display:flex">
 							<video id="video" class="video-class" width="320" height="240" autoplay muted></video>
 							<canvas id="overlay"></canvas>
 						</div>
@@ -298,13 +308,13 @@
 						<p id="location"></p>
 					</div>
 				</div>
+
+				<!-- /page content -->
+
+				<!-- footer content -->
+
+				<!-- /footer content -->
 			</div>
-
-			<!-- /page content -->
-
-			<!-- footer content -->
-
-			<!-- /footer content -->
 		</div>
 	</div>
 
@@ -657,11 +667,11 @@
 					row.cells[6].innerText = formattedDateOnly;
 
 
-					Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
-					sendAttendanceDataToServer();
-					const videoContainer = document.querySelector(".video-container");
-					videoContainer.style.display = "none";
-					stopWebcam();
+					// Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
+					// sendAttendanceDataToServer();
+					// const videoContainer = document.querySelector(".video-container");
+					// videoContainer.style.display = "none";
+					// stopWebcam();
 				}
 			});
 		}

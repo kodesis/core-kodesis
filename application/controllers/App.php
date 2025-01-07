@@ -3875,6 +3875,196 @@ class App extends CI_Controller
 
 		echo json_encode(['status' => 'success', 'message' => 'All images deleted and userImage set to NULL successfully.']);
 	}
+
+	public function lokasi_presensi()
+	{
+
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			$a = $this->session->userdata('level');
+			if (strpos($a, '401') !== false) {
+				//inbox notif
+				$nip = $this->session->userdata('nip');
+				$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+				$query = $this->db->query($sql);
+				$res2 = $query->result_array();
+				$result = $res2[0]['COUNT(Id)'];
+				$data['count_inbox'] = $result;
+
+				$sql3 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+				$query3 = $this->db->query($sql3);
+				$res3 = $query3->result_array();
+				$result3 = $res3[0]['COUNT(id)'];
+				$data['count_inbox2'] = $result3;
+
+				$this->load->view('lokasi_presensi', $data);
+			}
+		}
+	}
+
+	public function ajax_lokasi_presensi_list()
+	{
+		$this->load->model('lokasi_presensi_m', 'lpm');
+
+		$list = $this->lpm->get_datatables();
+		$data = array();
+		$crs = "";
+		$no = $_POST['start'];
+
+		foreach ($list as $cat) {
+
+			$no++;
+			$row = array();
+			$row[] = $no;
+			$row[] = $cat->nama_lokasi;
+			$row[] = $cat->alamat_lokasi;
+
+			$row[] = $cat->tipe_lokasi;
+			$row[] = $cat->latitude;
+			$row[] = $cat->longitude;
+			$radius_meter = $cat->radius * 1000;
+			$row[] = $radius_meter . ' Meter';
+			// $row[] = $cat->zona_waktu;
+			$row[] = $cat->jam_masuk . ' ' . $cat->zona_waktu;
+			$row[] = $cat->jam_pulang . ' ' . $cat->zona_waktu;
+
+			$row[] = '<a href="' . base_url('app/edit_lokasi_presensi/' . $cat->id) . '" class="btn btn-warning">
+								Update
+							</a><button onclick="onDelete(' . $cat->id . ')" class="btn btn-danger">
+								Delete
+							</button>';
+
+			$data[] = $row;
+		}
+
+		$output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->lpm->count_all(),
+			"recordsFiltered" => $this->lpm->count_filtered(),
+			"data" => $data,
+		);
+		echo json_encode($output);
+	}
+	public function add_lokasi_presensi()
+	{
+
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			$a = $this->session->userdata('level');
+			if (strpos($a, '401') !== false) {
+				//inbox notif
+				$nip = $this->session->userdata('nip');
+				$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+				$query = $this->db->query($sql);
+				$res2 = $query->result_array();
+				$result = $res2[0]['COUNT(Id)'];
+				$data['count_inbox'] = $result;
+
+				$sql3 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+				$query3 = $this->db->query($sql3);
+				$res3 = $query3->result_array();
+				$result3 = $res3[0]['COUNT(id)'];
+				$data['count_inbox2'] = $result3;
+
+				$this->load->view('lokasi_presensi_form', $data);
+			}
+		}
+	}
+	public function edit_lokasi_presensi($id)
+	{
+		$this->load->model('lokasi_presensi_m', 'lpm');
+
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			$a = $this->session->userdata('level');
+			if (strpos($a, '401') !== false) {
+				//inbox notif
+				$nip = $this->session->userdata('nip');
+				$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+				$query = $this->db->query($sql);
+				$res2 = $query->result_array();
+				$result = $res2[0]['COUNT(Id)'];
+				$data['count_inbox'] = $result;
+
+				$sql3 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+				$query3 = $this->db->query($sql3);
+				$res3 = $query3->result_array();
+				$result3 = $res3[0]['COUNT(id)'];
+				$data['count_inbox2'] = $result3;
+				$data['detail'] = $this->lpm->get_detail_id($id);
+
+				$this->load->view('lokasi_presensi_form', $data);
+			}
+		}
+	}
+
+	public function proses_tambah_lokasi_presensi()
+	{
+		$raw_slug = $this->input->post('nama_lokasi');
+		$slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', trim($raw_slug)));
+
+		$radius = $this->input->post('radius_lokasi') / 1000;
+		$data_insert = array(
+			'nama_lokasi' 				=> $this->input->post('nama_lokasi'),
+			'slug'			=> $slug,
+			'alamat_lokasi'			=> $this->input->post('alamat_lokasi'),
+			'tipe_lokasi'				=> $this->input->post('tipe_lokasi'),
+			'latitude'			=> $this->input->post('latitude_lokasi'),
+			'longitude'				=> $this->input->post('longitude_lokasi'),
+			'radius'				=> $radius,
+			'zona_waktu'			=> $this->input->post('zona_waktu'),
+			'jam_masuk'				=> $this->input->post('jam_masuk'),
+			'jam_pulang'				=> $this->input->post('jam_pulang'),
+		);
+		$this->db->insert('lokasi_presensi', $data_insert);
+		redirect('app/lokasi_presensi');
+	}
+
+	public function proses_update_lokasi_presensi()
+	{
+		$raw_slug = $this->input->post('nama_lokasi');
+		$slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', trim($raw_slug)));
+
+		$radius = $this->input->post('radius_lokasi') / 1000;
+		$data_insert = array(
+			'nama_lokasi' 				=> $this->input->post('nama_lokasi'),
+			'slug'			=> $slug,
+			'alamat_lokasi'			=> $this->input->post('alamat_lokasi'),
+			'tipe_lokasi'				=> $this->input->post('tipe_lokasi'),
+			'latitude'			=> $this->input->post('latitude_lokasi'),
+			'longitude'				=> $this->input->post('longitude_lokasi'),
+			'radius'				=> $radius,
+			'zona_waktu'			=> $this->input->post('zona_waktu'),
+			'jam_masuk'				=> $this->input->post('jam_masuk'),
+			'jam_pulang'				=> $this->input->post('jam_pulang'),
+		);
+		$this->db->where('id', $this->input->post('id_lokasi')); // Ensure to specify the record to update
+		$this->db->update('lokasi_presensi', $data_insert);
+		redirect('app/lokasi_presensi');
+	}
+	public function hapus_lokasi_presensi()
+	{
+		$id = $this->input->post('id');
+
+		if (!$id) {
+			echo json_encode(['status' => 'error', 'message' => 'ID tidak valid.']);
+			return;
+		}
+
+		$this->db->where('id', $id);
+		$this->db->delete('lokasi_presensi');
+
+		if ($this->db->affected_rows() > 0) {
+			echo json_encode(['status' => 'success', 'message' => 'Lokasi presensi berhasil dihapus.']);
+		} else {
+			echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus lokasi presensi.']);
+		}
+	}
+
+
 	public function tes()
 	{
 

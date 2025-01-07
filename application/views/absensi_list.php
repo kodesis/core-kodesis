@@ -39,6 +39,8 @@
   <link rel="stylesheet" href="<?php echo base_url(); ?>src/css/mobile_menu/header.css">
   <link rel="stylesheet" href="<?php echo base_url(); ?>src/css/mobile_menu/icons.css">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
   <style>
     .col-xs-3 {
       width: 25%;
@@ -202,21 +204,24 @@
       <div class="right_col" role="main">
         <div class="x_panel card">
           <div class="row text-center">
-            <div class="col-md-4">
+            <div class="col-md-3">
               <button class="btn btn-primary btn-block" onclick="showUser()">User List</button>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <button class="btn btn-primary btn-block" onclick="showTeam()">Team List</button>
             </div>
             <?php
             if ($this->session->userdata('level_jabatan') >= 3) {
             ?>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <button class="btn btn-primary btn-block" onclick="showApproval()">Approval List</button>
               </div>
             <?php
             }
             ?>
+            <div class="col-md-3">
+              <button class="btn btn-success btn-block" onclick="showExport()"><i class="fa fa-file-excel-o"></i> Export List</button>
+            </div>
           </div>
         </div>
 
@@ -270,7 +275,9 @@
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
                   </th>
-
+                  <th bgcolor="#34495e">
+                    <font color="white">Gambar</font>
+                  </th>
                   <!--th bgcolor="#004e81"><font color="white">Status</font></th-->
                 </tr>
               </thead>
@@ -333,7 +340,9 @@
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
                   </th>
-
+                  <th bgcolor="#34495e">
+                    <font color="white">Gambar</font>
+                  </th>
                   <!--th bgcolor="#004e81"><font color="white">Status</font></th-->
                 </tr>
               </thead>
@@ -399,7 +408,9 @@
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
                   </th>
-
+                  <th bgcolor="#34495e">
+                    <font color="white">Gambar</font>
+                  </th>
                   <th bgcolor="#34495e">
                     <font color="white">Approval</font>
                   </th>
@@ -411,6 +422,54 @@
           </div>
         </div>
 
+        <div class="x_panel card" id="excel" style="display: none;">
+          <?php if ($this->session->flashdata('success_reset')) { ?>
+            <div class="alert alert-success">
+              <a href="#" class="close" data-dismiss="alert">&times;</a>
+              <strong>Success!</strong> <?php echo $this->session->flashdata('success_reset'); ?>
+            </div>
+          <?php } ?>
+          <?php if ($this->session->flashdata('msg')) { ?>
+            <div class="alert alert-success">
+              <a href="#" class="close" data-dismiss="alert">&times;</a>
+              <strong>Success!</strong> <?php echo $this->session->flashdata('msg'); ?>
+            </div>
+          <?php } ?>
+
+
+          <!--div class="alert alert-info">Daftar Surat Kuasa </div-->
+          <div align="center">
+
+            <font color="brown">Absensi List Approval</font><br><br>
+          </div>
+
+
+          <div>
+            <div class="content" style="cursor: pointer;  margin: 0;">
+              <form class="form" id="form_export" action="<?= base_url('absensi/process_export') ?>" method="POST">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="" class="label">Tanggal Absensi</label>
+                    <input type="text" class="form-control month-picker" name="tanggal" id="tanggal_export_absensi">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="" class="label">Data</label>
+                    <select class="form-control" name="data_absensi" id="data_absensi">
+                      <option value="All" selected>All</option>
+                      <option value="User">User</option>
+                      <option value="Team">Team</option>
+                      <!-- <option value="Team">Team</option> -->
+                    </select>
+
+                  </div>
+                </div>
+                <br>
+                <button class="btn btn-success rounded">Export</button>
+              </form>
+              <!-- <button class="btn btn-success rounded" onclick="proccess_export()">Export</button> -->
+            </div>
+          </div>
+        </div>
         <!-- Finish content 3-->
       </div>
 
@@ -468,8 +527,17 @@
       <script src="<?= base_url() ?>src/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
       <script src="<?= base_url() ?>src/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
 
+      <!-- DatePicker -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
       <script>
         $(document).ready(function() {
+          $('#tanggal_export_absensi').datepicker({
+            format: "mm/yyyy",
+            startView: "months",
+            minViewMode: "months",
+            autoclose: true
+          });
           $("a[id='button-reset-cuti']").click(function(e) {
             if (!confirm('Apakah anda yakin ingin mereset cuti?')) {
               e.preventDefault();
@@ -554,19 +622,31 @@
         function showUser() {
           document.getElementById('user').style.display = 'flex';
           document.getElementById('team').style.display = 'none';
+          document.getElementById('excel').style.display = 'none';
           document.getElementById('approval').style.display = 'none';
         }
 
         function showTeam() {
           document.getElementById('user').style.display = 'none';
           document.getElementById('team').style.display = 'flex';
+          document.getElementById('excel').style.display = 'none';
           document.getElementById('approval').style.display = 'none';
         }
 
         function showApproval() {
           document.getElementById('user').style.display = 'none';
           document.getElementById('team').style.display = 'none';
+          document.getElementById('excel').style.display = 'none';
           document.getElementById('approval').style.display = 'flex';
+        }
+
+        function showExport() {
+
+          document.getElementById('user').style.display = 'none';
+          document.getElementById('team').style.display = 'none';
+          document.getElementById('approval').style.display = 'none';
+          document.getElementById('excel').style.display = 'flex';
+
         }
       </script>
 

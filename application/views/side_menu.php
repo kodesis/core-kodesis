@@ -148,6 +148,11 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '303') !== false) { ?>
 						<!--li><a href="<?php echo base_url(); ?>app/slip_gaji_pdf">Slip Gaji</a></li-->
+						<li><a href="<?php echo base_url(); ?>app/lokasi_presensi">Lokasi Presensi</a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '303') !== false) { ?>
+						<!--li><a href="<?php echo base_url(); ?>app/slip_gaji_pdf">Slip Gaji</a></li-->
 						<li><a href="<?php echo base_url(); ?>app/user">User</a></li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');

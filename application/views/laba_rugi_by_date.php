@@ -224,7 +224,7 @@
                                 <div class="row">
                                     <div class="col-md-4 col-xs-12">
                                         <h5>
-                                            Laba berjalan: <strong>Rp <?= number_format($total_pendapatan) ?></strong>
+                                            Laba berjalan: <strong>Rp <?= number_format($total_pendapatan, 2) ?></strong>
                                         </h5>
                                     </div>
                                     <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/reportByDate') ?>">
@@ -256,7 +256,7 @@
                                 <div class="row">
                                     <div class="col-md-6 col-xs-12">
                                         <h2 class="text-center">Biaya</h2>
-                                        <p class="text-right">Total: <strong><?= number_format($sum_biaya) ?></strong></p>
+                                        <p class="text-right">Total: <strong><?= number_format($sum_biaya, 2) ?></strong></p>
                                         <div class="table-responsive">
                                             <table id="" class="table" style="width:100%">
                                                 <thead>
@@ -275,7 +275,7 @@
                                                             <tr>
                                                                 <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></td>
                                                                 <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
+                                                                <td class="text-right"><?= number_format($a->saldo_awal, 2) ?></td>
                                                             </tr>
                                                     <?php
                                                         }
@@ -287,7 +287,7 @@
                                     <div class="col-md-6 col-xs-12">
                                         <div class="row justify-content-between">
                                             <h2 class="text-center">Pendapatan</h2>
-                                            <p class="text-right">Total: <strong><?= number_format($sum_pendapatan) ?></strong></p>
+                                            <p class="text-right">Total: <strong><?= number_format($sum_pendapatan, 2) ?></strong></p>
                                         </div>
                                         <div class="table-responsive">
                                             <table id="" class="table" style="width:100%">
@@ -307,7 +307,7 @@
                                                             <tr>
                                                                 <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></td>
                                                                 <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
+                                                                <td class="text-right"><?= number_format($a->saldo_awal, 2) ?></td>
                                                             </tr>
                                                     <?php
                                                         }

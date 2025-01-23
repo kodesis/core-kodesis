@@ -68,7 +68,8 @@ class M_coa extends CI_Model
         $this->cb->where('akun_debit', $no_coa);
         $this->cb->or_where('akun_kredit', $no_coa);
         $this->cb->group_end();
-        $this->cb->order_by('id', 'DESC');
+        // $this->cb->order_by('tanggal', 'ASC');
+        $this->cb->order_by('Id', 'DESC');
         $query = $this->cb->get();
 
         $result = $query->result();

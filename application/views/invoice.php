@@ -228,7 +228,7 @@
                             <div class="x_title">
                                 <h2>Invoices</h2>
                                 <ul class="nav navbar-right panel_toolbox">
-                                    <a href="<?= base_url('financial/create_invoice_khusus') ?>" class="btn btn-primary">Create Inv.</a>
+                                    <a href="<?= base_url('financial/create_invoice') ?>" class="btn btn-primary">Create Inv.</a>
 
                                     <!-- <li>
                                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Create Inv. <span class="caret"></span>
@@ -281,7 +281,7 @@
                                                 <th>Total</th>
                                                 <th>User</th>
                                                 <!-- <th>Stt. Pendapatan</th> -->
-                                                <!-- <th>Stt. Bayar</th> -->
+                                                <th>Stt. Bayar</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -295,11 +295,7 @@
                                                         <td><?= $i['nama_customer'] ?></td>
                                                         <td class="text-right"><?= number_format($i['total_nonpph'], 0) ?></td>
                                                         <td><?= isset($i['created_by_name']) ? $i['created_by_name'] : 'N/A' ?></td>
-                                                        <!-- <td><?= ($i['status_bayar'] == "1") ? "Sudah dibayar" : "Belum dibayar" ?></td> -->
                                                         <td>
-                                                            <a href="<?= base_url('financial/print_invoice/' . $i['no_invoice']) ?>" class="badge bg-orange" target="_blank" style="vertical-align: top;">
-                                                                Cetak
-                                                            </a>
                                                             <?php
                                                             if ($i['status_void'] == "1") {
                                                             ?>
@@ -383,9 +379,9 @@
                                                                                         </div>
                                                                                         <div class="col-sm-2 col-xs-12">
                                                                                             <div class="form-group">
-                                                                                                <label for="Lunas" class="form-label">Lunas</label>
+                                                                                                <label for="Lunas" class="form-label">Lunas <?= $i['opsi_termin'] ?></label>
                                                                                                 <div class="checkbox text-end">
-                                                                                                    <input type="checkbox" class="flat" name="status_bayar" id="status_bayar<?= $i['Id'] ?>" value="1" <?= ($i['opsi_termin'] == 0) ? 'checked ' : '' ?>> Ya
+                                                                                                    <input type="checkbox" style="margin-left: 20px" name="status_bayar" id="status_bayar<?= $i['Id'] ?>" value="1" <?= ($i['opsi_termin'] == 0) ? 'checked ' : '' ?>> Ya
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
@@ -393,7 +389,7 @@
                                                                                         <div class="col-sm-12 col-xs-12">
                                                                                             <div class="form-group">
                                                                                                 <label for="keterangan" class="form-label">Keterangan</label>
-                                                                                                <textarea name="keterangan" id="keterangan" class="form-control uppercase" required></textarea>
+                                                                                                <textarea name="keterangan" id="keterangan" class="form-control uppercase" required>Pembayaran invoice nomor <?= $i['no_invoice'] ?></textarea>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -445,6 +441,19 @@
                                                             <?php
                                                             } ?>
                                                         </td>
+                                                        <td>
+                                                            <a href="<?= base_url('financial/print_invoice/' . $i['no_invoice']) ?>" class="badge bg-orange" target="_blank" style="vertical-align: top;">
+                                                                Cetak
+                                                            </a>
+                                                            <?php
+                                                            if ($i['status_bayar'] == "0" and $i['status_void'] != "1") {
+                                                            ?>
+                                                                <a href="<?= base_url('financial/edit_invoice/' . $i['no_invoice']) ?>" class="badge btn-success" style="vertical-align: top;">
+                                                                    Edit
+                                                                </a>
+                                                            <?php
+                                                            } ?>
+                                                        </td>
                                                     </tr>
 
                                                 <?php
@@ -478,45 +487,6 @@
         </div>
 
         <!-- /page content -->
-
-        <!-- footer content -->
-
-        <!-- /footer content -->
-
-        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="jurnalModal">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">
-                            Lihat laporan
-                        </h4>
-                    </div>
-                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/showReport') ?>">
-                        <div class="modal-body">
-                            <div class="form-group row">
-                                <div class="col-md-12 col-xs-12">
-                                    <label for="no_invoice" class="form-label">Jenis laporan</label>
-                                    <select name="jenis_laporan" id="jenis_laporan" class="form-control">
-                                        <option value="">:: Pilih jenis laporan</option>
-                                        <option value="neraca">Neraca</option>
-                                        <option value="laba_rugi">Laba Rugi</option>
-                                        <option value="invoice_nol">Invoice Nol</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                Close
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                Process
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
     </div>
 

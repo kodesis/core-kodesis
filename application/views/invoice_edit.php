@@ -188,64 +188,6 @@
                                         <span class="badge bg-red"><?= $count_inbox; ?></span>
                                     <?php } ?>
                                 </a>
-                                <!--ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
-                    <li>
-                      <a>
-                        <span class="image"><img src="<?= base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="image"><img src="<?= base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="image"><img src="<?= base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="image"><img src="<?= base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-                        <span>
-                          <span>John Smith</span>
-                          <span class="time">3 mins ago</span>
-                        </span>
-                        <span class="message">
-                          Film festivals used to be do-or-die moments for movie makers. They were where...
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="text-center">
-                        <a>
-                          <strong>See All Alerts</strong>
-                          <i class="fa fa-angle-right"></i>
-                        </a>
-                      </div>
-                    </li>
-                  </ul-->
                             </li>
                             <?php include 'notif_tello.php' ?>
                         </ul>
@@ -256,9 +198,6 @@
 
             <!-- page content -->
             <div class="right_col" role="main">
-                <!--div class="pull-left">
-				<font color='Grey'>Create New E-Memo </font>
-			</div-->
                 <div class="clearfix"></div>
 
                 <!-- Start content-->
@@ -269,15 +208,15 @@
                                 <h2>Create Invoice</h2>
                             </div>
                             <div class="x_content">
-                                <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/store_invoice/khusus') ?>">
+                                <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/update_invoice/' . $inv['Id']) ?>">
                                     <div class="form-group row">
                                         <div class="col-md-2 col-xs-12">
                                             <label for="no_invoice" class="form-label">Number</label>
-                                            <input type="text" class="form-control" name="no_invoice" value="<?= $no_invoice ?>" readonly>
+                                            <input type="text" class="form-control" name="no_invoice" value="<?= $inv['no_invoice'] ?>" readonly>
                                         </div>
                                         <div class="col-md-3 col-xs-12">
                                             <label for="tgl_invoice" class="form-label">Date</label>
-                                            <input type="date" class="form-control" name="tgl_invoice" value="<?= date('Y-m-d') ?>">
+                                            <input type="date" class="form-control" name="tgl_invoice" value="<?= $inv['tanggal_invoice'] ?>">
                                         </div>
                                         <div class="col-md-5 col-xs-12">
                                             <label for="customer" class="form-label">Bill to</label>
@@ -285,7 +224,7 @@
                                                 <option value="">:: Pilih customer</option>
                                                 <?php
                                                 foreach ($customers as $c) : ?>
-                                                    <option value="<?= $c->id ?>"><?= $c->nama_customer ?></option>
+                                                    <option <?= ($inv['id_customer'] == $c->id) ? "selected" : "" ?> value="<?= $c->id ?>"><?= $c->nama_customer ?></option>
                                                 <?php
                                                 endforeach; ?>
                                             </select>
@@ -301,25 +240,22 @@
                                         <div class="col-md-2 col-xs-12">
                                             <label for="ppn" class="form-label">PPN</label>
                                             <select name="ppn" id="ppn" class="form-control">
-                                                <option value="0">0%</option>
-                                                <!-- <option value="0.01">1%</option>
-                                                <option value="0.02">2%</option>
-                                                <option value="0.10">10%</option> -->
-                                                <!-- <option value="0.11">11%</option> -->
-                                                <option value="0.11">11%</option>
+                                                <option <?= ($inv['ppn'] == "0.000") ? "selected" : "" ?> value="0.000">0%</option>
+                                                <option <?= ($inv['ppn'] == "0.110") ? "selected" : "" ?> value="0.110">11%</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
+
                                         <div class="col-md-12">
                                             <label for="keterangan" class="form-label">Notes</label>
-                                            <input name="keterangan" id="keterangan" class="form-control uppercase" placeholder="Enter notes here..." required>
+                                            <input name="keterangan" id="keterangan" class="form-control uppercase" placeholder="Enter notes here..." value="<?= $inv['keterangan'] ?>" required>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2 col-xs-12">
                                             <label for="nominal" class="form-label">Subtotal</label>
-                                            <input type="text" class="form-control" name="nominal" id="nominal" value="0" readonly>
+                                            <input type="text" class="form-control" name="nominal" id="nominal" value="<?= number_format($inv['subtotal'], 0, ',', '.') ?>" readonly>
                                         </div>
                                         <!-- <div class="col-md-2 col-xs-12">
                                             <label for="besaran_diskon" class="form-label">Discount</label>
@@ -327,29 +263,29 @@
                                         </div> -->
                                         <div class="col-md-2 col-xs-12">
                                             <label for="besaran_ppn" class="form-label">PPN</label>
-                                            <input type="text" class="form-control" name="besaran_ppn" id="besaran_ppn" value="0" readonly>
+                                            <input type="text" class="form-control" name="besaran_ppn" id="besaran_ppn" value="<?= number_format($inv['besaran_ppn'], 0, ',', '.') ?>" readonly>
                                         </div>
                                         <div class="col-md-2 col-xs-12">
                                             <label for="besaran_pph" class="form-label">PPh 23</label>
-                                            <input type="text" class="form-control" name="besaran_pph" id="besaran_pph" value="0" readonly>
+                                            <input type="text" class="form-control" name="besaran_pph" id="besaran_pph" value="<?= number_format($inv['besaran_pph'], 0, ',', '.') ?>" readonly>
                                         </div>
                                         <div class="col-md-2 col-xs-12">
                                             <label for="total_nonpph" class="form-label">Total (non PPh)</label>
-                                            <input type="text" class="form-control" name="total_nonpph" id="total_nonpph" value="0" readonly>
+                                            <input type="text" class="form-control" name="total_nonpph" id="total_nonpph" value="<?= number_format($inv['total_nonpph'], 0, ',', '.') ?>" readonly>
                                         </div>
                                         <div class="col-md-2 col-xs-12">
                                             <label for="total_denganpph" class="form-label">Total (w/ PPh)</label>
-                                            <input type="text" class="form-control" name="total_denganpph" id="total_denganpph" value="0" readonly>
+                                            <input type="text" class="form-control" name="total_denganpph" id="total_denganpph" value="<?= number_format($inv['total_denganpph'], 0, ',', '.') ?>" readonly>
                                         </div>
                                         <div class="col-md-2 col-xs-12">
                                             <label for="total_denganpph" class="form-label">Pendapatan</label>
-                                            <input type="text" class="form-control" name="nominal_pendapatan" id="nominal_pendapatan" value="0" readonly>
+                                            <input type="text" class="form-control" name="nominal_pendapatan" id="nominal_pendapatan" value="<?= number_format($inv['nominal_pendapatan'], 0, ',', '.') ?>" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2 col-xs-12">
                                             <label for="nominal_bayar" class="form-label">Nominal bayar</label>
-                                            <input type="text" class="form-control" name="nominal_bayar" id="nominal_bayar" value="0" readonly>
+                                            <input type="text" class="form-control" name="nominal_bayar" id="nominal_bayar" value="<?= number_format($inv['nominal_bayar'], 0, ',', '.') ?>" readonly>
                                         </div>
 
                                         <div class="col-md-3">
@@ -359,7 +295,7 @@
                                                 <?php
                                                 foreach ($pendapatan as $pd) :
                                                 ?>
-                                                    <option value="<?= $pd->no_sbb ?>"><?= $pd->no_sbb . ' - ' . $pd->nama_perkiraan ?></option>
+                                                    <option <?= ($pd->no_sbb == $inv['coa_debit']) ? "selected" : "" ?> value="<?= $pd->no_sbb ?>"><?= $pd->no_sbb . ' - ' . $pd->nama_perkiraan ?></option>
                                                 <?php
                                                 endforeach; ?>
                                             </select>
@@ -371,7 +307,7 @@
                                                 <?php
                                                 foreach ($persediaan as $ps) :
                                                 ?>
-                                                    <option value="<?= $ps->no_sbb ?>"><?= $ps->no_sbb . ' - ' . $ps->nama_perkiraan ?></option>
+                                                    <option <?= ($ps->no_sbb == $inv['coa_kredit']) ? "selected" : "" ?> value="<?= $ps->no_sbb ?>"><?= $ps->no_sbb . ' - ' . $ps->nama_perkiraan ?></option>
                                                 <?php
                                                 endforeach; ?>
                                             </select>
@@ -408,23 +344,50 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="baris">
-                                                <td>
-                                                    <input type="text" class="form-control uppercase" name="item[]">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="jumlah[]" value="0">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control total" name="total[]" value="0">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="total_amount[]" value="0" readonly>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger btn-sm hapusRow">Hapus</button>
-                                                </td>
-                                            </tr>
+                                            <?php
+                                            if ($details) {
+                                                foreach ($details as $d) : ?>
+                                                    <tr class="baris">
+                                                        <td>
+                                                            <input type="text" class="form-control uppercase" name="item[]" value="<?= $d->item ?>">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" name="jumlah[]" value="<?= number_format($d->qty, 0, ",", ".") ?>">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control total" name="total[]" value="<?= number_format($d->total, 0, ",", ".") ?>">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" name="total_amount[]" value="<?= number_format($d->total_amount, 0, ",", ".") ?>" readonly>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-danger btn-sm hapusRow">Hapus</button>
+                                                        </td>
+                                                    </tr>
+                                                <?php
+                                                endforeach;
+                                            } else {
+                                                ?>
+                                                <tr class="baris">
+                                                    <td>
+                                                        <input type="text" class="form-control uppercase" name="item[]">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="jumlah[]" value="0">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control total" name="total[]" value="0">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="total_amount[]" value="0" readonly>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btn-sm hapusRow">Hapus</button>
+                                                    </td>
+                                                </tr>
+                                            <?php
+                                            }
+                                            ?>
                                         </tbody>
                                     </table>
                                     <div class="row">

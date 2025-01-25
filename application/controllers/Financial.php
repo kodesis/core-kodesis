@@ -331,15 +331,15 @@ class Financial extends CI_Controller
         $id_user = $this->session->userdata('nip');
         $diskon = $this->input->post('diskon');
         $ppn = $this->input->post('ppn');
-        $nominal = $this->convertToNumber($this->input->post('nominal'));
-        $besaran_diskon = $this->convertToNumber(($this->input->post('besaran_diskon')) ? $this->input->post('besaran_diskon') : '0');
-        $besaran_ppn = $this->convertToNumber($this->input->post('besaran_ppn'));
-        $besaran_pph = $this->convertToNumber($this->input->post('besaran_pph'));
-        $nominal_bayar = $this->convertToNumber($this->input->post('nominal_bayar'));
-        // $total_chargeable = $this->convertToNumber($this->input->post('total_chargeable'));
-        $total_nonpph = $this->convertToNumber($this->input->post('total_nonpph'));
-        $total_denganpph = $this->convertToNumber($this->input->post('total_denganpph'));
-        $nominal_pendapatan = $this->convertToNumber($this->input->post('nominal_pendapatan'));
+        $nominal = $this->convertToNumberWithComma($this->input->post('nominal'));
+        $besaran_diskon = $this->convertToNumberWithComma(($this->input->post('besaran_diskon')) ? $this->input->post('besaran_diskon') : '0');
+        $besaran_ppn = $this->convertToNumberWithComma($this->input->post('besaran_ppn'));
+        $besaran_pph = $this->convertToNumberWithComma($this->input->post('besaran_pph'));
+        $nominal_bayar = $this->convertToNumberWithComma($this->input->post('nominal_bayar'));
+        // $total_chargeable = $this->convertToNumberWithComma($this->input->post('total_chargeable'));
+        $total_nonpph = $this->convertToNumberWithComma($this->input->post('total_nonpph'));
+        $total_denganpph = $this->convertToNumberWithComma($this->input->post('total_denganpph'));
+        $nominal_pendapatan = $this->convertToNumberWithComma($this->input->post('nominal_pendapatan'));
 
         // print_r($nominal);
         // exit;
@@ -414,9 +414,9 @@ class Financial extends CI_Controller
 
             for ($i = 0; $i < count($items); $i++) {
                 $item = trim($items[$i]);
-                $total = $this->convertToNumber($totals[$i]);
-                $jumlah = $this->convertToNumber($jumlahs[$i]);
-                $total_amount = $this->convertToNumber($total_amounts[$i]);
+                $total = $this->convertToNumberWithComma($totals[$i]);
+                $jumlah = $this->convertToNumberWithComma($jumlahs[$i]);
+                $total_amount = $this->convertToNumberWithComma($total_amounts[$i]);
 
                 $detail_data[] = [
                     'id_invoice' => $id_invoice,
@@ -1245,6 +1245,19 @@ class Financial extends CI_Controller
 
         // Mengganti koma sebagai pemisah desimal dengan titik
         $standardNumber = str_replace(',', '.', $numberWithoutThousandsSeparator);
+
+        // Mengonversi string ke float
+        return (float) $standardNumber;
+    }
+
+    function convertToNumberWithComma($formattedNumber)
+    {
+        // Mengganti titik sebagai pemisah ribuan dengan string kosong
+        $numberWithoutThousandsSeparator = str_replace(',', '', $formattedNumber);
+
+        // Mengganti koma sebagai pemisah desimal dengan titik
+        // $standardNumber = str_replace(',', '.', $numberWithoutThousandsSeparator);
+        $standardNumber = $numberWithoutThousandsSeparator;
 
         // Mengonversi string ke float
         return (float) $standardNumber;

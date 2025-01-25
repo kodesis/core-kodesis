@@ -164,7 +164,7 @@
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '80') !== false) { ?>
-			<li>
+			<!-- <li>
 				<a><i class="fa fa-edit"></i>Financial<span class="fa fa-chevron-down"></span></a>
 				<ul class="nav child_menu">
 					<?php
@@ -218,6 +218,22 @@
 					<?php } ?>
 				</ul>
 			</li>
+			<li>
+				<a><i class="fa fa-edit"></i>POS<span class="fa fa-chevron-down"></span></a>
+				<ul class="nav child_menu">
+					<?php
+					if (strpos($a, '801') !== false) { ?>
+						<li>
+							<a href="<?= base_url(); ?>pos/list_barang">Master Barang</a>
+						</li>
+					<?php }
+					if (strpos($a, '801') !== false) { ?>
+						<li>
+							<a href="<?= base_url(); ?>pos/list_koperasi">Data Koperasi</a>
+						</li>
+					<?php } ?>
+				</ul>
+			</li> -->
 		<?php } ?>
 
 

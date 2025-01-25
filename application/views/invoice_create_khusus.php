@@ -526,10 +526,10 @@
 
         function formatNumber(number) {
             // Pisahkan bagian integer dan desimal
-            let parts = number.toString().split(".");
+            let parts = number.toString().split(",");
 
             // Format bagian integer dengan pemisah ribuan
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
             // Gabungkan bagian integer dan desimal dengan koma sebagai pemisah desimal
             return parts.join(",");
@@ -608,46 +608,58 @@
                 previousRow.after(newRow);
             });
 
+            $(document).on('change click keyup input paste', 'input[name="jumlah[]"], input[name="total[]"]', function(event) {
+                $(this).val(function(index, value) {
+                    return value.replace(/(?!\.)\D/g, "")
+                        .replace(/(?<=\..*)\./g, "")
+                        .replace(/(?<=\.\d\d).*/g, "")
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                });
+
+                var row = $(this).closest('.baris');
+
+                hitungTotal(row);
+                updateTotalBelanja();
+                updateTotal();
+            });
+
             // Saat input qty atau harga diubah
             // $(document).on('input', 'input[name="chargeable_weight[]"], input[name="harga[]"], input[name="awb_fee[]"], input[name="jumlah[]"]', function() {
-            $(document).on('input', 'input[name="jumlah[]"], input[name="total[]"]', function() {
-                var value = $(this).val();
-                var formattedValue = parseFloat(value.split('.').join(''));
-                $(this).val(formattedValue);
+            // $(document).on('input', 'input[name="jumlah[]"], input[name="total[]"]', function() {
+            //     var value = $(this).val();
+            //     var formattedValue = parseFloat(value.split('.').join(''));
+            //     $(this).val(formattedValue);
 
-                var row = $(this).closest('.baris');
-                hitungTotal(row);
-                updateTotalBelanja();
-                updateTotal();
-            });
+            //     var row = $(this).closest('.baris');
+            //     hitungTotal(row);
+            //     updateTotalBelanja();
+            //     updateTotal();
+            // });
 
-            // Tambahkan event listener untuk event keyup
-            $(document).on('keyup', 'input[name="jumlah[]"], input[name="total[]"]', function() {
-                var value = $(this).val().trim(); // Hapus spasi di awal dan akhir nilai
-                var formattedValue = formatNumber(parseFloat(value.split('.').join('')));
-                $(this).val(formattedValue);
-                if (isNaN(value)) { // Jika nilai input kosong
-                    $(this).val(''); // Atur nilai input menjadi 0
-                }
-                var row = $(this).closest('.baris');
-                hitungTotal(row);
-                updateTotalBelanja();
-                updateTotal();
-            });
+            // // Tambahkan event listener untuk event keyup
+            // $(document).on('keyup', 'input[name="jumlah[]"], input[name="total[]"]', function() {
+            //     var value = $(this).val().trim(); // Hapus spasi di awal dan akhir nilai
+            //     var formattedValue = formatNumber(parseFloat(value.split('.').join('')));
+            //     $(this).val(formattedValue);
+            //     if (isNaN(value)) { // Jika nilai input kosong
+            //         $(this).val(''); // Atur nilai input menjadi 0
+            //     }
+            //     var row = $(this).closest('.baris');
+            //     hitungTotal(row);
+            //     updateTotalBelanja();
+            //     updateTotal();
+            // });
 
             function hitungTotal(row) {
-                var total = row.find('input[name="total[]"]').val().replace(/\./g, '');
-                var jumlah = row.find('input[name="jumlah[]"]').val().replace(/\./g, '');
+                var total = row.find('input[name="total[]"]').val().replace(/\,/g, '');
+                var jumlah = row.find('input[name="jumlah[]"]').val().replace(/\,/g, '');
 
-                total = parseInt(total); // Ubah string ke angka float
-                jumlah = parseInt(jumlah); // Ubah string ke angka float
+                total = (total) || 0;
+                jumlah = (jumlah) || 0;
 
-                total = isNaN(total) ? 0 : total;
-                jumlah = isNaN(jumlah) ? 0 : jumlah;
+                var total_amount = Number(total) * Number(jumlah);
 
-                var total_amount = total * jumlah;
-
-                row.find('input[name="total_amount[]"]').val(formatNumber(total_amount));
+                row.find('input[name="total_amount[]"]').val(formatNumber(total_amount.toFixed(0)));
                 updateTotalBelanja();
             }
 
@@ -655,7 +667,7 @@
                 var total_pos_fix = 0;
 
                 $(".baris").each(function() {
-                    var total = $(this).find('input[name="total_amount[]"]').val().replace(/\./g, ''); // Ambil nilai total dari setiap baris
+                    var total = $(this).find('input[name="total_amount[]"]').val().replace(/\,/g, ''); // Ambil nilai total dari setiap baris
                     total = parseFloat(total); // Ubah string ke angka float
 
                     if (!isNaN(total)) { // Pastikan total adalah angka
@@ -698,7 +710,7 @@
                 var subtotal = 0;
                 // Hitung subtotal dari total setiap baris
                 $('.baris').each(function() {
-                    var totalBaris = parseInt($(this).find('input[name="total_amount[]"]').val().replace(/\./g, '') || 0);
+                    var totalBaris = parseInt($(this).find('input[name="total_amount[]"]').val().replace(/\,/g, '') || 0);
                     subtotal += totalBaris;
                 });
                 // Hitung besaran diskon
@@ -742,7 +754,7 @@
             function updateTotalEdit() {
                 var diskon = parseFloat($('#diskonEdit').val());
 
-                var subtotal = parseInt($('#nominal').val().replace(/\./g, '') || 0);
+                var subtotal = parseInt($('#nominal').val().replace(/\,/g, '') || 0);
 
                 // Hitung besaran diskon
                 var besaranDiskon = subtotal * diskon;
@@ -769,8 +781,8 @@
             });
 
             function hitungTotalItem(row) {
-                var qty = row.find('input[name="qty"]').val().replace(/\./g, ''); // Hapus tanda titik
-                var harga = row.find('input[name="harga"]').val().replace(/\./g, ''); // Hapus tanda titik
+                var qty = row.find('input[name="qty"]').val().replace(/\,/g, ''); // Hapus tanda titik
+                var harga = row.find('input[name="harga"]').val().replace(/\,/g, ''); // Hapus tanda titik
                 qty = parseInt(qty); // Ubah string ke angka float
                 harga = parseInt(harga); // Ubah string ke angka float
 
@@ -846,7 +858,7 @@
             });
 
             function hitungTotalNewItem(row) {
-                var harga = row.find('input[name="newHarga[]"]').val().replace(/\./g, ''); //
+                var harga = row.find('input[name="newHarga[]"]').val().replace(/\,/g, ''); //
                 harga = parseInt(harga);
 
                 harga = isNaN(harga) ? 0 : harga;

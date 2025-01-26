@@ -176,7 +176,7 @@
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '80') !== false) { ?>
-			<!-- <li>
+			<li>
 				<a><i class="fa fa-edit"></i>Financial<span class="fa fa-chevron-down"></span></a>
 				<ul class="nav child_menu">
 					<?php
@@ -230,7 +230,7 @@
 					<?php } ?>
 				</ul>
 			</li>
-			<li>
+			<!-- <li>
 				<a><i class="fa fa-edit"></i>POS<span class="fa fa-chevron-down"></span></a>
 				<ul class="nav child_menu">
 					<?php

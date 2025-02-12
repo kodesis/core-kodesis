@@ -163,7 +163,7 @@
                             <?php
                             if ($invoice['besaran_ppn'] != '0.00') {
                             ?>
-                                PPn 11%
+                                <p>PPn 11%</p>
                             <?php
                             } ?>
                             <p>Total</p>

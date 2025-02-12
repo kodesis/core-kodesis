@@ -142,6 +142,15 @@
 						<li><a href="<?php echo base_url(); ?>app/absen_wfa">Absen WFA</a></li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '302') !== false) { ?>
+						<li><a href="<?php echo base_url(); ?>absensi/list">Absensi List</a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '303') !== false) { ?>
+						<!--li><a href="<?php echo base_url(); ?>app/slip_gaji_pdf">Slip Gaji</a></li-->
+						<li><a href="<?php echo base_url(); ?>app/lokasi_presensi">Lokasi Presensi</a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '303') !== false) { ?>
 						<!--li><a href="<?php echo base_url(); ?>app/slip_gaji_pdf">Slip Gaji</a></li-->
 						<li><a href="<?php echo base_url(); ?>app/user">User</a></li>
@@ -152,11 +161,15 @@
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '302') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>absensi">Absensi</a></li>
+						<li><a href="<?php echo base_url(); ?>cabang">Cabang</a></li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '302') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>tesseract">Tesseract-OCR</a></li>
+						<li><a href="<?php echo base_url(); ?>member">Member</a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '302') !== false) { ?>
+						<li><a href="<?php echo base_url(); ?>tabungan">Tabungan</a></li>
 					<?php } ?>
 				</ul>
 			</li>
@@ -217,6 +230,22 @@
 					<?php } ?>
 				</ul>
 			</li>
+			<!-- <li>
+				<a><i class="fa fa-edit"></i>POS<span class="fa fa-chevron-down"></span></a>
+				<ul class="nav child_menu">
+					<?php
+					if (strpos($a, '801') !== false) { ?>
+						<li>
+							<a href="<?= base_url(); ?>pos/list_barang">Master Barang</a>
+						</li>
+					<?php }
+					if (strpos($a, '801') !== false) { ?>
+						<li>
+							<a href="<?= base_url(); ?>pos/list_koperasi">Data Koperasi</a>
+						</li>
+					<?php } ?>
+				</ul>
+			</li> -->
 		<?php } ?>
 
 

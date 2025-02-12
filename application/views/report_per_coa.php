@@ -254,21 +254,18 @@
                                     </div>
                                     <div class="row" style="margin-top: 10px;">
                                         <div class="col-md-12 col-xs-12">
-                                            <!-- <h2 class="text-center">Activa</h2> -->
-                                            <!-- <p class="text-right">Total: <strong><?= number_format($sum_activa) ?></strong></p> -->
                                             <table id="datatable" class="table table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
                                                         <th class="text-right" colspan="2">Total:</th>
-                                                        <th class="text-right"><?= number_format($sum_debit) ?></th>
-                                                        <th class="text-right"><?= number_format($sum_kredit) ?></th>
+                                                        <th class="text-right"><?= number_format($sum_debit, 2) ?></th>
+                                                        <th class="text-right"><?= number_format($sum_kredit, 2) ?></th>
+                                                        <!-- <th class="text-right" colspan="2">Saldo Awal: <?= number_format($saldo_awal, 2) ?></th> -->
                                                     </tr>
                                                     <tr>
                                                         <th class="text-center">#</th>
                                                         <th class="text-center">Tanggal</th>
-                                                        <!-- <th class="text-center">Akun </th> -->
                                                         <th class="text-center">Debit</th>
-                                                        <!-- <th class="text-center">Saldo Debit</th> -->
                                                         <th class="text-center">Kredit</th>
                                                         <th class="text-center">Saldo Akhir</th>
                                                         <th class="text-center">Keterangan</th>
@@ -277,22 +274,77 @@
                                                 <tbody>
                                                     <?php
                                                     $no = 1;
-                                                    foreach ($coa as $a) :
+                                                    if ($coa) {
+
+                                                        foreach ($coa as $a) :
                                                     ?>
+                                                            <tr>
+                                                                <td><?= $no++ ?></td>
+                                                                <td><?= format_indo($a->tanggal) ?></td>
+                                                                <!-- <td><?= ($a->akun_debit == $detail_coa['no_sbb']) ? $a->akun_debit : $a->akun_kredit ?></td> -->
+                                                                <td class="text-right"><?= ($a->akun_debit == $detail_coa['no_sbb']) ? (($a->jumlah_debit) ? number_format($a->jumlah_debit) : '0') : '0' ?></td>
+                                                                <!-- <td class="text-right"><?= ($a->akun_debit == $detail_coa['no_sbb']) ? (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') : '0' ?></td> -->
+                                                                <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->jumlah_kredit) ? number_format($a->jumlah_kredit) : '0') : '0' ?></td>
+                                                                <!-- <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) : '0') : '0' ?></td> -->
+                                                                <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) :  '0') : (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') ?></td>
+                                                                <td><?= $a->keterangan ?></td>
+                                                            </tr>
+                                                        <?php
+                                                        endforeach;
+                                                    } else {
+                                                        ?>
                                                         <tr>
-                                                            <td><?= $no++ ?></td>
-                                                            <td><?= format_indo($a->tanggal) ?></td>
-                                                            <!-- <td><?= ($a->akun_debit == $detail_coa['no_sbb']) ? $a->akun_debit : $a->akun_kredit ?></td> -->
-                                                            <td class="text-right"><?= ($a->akun_debit == $detail_coa['no_sbb']) ? (($a->jumlah_debit) ? number_format($a->jumlah_debit) : '0') : '0' ?></td>
-                                                            <!-- <td class="text-right"><?= ($a->akun_debit == $detail_coa['no_sbb']) ? (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') : '0' ?></td> -->
-                                                            <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->jumlah_kredit) ? number_format($a->jumlah_kredit) : '0') : '0' ?></td>
-                                                            <!-- <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) : '0') : '0' ?></td> -->
-                                                            <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) :  '0') : (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') ?></td>
-                                                            <td><?= $a->keterangan ?></td>
+                                                            <td colspan="6">Tidak ada transaksi pada periode yang dipilih</td>
                                                         </tr>
                                                     <?php
-                                                    endforeach; ?>
+                                                    } ?>
                                                 </tbody>
+                                                <!-- <tbody>
+                                                    <?php
+                                                    $no = 1;
+                                                    $saldo = $saldo_awal;
+                                                    if ($coa) {
+                                                        foreach ($coa as $a) {
+                                                            $posisi = $detail_coa["posisi"];
+                                                            $no_sbb = $detail_coa["no_sbb"];
+
+                                                            if ($posisi == "AKTIVA") {
+                                                                if ($a->akun_debit == $no_sbb) {
+                                                                    $saldo += $a->jumlah_debit;
+                                                                } else {
+                                                                    $saldo -= $a->jumlah_kredit;
+                                                                }
+                                                            } else { // PASIVA
+                                                                if ($a->akun_kredit == $no_sbb) {
+                                                                    $saldo += $a->jumlah_kredit;
+                                                                } else {
+                                                                    $saldo -= $a->jumlah_debit;
+                                                                }
+                                                            } ?>
+                                                            <tr>
+                                                                <td><?= $no++ ?></td>
+                                                                <td><?= format_indo($a->tanggal) ?></td>
+                                                                <td class="text-right">
+                                                                    <?= ($a->akun_debit == $detail_coa['no_sbb']) ? number_format(($a->jumlah_debit ?: 0), 2) : '0.00' ?>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <?= ($a->akun_kredit == $detail_coa['no_sbb']) ? number_format(($a->jumlah_kredit ?: 0), 2) : '0.00' ?>
+                                                                </td>
+                                                                <td class="text-right"><?= number_format($saldo) ?></td>
+                                                                <td><?= $a->keterangan ?></td>
+                                                            </tr>
+                                                        <?php
+                                                        }
+                                                    } else {
+                                                        ?>
+                                                        <tr>
+                                                            <td colspan="6">Tidak ada transaksi pada periode yang dipilih</td>
+                                                        </tr>
+                                                    <?php
+                                                    }
+                                                    ?>
+
+                                                </tbody> -->
                                             </table>
                                         </div>
                                     </div>

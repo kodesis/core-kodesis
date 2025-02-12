@@ -227,7 +227,7 @@
                                 <div class="row">
                                     <div class="col-md-4 col-xs-12">
                                         <h5>
-                                            Neraca: <strong>Rp <?= (isset($neraca)) ? number_format($neraca) : 0 ?></strong>
+                                            Neraca: <strong>Rp <?= (isset($neraca)) ? number_format($neraca, 2) : 0 ?></strong>
                                         </h5>
                                     </div>
                                     <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/reportByDate') ?>">
@@ -260,7 +260,7 @@
                                 <div class="row">
                                     <div class="col-md-6 col-xs-12">
                                         <h2 class="text-center">Activa</h2>
-                                        <p class="text-right">Total: <strong><?= (isset($sum_activa)) ? number_format($sum_activa) : 0 ?></strong></p>
+                                        <p class="text-right">Total: <strong><?= (isset($sum_activa)) ? number_format($sum_activa, 2) : 0 ?></strong></p>
                                         <div class="table-responsive">
                                             <table id="" class="table" style="width:100%">
                                                 <thead>
@@ -280,7 +280,7 @@
                                                                 <tr>
                                                                     <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></button></td>
                                                                     <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
+                                                                    <td class="text-right"><?= number_format($a->saldo_awal, 2) ?></td>
                                                                 </tr>
                                                         <?php
                                                             endif;
@@ -298,7 +298,7 @@
                                     <div class="col-md-6 col-xs-12">
                                         <div class="row justify-content-between">
                                             <h2 class="text-center">Pasiva</h2>
-                                            <p class="text-right">Total: <strong><?= (isset($sum_pasiva)) ? number_format($sum_pasiva) : 0 ?></strong></p>
+                                            <p class="text-right">Total: <strong><?= (isset($sum_pasiva)) ? number_format($sum_pasiva, 2) : 0 ?></strong></p>
                                         </div>
                                         <div class="table-responsive">
                                             <table id="" class="table" style="width:100%">
@@ -319,15 +319,15 @@
                                                                 <tr>
                                                                     <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></td>
                                                                     <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal) ?></td>
+                                                                    <td class="text-right"><?= number_format($a->saldo_awal, 2) ?></td>
                                                                 </tr>
                                                         <?php
                                                             endif;
                                                         endforeach; ?>
                                                         <tr>
-                                                            <td>3103001</td>
+                                                            <td>31030</td>
                                                             <td>LABA TAHUN BERJALAN</td>
-                                                            <td class="text-right"><?= number_format($laba) ?></td>
+                                                            <td class="text-right"><?= number_format($laba, 2) ?></td>
                                                         </tr>
                                                     <?php
                                                     else : ?>

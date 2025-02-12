@@ -1046,23 +1046,58 @@
 
             });
 
-            $('#neraca_debit, #neraca_kredit').change(function() {
-                var debit = $('#neraca_debit').find(":selected").val();
-                var kredit = $('#neraca_kredit').find(":selected").val();
-                disabledSubmit(debit, kredit);
-            });
+            $(document).ready(function() {
 
-            function disabledSubmit(debit, kredit) {
-                if (debit && kredit) {
-                    if (debit == kredit) {
-                        console.log('sama');
-                        $('.btn-success').prop('disabled', true);
-                    } else {
-                        console.log('tidak sama');
-                        $('.btn-success').prop('disabled', false);
+
+                function formatState(state, colorAktiva, colorPasiva, signAktiva, signPasiva) {
+                    if (!state.id) {
+                        return state.text;
+                    }
+
+                    var color = state.element.dataset.posisi == "AKTIVA" ? colorAktiva : colorPasiva;
+                    var sign = state.element.dataset.posisi == "AKTIVA" ? signAktiva : signPasiva;
+
+                    var $state = $('<span style="background-color: ' + color + ';"><strong>' + state.text + ' ' + sign + '</strong></span>');
+
+                    return $state;
+                };
+
+                function formatStateDebit(state) {
+                    return formatState(state, '#2ecc71', '#ff7675', '(+)', '(-)');
+                }
+
+                function formatStateKredit(state) {
+                    return formatState(state, '#ff7675', '#2ecc71', '(-)', '(+)');
+                }
+
+                $('#neraca_debit').select2({
+                    // templateResult: formatStateDebit,
+                    templateSelection: formatStateDebit
+                });
+
+                $('#neraca_kredit').select2({
+                    // templateResult: formatStateKredit,
+                    templateSelection: formatStateKredit
+                });
+
+                $('#neraca_debit, #neraca_kredit').change(function() {
+                    var debit = $('#neraca_debit').find(":selected").val();
+                    var kredit = $('#neraca_kredit').find(":selected").val();
+                    disabledSubmit(debit, kredit);
+                });
+
+                function disabledSubmit(debit, kredit) {
+                    if (debit && kredit) {
+                        if (debit == kredit) {
+                            console.log('sama');
+                            $('.btn-success').prop('disabled', true);
+                        } else {
+                            console.log('tidak sama');
+                            $('.btn-success').prop('disabled', false);
+                        }
                     }
                 }
-            }
+            });
 
         });
 

@@ -2,6 +2,219 @@
 
 class Absen_m extends CI_Model
 {
+
+    var $table = 'tblattendance';
+    var $column_order = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
+    var $column_search = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable 
+    var $order = array('date' => 'desc', 'waktu' => 'desc'); // default order 
+
+    function _get_datatables_query()
+    {
+
+        $this->db->select('tblattendance.*');
+        $this->db->from('tblattendance');
+        $this->db->where('username', $this->session->userdata('username'));
+        $i = 0;
+
+        foreach ($this->column_search as $item) // loop column 
+        {
+            if ($_POST['search']['value']) // if datatable send POST for search
+            {
+
+                if ($i === 0) // first loop
+                {
+                    $this->db->group_start(); // open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+
+                if (count($this->column_search) - 1 == $i) //last loop
+                    $this->db->group_end(); //close bracket
+            }
+            $i++;
+        }
+
+        if (isset($_POST['order'])) // here order processing
+        {
+            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+        } else if (isset($this->order)) {
+            $order = $this->order;
+            // $this->db->order_by(key($order), $order[key($order)]);
+            foreach ($order as $key => $value) {
+                $this->db->order_by($key, $value);
+            }
+        }
+    }
+
+    function get_datatables()
+    {
+        $this->_get_datatables_query();
+        if ($_POST['length'] != -1)
+            $this->db->limit($_POST['length'], $_POST['start']);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    function count_filtered()
+    {
+        $this->_get_datatables_query();
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+
+    function count_all()
+    {
+
+        $this->_get_datatables_query();
+        $query = $this->db->get();
+
+        return $this->db->count_all_results();
+    }
+
+
+    var $table2 = 'tblattendance';
+    var $column_order2 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
+    var $column_search2 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable datatable searchable 
+    var $order2 = array('date' => 'desc', 'waktu' => 'desc'); // default order 
+
+    function _get_datatables_query2()
+    {
+
+        $this->db->select('tblattendance.*,users.bagian');
+        $this->db->from('tblattendance');
+        $this->db->where('bagian', $this->session->userdata('bagian'));
+        $this->db->join('users', 'users.username = tblattendance.username');
+        $i = 0;
+
+        foreach ($this->column_search as $item) // loop column 
+        {
+            if ($_POST['search']['value']) // if datatable send POST for search
+            {
+
+                if ($i === 0) // first loop
+                {
+                    $this->db->group_start(); // open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+
+                if (count($this->column_search) - 1 == $i) //last loop
+                    $this->db->group_end(); //close bracket
+            }
+            $i++;
+        }
+
+        if (isset($_POST['order'])) // here order processing
+        {
+            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+        } else if (isset($this->order)) {
+            $order = $this->order;
+            // $this->db->order_by(key($order), $order[key($order)]);
+            foreach ($order as $key => $value) {
+                $this->db->order_by($key, $value);
+            }
+        }
+    }
+
+    function get_datatables2()
+    {
+        $this->_get_datatables_query2();
+        if ($_POST['length'] != -1)
+            $this->db->limit($_POST['length'], $_POST['start']);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    function count_filtered2()
+    {
+        $this->_get_datatables_query2();
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+
+    function count_all2()
+    {
+
+        $this->_get_datatables_query2();
+        $query = $this->db->get();
+
+        return $this->db->count_all_results();
+    }
+
+
+    var $table3 = 'tblattendance';
+    var $column_order3 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
+    var $column_search3 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable datatable searchable 
+    var $order3 = array('date' => 'desc', 'waktu' => 'desc'); // default order 
+
+    function _get_datatables_query3()
+    {
+
+        $this->db->select('tblattendance.*,users.supervisi');
+        $this->db->from('tblattendance');
+        $this->db->where('attendanceStatus', 'Pending');
+        $this->db->where('supervisi', $this->session->userdata('nip'));
+        $this->db->join('users', 'users.username = tblattendance.username');
+        $i = 0;
+
+        foreach ($this->column_search as $item) // loop column 
+        {
+            if ($_POST['search']['value']) // if datatable send POST for search
+            {
+
+                if ($i === 0) // first loop
+                {
+                    $this->db->group_start(); // open bracket. query Where with OR clause better with bracket. because maybe can combine with other WHERE with AND.
+                    $this->db->like($item, $_POST['search']['value']);
+                } else {
+                    $this->db->or_like($item, $_POST['search']['value']);
+                }
+
+                if (count($this->column_search) - 1 == $i) //last loop
+                    $this->db->group_end(); //close bracket
+            }
+            $i++;
+        }
+
+        if (isset($_POST['order'])) // here order processing
+        {
+            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+        } else if (isset($this->order)) {
+            $order = $this->order;
+            // $this->db->order_by(key($order), $order[key($order)]);
+            foreach ($order as $key => $value) {
+                $this->db->order_by($key, $value);
+            }
+        }
+    }
+
+    function get_datatables3()
+    {
+        $this->_get_datatables_query3();
+        if ($_POST['length'] != -1)
+            $this->db->limit($_POST['length'], $_POST['start']);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    function count_filtered3()
+    {
+        $this->_get_datatables_query3();
+        $query = $this->db->get();
+        return $query->num_rows();
+    }
+
+    function count_all3()
+    {
+
+        $this->_get_datatables_query3();
+        $query = $this->db->get();
+
+        return $this->db->count_all_results();
+    }
+
     public function get_user()
     {
         $this->db->select('*'); // Fetch only these columns
@@ -41,7 +254,6 @@ class Absen_m extends CI_Model
                         $startOfDay = new DateTime($jam->jam_masuk); // Assuming format is H:i:s
                         $endOfDay = new DateTime($jam->jam_keluar);
                         $startOfDay->modify('+2 hours');
-                        $endOfDay->modify('+2 hours');
 
                         // Debug outputs
                         // echo "Current Time: " . $currentTime->format('H:i:s') . "<br>";
@@ -54,22 +266,30 @@ class Absen_m extends CI_Model
                             $tipe = 'Masuk';
                         } elseif ($currentTime->format('H:i:s') >= $startOfDay->format('H:i:s') && $currentTime->format('H:i:s') < $endOfDay->format('H:i:s')) {
                             // Between jam_masuk and jam_keluar, it is 'Keluar'
-                            $tipe = 'Keluar';
+                            $tipe = 'Telat';
                         } elseif ($currentTime->format('H:i:s') >= $endOfDay->format('H:i:s')) {
                             // After jam_keluar, it is 'Pulang'
                             $tipe = 'Pulang';
                         }
 
-                        // Insert the attendance record
-                        $this->db->insert('tblattendance', [
-                            'username' => $data['username'],
-                            'nip' => $data['nip'],
-                            'nama' => $data['nama'],
-                            'attendanceStatus' => $data['attendanceStatus'],
-                            'lokasiAttendance' => $data['lokasiAttendance'],
-                            'date' => date("Y-m-d"),
-                            'tipe' => $tipe
-                        ]);
+                        $this->db->select('*');
+                        $this->db->from('tblattendance');
+                        $this->db->where('username', $data['username']);
+                        $this->db->where('tipe', $tipe);
+                        $this->db->where('date', date("Y-m-d"));
+                        $cek_absen = $this->db->get()->row();
+                        if (empty($cek_absen)) {
+                            // Insert the attendance record
+                            $this->db->insert('tblattendance', [
+                                'username' => $data['username'],
+                                'nip' => $data['nip'],
+                                'nama' => $data['nama'],
+                                'attendanceStatus' => $data['attendanceStatus'],
+                                'lokasiAttendance' => $data['lokasiAttendance'],
+                                'date' => date("Y-m-d"),
+                                'tipe' => $tipe
+                            ]);
+                        }
                     } else {
                         $response['status'] = 'error';
                         $response['message'] = "User not found for username: " . $data['username'];
@@ -104,6 +324,20 @@ class Absen_m extends CI_Model
         $query = $this->db->get();
 
         // return $query->result_array(); // Return the result as an array
+        return $query->result(); // Return the result as an array
+    }
+    public function data_user()
+    {
+        $this->db->select('*'); // Fetch only these columns
+        $this->db->from('users'); // Table name
+        $this->db->where('username', $this->session->userdata('username'));
+        $query = $this->db->get();
+
+        // return $query->result_array(); // Return the result as an array
         return $query->row(); // Return the result as an array
+    }
+    public function update($data, $where)
+    {
+        $this->db->update($this->table, $data, $where);
     }
 }

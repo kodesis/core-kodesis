@@ -15,7 +15,7 @@ class M_Customer extends CI_Model
         return $this->cb->order_by('nama_customer', 'ASC')->get('customer')->result();
     }
 
-    public function list_customer($status)
+    public function list_customer($status = NULL)
     {
         if ($status) {
             $this->cb->where('status_customer', $status);

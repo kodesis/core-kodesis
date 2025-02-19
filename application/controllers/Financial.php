@@ -497,9 +497,6 @@ class Financial extends CI_Controller
         $total_denganpph = $this->convertToNumber($this->input->post('total_denganpph'));
         $nominal_pendapatan = $this->convertToNumber($this->input->post('nominal_pendapatan'));
 
-        // print_r($id);
-        // exit;
-
         $no_inv = $this->input->post('no_invoice');
 
         // $status_pendapatan = $this->input->post('status_pendapatan');
@@ -509,8 +506,8 @@ class Financial extends CI_Controller
         $coa_debit = $this->input->post('coa_debit');
         $coa_kredit = $this->input->post('coa_kredit');
 
+        $pph = ($opsi_pph == 1) ? '0.02' : 0;
 
-        $pph = isset($opsi_pph) ? '0.02' : 0;
 
         $tgl_invoice = $this->input->post('tgl_invoice');
 
@@ -544,7 +541,17 @@ class Financial extends CI_Controller
             'status_pendapatan' => '1'
         ];
 
-        $this->db->trans_begin();
+        $this->cb->trans_begin();
+
+        $inv =  $this->m_invoice->showById($id);
+
+        $keterangan_lama = "Jurnal balik edit invoice " . $inv['no_invoice'];
+
+        // Jurnal balik sebelum update invoice
+        $coa_kredit_lama = $inv['coa_kredit'];
+        $coa_debit_lama = $inv['coa_debit'];
+
+        $this->posting($coa_kredit_lama, $coa_debit_lama, $keterangan_lama, $inv['nominal_pendapatan'], $inv['tanggal_invoice'], $inv['Id']);
 
         if (!$this->m_invoice->update_invoice($id, $invoice_data)) {
             $this->cb->trans_rollback();
@@ -557,9 +564,11 @@ class Financial extends CI_Controller
         $totals = $this->input->post('total');
         $total_amounts = $this->input->post('total_amount');
 
+        // Hapus detail invoice lama
+        $this->cb->where('id_invoice', $id)->delete('invoice_details');
+
         // Handle detail data
         if (!empty($items)) {
-            $this->cb->where('id_invoice', $id)->delete('invoice_details');
             $detail_data = [];
 
             for ($i = 0; $i < count($items); $i++) {
@@ -573,29 +582,40 @@ class Financial extends CI_Controller
                 ];
             }
 
-            if (!empty($detail_data) && !$this->m_invoice->insert_batch($detail_data)) {
-                $this->cb->trans_rollback();
-                $this->session->set_flashdata('message_name', 'Failed to insert invoice details.');
-                redirect("financial/invoice");
+            if (!empty($detail_data)) {
+                if (!$this->m_invoice->insert_batch($detail_data)) {
+                    $this->cb->trans_rollback();
+                    $this->session->set_flashdata('message_name', 'Failed to insert invoice details.');
+                    redirect("financial/invoice");
+                }
             }
         }
 
         // Update jurnal
-        $dt_jurnal = [
-            'tanggal' => $tgl_invoice,
-            'akun_debit' => $coa_debit,
-            'jumlah_debit' => $nominal_bayar,
-            'akun_kredit' => $coa_kredit,
-            'jumlah_kredit' => $nominal_bayar,
-            'keterangan' => trim($keterangan),
-            'created_by' => $id_user,
-        ];
+        // $dt_jurnal = [
+        //     'tanggal' => $tgl_invoice,
+        //     'akun_debit' => $coa_debit,
+        //     'jumlah_debit' => $nominal_bayar,
+        //     'akun_kredit' => $coa_kredit,
+        //     'jumlah_kredit' => $nominal_bayar,
+        //     'keterangan' => trim($keterangan),
+        //     'created_by' => $id_user,
+        // ];
 
-        if (!$this->cb->where('id_invoice', $id)->update('jurnal_neraca', $dt_jurnal)) {
-            $this->cb->trans_rollback();
-            $this->session->set_flashdata('message_name', 'Failed to update journal.');
-            redirect("financial/invoice");
-        }
+        // if (!$this->cb->where('id_invoice', $id)->update('jurnal_neraca', $dt_jurnal)) {
+        //     $this->cb->trans_rollback();
+        //     $this->session->set_flashdata('message_name', 'Failed to update journal.');
+        //     redirect("financial/invoice");
+        // }
+
+        $this->posting(
+            $coa_debit,
+            $coa_kredit,
+            $keterangan,
+            $total_denganpph,
+            $tgl_invoice,
+            $id
+        );
 
         // Commit transaksi
         if ($this->cb->trans_status() === FALSE) {

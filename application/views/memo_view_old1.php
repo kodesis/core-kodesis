@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= base_url($setting[2]->object) ?>" type="image/ico" />
+	<title><?= $setting['3']->object ?> | Bussines Development</title>
 	<title>BDL CORE | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -285,7 +287,7 @@
 									$no = 0;
 									$string = substr($memo->nip_kpd, 0, -1);
 									$arr_kpd = explode(";", $string);
-									foreach ($arr_kpd as $data):
+									foreach ($arr_kpd as $data) :
 										$sql = "SELECT nama,nama_jabatan FROM users WHERE nip='$data';";
 										$query = $this->db->query($sql);
 										$result = $query->row();
@@ -304,7 +306,7 @@
 									if (!empty($memo->nip_cc)) {
 										$string = substr($memo->nip_cc, 0, -1);
 										$arr_kpd = explode(";", $string);
-										foreach ($arr_kpd as $data):
+										foreach ($arr_kpd as $data) :
 											$sql = "SELECT nama,nama_jabatan FROM users WHERE nip='$data';";
 											$query = $this->db->query($sql);
 											$result = $query->row();

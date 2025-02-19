@@ -72,7 +72,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <img src="<?= base_url(); ?>img/kodesis_kotak.png" style="width: 150px;" alt="">
+                        <img src="<?= $this->session->userdata('icon') ?>" style="width: 150px;" alt="">
                     </td>
                     <td colspan="2" class="text-end">
                         <p style="font-size: 20pt" class="title">Invoice</p>
@@ -108,8 +108,8 @@
                 </tr>
                 <tr>
                     <td style="vertical-align:top">
-                        <p class="title" style="margin-top: 0;">PT. Kode Sistem Indonesia</p>
-                        Jalan bukit cinere D/186 RT 04 RW 02 Kec. Cinere Kab. Depok<br>0896-2555-1238
+                        <p class="title" style="margin-top: 0;"><?= $this->session->userdata('nama_perusahaan') ?></p>
+                        <p style=""><?= nl2br($this->session->userdata('alamat_perusahaan')) ?></p>
                     </td>
                     <td style="vertical-align:bottom; width: 2%;">
                     </td>
@@ -152,9 +152,7 @@
                         <p class="title">Pesan</p>
                         <hr>
                         <p>
-                            Pembayaran Transfer ke rekening berikut: <br>
-                            Bank BCA 3753002304<br>
-                            PT. Kode Sistem Indonesia
+                            <?= nl2br($this->session->userdata('nomor_rekening')) ?>
                         </p>
                     </td>
                     <td class="text-end" style="width: 25%; vertical-align: top">
@@ -163,7 +161,7 @@
                             <?php
                             if ($invoice['besaran_ppn'] != '0.00') {
                             ?>
-                                <p>PPn 11%</p>
+                                <p><?= $this->session->userdata('nama_ppn') ?></p>
                             <?php
                             } ?>
                             <p>Total</p>

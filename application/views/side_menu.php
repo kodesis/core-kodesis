@@ -296,6 +296,12 @@
 				<li><a href="<?php echo base_url(); ?>login/password">Change Password</a></li>
 			</ul>
 		</li>
+		<li>
+			<a><i class="fa fa-gear"></i>Setting<span class="fa fa-chevron-down"></span></a>
+			<ul class="nav child_menu">
+				<li><a href="<?php echo base_url(); ?>setting">Pengaturan sistem</a></li>
+			</ul>
+		</li>
 	</ul>
 </div>
 

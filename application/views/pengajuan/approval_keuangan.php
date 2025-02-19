@@ -16,7 +16,10 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="icon" href="images/favicon.ico" type="image/ico" />
+  <?php $setting = $this->db->get('setting')->result(); ?>
+
+  <link rel="icon" href="<?= base_url($setting[2]->object) ?>" type="image/ico" />
+  <title><?= $setting['3']->object ?> | Bussines Development</title>
 
   <title>Kodesis | Business Development</title>
 
@@ -237,7 +240,10 @@
 
           <div class="navbar nav_title" style="border: 0;">
 
-            <a href="<?= base_url(); ?>" class="site_title"><img src="<?= base_url(); ?>img/logo-kodesis.png" alt="..." height="42" width="60"><span> Kodesis</span></a>
+            <a href="<?php echo base_url(); ?>" class="site_title">
+              <img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+              <span><?= $this->session->userdata('nama_singkat') ?></span>
+            </a>
 
           </div>
 

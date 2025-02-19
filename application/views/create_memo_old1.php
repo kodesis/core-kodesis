@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= base_url($setting[2]->object) ?>" type="image/ico" />
+	<title><?= $setting['3']->object ?> | Bussines Development</title>
 	<title>BDL CORE | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -299,7 +301,7 @@
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<?php if (!empty($memo->nip_kpd)) { ?>
 												<select class="form-control js-example-basic-multiple" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<?php
 														if (($data->nip == $memo->nip_dari)) { ?>
 															<option selected="selected" value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
@@ -310,7 +312,7 @@
 												</select>
 											<?php } else { ?>
 												<select class="form-control js-example-basic-multiple" required="required" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
 													<?php endforeach; ?>
 												</select>
@@ -319,14 +321,14 @@
 									<?php } else { ?>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<!--select class="form-control" required="required" multiple="multiple" name="tujuan_memo[]" id="tujuan_memo">
-									<?php foreach ($sendto as $data): ?>        
+									<?php foreach ($sendto as $data) : ?>        
 										<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option> 
 									<?php endforeach; ?>
 								  </select-->
 
 											<?php if (!empty($memo->nip_kpd)) { ?>
 												<select class="form-control js-example-basic-multiple" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<?php
 														if (($data->nip == $memo->nip_dari)) { ?>
 															<option selected="selected" value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
@@ -337,7 +339,7 @@
 												</select>
 											<?php } else { ?>
 												<select class="form-control js-example-basic-multiple" required="required" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?> (<?php echo $data->nama_jabatan; ?>)</option>
 													<?php endforeach; ?>
 												</select>
@@ -354,7 +356,7 @@
 										<div class="col-md-6 col-sm-6 col-xs-12">
 
 											<select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
-												<?php foreach ($sendto as $data): ?>
+												<?php foreach ($sendto as $data) : ?>
 													<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
 												<?php endforeach; ?>
 											</select>
@@ -368,14 +370,14 @@
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC BOC</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<!--select class="form-control" multiple="multiple" name="cc_memo[]" id="cc_memo">
-									<?php foreach ($sendto as $data): ?>        
+									<?php foreach ($sendto as $data) : ?>        
 										<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option> 
 									<?php endforeach; ?>
 								  </select-->
 
 											<?php if (!empty($memo->nip_cc)) { ?>
 												<!-- <?= $memo->nip_kpd ?>       -->
-												<?php foreach ($sendto as $data): ?>
+												<?php foreach ($sendto as $data) : ?>
 												<?php
 												// $o = explode(';',$memo->nip_kpd);
 												// echo  var_dump($o);
@@ -390,7 +392,7 @@
 												endforeach;
 												?>
 												<select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<?php if (strpos($memo->nip_cc, $data->nip) !== false) {
 															if ($data->nip <> $this->session->userdata('nip')) { ?>
 																<option selected="selected" value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
@@ -406,7 +408,7 @@
 												</select>
 											<?php } else if (empty($memo->nip_cc) && $this->uri->segment(3)) { ?>
 												<select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<?php if (strpos($memo->nip_kpd, $data->nip) !== false) {
 															if ($data->nip <> $this->session->userdata('nip')) {
 														?>
@@ -418,7 +420,7 @@
 												</select>
 											<?php } else { ?>
 												<select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
-													<?php foreach ($sendto as $data): ?>
+													<?php foreach ($sendto as $data) : ?>
 														<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?> (<?php echo $data->nama_jabatan; ?>)</option>
 													<?php endforeach; ?>
 												</select>
@@ -427,7 +429,7 @@
 
 
 											<!--select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
-									<?php foreach ($sendto as $data): ?>        
+									<?php foreach ($sendto as $data) : ?>        
 										<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option> 
 									<?php endforeach; ?>
 								  </select-->

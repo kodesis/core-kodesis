@@ -764,4 +764,9 @@ class M_app extends CI_Model
 		$query = $this->db->get();
 		return $query->result();
 	}
+
+	function list_setting()
+	{
+		return $this->db->get('setting')->result();
+	}
 }

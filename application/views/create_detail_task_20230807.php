@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= base_url($setting[2]->object) ?>" type="image/ico" />
+	<title><?= $setting['3']->object ?> | Bussines Development</title>
 	<title>BDL CORE | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,8 +21,7 @@
 	<link href="<?php echo base_url(); ?>src/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 
 	<!-- bootstrap-progressbar -->
-	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-		rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 	<!-- JQVMap -->
 	<link href="<?php echo base_url(); ?>src/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
 	<!-- bootstrap-daterangepicker -->
@@ -108,9 +109,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img
-								src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42"
-								width="60"><span> Bangun
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> Bangun
 								Desa</span></a>
 					</div>
 
@@ -119,8 +118,7 @@
 					<!-- menu profile quick info -->
 					<div class="profile clearfix">
 						<div class="profile_pic">
-							<img src="<?php echo base_url(); ?>src/images/img.jpg" alt="..."
-								class="img-circle profile_img">
+							<img src="<?php echo base_url(); ?>src/images/img.jpg" alt="..." class="img-circle profile_img">
 						</div>
 						<div class="profile_info">
 							<span>Welcome,</span>
@@ -153,10 +151,8 @@
 
 						<ul class="nav navbar-nav navbar-right">
 							<li class="">
-								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-									aria-expanded="false">
-									<img src="<?php echo base_url(); ?>src/images/img.jpg"
-										alt=""><?php echo $this->session->userdata('nama'); ?>
+								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+									<img src="<?php echo base_url(); ?>src/images/img.jpg" alt=""><?php echo $this->session->userdata('nama'); ?>
 									<span class=" fa fa-angle-down"></span>
 								</a>
 								<ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -168,8 +164,7 @@
 										</a>
 									</li>
 									<li><a href="javascript:;">Help</a></li>
-									<li><a href="<?php echo base_url(); ?>login/logout"><i
-												class="fa fa-sign-out pull-right"></i> Log
+									<li><a href="<?php echo base_url(); ?>login/logout"><i class="fa fa-sign-out pull-right"></i> Log
 											Out</a></li>
 								</ul>
 							</li>
@@ -275,8 +270,7 @@
 									</a>
 								</li>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-										aria-expanded="false">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 										<i class="fa fa-wrench">
 										</i>
 									</a>
@@ -311,17 +305,14 @@
 								<br>
 								<input style="border-radius: 5px;" type="hidden" name="id_task" value="<?= $this->uri->segment(3) ?>">
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Task Name</label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Task Name</label>
 									<div class="col-md-6 col-sm-6 col-xs-12">
-										<input style="border-radius: 5px;" type="text" class="form-control"
-											name="project_name1">
+										<input style="border-radius: 5px;" type="text" class="form-control" name="project_name1">
 									</div>
 								</div>
 								<input style="border-radius: 5px;" type="hidden" value="1" name="row[]">
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Responsible
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Responsible
 										Project </label>
 									<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
 									<div class="col-md-6 col-sm-6 col-xs-12">
@@ -340,15 +331,13 @@
 								</div>
 
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
 										<textarea style="border-radius: 5px;" type="text" class="form-control" name="description1"></textarea>
 									</div>
 								</div>
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Start and due
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Start and due
 										date</label>
 									<div class="col-md-3 col-sm-6 col-xs-12">
 										<input style="border-radius: 5px;" type="date" class="form-control" name="start1">
@@ -358,16 +347,14 @@
 									</div>
 								</div>
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
 										<input style="border-radius: 5px;" multiple type="file" name="att1[]" class="form-control">
 									</div>
 								</div>
 
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Activity</label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Activity</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
 										<select style="border-radius: 5px;" class="form-control" name="activity1" id="">
 											<option value="1">Open</option>
@@ -377,8 +364,7 @@
 									</div>
 								</div>
 								<div class="item form-group">
-									<label style="text-align: left;"
-										class="control-label col-md-3 col-sm-3 col-xs-12">Comment</label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Comment</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
 										<input style="border-radius: 5px;" type="text" class="form-control" name="comment1">
 									</div>
@@ -432,8 +418,7 @@
 									</a>
 								</li>
 								<li class="dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-										aria-expanded="false">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 										<i class="fa fa-wrench">
 										</i>
 									</a>
@@ -470,17 +455,14 @@
 									<br>
 									<input style="border-radius: 5px;" type="hidden" name="id_task" value="<?= $this->uri->segment(3) ?>">
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Task Name</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Task Name</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
-											<input value="<?= $x->task_name ?>" style="border-radius: 5px;" type="text" class="form-control"
-												name="project_name1">
+											<input value="<?= $x->task_name ?>" style="border-radius: 5px;" type="text" class="form-control" name="project_name1">
 										</div>
 									</div>
 									<input style="border-radius: 5px;" type="hidden" value="1" name="row[]">
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Responsible
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Responsible
 											Project </label>
 										<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
 										<div class="col-md-6 col-sm-6 col-xs-12">
@@ -499,15 +481,13 @@
 									</div>
 
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
 										<div class="col-md6 col-sm-6 col-xs-12">
 											<textarea style="border-radius: 5px;" type="text" class="form-control" name="description1"><?= $x->description ?></textarea>
 										</div>
 									</div>
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Start and due
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Start and due
 											date</label>
 										<div class="col-md-3 col-sm-6 col-xs-12">
 											<input style="border-radius: 5px;" type="date" value="<?= $x->start_date ?>" class="form-control" name="start1">
@@ -517,8 +497,7 @@
 										</div>
 									</div>
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
 										<div class="col-md6 col-sm-3 col-xs-12">
 											<input style="border-radius: 5px;" multiple type="file" name="att1[]" class="form-control">
 										</div>
@@ -529,8 +508,7 @@
 									</div>
 
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Activity</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Activity</label>
 										<div class="col-md6 col-sm-6 col-xs-12">
 											<select style="border-radius: 5px;" class="form-control" name="activity1" id="">
 												<option <?= $x->activity == '1' ? 'selected' : '' ?> value="1">Open</option>
@@ -540,8 +518,7 @@
 										</div>
 									</div>
 									<div class="item form-group">
-										<label style="text-align: left;"
-											class="control-label col-md-3 col-sm-3 col-xs-12">Comment</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Comment</label>
 										<div class="col-md6 col-sm-6 col-xs-12">
 											<input style="border-radius: 5px;" value="<?= $x->comment ?>" type="text" class="form-control" name="comment1">
 										</div>

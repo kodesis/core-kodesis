@@ -73,12 +73,61 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+// $db['default'] = array(
+// 	'dsn'	=> '',
+// 	'hostname' => 'kodesis.id',
+// 	'username' => 'kodesisi_admin',
+// 	'password' => 'admin123!@#',
+// 	'database' => 'kodesisi_admin',
+// 	'dbdriver' => 'mysqli',
+// 	'dbprefix' => '',
+// 	'pconnect' => FALSE,
+// 	'db_debug' => (ENVIRONMENT !== 'production'),
+// 	'cache_on' => FALSE,
+// 	'cachedir' => '',
+// 	'char_set' => 'utf8',
+// 	'dbcollat' => 'utf8_general_ci',
+// 	'swap_pre' => '',
+// 	'encrypt' => FALSE,
+// 	'compress' => FALSE,
+// 	'stricton' => FALSE,
+// 	'failover' => array(),
+// 	'save_queries' => TRUE
+// );
+
+// $db['corebank'] = array(
+// 	'dsn'	=> '',
+// 	// 'hostname' => 'localhost',
+// 	// 'username' => 'root',
+// 	// 'password' => '',
+// 	// 'database' => 'corebank',
+// 	'hostname' => 'kodesis.id',
+// 	'username' => 'kodesisi_admin',
+// 	'password' => 'admin123!@#',
+// 	'database' => 'kodesisi_admin1',
+// 	'dbdriver' => 'mysqli',
+// 	'dbprefix' => '',
+// 	'pconnect' => FALSE,
+// 	'db_debug' => (ENVIRONMENT !== 'production'),
+// 	'cache_on' => FALSE,
+// 	'cachedir' => '',
+// 	'char_set' => 'utf8',
+// 	'dbcollat' => 'utf8_general_ci',
+// 	'swap_pre' => '',
+// 	'encrypt' => FALSE,
+// 	'compress' => FALSE,
+// 	'stricton' => FALSE,
+// 	'failover' => array(),
+// 	'save_queries' => TRUE
+// );
+
+
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'kodesis.id',
-	'username' => 'kodesisi_admin',
-	'password' => 'admin123!@#',
-	'database' => 'kodesisi_admin',
+	'hostname' => 'localhost:3307',
+	'username' => 'root',
+	'password' => '',
+	'database' => 'master_local',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -97,14 +146,10 @@ $db['default'] = array(
 
 $db['corebank'] = array(
 	'dsn'	=> '',
-	// 'hostname' => 'localhost',
-	// 'username' => 'root',
-	// 'password' => '',
-	// 'database' => 'corebank',
-	'hostname' => 'kodesis.id',
-	'username' => 'kodesisi_admin',
-	'password' => 'admin123!@#',
-	'database' => 'kodesisi_admin1',
+	'hostname' => 'localhost:3307',
+	'username' => 'root',
+	'password' => '',
+	'database' => 'master_local_corebank',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

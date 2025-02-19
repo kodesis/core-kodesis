@@ -309,8 +309,9 @@
 											</label>
 										</td>
 										<td class="fitwidth">
-											<?php $tgl = $asset_list->tgl_perolehan;
-											echo $newDate = date("d F Y", strtotime($tgl)); ?>
+											<?php
+											$tgl = $asset_list->tgl_perolehan;
+											echo date("d F Y", strtotime($tgl)); ?>
 										</td>
 									</tr>
 									<tr>

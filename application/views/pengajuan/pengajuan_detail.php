@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <?php $setting = $this->db->get('setting')->result(); ?>
 
-  <link rel="icon" href="<?= base_url($setting[2]->object) ?>" type="image/ico" />
-  <title><?= $setting['3']->object ?> | Bussines Development</title>
+  <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+  <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
   <title>Kodesis | Business Development</title>
   <!-- Bootstrap -->
   <link href="<?= base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">

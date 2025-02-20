@@ -516,7 +516,7 @@
                             </div>
                             <div class="x_content">
                                 <!-- <br> -->
-                                <form class="form-label-left input_mask" method="POST" action="<?= base_url('financial/store_financial_entry/multi_kredit') ?>" enctype="multipart/form-data">
+                                <form class="form-label-left input_mask" method="POST" action="<?= base_url('financial/process_financial_entry/multi_kredit') ?>" enctype="multipart/form-data">
 
 
                                     <div class="col-md-6 col-xs-12 form-group has-feedback">

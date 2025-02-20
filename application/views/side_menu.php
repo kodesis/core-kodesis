@@ -30,7 +30,7 @@
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '70') !== false) { ?>
-			<!-- <li>
+			<li>
 				<a><i class="fa fa-edit"></i>External Letter<span class="fa fa-chevron-down"></span></a>
 				<ul class="nav child_menu">
 					<?php $a = $this->session->userdata('level');
@@ -43,7 +43,7 @@
 					<?php } ?>
 
 				</ul>
-			</li> -->
+			</li>
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '60') !== false) { ?>

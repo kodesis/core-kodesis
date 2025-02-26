@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
 	<title>Kodesis | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -104,7 +106,8 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/logo-kodesis.png" alt="..." height="42" width="60"><span> Kodesis</span></a>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
 					<div class="clearfix"></div>
@@ -334,19 +337,19 @@
 											<td><a href="<?= base_url('app/memo_view/' . $data->id) ?>"><?= $data->judul ?></a></td>
 											<td><a href="<?= base_url('app/memo_view/' . $data->id) ?>"><?= date('d/m/y | H:i:s', strtotime($data->tanggal)) ?></a></td>
 											<td><?php
-													if ($this->uri->segment(2) == 'send_memo' or $this->uri->segment(2) == 'send_cari') {
-														$string = substr($data->nip_kpd, 0, -1);
-														$arr_kpd = explode(";", $string);
-														$last = $arr_kpd[0];
-														$sql = "SELECT nama FROM users WHERE nip='$last';";
-														$query = $this->db->query($sql);
-														$result = $query->row();
-														// echo $result->nama;
-														echo '<a href=' . base_url("app/memo_view/" . $data->id) . '>' . $result->nama . '</a>';
-													} else {
-														// echo $data->nama;
-														echo '<a href=' . base_url("app/memo_view/" . $data->id) . '>' . $data->nama . '</a>';
-													} ?>
+												if ($this->uri->segment(2) == 'send_memo' or $this->uri->segment(2) == 'send_cari') {
+													$string = substr($data->nip_kpd, 0, -1);
+													$arr_kpd = explode(";", $string);
+													$last = $arr_kpd[0];
+													$sql = "SELECT nama FROM users WHERE nip='$last';";
+													$query = $this->db->query($sql);
+													$result = $query->row();
+													// echo $result->nama;
+													echo '<a href=' . base_url("app/memo_view/" . $data->id) . '>' . $result->nama . '</a>';
+												} else {
+													// echo $data->nama;
+													echo '<a href=' . base_url("app/memo_view/" . $data->id) . '>' . $data->nama . '</a>';
+												} ?>
 											</td>
 										</p>
 									<?php } else { ?>

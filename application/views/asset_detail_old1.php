@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
 	<title>BDL CORE | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,15 +21,13 @@
 	<link href="<?php echo base_url(); ?>src/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 
 	<!-- bootstrap-progressbar -->
-	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-		rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 	<!-- JQVMap -->
 	<link href="<?php echo base_url(); ?>src/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
 	<!-- bootstrap-daterangepicker -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 	<!-- bootstrap-datetimepicker -->
-	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css"
-		rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
 	<!-- Custom Theme Style -->
 	<link href="<?php echo base_url(); ?>src/build/css/custom.min.css" rel="stylesheet">
 	<!-- footer menu -->
@@ -140,8 +140,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img
-								src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span>
 								Bangun Desa</span></a>
 					</div>
 
@@ -150,8 +149,7 @@
 					<!-- menu profile quick info -->
 					<div class="profile clearfix">
 						<div class="profile_pic">
-							<img src="<?php echo base_url(); ?>src/images/img.jpg" alt="..."
-								class="img-circle profile_img">
+							<img src="<?php echo base_url(); ?>src/images/img.jpg" alt="..." class="img-circle profile_img">
 						</div>
 						<div class="profile_info">
 							<span>Welcome,</span>
@@ -184,10 +182,8 @@
 
 						<ul class="nav navbar-nav navbar-right">
 							<li class="">
-								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-									aria-expanded="false">
-									<img src="<?php echo base_url(); ?>src/images/img.jpg"
-										alt=""><?php echo $this->session->userdata('nama'); ?>
+								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+									<img src="<?php echo base_url(); ?>src/images/img.jpg" alt=""><?php echo $this->session->userdata('nama'); ?>
 									<span class=" fa fa-angle-down"></span>
 								</a>
 								<ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -199,8 +195,7 @@
 										</a>
 									</li>
 									<li><a href="javascript:;">Help</a></li>
-									<li><a href="<?php echo base_url(); ?>login/logout"><i
-												class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+									<li><a href="<?php echo base_url(); ?>login/logout"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
 								</ul>
 							</li>
 
@@ -258,30 +253,25 @@
 									<tr>
 										<td>
 											<div class="item form-group">
-												<label class="col-form-label col-md-3 col-sm-3 label-align"
-													for="first-name">Kode Asset <span class="required">*</span>
+												<label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kode Asset <span class="required">*</span>
 												</label>
 												<?php echo $asset_list->kode; ?>
 											</div>
 											<div class="item form-group">
-												<label class="col-form-label col-md-3 col-sm-3 label-align"
-													for="last-name">Nama Asset <span class="required">*</span>
+												<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Nama Asset <span class="required">*</span>
 												</label>
 												<?php echo $asset_list->nama_asset; ?>
 											</div>
 											<div class="item form-group">
-												<label for="middle-name"
-													class="col-form-label col-md-3 col-sm-3 label-align">Spesifikasi</label>
+												<label for="middle-name" class="col-form-label col-md-3 col-sm-3 label-align">Spesifikasi</label>
 												<?php echo $asset_list->spesifikasi; ?>
 											</div>
 											<div class="item form-group">
-												<label for="middle-name"
-													class="col-form-label col-md-3 col-sm-3 label-align">Lokasi</label>
+												<label for="middle-name" class="col-form-label col-md-3 col-sm-3 label-align">Lokasi</label>
 												<?php echo $asset_list->lokasi; ?>
 											</div>
 											<div class="item form-group">
-												<label for="middle-name"
-													class="col-form-label col-md-3 col-sm-3 label-align">Ruangan</label>
+												<label for="middle-name" class="col-form-label col-md-3 col-sm-3 label-align">Ruangan</label>
 												<?php echo $asset_list->ruangan; ?>
 											</div>
 											<div class="item form-group">
@@ -294,8 +284,7 @@
 										</td>
 										<td>
 											<div class="polaroid">
-												<img src="<?php echo base_url(); ?>app/qrcode_view/<?php echo $asset_list->Id; ?>"
-													alt="5 Terre" style="width:100%">
+												<img src="<?php echo base_url(); ?>app/qrcode_view/<?php echo $asset_list->Id; ?>" alt="5 Terre" style="width:100%">
 											</div>
 										</td>
 									</tr>
@@ -305,8 +294,7 @@
 									<div class="col-md-6 col-sm-6 offset-md-3">
 										<!--button class="btn btn-primary" type="button">Cancel</button>
 										<button class="btn btn-primary" type="reset">Reset</button-->
-										<button type="button" class="btn btn-success" data-toggle="modal"
-											data-target="#myModal1">Update</button>
+										<button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal1">Update</button>
 									</div>
 								</div>
 								<!--div class="ln_solid"></div-->
@@ -346,7 +334,7 @@
 									</thead>
 									<?php
 									$no = 1;
-									foreach ($asset_history as $data):
+									foreach ($asset_history as $data) :
 									?>
 										<!--content here-->
 										<tbody>
@@ -377,8 +365,7 @@
 
 
 			<!-- /page content -->
-			<form data-parsley-validate enctype="multipart/form-data" action="<?php echo base_url(); ?>app/simpan_update"
-				method="post" name="form_fullpayment" id="form_fullpayment" class="form-horizontal form-label-left">
+			<form data-parsley-validate enctype="multipart/form-data" action="<?php echo base_url(); ?>app/simpan_update" method="post" name="form_fullpayment" id="form_fullpayment" class="form-horizontal form-label-left">
 				<div class="modal fade" id="myModal1" role="dialog">
 					<div class="modal-dialog">
 						<!-- Modal content-->
@@ -397,10 +384,7 @@
 											Asset <span class="required">*</span>
 										</label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<input id="nama_asset" class="form-control col-md-7 col-xs-12"
-												data-validate-length-range="6" data-validate-words="1" name="nama_asset"
-												placeholder="" required="required" type="text"
-												value="<?php echo $asset_list->nama_asset; ?>">
+											<input id="nama_asset" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="nama_asset" placeholder="" required="required" type="text" value="<?php echo $asset_list->nama_asset; ?>">
 										</div>
 										<br><br>
 									</div>
@@ -410,9 +394,7 @@
 										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Foto
 										</label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<input id="nama_asset" class="form-control col-md-7 col-xs-12"
-												data-validate-length-range="6" data-validate-words="1" name="foto_asset"
-												placeholder="" type="file">
+											<input id="nama_asset" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="foto_asset" placeholder="" type="file">
 										</div>
 										<br><br>
 									</div>
@@ -432,31 +414,25 @@
 								<?php } ?>
 								<div class="form-group">
 									<div class="item form-group">
-										<label class="col-form-label col-md-3 col-sm-3 label-align"
-											for="last-name">Spesifikasi <span class="required">*</span>
+										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Spesifikasi <span class="required">*</span>
 										</label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<input id="spesifikasi" class="form-control col-md-7 col-xs-12"
-												data-validate-length-range="6" data-validate-words="1"
-												name="spesifikasi" placeholder="" required="required" type="text"
-												value="<?php echo $asset_list->spesifikasi; ?>">
+											<input id="spesifikasi" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="spesifikasi" placeholder="" required="required" type="text" value="<?php echo $asset_list->spesifikasi; ?>">
 										</div>
 										<br><br>
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="item form-group">
-										<label class="col-form-label col-md-3 col-sm-3 label-align"
-											for="last-name">Ruangan <span class="required">*</span>
+										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Ruangan <span class="required">*</span>
 										</label>
 										<!--div class="col-md-9 col-sm-9 col-xs-12">
 					  <input id="ruangan" class="form-control col-md-7 col-xs-12" name="ruangan" placeholder="" required="required" type="text" value="<?php echo $asset_list->ruangan; ?>">
 					</div-->
 
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<select class="js-example-basic-single" style="width:100%;" name="ruangan"
-												id="ruangan" required="required">
-												<?php foreach ($asset_ruang as $data):
+											<select class="js-example-basic-single" style="width:100%;" name="ruangan" id="ruangan" required="required">
+												<?php foreach ($asset_ruang as $data) :
 													if ($data->keterangan == $asset_list->ruangan) { ?>
 														<option value="<?php echo $data->keterangan; ?>" selected>
 															<?php echo $data->keterangan; ?></option>
@@ -473,8 +449,7 @@
 								</div>
 								<div class="form-group">
 									<div class="item form-group">
-										<label class="col-form-label col-md-3 col-sm-3 label-align"
-											for="last-name">Lokasi <span class="required">*</span>
+										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Lokasi <span class="required">*</span>
 										</label>
 										<!--div class="col-md-9 col-sm-9 col-xs-12">
 					  <input id="lokasi" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="lokasi" placeholder="" required="required" type="text" 
@@ -482,9 +457,8 @@
 					</div-->
 
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<select class="form-control js-example-basic-single" style="width:100%;"
-												name="lokasi" id="lokasi" required="required">
-												<?php foreach ($asset_lokasi as $data):
+											<select class="form-control js-example-basic-single" style="width:100%;" name="lokasi" id="lokasi" required="required">
+												<?php foreach ($asset_lokasi as $data) :
 													if ($data->keterangan == $asset_list->lokasi) { ?>
 														<option value="<?php echo $data->keterangan; ?>" selected>
 															<?php echo $data->keterangan; ?></option>
@@ -501,12 +475,9 @@
 								</div>
 								<div class="form-group">
 									<div class="item form-group">
-										<label class="col-form-label col-md-3 col-sm-3 label-align"
-											for="last-name">Detail Perubahan <span class="required">*</span></label>
+										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Detail Perubahan <span class="required">*</span></label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<textarea name="remark" class="form-control" rows="3"
-												placeholder="Please write your information"
-												required="required"></textarea>
+											<textarea name="remark" class="form-control" rows="3" placeholder="Please write your information" required="required"></textarea>
 										</div>
 										<br><br><br><br>
 									</div>
@@ -514,10 +485,8 @@
 							</div>
 							<div class="modal-footer">
 								<div style="text-align: center;">
-									<input id="id_postf" name="id_postf" type="hidden" required="required"
-										value="<?php echo $asset_list->Id; ?>">
-									<input id="kode" name="kode" type="hidden" required="required"
-										value="<?php echo $asset_list->kode; ?>">
+									<input id="id_postf" name="id_postf" type="hidden" required="required" value="<?php echo $asset_list->Id; ?>">
+									<input id="kode" name="kode" type="hidden" required="required" value="<?php echo $asset_list->kode; ?>">
 									<?php
 									echo form_submit('Submit', 'Simpan', 'onclick="return clicked();", class="btn btn-primary"');
 									?>

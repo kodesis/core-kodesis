@@ -79,15 +79,20 @@
             text-align: left;
             vertical-align: middle;
         }
+
+        .select2-container .select2-dropdown .select2-results__option {
+            text-align: left;
+            /* Pastikan opsi dropdown rata kiri */
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
     </style>
 </head>
 
 <header class="header_area sticky-header">
-    <?php
-    if ($this->session->flashdata('message_name')) {
-    ?>
-        <div class="flash-data" data-flashdata="<?= $this->session->flashdata('message_name') ?>"></div>
-    <?php } ?>
+    <div class="flash-data" data-flashdata="<?= $this->session->flashdata('message_name') ?>"></div>
     <div class="flash-data-error" data-flashdata="<?= $this->session->flashdata('message_error') ?>"></div>
     <!-- footer menu -->
     <div class="footer_panel">
@@ -219,114 +224,116 @@
 
             <!-- page content -->
             <div class="right_col" role="main">
+                <div class="page-title">
+                    <div class="title_left" style="width: 30%;">
+                        <h3>List of CoA</h3>
+                    </div>
+
+                    <div class="title_right" style="width: 100%;">
+                        <div class="col-md-12 col-xs-12 form-group pull-right top_search">
+                            <form class="form-horizontal form-label-left" method="post" action="<?= base_url('financial/list_coa') ?>">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="keyword" placeholder="Search for..." value="<?= $keyword ?>">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="submit">Go!</button>
+                                        <a href="<?= base_url('financial/reset/coa') ?>" class="btn btn-warning" style="color:white;">Reset</a>
+                                        <button class="btn btn-primary text-white" data-toggle="modal" data-target="#tambahCoa" type="button" style="color: white;">Tambah CoA</button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <div class="clearfix"></div>
 
                 <!-- Start content-->
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
-                            <div class="x_title">
-                                <h2>Tabel </h2>
-
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <?php
-                                    if ($this->uri->segment(3)) {
-                                    ?>
-                                        <li>
-                                            <button class="btn btn-warning" onclick="document.location='<?= $_SERVER['HTTP_REFERER'] ?>'">Kembali</button>
-                                        </li>
-                                    <?php
-                                    } else {
-                                    ?>
-                                        <li>
-                                            <button class="btn btn-success" onclick="document.location='<?= base_url('financial/neraca_tersimpan') ?>'">Neraca tersimpan</button>
-                                        </li>
-                                        <li>
-                                            <button class="btn btn-primary" data-toggle="modal" data-target="#simpanNeraca">Simpan neraca</button>
-                                        </li>
-                                    <?php
-                                    } ?>
-                                </ul>
-                            </div>
                             <div class="x_content">
-                                <div class="row">
-                                    <div class="col-md-6 col-xs-12">
-                                        <h5>
-                                            <?php ?>
-                                            Neraca: <strong>Rp <?= number_format($neraca) ?></strong>
-                                        </h5>
-                                    </div>
-                                    <div class="col-md-2 col-xs-12">
-                                    </div>
-                                    <div class="col-md-4 col-xs-12">
+                                <div class="table-responsive">
+                                    <table id="" class="table table-striped" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>BB</th>
+                                                <th>Sub BB</th>
+                                                <th>Nama Perkiraan</th>
+                                                <th class="text-center">Nominal</th>
+                                                <!-- <th class="text-center">Aksi</th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            if ($coa) {
+                                                $no = ($this->uri->segment(3)) ? ((($this->uri->segment(3) - 1) * 10) + 1) : '1';
 
-                                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/showReport') ?>">
-                                            <div class="form-group row">
-                                                <select name="jenis_laporan" id="jenis_laporan" class="form-control" onchange="this.form.submit()">
-                                                    <option <?= ($this->input->post('jenis_laporan') == "neraca") ? "selected" : "" ?> value="neraca">Neraca</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "laba_rugi") ? "selected" : "" ?> value="laba_rugi">Laba Rugi</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "invoice_nol") ? "selected" : "" ?> value="invoice_nol">Invoice Nol</option>
-                                                </select>
-                                            </div>
-                                        </form>
-                                    </div>
+                                                foreach ($coa as $i) : ?>
+                                                    <tr>
+                                                        <td><?= $no++ ?>.</td>
+                                                        <td><?= $i['no_bb'] ?></td>
+                                                        <td><?= $i['no_sbb'] ?></td>
+                                                        <td><?= ($i['nama_perkiraan']) ?></td>
+                                                        <td class="text-right"><?= number_format($i['nominal']) ?></td>
+                                                    </tr>
+
+                                                <?php
+                                                endforeach;
+                                            } else {
+                                                ?>
+                                                <tr>
+                                                    <td colspan="5">Tidak ada data yang ditampilkan</td>
+                                                </tr>
+                                            <?php
+                                            } ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-xs-12">
-                                        <h2 class="text-center">Activa</h2>
-                                        <p class="text-right">Total: <strong><?= number_format($sum_activa) ?></strong></p>
-                                        <table id="datatable" class="table" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>No. Coa</th>
-                                                    <th>Nama Coa</th>
-                                                    <th>Nominal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                foreach ($activa as $a) :
-                                                ?>
-                                                    <tr>
-                                                        <td><?= $a->no_sbb ?></td>
-                                                        <td><?= $a->nama_perkiraan ?></td>
-                                                        <td class="text-right"><?= number_format($a->nominal) ?></td>
-                                                    </tr>
-                                                <?php
-                                                endforeach; ?>
-                                            </tbody>
-                                        </table>
+                                    <div class="col-md-12 col-xs-12">
+                                        <!-- <h6>*klik kode untuk lihat neraca tersimpan</h6> -->
                                     </div>
-                                    <div class="col-md-6 col-xs-12">
-                                        <div class="row justify-content-between">
-                                            <h2 class="text-center">Pasiva</h2>
-                                            <p class="text-right">Total: <strong><?= number_format($sum_pasiva) ?></strong></p>
-                                        </div>
-                                        <table id="datatable" class="table" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>No. Coa</th>
-                                                    <th>Nama Coa</th>
-                                                    <th>Nominal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                foreach ($pasiva as $p) :
-                                                ?>
-                                                    <tr>
-                                                        <td><?= $p->no_sbb ?></td>
-                                                        <td><?= $p->nama_perkiraan ?></td>
-                                                        <td class="text-right"><?= number_format(($p->no_sbb == '32020') ? $laba : $p->nominal) ?></td>
-                                                    </tr>
-                                                <?php
-                                                endforeach; ?>
-                                            </tbody>
-                                        </table>
+                                    <div class="col-md-12 col-xs-12 text-right">
+                                        <?= $this->pagination->create_links() ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="tambahCoa">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                                Tambah CoA Baru
+                            </h4>
+                        </div>
+                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/tambahCoa') ?>">
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    <div class="col-12">
+                                        <label for="no_bb" class="form-label">No. BB</label>
+                                        <input type="text" name="no_bb" id="no_bb" class="form-control">
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <label for="no_sbb" class="form-label">No. SBB</label>
+                                        <input type="text" name="no_sbb" id="no_sbb" class="form-control">
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <label for="nama_coa" class="form-label">Nama CoA</label>
+                                        <input type="text" name="nama_coa" id="nama_coa" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">
+                                    Tambah CoA
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -336,37 +343,6 @@
         </div>
 
         <!-- /page content -->
-
-        <!-- footer content -->
-
-        <!-- /footer content -->
-
-        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="simpanNeraca">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">
-                            Simpan neraca
-                        </h4>
-                    </div>
-                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/simpanNeraca') ?>">
-                        <div class="modal-body">
-                            <div class="form-group row">
-                                <div class="col-md-12 col-xs-12">
-                                    <label for="keterangan" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" id="keterangan" class="form-control" oninput="this.value = this.value.toUpperCase()"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">
-                                Simpan neraca
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
     </div>
 
@@ -435,62 +411,23 @@
             });
         });
 
-        $(document).ready(function() {
-            // $('#simpan_neraca').click(function() {
-            //     $.ajax({
-            //         url: '<?php echo base_url('financial/simpanNeraca'); ?>',
-            //         type: 'GET',
-            //         dataType: 'json',
-            //         contentType: "application/json; charset=utf-8",
-            //         headers: {
-            //             'Access-Control-Allow-Origin': '*',
-            //         },
-
-            //         success: function(response) {
-            //             console.log(response);
-            //             if (response.status == 'success') {
-            //                 Swal.fire({
-            //                     title: "Success!! ",
-            //                     text: 'Laporan neraca berhasil disimpan!',
-            //                     icon: "success",
-            //                 });
-            //             } else {
-            //                 Swal.fire({
-            //                     title: "Error!! ",
-            //                     text: 'Gagal menyimpan laporan neraca.',
-            //                     icon: "error",
-            //                 });
-            //             }
-            //         },
-            //         error: function(xhr, status, error) {
-            //             console.log(xhr);
-            //             Swal.fire({
-            //                 title: "Error!! ",
-            //                 text: 'Terjadi kesalahan: ' + error,
-            //                 icon: "error",
-            //             });
-            //         }
-            //     });
-            // });
-        });
 
 
         function formatNumber(number) {
             return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        function format_angka() {
-            var nominal = document.getElementById('input_nominal').value;
+        // function format_angka() {
+        //     var nominal = document.getElementById('input_nominal').value;
 
-            var formattedValue = formatNumber(parseFloat(nominal.split('.').join('')));
+        //     var formattedValue = formatNumber(parseFloat(nominal.split('.').join('')));
 
-            document.getElementById('input_nominal').value = formattedValue;
-        }
+        //     document.getElementById('input_nominal').value = formattedValue;
+        // }
 
         <?php
         if ($this->session->flashdata('message_name')) {
-        ?>
-            Swal.fire({
+        ?> Swal.fire({
                 title: "Success!! ",
                 text: '<?= $this->session->flashdata('message_name') ?>',
                 type: "success",
@@ -499,19 +436,21 @@
         <?php
             // $this->session->sess_destroy('message_name');
             unset($_SESSION['message_name']);
-        } ?>
+        }
 
-        // const flashdata_error = $('<?= $this->session->flashdata("message_error") ?>').data("flashdata");
-        const flashdata_error = $(".flash-data-error").data("flashdata");
-        // const flashdata_error = $('.flash-data').data('flashdata');
-        if (flashdata_error) {
-            Swal.fire({
+        if ($this->session->flashdata('message_error')) {
+        ?> Swal.fire({
                 title: "Error!! ",
-                text: flashdata_error,
+                text: '<?= $this->session->flashdata('message_error') ?>',
                 type: "error",
                 icon: "error",
             });
+        <?php
+            // $this->session->sess_destroy('message_error');
+            unset($_SESSION['message_error']);
         }
+
+        ?>
 
         $(".btn-process").on("click", function(e) {
             e.preventDefault();
@@ -533,6 +472,64 @@
         });
     </script>
 
+    <script>
+        $(document).ready(function() {
+            <?php foreach ($invoices as $i) : ?>
+                    (function() {
+                        var invoiceId = '<?= $i['Id'] ?>';
+
+                        // Event listener saat modal ditampilkan
+                        $('#modal<?= $i['Id'] ?>').on('shown.bs.modal', function() {
+                            var checkbox = $('#status_bayar' + invoiceId);
+                            var nominalBayarInput = $('#nominal_bayar' + invoiceId);
+                            var piutangElement = $('#piutang' + invoiceId);
+
+                            // console.log('Modal shown for invoice ID:', invoiceId); // Debug log
+
+                            if (piutangElement.length > 0 && piutangElement.val() !== '') {
+                                var piutang = parseFloat(piutangElement.val().replace(/,/g, ''));
+
+                                // Fungsi untuk memperbarui nilai nominal bayar
+                                function updateNominalBayar() {
+                                    // console.log('Checkbox checked:', checkbox.is(':checked')); // Debug log
+
+                                    if (checkbox.is(':checked')) {
+                                        nominalBayarInput.val(piutang.toLocaleString('id-ID')).attr('readonly', true);
+                                    } else {
+                                        nominalBayarInput.val('0').attr('readonly', false);
+                                    }
+                                }
+
+                                // Inisialisasi
+                                updateNominalBayar();
+
+                                // Event handler untuk checkbox menggunakan click event
+                                checkbox.on('click', function() {
+                                    updateNominalBayar();
+                                });
+
+                                // Event handler untuk input nominal bayar
+                                nominalBayarInput.on('input', function() {
+                                    var value = $(this).val().replace(/\./g, '').replace(',', '.');
+
+                                    if (value === '' || isNaN(parseFloat(value))) {
+                                        $(this).val('0').attr('readonly', false);
+                                    } else {
+                                        value = parseFloat(value);
+                                        if (value > piutang) {
+                                            alert('Nilai nominal bayar tidak boleh lebih dari piutang.');
+                                            $(this).val(piutang.toLocaleString('id-ID'));
+                                        } else {
+                                            $(this).val(value.toLocaleString('id-ID'));
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    })();
+            <?php endforeach; ?>
+        });
+    </script>
 
 </body>
 

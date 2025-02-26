@@ -74,7 +74,7 @@
 
                <div class="wrap-input100 validate-input" data-validate="Enter No Handphone">
 
-                  <input class="input100" type="text" name="username" placeholder="No. Handphone" autocomplete="off">
+                  <input class="input100" type="text" name="username" placeholder="No. Handphone" autocomplete="off" autofocus>
 
                   <span class="focus-input100" data-placeholder="&#xe830;"></span>
 

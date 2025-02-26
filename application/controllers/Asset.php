@@ -3,22 +3,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Asset extends CI_Controller
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-		
-        //$this->load->model('M_cuti');
+	public function __construct()
+	{
+		parent::__construct();
+
+		//$this->load->model('M_cuti');
 		$this->load->model('m_asset');
 		$this->load->library(array('form_validation', 'session', 'user_agent', 'Api_Whatsapp'));
 		$this->load->library('pagination');
 		$this->load->database();
 		$this->load->helper('url', 'form', 'download');
 
-        if (!$this->session->userdata('nip')) {
-            redirect('login');
-        }
-    }
-	
+		if (!$this->session->userdata('nip')) {
+			redirect('login');
+		}
+	}
+
 	public function item_list()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
@@ -85,7 +85,7 @@ class Asset extends CI_Controller
 			}
 		}
 	}
-	
+
 	function filter_jenis_item()
 	{
 		$jenis = $this->input->post('jenis_item');
@@ -96,13 +96,13 @@ class Asset extends CI_Controller
 	{
 		$this->load->view('export_item');
 	}
-	
+
 	function reset_jenis_item()
 	{
 		$this->session->unset_userdata('filterJenis');
 		redirect('asset/item_list');
 	}
-	
+
 	public function item_detail()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
@@ -135,7 +135,7 @@ class Asset extends CI_Controller
 			}
 		}
 	}
-	
+
 	public function item_cari()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
@@ -205,7 +205,4 @@ class Asset extends CI_Controller
 			}
 		}
 	}
-	
 }
-
-?>

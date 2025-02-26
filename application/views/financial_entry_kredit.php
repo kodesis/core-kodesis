@@ -16,7 +16,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+    <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+    <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
 
     <title>Kodesis | Business Development</title>
 
@@ -208,7 +210,10 @@
 
                     <div class="navbar nav_title" style="border: 0;">
 
-                        <a href="<?= base_url(); ?>" class="site_title"><img src="<?= base_url(); ?>img/logo-kodesis.png" alt="..." height="42" width="60"><span> Kodesis</span></a>
+                        <a href="<?php echo base_url(); ?>" class="site_title">
+                            <img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+                            <span><?= $this->session->userdata('nama_singkat') ?></span>
+                        </a>
 
                     </div>
 
@@ -511,7 +516,7 @@
                             </div>
                             <div class="x_content">
                                 <!-- <br> -->
-                                <form class="form-label-left input_mask" method="POST" action="<?= base_url('financial/store_financial_entry/multi_debit') ?>" enctype="multipart/form-data">
+                                <form class="form-label-left input_mask" method="POST" action="<?= base_url('financial/process_financial_entry/multi_debit') ?>" enctype="multipart/form-data">
 
 
                                     <table class="table">

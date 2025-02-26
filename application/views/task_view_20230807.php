@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
 	<title>BDL CORE | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,8 +21,7 @@
 	<link href="<?php echo base_url(); ?>src/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 
 	<!-- bootstrap-progressbar -->
-	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css"
-		rel="stylesheet">
+	<link href="<?php echo base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 	<!-- JQVMap -->
 	<link href="<?php echo base_url(); ?>src/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
 	<!-- bootstrap-daterangepicker -->
@@ -119,8 +120,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img
-								src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> Bangun
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> Bangun
 								Desa</span></a>
 					</div>
 
@@ -162,10 +162,8 @@
 
 						<ul class="nav navbar-nav navbar-right">
 							<li class="">
-								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
-									aria-expanded="false">
-									<img src="<?php echo base_url(); ?>src/images/img.jpg"
-										alt=""><?php echo $this->session->userdata('nama'); ?>
+								<a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+									<img src="<?php echo base_url(); ?>src/images/img.jpg" alt=""><?php echo $this->session->userdata('nama'); ?>
 									<span class=" fa fa-angle-down"></span>
 								</a>
 								<ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -194,8 +192,7 @@
 								<ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
 									<li>
 										<a>
-											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg"
-													alt="Profile Image" /></span>
+											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
 											<span>
 												<span>John Smith</span>
 												<span class="time">3 mins ago</span>
@@ -207,8 +204,7 @@
 									</li>
 									<li>
 										<a>
-											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg"
-													alt="Profile Image" /></span>
+											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
 											<span>
 												<span>John Smith</span>
 												<span class="time">3 mins ago</span>
@@ -220,8 +216,7 @@
 									</li>
 									<li>
 										<a>
-											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg"
-													alt="Profile Image" /></span>
+											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
 											<span>
 												<span>John Smith</span>
 												<span class="time">3 mins ago</span>
@@ -233,8 +228,7 @@
 									</li>
 									<li>
 										<a>
-											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg"
-													alt="Profile Image" /></span>
+											<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
 											<span>
 												<span>John Smith</span>
 												<span class="time">3 mins ago</span>
@@ -345,10 +339,8 @@
 												<td> <?= $x->due_date ?></td>
 												<td> <?= $activity ?></td>
 												<td>
-													<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>"
-														class="btn btn-xs" style="background-color: white;">Detail</a>
-													<a href="<?= base_url('task/card_edit/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>"
-														class="btn btn-xs" style="background-color: black;color:white;">Edit</a>
+													<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
+													<a href="<?= base_url('task/card_edit/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: black;color:white;">Edit</a>
 												</td>
 											</tr>
 										<?php } else {
@@ -377,8 +369,7 @@
 												<td> <?= $activity ?></td>
 												<!-- <td> <?= $x->comment ?></td> -->
 												<td>
-													<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>"
-														class="btn btn-xs" style="background-color: white;">Detail</a>
+													<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
 													<i style="color: red;" class="fa fa-circle"></i>
 												</td>
 											</tr>

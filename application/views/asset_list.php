@@ -7,7 +7,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
 	<title>Kodesis | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -106,7 +108,8 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/logo-kodesis.png" alt="..." height="42" width="60"><span> Kodesis</span></a>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
 					<div class="clearfix"></div>
@@ -385,7 +388,7 @@
 											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Kode <span class="required">*</span>
 											</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<input id="kode" class="form-control col-md-12 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="kode" placeholder="" required="required" type="text">
+												<input id="kode" class="form-control col-md-12 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="kode" placeholder="" type="text">
 											</div>
 											<br><br>
 										</div>
@@ -395,7 +398,7 @@
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Tgl Perolehan <span class="required">*</span></label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
 											<div class='input-group date' id='myDatepicker'>
-												<input type='text' id='date_pic' name='date_pic' class="form-control" placeholder="yyyy-mm-dd" data-validate-words="1" required="required" />
+												<input type='text' id='date_pic' name='date_pic' class="form-control" placeholder="yyyy-mm-dd" data-validate-words="1" />
 												<span class="input-group-addon">
 													<span class="glyphicon glyphicon-calendar"></span>
 												</span>
@@ -425,7 +428,7 @@
 											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Nama Asset <span class="required">*</span>
 											</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<input id="nama_asset" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="nama_asset" placeholder="" required="required" type="text">
+												<input id="nama_asset" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="nama_asset" placeholder="" type="text">
 											</div>
 											<br><br>
 										</div>
@@ -445,7 +448,7 @@
 											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Spesifikasi <span class="required">*</span>
 											</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<input id="spesifikasi" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="spesifikasi" placeholder="" required="required" type="text">
+												<input id="spesifikasi" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="spesifikasi" placeholder="" type="text">
 											</div>
 											<br><br>
 										</div>
@@ -455,7 +458,7 @@
 										<div class="item form-group">
 											<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Ruangan</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<select class="form-control js-example-basic-single" style="width:100%;" name="ruangan" id="ruangan" required="required">
+												<select class="form-control js-example-basic-single" style="width:100%;" name="ruangan" id="ruangan">
 													<?php foreach ($asset_ruang as $data) : ?>
 														<option value="<?php echo $data->keterangan; ?>"><?php echo $data->keterangan; ?></option>
 													<?php endforeach; ?>
@@ -467,7 +470,7 @@
 										<div class="item form-group">
 											<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Lokasi</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<select class="form-control js-example-basic-single" style="width:100%;" name="lokasi" id="lokasi" required="required">
+												<select class="form-control js-example-basic-single" style="width:100%;" name="lokasi" id="lokasi">
 													<?php foreach ($asset_lokasi as $data) : ?>
 														<option value="<?php echo $data->keterangan; ?>"><?php echo $data->keterangan; ?></option>
 													<?php endforeach; ?>
@@ -480,7 +483,7 @@
 											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Jumlah <span class="required">*</span>
 											</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<input id="jumlah" class="form-control col-md-7 col-xs-12" data-validate-length-range="1" data-validate-words="1" name="jumlah" placeholder="" required="required" type="number">
+												<input id="jumlah" class="form-control col-md-7 col-xs-12" data-validate-length-range="1" data-validate-words="1" name="jumlah" placeholder="" type="number">
 											</div>
 											<br><br>
 										</div>
@@ -507,7 +510,7 @@
 												<div class="input-group">
 													<span class="input-group-addon">Rp
 													</span>
-													<input id="salary" class="uang form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="salary" placeholder="" required="required" type="text">
+													<input id="salary" class="uang form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="salary" placeholder="" type="text">
 												</div>
 											</div>
 											<br><br>
@@ -518,7 +521,67 @@
 											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Umur <span class="required">*</span>
 											</label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<input id="jumlah" class="form-control col-md-7 col-xs-12" data-validate-length-range="1" data-validate-words="1" name="umur" placeholder="" required="required" type="number">
+												<input id="jumlah" class="form-control col-md-7 col-xs-12" data-validate-length-range="1" data-validate-words="1" name="umur" placeholder="" type="number">
+											</div>
+											<br><br>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="item form-group">
+											<label class="col-form-label col-md-3 col-sm-3 label-align" for="coa_asset">COA Asset<span class="required">*</span>
+											</label>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<select name="coa_asset" class="form-control js-example-basic-single" style="width: 100%;">
+													<option value=""> :: PILIH COA ASSET ::</option>
+													<?php foreach ($coa_list as $cl) : ?>
+														<option value="<?= $cl['no_sbb'] ?>"><?= $cl['no_sbb'] . ' - ' . $cl['nama_perkiraan'] ?></option>
+													<?php endforeach ?>
+												</select>
+											</div>
+											<br><br>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="item form-group">
+											<label class="col-form-label col-md-3 col-sm-3 label-align" for="coa_beban">COA Beban<span class="required">*</span>
+											</label>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<select name="coa_beban" class="form-control js-example-basic-single" style="width: 100%;">
+													<option value=""> :: PILIH COA BEBAN ::</option>
+													<?php foreach ($coa_list as $cl) : ?>
+														<option value="<?= $cl['no_sbb'] ?>"><?= $cl['no_sbb'] . ' - ' . $cl['nama_perkiraan'] ?></option>
+													<?php endforeach ?>
+												</select>
+											</div>
+											<br><br>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="item form-group">
+											<label class="col-form-label col-md-3 col-sm-3 label-align" for="coa_kas">COA Kas<span class="required">*</span>
+											</label>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<select name="coa_kas" class="form-control js-example-basic-single" style="width: 100%;">
+													<option value=""> :: PILIH COA KAS ::</option>
+													<?php foreach ($coa_list as $cl) : ?>
+														<option value="<?= $cl['no_sbb'] ?>"><?= $cl['no_sbb'] . ' - ' . $cl['nama_perkiraan'] ?></option>
+													<?php endforeach ?>
+												</select>
+											</div>
+											<br><br>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="item form-group">
+											<label class="col-form-label col-md-3 col-sm-3 label-align" for="coa_penyusutan">COA Penyusutan<span class="required">*</span>
+											</label>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<select name="coa_penyusutan" class="form-control js-example-basic-single" style="width: 100%;">
+													<option value=""> :: PILIH COA PENYUSUTAN ::</option>
+													<?php foreach ($coa_list as $cl) : ?>
+														<option value="<?= $cl['no_sbb'] ?>"><?= $cl['no_sbb'] . ' - ' . $cl['nama_perkiraan'] ?></option>
+													<?php endforeach ?>
+												</select>
 											</div>
 											<br><br>
 										</div>
@@ -527,17 +590,15 @@
 										<div class="item form-group">
 											<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Detail <span class="required">*</span></label>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-												<textarea name="remark" class="form-control" rows="3" placeholder="Please write your information" required="required"></textarea>
+												<textarea name="remark" class="form-control" rows="3" placeholder="Please write your information"></textarea>
 											</div>
 											<br><br><br><br>
 										</div>
 									</div>
 								</div>
 								<div class="modal-footer">
-									<div style="text-align: center;">
-										<?php
-										echo form_submit('Submit', 'Simpan', 'onclick="return clicked();", class="btn btn-primary"');
-										?>
+									<div>
+										<button type="submit" class="btn btn-primary simpan">Simpan</button>
 										<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 									</div>
 								</div>
@@ -597,6 +658,7 @@
 				<!-- Select2 -->
 				<link rel="stylesheet" href="<?php echo base_url(); ?>src/select2/css/select2.min.css">
 				<script type="text/javascript" src="<?php echo base_url(); ?>src/select2/js/select2.min.js"></script>
+				<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 				<!-- Custom Theme Scripts -->
 				<script src="<?php echo base_url(); ?>src/build/js/custom.min.js"></script>
 
@@ -615,6 +677,74 @@
 						$('.uang').mask('000,000,000,000', {
 							reverse: true
 						});
+
+						$('.simpan').click(function(e) {
+							e.preventDefault();
+							var parent = $(this).parents("form");
+							var url = parent.attr("action");
+							console.log(parent);
+							var formData = new FormData(parent[0]);
+							Swal.fire({
+								title: "Are you sure?",
+								text: "You want to submit the form?",
+								icon: "warning",
+								showCancelButton: true,
+								confirmButtonColor: "#3085d6",
+								cancelButtonColor: "#d33",
+								confirmButtonText: "Yes",
+							}).then((result) => {
+								if (result.isConfirmed) {
+									$.ajax({
+										url: url,
+										method: "POST",
+										data: formData,
+										processData: false,
+										contentType: false,
+										dataType: "JSON",
+										beforeSend: () => {
+											Swal.fire({
+												title: "Loading....",
+												timerProgressBar: true,
+												allowOutsideClick: false,
+												didOpen: () => {
+													Swal.showLoading();
+												},
+											});
+										},
+										success: function(res) {
+											if (res.success) {
+												Swal.fire({
+													icon: "success",
+													title: `${res.msg}`,
+													showConfirmButton: false,
+													timer: 1500,
+												}).then(function() {
+													Swal.close();
+													location.href = res.reload
+												});
+											} else {
+												Swal.fire({
+													icon: "error",
+													title: `${res.msg}`,
+													showConfirmButton: false,
+													timer: 1500,
+												}).then(function() {
+													Swal.close();
+												});
+											}
+										},
+										error: function(xhr, status, error) {
+											Swal.fire({
+												icon: "error",
+												title: `${error}`,
+												showConfirmButton: false,
+												timer: 1500,
+											});
+										},
+									});
+								}
+							});
+						})
 					})
 				</script>
 

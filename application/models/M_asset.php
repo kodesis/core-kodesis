@@ -36,7 +36,7 @@ class M_asset extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->num_rows();
 	}
-	
+
 	function item_cari_pagination($limit, $start, $st = NULL)
 	{
 		if ($st == "NIL") $st = "";
@@ -45,7 +45,7 @@ class M_asset extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->result();
 	}
-	
+
 	function item_cari_count($st = NULL)
 	{
 		if ($st == "NIL") $st = "";
@@ -54,6 +54,4 @@ class M_asset extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->num_rows();
 	}
-	
 }
-?>

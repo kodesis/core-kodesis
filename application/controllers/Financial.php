@@ -32,7 +32,7 @@ class Financial extends CI_Controller
     {
     }
 
-    public function financial_entry()
+    public function financial_entry($jenis = NULL)
     {
         $nip = $this->session->userdata('nip');
         $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
@@ -51,55 +51,71 @@ class Financial extends CI_Controller
             'count_inbox2' => $result2,
         ];
 
-        $this->load->view('financial_entry', $data);
+
+
+        if ($jenis == "debit") {
+            $this->load->view('financial_entry_debit', $data);
+        } else if ($jenis == "kredit") {
+            $this->load->view('financial_entry_kredit', $data);
+        } else {
+            $this->load->view('financial_entry', $data);
+        }
     }
 
-    public function process_financial_entry($jenis = Null)
+    public function process_financial_entry($jenis = null)
     {
+        $keterangan = trim($this->input->post('input_keterangan'));
+        $tanggal_transaksi = $this->input->post('tanggal');
+
+        $this->db->trans_start(); // Mulai transaksi
+        $id_invoice = NULL;
+
         if ($jenis == "multi_kredit") {
-            $coa_debit = $this->input->post('neraca_debit');
+            $coa_debit  = $this->input->post('neraca_debit');
             $coa_kredit = $this->input->post('accounts');
-            $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('nominals'));
-            $jenis_fe = $jenis;
-        } else if ($jenis == "multi_debit") {
-            $coa_debit = $this->input->post('accounts');
+            $nominal    = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('nominals'));
+
+            if (is_array($coa_kredit) && is_array($nominal)) {
+                foreach ($coa_kredit as $i => $kredit) {
+                    $this->posting($coa_debit, $kredit, $keterangan, $nominal[$i], $tanggal_transaksi, $id_invoice);
+                }
+            }
+        } elseif ($jenis == "multi_debit") {
+            $coa_debit  = $this->input->post('accounts');
             $coa_kredit = $this->input->post('neraca_kredit');
-            $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('nominals'));
-            $jenis_fe = $jenis;
+            $nominal    = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('nominals'));
+
+            if (is_array($coa_debit) && is_array($nominal)) {
+                foreach ($coa_debit as $i => $debit) {
+                    $this->posting($debit, $coa_kredit, $keterangan, $nominal[$i], $tanggal_transaksi, $id_invoice);
+                }
+            }
         } else {
-            $coa_debit = $this->input->post('neraca_debit');
+            $coa_debit  = $this->input->post('neraca_debit');
             $coa_kredit = $this->input->post('neraca_kredit');
 
             if ($coa_debit == $coa_kredit) {
                 $this->session->set_flashdata('message_error', 'CoA Debit dan Kredit tidak boleh sama');
                 redirect('financial/financial_entry');
             }
+
             $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('input_nominal'));
-            $jenis_fe = "single";
+            $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal_transaksi, $id_invoice);
         }
 
-        // $coa_debit = $this->input->post('neraca_debit');
-        // $coa_kredit = $this->input->post('neraca_kredit');
+        $this->db->trans_complete(); // Selesaikan transaksi
 
-        // if ($coa_debit == $coa_kredit) {
-        //     $this->session->set_flashdata('message_error', 'CoA Debit dan Kredit tidak boleh sama');
-        //     redirect('financial/financial_entry');
-        // }
-        // $nominal = preg_replace('/[^a-zA-Z0-9\']/', '', $this->input->post('input_nominal'));
-
-        $keterangan = trim($this->input->post('input_keterangan'));
-        $tanggal = $this->input->post('tanggal');
-
-        if (!$this->input->post()) {
-            $this->session->set_flashdata('message_error', 'Gagal Input');
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('message_error', 'Transaksi gagal, silakan coba lagi.');
         } else {
-            $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $jenis_fe);
-
-            $this->session->set_flashdata('message_name', 'Financial entry success.');
+            $this->db->trans_commit();
+            $this->session->set_flashdata('message_name', 'Transaksi berhasil.');
         }
 
         redirect('financial/financial_entry');
     }
+
 
     public function upload_financial_entry()
     {
@@ -497,9 +513,6 @@ class Financial extends CI_Controller
         $total_denganpph = $this->convertToNumber($this->input->post('total_denganpph'));
         $nominal_pendapatan = $this->convertToNumber($this->input->post('nominal_pendapatan'));
 
-        // print_r($id);
-        // exit;
-
         $no_inv = $this->input->post('no_invoice');
 
         // $status_pendapatan = $this->input->post('status_pendapatan');
@@ -509,8 +522,8 @@ class Financial extends CI_Controller
         $coa_debit = $this->input->post('coa_debit');
         $coa_kredit = $this->input->post('coa_kredit');
 
+        $pph = ($opsi_pph == 1) ? '0.02' : 0;
 
-        $pph = isset($opsi_pph) ? '0.02' : 0;
 
         $tgl_invoice = $this->input->post('tgl_invoice');
 
@@ -544,7 +557,17 @@ class Financial extends CI_Controller
             'status_pendapatan' => '1'
         ];
 
-        $this->db->trans_begin();
+        $this->cb->trans_begin();
+
+        $inv =  $this->m_invoice->showById($id);
+
+        $keterangan_lama = "Jurnal balik edit invoice " . $inv['no_invoice'];
+
+        // Jurnal balik sebelum update invoice
+        $coa_kredit_lama = $inv['coa_kredit'];
+        $coa_debit_lama = $inv['coa_debit'];
+
+        $this->posting($coa_kredit_lama, $coa_debit_lama, $keterangan_lama, $inv['nominal_pendapatan'], $inv['tanggal_invoice'], $inv['Id']);
 
         if (!$this->m_invoice->update_invoice($id, $invoice_data)) {
             $this->cb->trans_rollback();
@@ -557,9 +580,11 @@ class Financial extends CI_Controller
         $totals = $this->input->post('total');
         $total_amounts = $this->input->post('total_amount');
 
+        // Hapus detail invoice lama
+        $this->cb->where('id_invoice', $id)->delete('invoice_details');
+
         // Handle detail data
         if (!empty($items)) {
-            $this->cb->where('id_invoice', $id)->delete('invoice_details');
             $detail_data = [];
 
             for ($i = 0; $i < count($items); $i++) {
@@ -573,29 +598,40 @@ class Financial extends CI_Controller
                 ];
             }
 
-            if (!empty($detail_data) && !$this->m_invoice->insert_batch($detail_data)) {
-                $this->cb->trans_rollback();
-                $this->session->set_flashdata('message_name', 'Failed to insert invoice details.');
-                redirect("financial/invoice");
+            if (!empty($detail_data)) {
+                if (!$this->m_invoice->insert_batch($detail_data)) {
+                    $this->cb->trans_rollback();
+                    $this->session->set_flashdata('message_name', 'Failed to insert invoice details.');
+                    redirect("financial/invoice");
+                }
             }
         }
 
         // Update jurnal
-        $dt_jurnal = [
-            'tanggal' => $tgl_invoice,
-            'akun_debit' => $coa_debit,
-            'jumlah_debit' => $nominal_bayar,
-            'akun_kredit' => $coa_kredit,
-            'jumlah_kredit' => $nominal_bayar,
-            'keterangan' => trim($keterangan),
-            'created_by' => $id_user,
-        ];
+        // $dt_jurnal = [
+        //     'tanggal' => $tgl_invoice,
+        //     'akun_debit' => $coa_debit,
+        //     'jumlah_debit' => $nominal_bayar,
+        //     'akun_kredit' => $coa_kredit,
+        //     'jumlah_kredit' => $nominal_bayar,
+        //     'keterangan' => trim($keterangan),
+        //     'created_by' => $id_user,
+        // ];
 
-        if (!$this->cb->where('id_invoice', $id)->update('jurnal_neraca', $dt_jurnal)) {
-            $this->cb->trans_rollback();
-            $this->session->set_flashdata('message_name', 'Failed to update journal.');
-            redirect("financial/invoice");
-        }
+        // if (!$this->cb->where('id_invoice', $id)->update('jurnal_neraca', $dt_jurnal)) {
+        //     $this->cb->trans_rollback();
+        //     $this->session->set_flashdata('message_name', 'Failed to update journal.');
+        //     redirect("financial/invoice");
+        // }
+
+        $this->posting(
+            $coa_debit,
+            $coa_kredit,
+            $keterangan,
+            $total_denganpph,
+            $tgl_invoice,
+            $id
+        );
 
         // Commit transaksi
         if ($this->cb->trans_status() === FALSE) {
@@ -1304,6 +1340,137 @@ class Financial extends CI_Controller
             $this->session->set_flashdata('message_name', 'The invoice has been successfully void. ' . $no_inv);
             // After that you need to used redirect function instead of load view such as 
             redirect("financial/invoice");
+        }
+    }
+
+    public function list_coa()
+    {
+        $keyword = ($this->input->post('keyword')) ? trim($this->input->post('keyword')) : (($this->session->userdata('search')) ? $this->session->userdata('search') : '');
+        if ($keyword === null) $keyword = $this->session->userdata('search');
+        else $this->session->set_userdata('search', $keyword);
+
+        $config = [
+            'base_url' => site_url('financial/list_coa'),
+            'total_rows' => $this->m_coa->count($keyword, 'v_coa_all'),
+            'per_page' => 25,
+            'uri_segment' => 3,
+            'num_links' => 1,
+            'full_tag_open' => '<ul class="pagination" style="margin: 0 0">',
+            'full_tag_close' => '</ul>',
+            'first_link' => true,
+            'last_link' => true,
+            'first_tag_open' => '<li>',
+            'first_tag_close' => '</li>',
+            'first_link' => 'First',
+            'prev_link' => '«',
+            'prev_tag_open' => '<li class="prev">',
+            'prev_tag_close' => '</li>',
+            'next_link' => '»',
+            'last_link' => 'Last',
+            'next_tag_open' => '<li>',
+            'next_tag_close' => '</li>',
+            'last_tag_open' => '<li>',
+            'last_tag_close' => '</li>',
+            'cur_tag_open' => '<li class="active"><a href="#">',
+            'cur_tag_close' => '</a></li>',
+            'num_tag_open' => '<li>',
+            'num_tag_close' => '</li>',
+            'use_page_numbers' => TRUE,
+            // 'enable_query_strings' => TRUE,
+            // 'page_query_string' => TRUE,
+            // 'query_string_segment' => 'page'
+        ];
+
+
+        $this->pagination->initialize($config);
+
+        $page = $this->uri->segment(3) ? ($this->uri->segment(3) - 1) * $config['per_page'] : 0;
+        // $invoices = $this->m_invoice->list_invoice($config["per_page"], $page, $keyword);
+        $coa = $this->m_coa->list_coa_paginate($config["per_page"], $page, $keyword);
+
+        $nip = $this->session->userdata('nip');
+        $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+        $query = $this->db->query($sql);
+        $result = $query->row_array()['COUNT(Id)'];
+
+        $sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+        $query2 = $this->db->query($sql2);
+        $result2 = $query2->row_array()['COUNT(id)'];
+
+        $data = [
+            'page' => $page,
+            'coa' => $coa,
+            'count_inbox' => $result,
+            'count_inbox2' => $result2,
+            'keyword' => $keyword,
+            'title' => "List CoA",
+        ];
+
+        $this->load->view('list_coa', $data);
+    }
+
+    public function tambahCoa()
+    {
+        $no_bb = $this->input->post('no_bb');
+        $no_sbb = $this->input->post('no_sbb');
+        $nama_coa = $this->input->post('nama_coa');
+
+        $cek_no_sbb = $this->m_coa->isAvailable('no_sbb', $no_sbb);
+        $cek_nama_coa = $this->m_coa->isAvailable('nama_perkiraan', $nama_coa);
+
+        if ($cek_no_sbb) {
+            $this->session->set_flashdata('message_error', 'No. ' . $no_sbb . ' sudah ada');
+            redirect($_SERVER['HTTP_REFERER']);
+        } else if ($cek_nama_coa) {
+            $this->session->set_flashdata('message_error', 'CoA ' . $nama_coa . ' sudah ada');
+            redirect($_SERVER['HTTP_REFERER']);
+        } else {
+
+            $substr_coa = substr($no_sbb, 0, 1);
+
+            if ($substr_coa == "1" || $substr_coa == "5" || $substr_coa == "6" || $substr_coa == "7" || $substr_coa == "5" || $substr_coa == "6") {
+                $posisi = 'AKTIVA';
+            } else {
+                $posisi = 'PASIVA';
+            }
+
+            // cek tabel
+            if ($substr_coa == "1" || $substr_coa == "2" || $substr_coa == "3") {
+                $tabel = "t_coa_sbb";
+
+                $data = [
+                    'no_bb' => $no_bb,
+                    'no_sbb' => $no_sbb,
+                    'nama_perkiraan' => $nama_coa,
+                    'posisi' => $posisi,
+                ];
+            } else if ($substr_coa == "4" || $substr_coa == "5" || $substr_coa == "6" || $substr_coa == "7" || $substr_coa == "8" || $substr_coa == "9") {
+                $tabel = "t_coalr_sbb";
+                $data = [
+                    'no_lr_bb' => $no_bb,
+                    'no_lr_sbb' => $no_sbb,
+                    'nama_perkiraan' => $nama_coa,
+                    'posisi' => $posisi,
+                ];
+            } else {
+                $this->session->set_flashdata('message_error', 'Format nomor CoA ' . $no_sbb . ' tidak sesuai.');
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+
+
+            $this->cb->trans_begin();
+
+            $query = $this->cb->insert($tabel, $data);
+
+            if ($query) {
+                $this->cb->trans_commit();
+                $this->session->set_flashdata('message_name', 'CoA ' . $no_sbb . ' berhasil ditambahkan.');
+                redirect($_SERVER['HTTP_REFERER']);
+            } else {
+                $this->cb->trans_rollback();
+                $this->session->set_flashdata('message_error', 'CoA ' . $no_sbb . ' gagal disimpan. Ket:' . $this->cb->error());
+                redirect($_SERVER['HTTP_REFERER']);
+            }
         }
     }
 

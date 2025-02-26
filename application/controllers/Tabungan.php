@@ -10,6 +10,7 @@ class Tabungan extends CI_Controller
         $this->load->helper('url');
         $this->load->model('m_login');
         $this->load->model('tabungan_m', 'tabungan');
+        $this->load->model('member_m', 'member');
         $this->load->database();
     }
 
@@ -171,6 +172,7 @@ class Tabungan extends CI_Controller
             // $data['count_inbox2'] = $result4;
             $data['nasabah'] = $this->tabungan->get_nasabah();
             $data['tabungan'] = $this->tabungan->get_jenis_tabungan();
+            $data['cabang'] = $this->member->get_cabang();
 
             $this->load->view('tabungan_form', $data);
         }
@@ -221,6 +223,7 @@ class Tabungan extends CI_Controller
 
             $data['nasabah'] = $this->tabungan->get_nasabah();
             $data['tabungan'] = $this->tabungan->get_jenis_tabungan();
+            $data['cabang'] = $this->member->get_cabang();
 
             $data['detail'] = $this->tabungan->get_detail_id($id);
 
@@ -240,6 +243,7 @@ class Tabungan extends CI_Controller
             'nominal_blokir' => $this->input->post('nominal_blokir'),
             'pos_rate' => $this->input->post('pos_rate'),
             'nolsp' => $this->input->post('nolsp'),
+            'cabang' => $this->input->post('cabang'),
         );
         $this->cb->insert('t_tabungan', $data_insert);
         redirect('tabungan');
@@ -259,6 +263,7 @@ class Tabungan extends CI_Controller
             'nominal_blokir' => $this->input->post('nominal_blokir'),
             'pos_rate' => $this->input->post('pos_rate'),
             'nolsp' => $this->input->post('nolsp'),
+            'cabang' => $this->input->post('cabang'),
         );
         $this->cb->where('no_tabungan', $this->input->post('id_tabungan')); // Ensure to specify the record to update
         $this->cb->update('t_tabungan', $data_insert);

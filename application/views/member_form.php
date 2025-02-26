@@ -9,6 +9,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="images/favicon.ico" type="image/ico" />
 	<title>Kodesis | Business Development</title>
+	<!-- Select2 -->
+	<link href="<?php echo base_url(); ?>src/vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
+	<link href="<?php echo base_url(); ?>src/vendors/select2/dist/css/select2.css" rel="stylesheet" />
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Font Awesome -->
@@ -242,7 +245,7 @@
 									</div>
 									<div class="col-md-6">
 										<label for="kode_ao">Kode AO</label>
-										<select class="form-control" name="kode_ao" id="kode_ao">
+										<select class="form-control select2" name="kode_ao" id="kode_ao">
 											<option selected disabled>-- Pilih Kode AO --</option>
 											<?php
 											foreach ($karyawan as $k) {
@@ -268,7 +271,7 @@
 									</div>
 									<div class="col-md-6">
 										<label for="tempat_lahir">Cabang</label>
-										<select class="form-control" name="cabang" id="cabang">
+										<select class="form-control select2" name="cabang" id="cabang">
 											<option selected disabled>-- Pilih Cabang --</option>
 											<?php
 											foreach ($cabang as $c) {
@@ -283,13 +286,13 @@
 										<label for="kota">Kota</label>
 										<input type="text" class="form-control" name="kota" id="kota">
 									</div>
-									<div class="col-md-6">
+									<!-- <div class="col-md-6">
 										<label for="tgl_pendaftaran">Tanggal Pendaftaran</label>
 										<input type="date" class="form-control" name="tgl_pendaftaran" id="tgl_pendaftaran">
-									</div>
+									</div> -->
 									<div class="col-md-6">
 										<label for="tipe_nasabah">Tipe Nasabah</label>
-										<select class="form-control" name="tipe_nasabah" id="tipe_nasabah">
+										<select class="form-control select2" name="tipe_nasabah" id="tipe_nasabah">
 											<option selected disabled>-- Pilih Tipe Nasabah --</option>
 											<?php
 											foreach ($tipe as $t) {
@@ -302,7 +305,7 @@
 									</div>
 									<div class="col-md-6">
 										<label for="segmen_nasabah">Segmen Nasabah</label>
-										<select class="form-control" name="segmen_nasabah" id="segmen_nasabah">
+										<select class="form-control select2" name="segmen_nasabah" id="segmen_nasabah">
 											<option selected disabled>-- Pilih Segmen Nasabah --</option>
 											<?php
 											foreach ($segmen as $s) {
@@ -317,10 +320,10 @@
 										<label for="warga_negara">Warga Negara</label>
 										<input type="text" class="form-control" name="warga_negara" id="warga_negara">
 									</div>
-									<div class="col-md-6">
+									<!-- <div class="col-md-6">
 										<label for="no_cib">No CIB</label>
 										<input type="text" class="form-control" name="no_cib" id="no_cib">
-									</div>
+									</div> -->
 								</div>
 								<button type="submit" class="btn btn-primary">Submit</button>
 								<button type="reset" class="btn btn-warning">Reset</button>
@@ -365,7 +368,7 @@
 									</div>
 									<div class="col-md-6">
 										<label for="kode_ao">Kode AO</label>
-										<select class="form-control" name="kode_ao" id="kode_ao">
+										<select class="form-control select2" name="kode_ao" id="kode_ao">
 											<option disabled>-- Pilih Kode AO --</option>
 											<?php
 											foreach ($karyawan as $k) {
@@ -392,7 +395,7 @@
 									</div>
 									<div class="col-md-6">
 										<label for="tempat_lahir">Cabang</label>
-										<select class="form-control" name="cabang" id="cabang">
+										<select class="form-control select2" name="cabang" id="cabang">
 											<option selected disabled>-- Pilih Cabang --</option>
 											<?php
 											foreach ($cabang as $c) {
@@ -409,13 +412,13 @@
 										<label for="kota">Kota</label>
 										<input type="text" class="form-control" name="kota" id="kota" value="<?= $detail->kota ?>">
 									</div>
-									<div class="col-md-6">
+									<!-- <div class="col-md-6">
 										<label for="tgl_pendaftaran">Tanggal Pendaftaran</label>
 										<input type="date" class="form-control" name="tgl_pendaftaran" id="tgl_pendaftaran" value="<?= $detail->tgl_pendaftaran ?>">
-									</div>
+									</div> -->
 									<div class="col-md-6">
 										<label for="tipe_nasabah">Tipe Nasabah</label>
-										<select class="form-control" name="tipe_nasabah" id="tipe_nasabah">
+										<select class="form-control select2" name="tipe_nasabah" id="tipe_nasabah">
 											<option disabled>-- Pilih Tipe Nasabah --</option>
 											<?php
 											foreach ($tipe as $t) {
@@ -431,7 +434,7 @@
 									</div>
 									<div class="col-md-6">
 										<label for="segmen_nasabah">Segmen Nasabah</label>
-										<select class="form-control" name="segmen_nasabah" id="segmen_nasabah">
+										<select class="form-control select2" name="segmen_nasabah" id="segmen_nasabah">
 											<option disabled>-- Pilih Segmen Nasabah --</option>
 											<?php
 											foreach ($segmen as $s) {
@@ -449,10 +452,10 @@
 										<label for="warga_negara">Warga Negara</label>
 										<input type="text" class="form-control" name="warga_negara" id="warga_negara" value="<?= $detail->warga_negara ?>">
 									</div>
-									<div class="col-md-6">
+									<!-- <div class="col-md-6">
 										<label for="no_cib">No CIB</label>
 										<input type="text" class="form-control" name="no_cib" id="no_cib" value="<?= $detail->no_cib ?>">
-									</div>
+									</div> -->
 								</div>
 								<button type="submit" class="btn btn-primary">Submit</button>
 								<button type="reset" class="btn btn-warning">Reset</button>
@@ -521,8 +524,7 @@
 	<!-- Custom Theme Scripts -->
 	<script src="<?php echo base_url(); ?>src/build/js/custom.min.js"></script>
 	<!-- Select2 -->
-	<link rel="stylesheet" href="<?= base_url() ?>src/select2/css/select2.min.css">
-	<script type="text/javascript" src="<?= base_url() ?>src/select2/js/select2.min.js"></script>
+	<script src="<?php echo base_url(); ?>src/vendors/select2/dist/js/select2.min.js"></script>
 
 	<!-- DataTables -->
 	<script src="<?= base_url() ?>src/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -539,6 +541,10 @@
 	<script src="<?= base_url() ?>src/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
 
 	<script>
+		$(document).ready(() => {
+			$('.select2').select2();
+
+		})
 		document.addEventListener('DOMContentLoaded', function() {
 			const today = new Date().toISOString().split('T')[0];
 			document.getElementById('tgl_lahir').value = today;

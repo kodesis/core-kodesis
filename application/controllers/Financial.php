@@ -1001,11 +1001,17 @@ class Financial extends CI_Controller
         $coa = json_decode($coaBefore);
         $saldo_awal = null;
 
+        // echo '<pre>';
+        // print_r($coa);
+        // echo '</pre>';
+        // exit;
         // Iterasi untuk mencari saldo awal
-        foreach ($coa as $item) {
-            if ($item->no_sbb == $no_coa) {
-                $saldo_awal = $item->saldo_awal;
-                break;
+        if ($coa) {
+            foreach ($coa as $item) {
+                if ($item->no_sbb == $no_coa) {
+                    $saldo_awal = $item->saldo_awal;
+                    break;
+                }
             }
         }
 

@@ -73,6 +73,11 @@ class Pengajuan extends CI_Controller
       $subtotal = $this->input->post('total[]');
       $total = $this->input->post('nominal');
 
+      // echo '<pre>';
+      // print_r($_POST);
+      // echo '</pre>';
+      // exit;
+
       $this->form_validation->set_rules('rekening', 'No. Rekening', 'required|trim');
       $this->form_validation->set_rules('metode', 'Metode Pembayaran', 'required');
       $this->form_validation->set_rules('catatan', 'Catatan', 'trim|required');
@@ -102,7 +107,7 @@ class Pengajuan extends CI_Controller
             'user' => $user['nip'],
             'no_rekening' => $rekening,
             'metode_pembayaran' => $metode,
-            'spv' => '220940146',
+            'spv' => $user['supervisi'],
             'posisi' => 'Diajukan kepada spv',
             'bukti_pengajuan' => $upload['file_name'],
             'catatan' => $catatan,

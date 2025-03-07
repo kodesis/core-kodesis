@@ -444,7 +444,7 @@
 											Asset <span class="required">*</span>
 										</label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<input id="nama_asset" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="nama_asset" placeholder="" required="required" type="text" value="<?php echo $asset_list->nama_asset; ?>">
+											<input id="nama_asset" class="form-control col-md-7 col-xs-12" name="nama_asset" type="text" value="<?php echo $asset_list->nama_asset; ?>">
 										</div>
 										<br><br>
 									</div>
@@ -454,7 +454,7 @@
 										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Foto
 										</label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<input id="nama_asset" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="foto_asset" placeholder="" type="file">
+											<input id="nama_asset" class="form-control col-md-7 col-xs-12" name="foto_asset" type="file">
 										</div>
 										<br><br>
 									</div>
@@ -477,7 +477,7 @@
 										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Spesifikasi <span class="required">*</span>
 										</label>
 										<div class="col-md-9 col-sm-9 col-xs-12">
-											<input id="spesifikasi" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="spesifikasi" placeholder="" required="required" type="text" value="<?php echo $asset_list->spesifikasi; ?>">
+											<input id="spesifikasi" class="form-control col-md-7 col-xs-12" name="spesifikasi" type="text" value="<?php echo $asset_list->spesifikasi; ?>">
 										</div>
 										<br><br>
 									</div>
@@ -486,24 +486,19 @@
 									<div class="item form-group">
 										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Ruangan <span class="required">*</span>
 										</label>
-										<!--div class="col-md-9 col-sm-9 col-xs-12">
-					  <input id="ruangan" class="form-control col-md-7 col-xs-12" name="ruangan" placeholder="" required="required" type="text" value="<?php echo $asset_list->ruangan; ?>">
-					</div-->
-
 										<div class="col-md-9 col-sm-9 col-xs-12">
 											<select class="js-example-basic-single" style="width:100%;" name="ruangan" id="ruangan" required="required">
-												<?php foreach ($asset_ruang as $data) :
-													if ($data->keterangan == $asset_list->ruangan) { ?>
-														<option value="<?php echo $data->keterangan; ?>" selected>
-															<?php echo $data->keterangan; ?></option>
+												<?php foreach ($asset_ruang as $ar) :
+													if ($ar->keterangan == $asset_list->ruangan) { ?>
+														<option value="<?php echo $ar->keterangan; ?>" selected>
+															<?php echo $ar->keterangan; ?></option>
 													<?php } else { ?>
-														<option value="<?php echo $data->keterangan; ?>">
-															<?php echo $data->keterangan; ?></option>
+														<option value="<?php echo $ar->keterangan; ?>">
+															<?php echo $ar->keterangan; ?></option>
 													<?php } ?>
 												<?php endforeach; ?>
 											</select>
 										</div>
-
 										<br><br>
 									</div>
 								</div>
@@ -511,20 +506,15 @@
 									<div class="item form-group">
 										<label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Lokasi <span class="required">*</span>
 										</label>
-										<!--div class="col-md-9 col-sm-9 col-xs-12">
-					  <input id="lokasi" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="lokasi" placeholder="" required="required" type="text" 
-					  value="<?php echo $asset_list->lokasi; ?>">
-					</div-->
-
 										<div class="col-md-9 col-sm-9 col-xs-12">
 											<select class="form-control js-example-basic-single" style="width:100%;" name="lokasi" id="lokasi" required="required">
-												<?php foreach ($asset_lokasi as $data) :
-													if ($data->keterangan == $asset_list->lokasi) { ?>
-														<option value="<?php echo $data->keterangan; ?>" selected>
-															<?php echo $data->keterangan; ?></option>
+												<?php foreach ($asset_lokasi as $al) :
+													if ($al->keterangan == $asset_list->lokasi) { ?>
+														<option value="<?php echo $al->keterangan; ?>" selected>
+															<?php echo $al->keterangan; ?></option>
 													<?php } else { ?>
-														<option value="<?php echo $data->keterangan; ?>">
-															<?php echo $data->keterangan; ?></option>
+														<option value="<?php echo $al->keterangan; ?>">
+															<?php echo $al->keterangan; ?></option>
 													<?php } ?>
 												<?php endforeach; ?>
 											</select>
@@ -562,9 +552,8 @@
 								<div style="text-align: center;">
 									<input id="id_postf" name="id_postf" type="hidden" required="required" value="<?php echo $asset_list->Id; ?>">
 									<input id="kode" name="kode" type="hidden" required="required" value="<?php echo $asset_list->kode; ?>">
-									<?php
-									echo form_submit('Submit', 'Simpan', 'onclick="return clicked();", class="btn btn-primary"');
-									?>
+									<button type="submit" class="btn btn-primary simpan">Simpan</button>
+									<!-- <button type="submit" class="btn btn-primary">Simpan</button> -->
 									<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 								</div>
 							</div>
@@ -629,6 +618,8 @@
 	<script src="<?php echo base_url(); ?>src/build/js/custom.min.js"></script>
 	<script src="<?php echo base_url(); ?>src/vendors/validator/validator.js"></script>
 
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -637,6 +628,75 @@
 		});
 
 	});
+
+	$('.simpan').click(function(e) {
+		e.preventDefault();
+		var parent = $(this).parents("form");
+		var url = parent.attr("action");
+		console.log(parent);
+		var formData = new FormData(parent[0]);
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You want to submit the form?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				$.ajax({
+					url: url,
+					method: "POST",
+					data: formData,
+					processData: false,
+					contentType: false,
+					dataType: "JSON",
+					beforeSend: () => {
+						Swal.fire({
+							title: "Loading....",
+							timerProgressBar: true,
+							allowOutsideClick: false,
+							didOpen: () => {
+								Swal.showLoading();
+							},
+						});
+					},
+					success: function(res) {
+						if (res.success) {
+							Swal.fire({
+								icon: "success",
+								title: `${res.msg}`,
+								showConfirmButton: false,
+								timer: 1500,
+							}).then(function() {
+								Swal.close();
+								location.reload();
+							});
+						} else {
+							Swal.fire({
+								icon: "error",
+								title: `${res.msg}`,
+								showConfirmButton: false,
+								timer: 1500,
+							}).then(function() {
+								Swal.close();
+							});
+						}
+					},
+					error: function(xhr, status, error) {
+						Swal.fire({
+							icon: "error",
+							title: `${error}`,
+							showConfirmButton: false,
+							timer: 1500,
+						});
+					},
+				});
+			}
+		});
+	})
+
 	$("#tujuan").select2({
 		placeholder: "Destination",
 		allowClear: true

@@ -231,18 +231,16 @@
                                     <div class="row">
                                         <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>">
                                             <div class="col-md-5 col-xs-12">
-                                                <div class="form-group">
-                                                    <label for="" class="form-label">No. CoA</label>
-                                                    <select name="no_coa" id="no_coa" class="form-control select2">
-                                                        <option value="">:: Pilih nomor coa</option>
-                                                        <?php
-                                                        foreach ($coas as $c) {
-                                                        ?>
-                                                            <option <?= ($this->input->post('no_coa') == $c->no_sbb) ? "selected" : "" ?> value="<?= $c->no_sbb ?>"><?= $c->no_sbb ?> - <?= $c->nama_perkiraan ?></option>
-                                                        <?php
-                                                        } ?>
-                                                    </select>
-                                                </div>
+                                                <label for="" class="form-label">No. CoA</label>
+                                                <select name="no_coa" id="no_coa" class="form-control select2">
+                                                    <option value="">:: Pilih nomor coa</option>
+                                                    <?php
+                                                    foreach ($coas as $c) {
+                                                    ?>
+                                                        <option <?= ($this->input->post('no_coa') == $c->no_sbb) ? "selected" : "" ?> value="<?= $c->no_sbb ?>"><?= $c->no_sbb ?> - <?= $c->nama_perkiraan ?></option>
+                                                    <?php
+                                                    } ?>
+                                                </select>
                                             </div>
                                             <div class="col-md-3 col-xs-12">
                                                 <label for="tgl_dari" class="form-label">Dari</label>
@@ -258,7 +256,7 @@
                                         </form>
                                     </div>
                                     <div class="row" style="margin-top: 10px;">
-                                        <div class="col-md-12 col-xs-12">
+                                        <div class="col-md-12 col-xs-12 table-responsive">
                                             <table id="datatable" class="table table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
@@ -360,18 +358,16 @@
 
                                         <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>">
                                             <div class="col-md-5 col-xs-12">
-                                                <div class="form-group">
-                                                    <label for="" class="form-label">No. CoA </label>
-                                                    <select name="no_coa" id="no_coa" class="form-control select2">
-                                                        <option value="">:: Pilih nomor coa</option>
-                                                        <?php
-                                                        foreach ($coas as $c) {
-                                                        ?>
-                                                            <option value="<?= $c->no_sbb ?>"><?= $c->no_sbb ?> - <?= $c->nama_perkiraan ?></option>
-                                                        <?php
-                                                        } ?>
-                                                    </select>
-                                                </div>
+                                                <label for="" class="form-label">No. CoA </label>
+                                                <select name="no_coa" id="no_coa" class="form-control select2">
+                                                    <option value="">:: Pilih nomor coa</option>
+                                                    <?php
+                                                    foreach ($coas as $c) {
+                                                    ?>
+                                                        <option value="<?= $c->no_sbb ?>"><?= $c->no_sbb ?> - <?= $c->nama_perkiraan ?></option>
+                                                    <?php
+                                                    } ?>
+                                                </select>
                                             </div>
                                             <div class="col-md-3 col-xs-12">
                                                 <label for="tgl_invoice" class="form-label">Dari</label>

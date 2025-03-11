@@ -3,6 +3,10 @@
 class M_asset extends CI_Model
 {
 
+	var $column_order = array(null, 'periode', null);
+	var $column_search = array('periode');
+	var $order = array('Id' => 'desc');
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -11,6 +15,54 @@ class M_asset extends CI_Model
 	public function __destruct()
 	{
 		$this->db->close();
+	}
+
+	private function _get_datatables_query_penyusutan()
+	{
+		$this->cb->select('a.*')->from('t_penyusutan a');
+		$i = 0;
+		foreach ($this->column_search as $item) {
+			if ($this->input->post('search')['value']) {
+				if ($i === 0) {
+					$this->cb->group_start();
+					$this->cb->like($item, $this->input->post('search')['value']);
+				} else {
+					$this->cb->or_like($item, $this->input->post('search')['value']);
+				}
+				if (count($this->column_search) - 1 == $i) //looping terakhir
+					$this->cb->group_end();
+			}
+			$i++;
+		}
+		// jika datatable mengirim POST untuk order
+		if ($this->input->post('order')) {
+			$this->cb->order_by($this->column_order[$this->input->post('order')['0']['column']], $this->input->post('order')['0']['dir']);
+		} else if (isset($this->order)) {
+			$order = $this->order;
+			$this->cb->order_by(key($order), $order[key($order)]);
+		}
+	}
+
+	public function get_datatables_penyusutan()
+	{
+		$this->_get_datatables_query_penyusutan();
+		if ($this->input->post('length') != -1)
+			$this->cb->limit($this->input->post('length'), $this->input->post('start'));
+		$query = $this->cb->get();
+		return $query->result();
+	}
+
+	public function count_filtered()
+	{
+		$this->_get_datatables_query_penyusutan();
+		$query = $this->cb->get();
+		return $query->num_rows();
+	}
+
+	public function count_all()
+	{
+		$this->_get_datatables_query_penyusutan();
+		return $this->cb->count_all_results();
 	}
 
 	function asset_get($limit, $start)

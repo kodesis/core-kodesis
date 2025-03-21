@@ -224,16 +224,16 @@
 									<td>: <?= $user->username ?></td>
 								</tr>
 								<tr>
-									<th>Nama</th>
+									<th width="300">Nama</th>
 									<td>: <?= $user->nama ?></td>
 
 								</tr>
 								<tr>
-									<th>Level</th>
+									<th width="300">Level</th>
 									<td>: <?= $user->level ?></td>
 								</tr>
 								<tr>
-									<th>Status</th>
+									<th width="300">Status</th>
 									<td>:<?php if ($user->status == 1) { ?>
 										<span style="cursor: default;" class="btn btn-primary">Active</span>
 									<?php } else { ?>
@@ -242,51 +242,51 @@
 									</td>
 								</tr>
 								<tr>
-									<th>Email</th>
+									<th width="300">Email</th>
 									<td>: <?= $user->email ?></td>
 								</tr>
 								<tr>
-									<th>Phone</th>
+									<th width="300">Phone</th>
 									<td>: <?= $user->phone ?></td>
 								</tr>
 								<tr>
-									<th>Code Agent</th>
+									<th width="300">Code Agent</th>
 									<td>: <?= $user->kd_agent ?></td>
 								</tr>
 								<tr>
-									<th>Nip</th>
+									<th width="300">Nip</th>
 									<td>: <?= $user->nip ?></td>
 								</tr>
 								<tr>
-									<th>Level</th>
+									<th width="300">Level</th>
 									<td>: <?= $user->level_jabatan ?></td>
 								</tr>
 								<tr>
-									<th>Bagian</th>
+									<th width="300">Bagian</th>
 									<td>: <?= $user->bagian ?></td>
 								</tr>
 								<tr>
-									<th>TMT</th>
+									<th width="300">TMT</th>
 									<td>: <?= date('d F Y', strtotime($user->tmt)) ?></td>
 								</tr>
 								<tr>
-									<th>Cuti Reguler</th>
+									<th width="300">Cuti Reguler</th>
 									<td>: <?= $user->cuti ?></td>
 								</tr>
 								<tr>
-									<th>Nama Jabatan</th>
+									<th width="300">Nama Jabatan</th>
 									<td>: <?= $user->nama_jabatan ?></td>
 								</tr>
 								<tr>
-									<th>Jam Masuk</th>
+									<th width="300">Jam Masuk</th>
 									<td>: <?= $user->jam_masuk ?></td>
 								</tr>
 								<tr>
-									<th>Jam Keluar</th>
+									<th width="300">Jam Keluar</th>
 									<td>: <?= $user->jam_keluar ?></td>
 								</tr>
 								<tr>
-									<th>Supervisi</th>
+									<th width="300">Supervisi</th>
 									<td>:
 										<?php
 										if ($user->supervisi != null || $user->supervisi != "") {
@@ -377,7 +377,7 @@
 									</tr>
 
 									<tr>
-										<th>Status</th>
+										<th width="300">Status</th>
 										<td>
 											<input name="status" value="1" type="radio" id="active">
 											<label for="active">Active</label>
@@ -390,19 +390,19 @@
 										<td> <input type="text" name="email" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Phone</th>
+										<th width="300">Phone</th>
 										<td><input type="text" name="phone" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Code Agent</th>
+										<th width="300">Code Agent</th>
 										<td><input type="text" name="kd_agent" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Nip</th>
+										<th width="300">Nip</th>
 										<td><input type="text" name="nip" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Level Jabatan</th>
+										<th width="300">Level Jabatan</th>
 										<td>
 											<select name="level_jabatan" id="" class="form-control">
 												<option value="">Pilih Jabatan</option>
@@ -417,7 +417,7 @@
 										</td>
 									</tr>
 									<tr>
-										<th>Bagian</th>
+										<th width="300">Bagian</th>
 										<td>
 											<select name="bagian" class="form-control" id="">
 												<?php $xx = $this->db->get('bagian')->result();
@@ -433,11 +433,11 @@
 										</td>
 									</tr>
 									<tr>
-										<th>Nama Jabatan</th>
+										<th width="300">Nama Jabatan</th>
 										<td><input type="text" name="nama_jabatan" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Supervisi</th>
+										<th width="300">Supervisi</th>
 										<td>
 											<select name="supervisi" id="" class="form-control js-example-basic-multiple">
 												<?php
@@ -449,7 +449,7 @@
 										</td>
 									</tr>
 									<tr>
-										<th>TMT</th>
+										<th width="300">TMT</th>
 										<td>
 											<div class='input-group date' id='myDatepicker2'>
 												<input type='text' name='tmt' class="form-control" placeholder="yyyy-mm-dd" data-validate-words="1" required="required" />
@@ -460,15 +460,15 @@
 										</td>
 									</tr>
 									<tr>
-										<th>Cuti Reguler</th>
+										<th width="300">Cuti Reguler</th>
 										<td><input type="number" name="cuti" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Jam Masuk</th>
+										<th width="300">Jam Masuk</th>
 										<td><input type="time" name="jam_masuk" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>Jam Keluar</th>
+										<th width="300">Jam Keluar</th>
 										<td><input type="time" name="jam_keluar" class="form-control"></td>
 									</tr>
 									<tr>
@@ -519,7 +519,7 @@
 									</tr>
 
 									<tr>
-										<th>Status</th>
+										<th width="300">Status</th>
 										<td>
 											<input <?= $user->status ? 'checked' : '' ?> name="status" type="radio" value="1" id="active">
 											<label for="active">Active</label>
@@ -532,27 +532,27 @@
 										<td> <input type="text" name="email" class="form-control" value="<?= $user->email ?>"></td>
 									</tr>
 									<tr>
-										<th>Phone</th>
+										<th width="300">Phone</th>
 										<td><input type="text" name="phone" class="form-control" value="<?= $user->phone ?>"></td>
 									</tr>
 									<tr>
-										<th>Code Agent</th>
+										<th width="300">Code Agent</th>
 										<td><input type="text" name="kd_agent" class="form-control" value="<?= $user->kd_agent ?>"></td>
 									</tr>
 									<tr>
-										<th>Nip</th>
+										<th width="300">Nip</th>
 										<td><input readonly type="text" name="nip" class="form-control" value="<?= $user->nip ?>"></td>
 									</tr>
 									<tr>
-										<th>Level Jabatan</th>
+										<th width="300">Level Jabatan</th>
 										<td><input type="text" name="level_jabatan" class="form-control" value="<?= $user->level_jabatan ?>"></td>
 									</tr>
 									<tr>
-										<th>TMT</th>
+										<th width="300">TMT</th>
 										<td><input type="date" name="tmt" class="form-control" value="<?= $user->tmt ?>"></td>
 									</tr>
 									<tr>
-										<th>Bagian</th>
+										<th width="300">Bagian</th>
 										<td>
 											<select name="bagian" class="form-control js-example-basic-multiple" id="">
 												<option value=""> -- Pilih Bagian --</option>
@@ -564,11 +564,11 @@
 										</td>
 									</tr>
 									<tr>
-										<th>Nama Jabatan</th>
+										<th width="300">Nama Jabatan</th>
 										<td><input type="text" name="nama_jabatan" class="form-control" value="<?= $user->nama_jabatan ?>"></td>
 									</tr>
 									<tr>
-										<th>Supervisi</th>
+										<th width="300">Supervisi</th>
 										<td>
 											<select name="supervisi" class="form-control js-example-basic-multiple">
 												<option value=""> -- Pilih Supervisi --</option>
@@ -588,19 +588,19 @@
 										</td>
 									</tr>
 									<tr>
-										<th>Cuti</th>
+										<th width="300">Cuti</th>
 										<td>
 											<input type="number" name="cuti" class="form-control" value="<?= $user->cuti ?>">
 										</td>
 									</tr>
 									<tr>
-										<th>Jam Masuk</th>
+										<th width="300">Jam Masuk</th>
 										<td>
 											<input type="time" name="jam_masuk" class="form-control" value="<?= $user->jam_masuk ?>">
 										</td>
 									</tr>
 									<tr>
-										<th>Jam Keluar</th>
+										<th width="300">Jam Keluar</th>
 										<td>
 											<input type="time" name="jam_keluar" class="form-control" value="<?= $user->jam_keluar ?>">
 										</td>

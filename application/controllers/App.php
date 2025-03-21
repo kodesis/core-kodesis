@@ -1617,6 +1617,7 @@ class App extends CI_Controller
 							"nama_jabatan" => $this->input->post('nama_jabatan'),
 							"supervisi" => $this->input->post('supervisi'),
 							"cuti" => $this->input->post('cuti'),
+							"id_lokasi_presensi" => $this->input->post('lokasi_presensi'),
 							"jam_masuk" => $this->input->post('jam_masuk'),
 							"jam_keluar" => $this->input->post('jam_keluar')
 						];

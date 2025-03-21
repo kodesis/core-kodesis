@@ -278,18 +278,6 @@
 									<td>: <?= $user->nama_jabatan ?></td>
 								</tr>
 								<tr>
-									<th>Nama Jabatan</th>
-									<td>: <?= $user->nama_jabatan ?></td>
-								</tr>
-
-								<tr>
-									<th>Lokasi Presensi</th>
-									<?php
-
-									$lokasi = $this->db->get_where('lokasi_presensi', ['id' => $user->id_lokasi_presensi])->row();									?>
-									<td>: <?= $lokasi->nama_lokasi ?></td>
-								</tr>
-								<tr>
 									<th>Jam Masuk</th>
 									<td>: <?= $user->jam_masuk ?></td>
 								</tr>
@@ -476,22 +464,6 @@
 										<td><input type="number" name="cuti" class="form-control"></td>
 									</tr>
 									<tr>
-										<th>
-											Lokasi Presensi
-										</th>
-										<td>
-											<select name="lokasi_presensi" class="form-control js-example-basic-multiple">
-												<option value=""> -- Pilih Lokasi Presensi --</option>
-												<?php
-												$lokasi = $this->db->get('lokasi_presensi')->result();
-												foreach ($lokasi as $data) {
-												?>
-													<option value="<?= $data->id ?>"><?= $data->nama_lokasi ?></option>
-												<?php } ?>
-											</select>
-										</td>
-									</tr>
-									<tr>
 										<th>Jam Masuk</th>
 										<td><input type="time" name="jam_masuk" class="form-control"></td>
 									</tr>
@@ -513,23 +485,19 @@
 							<form action="<?= base_url('app/user_edit/' . $this->uri->segment('3')) ?>" method="POST">
 								<input type="hidden" value="edit" name="edit">
 								<input type="hidden" value="<?= $this->uri->segment('3') ?>" name="id">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Username</label>
-											<input readonly type="text" name="username" class="form-control" value="<?= $user->username ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Name</label>
-											<input type="text" name="nama" class="form-control" value="<?= $user->nama ?>">
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Level</label>
+								<table>
+									<tr>
+										<th width="300">Username</th>
+										<td width="300"> <input readonly type="text" name="username" class="form-control" value="<?= $user->username ?>"></td>
+									</tr>
+									<tr>
+										<th width="200">Name</th>
+										<td> <input type="text" name="nama" class="form-control" value="<?= $user->nama ?>">
+										</td>
+									</tr>
+									<tr>
+										<th width="200">Level</th>
+										<td width="100%">
 											<select class="form-control js-example-basic-multiple" name="level[]" multiple="multiple">
 												<?php
 												$level_x = explode(',', $user->level);
@@ -547,61 +515,45 @@
 													//}
 												} ?>
 											</select>
-										</div>
-									</div>
+										</td>
+									</tr>
 
-									<div class="col-md-6">
-										<div class="form-check">
-											<label>Status</label>
-											<br>
-											<input <?= $user->status ? 'checked' : '' ?> name="status" type="radio" value="1" id="active" class="form-check-input">
-											<label class="form-check-label" for="active">Active</label>
-											<br>
-											<input <?= $user->status ? '' : 'checked' ?> name="status" type="radio" value="0" id="noactive" class="form-check-input">
-											<label class="form-check-label" for="noactive">Not Active</label>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Email</label>
-											<input type="text" name="email" class="form-control" value="<?= $user->email ?>">
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Phone</label>
-											<input type="text" name="phone" class="form-control" value="<?= $user->phone ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Code Agent</label>
-											<input type="text" name="kd_agent" class="form-control" value="<?= $user->kd_agent ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Nip</label>
-											<input readonly type="text" name="nip" class="form-control" value="<?= $user->nip ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Level Jabatan</label>
-											<input type="text" name="level_jabatan" class="form-control" value="<?= $user->level_jabatan ?>">
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>TMT</label>
-											<input type="date" name="tmt" class="form-control" value="<?= $user->tmt ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Bagian</label>
+									<tr>
+										<th>Status</th>
+										<td>
+											<input <?= $user->status ? 'checked' : '' ?> name="status" type="radio" value="1" id="active">
+											<label for="active">Active</label>
+											<input <?= $user->status ? '' : 'checked' ?> name="status" type="radio" value="0" id="noactive">
+											<label for="noactive">Not Active</label>
+										</td>
+									</tr>
+									<tr>
+										<th width="200">Email</th>
+										<td> <input type="text" name="email" class="form-control" value="<?= $user->email ?>"></td>
+									</tr>
+									<tr>
+										<th>Phone</th>
+										<td><input type="text" name="phone" class="form-control" value="<?= $user->phone ?>"></td>
+									</tr>
+									<tr>
+										<th>Code Agent</th>
+										<td><input type="text" name="kd_agent" class="form-control" value="<?= $user->kd_agent ?>"></td>
+									</tr>
+									<tr>
+										<th>Nip</th>
+										<td><input readonly type="text" name="nip" class="form-control" value="<?= $user->nip ?>"></td>
+									</tr>
+									<tr>
+										<th>Level Jabatan</th>
+										<td><input type="text" name="level_jabatan" class="form-control" value="<?= $user->level_jabatan ?>"></td>
+									</tr>
+									<tr>
+										<th>TMT</th>
+										<td><input type="date" name="tmt" class="form-control" value="<?= $user->tmt ?>"></td>
+									</tr>
+									<tr>
+										<th>Bagian</th>
+										<td>
 											<select name="bagian" class="form-control js-example-basic-multiple" id="">
 												<option value=""> -- Pilih Bagian --</option>
 												<?php $xx = $this->db->get('bagian')->result();
@@ -609,18 +561,15 @@
 													<option <?= $k->Id == $user->bagian ? 'selected' : '' ?> value="<?= $k->Id ?>"><?= $k->nama ?></option>
 												<?php } ?>
 											</select>
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Nama Jabatan</label>
-											<input type="text" name="nama_jabatan" class="form-control" value="<?= $user->nama_jabatan ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Supervisi</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Nama Jabatan</th>
+										<td><input type="text" name="nama_jabatan" class="form-control" value="<?= $user->nama_jabatan ?>"></td>
+									</tr>
+									<tr>
+										<th>Supervisi</th>
+										<td>
 											<select name="supervisi" class="form-control js-example-basic-multiple">
 												<option value=""> -- Pilih Supervisi --</option>
 												<?php
@@ -636,55 +585,33 @@
 													<option <?= $selected ?> value="<?= $data->nip ?>"><?= $data->nama_jabatan ?></option>
 												<?php } ?>
 											</select>
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Cuti</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Cuti</th>
+										<td>
 											<input type="number" name="cuti" class="form-control" value="<?= $user->cuti ?>">
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label>Lokasi Presensi</label>
-											<select name="lokasi_presensi" class="form-control js-example-basic-multiple">
-												<option value=""> -- Pilih Lokasi Presensi --</option>
-												<?php
-												$lokasi = $this->db->get('lokasi_presensi')->result();
-												foreach ($lokasi as $data) {
-													if ($user->id_lokasi_presensi != null || $user->id_lokasi_presensi != "") {
-														$selected = $user->id_lokasi_presensi == $data->id ? "selected" : "";
-													} else {
-														$selected = "";
-													}
-												?>
-													<option <?= $selected ?> value="<?= $data->id ?>"><?= $data->nama_lokasi ?></option>
-												<?php } ?>
-											</select>
-										</div>
-									</div>
-									<div class="col-md-3">
-										<div class="form-group">
-											<label>Jam Masuk</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Masuk</th>
+										<td>
 											<input type="time" name="jam_masuk" class="form-control" value="<?= $user->jam_masuk ?>">
-										</div>
-									</div>
-									<div class="col-md-3">
-										<div class="form-group">
-											<label>Jam Keluar</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Keluar</th>
+										<td>
 											<input type="time" name="jam_keluar" class="form-control" value="<?= $user->jam_keluar ?>">
-										</div>
-									</div>
-
-									<div class="col-12">
-										<div class="form-group">
+										</td>
+									</tr>
+									<tr>
+										<th>
 											<a class="btn btn-warning" href="<?= base_url('app/user') ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
 											<button type="submit" class="btn btn-primary">Update</button>
-										</div>
-									</div>
-
-								</div>
+										</th>
+									</tr>
+								</table>
 							</form>
 							<br>
 						<?php } ?>

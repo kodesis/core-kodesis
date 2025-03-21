@@ -4235,7 +4235,7 @@ class App extends CI_Controller
 
 	public function ajax_lokasi_presensi_list()
 	{
-		$this->load->model('lokasi_presensi_m', 'lpm');
+		$this->load->model('Lokasi_Presensi_m', 'lpm');
 
 		$list = $this->lpm->get_datatables();
 		$data = array();
@@ -4304,7 +4304,7 @@ class App extends CI_Controller
 	}
 	public function edit_lokasi_presensi($id)
 	{
-		$this->load->model('lokasi_presensi_m', 'lpm');
+		$this->load->model('Lokasi_Presensi_m', 'lpm');
 
 		if ($this->session->userdata('isLogin') == FALSE) {
 			redirect('home');

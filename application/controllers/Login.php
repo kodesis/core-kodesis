@@ -143,6 +143,8 @@ class Login extends CI_Controller
 				$this->session->set_userdata('nomor_rekening', $setting->nomor_rekening);
 				$this->session->set_userdata('nama_ppn', $setting->nama_ppn);
 				$this->session->set_userdata('ppn', $setting->besaran_ppn);
+				$this->session->set_userdata('kode_cabang', $data->id_cabang);
+				$this->session->set_userdata('nama_akronim', $setting->nama_akronim);
 
 				redirect('home');
 			} else {

@@ -230,6 +230,18 @@
 						<li>
 							<a href="<?= base_url(); ?>financial/list_coa">List CoA</a>
 						</li>
+						<!-- <li>
+							<a>
+								Nota<span class="fa fa-chevron-down"></span>
+							</a>
+							<ul class="nav child_menu">
+								<li class="sub_menu">
+									<a href="<?= base_url(); ?>financial/nota">Daftar Nota</a>
+								</li>
+								<li><a href="<?= base_url(); ?>customer">Closing</a>
+								</li>
+							</ul>
+						</li> -->
 					<?php } ?>
 				</ul>
 			</li>

@@ -10,10 +10,19 @@ class M_invoice extends CI_Model
         $this->load->database();
     }
 
+    private function apply_cabang_filter()
+    {
+        $kode_cabang = $this->session->userdata('kode_cabang');
+        return $this->cb->where('id_cabang', $kode_cabang);
+    }
+
     public function list_invoice($limit, $from, $keyword, $customer_id)
     {
-        $this->cb->select('a.*, c.nama_customer');
+        $kode_cabang = $this->session->userdata('kode_cabang');
+
+        $this->cb->select('a.*, c.nama_customer, a.Id as nomor_id_invoice, a.slug as slug_invoice');
         $this->cb->from('invoice a');
+        $this->cb->where('a.id_cabang', $kode_cabang);
         $this->cb->join('customer c', 'a.id_customer = c.id', 'left');
 
         if ($keyword) {
@@ -52,9 +61,19 @@ class M_invoice extends CI_Model
         return $this->cb->from('invoice')->count_all_results();
     }
 
-    public function select_max()
+    public function select_max($tahun)
     {
-        return $this->cb->select('max(no_invoice) as max')->get('invoice')->row_array();
+        // Query untuk mendapatkan nomor invoice maksimum berdasarkan tahun
+        $query = $this->cb->select('MAX(no_invoice) AS max')
+            ->where('YEAR(tanggal_invoice)', $tahun)
+            ->get('invoice');
+
+        // Cek apakah hasil query tidak kosong
+        if ($query->num_rows() > 0) {
+            return $query->row_array();
+        } else {
+            return null; // Atau return array kosong jika diperlukan
+        }
     }
 
     public function insert($invoice_data)
@@ -72,7 +91,12 @@ class M_invoice extends CI_Model
 
     public function show($no_inv)
     {
-        return $this->cb->select('*, a.created_by as user_create')->from('invoice a')->join('customer b', 'a.id_customer = b.id', 'left')->where('no_invoice', $no_inv)->get()->row_array();
+        return $this->cb->select('*, a.created_by as user_create, a.slug as slug_invoice, a.Id as nomor_id_invoice')->from('invoice a')->join('customer b', 'a.id_customer = b.id', 'left')->where('no_invoice', $no_inv)->get()->row_array();
+    }
+
+    public function showById($id)
+    {
+        return $this->cb->select('*, a.created_by as user_create, a.slug as slug_invoice, a.Id as nomor_id_invoice')->from('invoice a')->join('customer b', 'a.id_customer = b.id', 'left')->where('a.Id', $id)->get()->row_array();
     }
 
     public function item_list($id)
@@ -129,6 +153,7 @@ class M_invoice extends CI_Model
 
     public function outstanding_agent()
     {
+        $this->apply_cabang_filter();
         // get data agent
         $customers = $this->cb->select('Id, nama_customer, jenis_outstanding, outstanding4, outstanding5')
             ->order_by('nama_customer', 'ASC')
@@ -212,5 +237,40 @@ class M_invoice extends CI_Model
         $total_termin = $result->total_termin ?? 0;
 
         return $total_nonpph - $total_termin;
+    }
+
+    public function list_nota($limit, $from, $keyword, $customer_id)
+    {
+
+        if ($keyword) {
+            $this->cb->like('slug', $keyword);
+        }
+
+        $invoices = $this->cb->order_by('Id', 'DESC')->limit($limit, $from)->get('nota')->result_array();
+
+        // Ambil semua user dari database bdl_core
+        $users = $this->db->select('id, nip, nama')->get('users')->result_array();
+        $user_map = array_column($users, 'nama', 'nip');  // Menggunakan nama pengguna sebagai nama kolom
+
+        // Gabungkan hasil query
+        foreach ($invoices as &$invoice) {
+            $invoice['created_by_name'] = isset($user_map[$invoice['created_by']]) ? $user_map[$invoice['created_by']] : null;
+            // $invoice['updated_by_name'] = isset($user_map[$invoice['updated_by']]) ? $user_map[$invoice['updated_by']] : null;
+        }
+
+        return $invoices;
+    }
+
+    public function insert_nota($nota_data)
+    {
+        $this->cb->insert('nota', $nota_data);
+
+        // Dapatkan ID nota yang baru saja di-generate
+        return $this->cb->insert_id();
+    }
+
+    public function insert_nota_batch($detail_data)
+    {
+        return $this->cb->insert_batch('nota_details', $detail_data);
     }
 }

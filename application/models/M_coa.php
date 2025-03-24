@@ -4,19 +4,25 @@ class M_coa extends CI_Model
 {
     // $this->cb untuk koneksi ke database corebank
 
+    private function apply_cabang_filter()
+    {
+        $kode_cabang = $this->session->userdata('kode_cabang');
+        return $this->cb->where('id_cabang', $kode_cabang);
+    }
+
     public function list_coa()
     {
-        return $this->cb->order_by('no_sbb', 'ASC')->get('v_coa_all')->result();
+        return $this->apply_cabang_filter()->order_by('no_sbb', 'ASC')->get('v_coa_all')->result();
     }
 
     public function cek_coa($no_coa)
     {
-        return $this->cb->select('posisi, nominal')->where('no_sbb', $no_coa)->get('v_coa_all')->row_array();
+        return $this->apply_cabang_filter()->select('posisi, nominal')->where('no_sbb', $no_coa)->get('v_coa_all')->row_array();
     }
 
     public function update_nominal_coa($no_coa, $data, $kolom, $tabel)
     {
-        return $this->cb->where($kolom, $no_coa)->update($tabel, $data);
+        return $this->apply_cabang_filter()->where($kolom, $no_coa)->update($tabel, $data);
     }
 
     public function add_transaksi($data)
@@ -31,7 +37,7 @@ class M_coa extends CI_Model
 
     public function getNeraca($table, $posisi)
     {
-        return $this->cb->where('nominal !=', '0')->where('posisi', $posisi)->get($table)->result();
+        return $this->apply_cabang_filter()->where('nominal !=', '0')->where('posisi', $posisi)->get($table)->result();
     }
 
     public function getSumNeraca($table, $posisi)
@@ -65,6 +71,7 @@ class M_coa extends CI_Model
         $this->cb->where('tanggal >=', $from);
         $this->cb->where('tanggal <=', $to);
         $this->cb->group_start();
+        $this->cb->where('id_cabang', $this->session->userdata('kode_cabang'));
         $this->cb->where('akun_debit', $no_coa);
         $this->cb->or_where('akun_kredit', $no_coa);
         $this->cb->group_end();
@@ -94,6 +101,8 @@ class M_coa extends CI_Model
 
     public function getCoaByCode($code = NULL)
     {
+        $this->apply_cabang_filter();
+
         if ($code) {
             $this->cb->like('no_sbb', $code, 'after');
         }
@@ -139,6 +148,7 @@ class M_coa extends CI_Model
 
     public function count($keyword, $tabel)
     {
+        $this->apply_cabang_filter();
         if ($keyword) {
             $this->cb->like('no_sbb', $keyword);
             $this->cb->or_like('no_bb', $keyword);
@@ -149,6 +159,7 @@ class M_coa extends CI_Model
 
     public function list_coa_paginate($limit, $from, $keyword)
     {
+        $this->apply_cabang_filter();
         if ($keyword) {
             $this->cb->like('no_sbb', $keyword);
             $this->cb->or_like('no_bb', $keyword);
@@ -164,11 +175,13 @@ class M_coa extends CI_Model
 
     public function isAvailable($kolom, $key)
     {
+        $this->apply_cabang_filter();
         return $this->cb->from('v_coa_all')->where($kolom, $key)->count_all_results();
     }
 
     public function list_saldo()
     {
+        $this->apply_cabang_filter();
         return $this->cb->order_by('periode', 'DESC')->get('saldo_awal')->result();
     }
 
@@ -207,6 +220,7 @@ class M_coa extends CI_Model
     {
         $bulan = (int) $bulan;
         $tahun = (int) $tahun;
+        $kode_cabang = $this->session->userdata('kode_cabang');
 
         $query = $this->cb->query("
             SELECT 
@@ -226,6 +240,8 @@ class M_coa extends CI_Model
             LEFT JOIN 
                 jurnal_neraca jn ON coa.no_sbb = jn.akun_debit OR coa.no_sbb = jn.akun_kredit
             WHERE 
+                jn.id_cabang = '$kode_cabang' AND 
+                coa.id_cabang = '$kode_cabang' AND 
                 MONTH(jn.tanggal) = '$bulan' AND YEAR(jn.tanggal) = '$tahun'
             GROUP BY 
                 coa.no_sbb
@@ -241,6 +257,7 @@ class M_coa extends CI_Model
 
     public function cek_saldo_awal($bulan)
     {
+        $this->apply_cabang_filter();
         return $this->cb->where('periode', $bulan)->get('saldo_awal')->row_array();
     }
 
@@ -248,6 +265,7 @@ class M_coa extends CI_Model
     {
         $date = new DateTime($tanggal_akhir);
         $tanggal_awal = $date->format('Y-m') . '-01';
+        $kode_cabang = $this->session->userdata('kode_cabang');
 
         if ($posisi == "AKTIVA") {
 
@@ -267,6 +285,8 @@ class M_coa extends CI_Model
             LEFT JOIN 
                 jurnal_neraca jn ON coa.no_sbb = jn.akun_debit OR coa.no_sbb = jn.akun_kredit
             WHERE 
+                jn.id_cabang = '$kode_cabang' AND 
+                coa.id_cabang = '$kode_cabang' AND
                 jn.tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
                 AND coa.table_source = '$table' AND coa.posisi = '$posisi'
             GROUP BY 
@@ -292,6 +312,8 @@ class M_coa extends CI_Model
             LEFT JOIN 
                 jurnal_neraca jn ON coa.no_sbb = jn.akun_debit OR coa.no_sbb = jn.akun_kredit
             WHERE 
+                jn.id_cabang = '$kode_cabang' AND 
+                coa.id_cabang = '$kode_cabang' AND
                 jn.tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'
                 AND coa.table_source = '$table' AND coa.posisi = '$posisi'
             GROUP BY 

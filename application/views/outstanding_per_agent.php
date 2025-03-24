@@ -7,9 +7,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
-    <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
+    <link rel="icon" href="images/favicon.ico" type="image/ico" />
+    <title>BDL CORE | Business Development</title>
     <!-- Bootstrap -->
     <link href="<?= base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -43,7 +42,7 @@
     <style>
         .col-xs-3 {
             width: 25%;
-            background-color: #004e81;
+            background-color: #008080;
         }
 
         .row {
@@ -82,10 +81,6 @@
         .select2-container .select2-dropdown .select2-results__option {
             text-align: left;
             /* Pastikan opsi dropdown rata kiri */
-        }
-
-        .uppercase {
-            text-transform: uppercase;
         }
     </style>
 </head>
@@ -143,10 +138,7 @@
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a href="<?php echo base_url(); ?>" class="site_title">
-                            <img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
-                            <span><?= $this->session->userdata('nama_singkat') ?></span>
-                        </a>
+                        <a href="<?= base_url(); ?>" class="site_title"><img src="<?= base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> Bangun Desa</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -230,109 +222,192 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
                             <div class="x_title">
-                                <h2>Customer Invoice</h2>
+                                <h2>Outstanding <?= $nama ?></h2>
                                 <ul class="nav navbar-right panel_toolbox">
                                     <li>
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahCustomer">
-                                            Tambah
-                                        </button>
+                                        <button class="btn btn-warning" onclick="document.location='<?= base_url('financial/outstanding') ?>'">Kembali</button>
                                     </li>
                                 </ul>
                             </div>
                             <div class="x_content">
-                                <table id="datatable" class="table table-striped table-bordered" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama</th>
-                                            <th>No. HP</th>
-                                            <th>Alamat</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        if ($customers) {
-                                            foreach ($customers as $i) : ?>
-                                                <tr>
-                                                    <td>
-                                                        <button class="btn btn-xs" type="button" data-toggle="modal" data-target="#editCustomer<?= $i->slug ?>">
-                                                            <?= $i->nama_customer ?>
-                                                        </button>
-                                                    </td>
-                                                    <td><?= ($i->telepon_customer) ? $i->telepon_customer : '-' ?></td>
-                                                    <td style="white-space: pre-line;"><?= $i->alamat_customer ?></td>
-                                                    <td><?= ucfirst($i->status_customer) ?></td>
-                                                </tr>
-                                                <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="editCustomer<?= $i->slug ?>">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title" id="myModalLabel">
-                                                                    Edit Customer
-                                                                </h4>
-                                                            </div>
-                                                            <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('customer/store/' . $i->slug) ?>">
-                                                                <div class="modal-body">
-                                                                    <div class="form-group row" style="display: none;">
-                                                                        <div class="col-md-12 col-xs-12">
-                                                                            <label for="status_customer" class="form-label">Jenis customer</label>
-                                                                            <select name="status_customer" id="status_customer" class="form-control">
-                                                                                <!-- <option value="">:: Pilih jenis customer</option> -->
-                                                                                <option value="reguler" selected>Reguler</option>
-                                                                                <!-- <option value="khusus">Khusus</option> -->
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <div class="col-md-12 col-xs-12">
-                                                                            <label for="nama_customer" class="form-label">Nama</label>
-                                                                            <input type="text" class="form-control" name="nama_customer" value="<?= $i->nama_customer ?>">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <div class="col-md-12 col-xs-12">
-                                                                            <label for="alamat_customer" class="form-label">Alamat</label>
-                                                                            <textarea name="alamat_customer" id="alamat_customer" class="form-control" placeholder="Masukkan alamat customer..." rows="4"><?= $i->alamat_customer ?></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <div class="col-md-12 col-xs-12">
-                                                                            <label for="telepon_customer" class="form-label">No. Kontak</label>
-                                                                            <input type="text" class="form-control" name="telepon_customer" value="<?= $i->telepon_customer ?>">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <div class="col-md-12 col-xs-12">
-                                                                            <label for="no_npwp" class="form-label">No. NPWP</label>
-                                                                            <input type="text" class="form-control" name="no_npwp" value="<?= $i->no_npwp ?>">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                        Close
-                                                                    </button>
-                                                                    <button type="submit" class="btn btn-primary">
-                                                                        Process
-                                                                    </button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            <?php
-                                            endforeach;
-                                        } else {
-                                            ?>
+                                <div class="table-responsive">
+                                    <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                                        <thead>
                                             <tr>
-                                                <td colspan="4">Tidak ada data yang ditampilkan</td>
+                                                <th>No.</th>
+                                                <th>Tanggal Invoice</th>
+                                                <th>Total</th>
+                                                <th>User</th>
+                                                <th>Aksi</th>
                                             </tr>
-                                        <?php
-                                        } ?>
-                                    </tbody>
-                                </table>
-                                <h6>* klik nama customer untuk edit</h6>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            if ($invoices) {
+                                                $total = 0;
+                                                foreach ($invoices as $i) :
+                                                    $angka = $i['total_nonpph'] - $i['total_termin']; ?>
+                                                    <tr>
+                                                        <td><?= $i['no_invoice'] ?></td>
+                                                        <td><?= format_indo($i['tanggal_invoice']) ?></td>
+                                                        <td class="text-right"><?= number_format($angka, 0) ?></td>
+                                                        <td><?= isset($i['created_by_name']) ? $i['created_by_name'] : 'N/A' ?></td>
+                                                        <td>
+                                                            <a href="<?= base_url('financial/print_invoice/' . $i['Id']) ?>" class="badge bg-orange" target="_blank" style="vertical-align: top;">
+                                                                Cetak
+                                                            </a>
+                                                            <?php
+                                                            if ($i['status_void'] == "1") {
+                                                            ?>
+                                                                <span class="badge bg-red" data-toggle="tooltip" data-placement="right" title="" data-original-title="Alasan: <?= $i['alasan_void'] ?>">Sudah divoid</span>
+                                                            <?php
+                                                            }
+
+                                                            if ($i['status_bayar'] == "1") {
+                                                            ?>
+                                                                <span class="badge bg-green">Sudah dibayar</span>
+                                                            <?php
+                                                            }
+
+                                                            if ($i['status_bayar'] == "0" and $i['status_void'] != "1") {
+                                                                $piutang = $i['total_denganpph'] - $i['total_termin']; ?>
+                                                                <button class="badge bg-red" data-toggle="modal" data-target="#void<?= $i['Id'] ?>">Void</button>
+                                                                <button class="badge bg-blue" data-toggle="modal" data-target="#modal<?= $i['Id'] ?>">Bayar</button>
+
+                                                                <div class="modal fade" id="modal<?= $i['Id'] ?>" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title" id="myModalLabel">
+                                                                                    <?= $i['no_invoice'] ?>
+                                                                                </h4>
+                                                                            </div>
+                                                                            <form action="<?= base_url('financial/paid/' . $i['no_invoice']) ?>" method="post">
+                                                                                <div class="modal-body">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-4 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="nominal_invoice" class="form-label">Nominal Invoice</label>
+                                                                                                <input type="text" name="nominal_invoice" id="nominal_invoice<?= $i['Id'] ?>" class="form-control" value="<?= number_format($i['total_denganpph']) ?>" readonly>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-4 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="piutang" class="form-label">Belum bayar</label>
+                                                                                                <input type="text" name="piutang" id="piutang<?= $i['Id'] ?>" class="form-control" value="<?= number_format($piutang) ?>" readonly>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-4 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="nominal_bayar" class="form-label">Nominal bayar</label>
+                                                                                                <input type="text" name="nominal_bayar" id="nominal_bayar<?= $i['Id'] ?>" class="form-control" value="<?= number_format(($i['opsi_termin'] == 0) ? $piutang : '0', 0, ',', '.') ?>" <?= ($i['opsi_termin'] == 0) ? 'readonly' : '' ?> required>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-8 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="no_coa" class="form-label">CoA Kas</label>
+                                                                                                <select name="no_coa" id="no_coa<?= $i['Id'] ?>" class="form-control" required>
+                                                                                                    <option value="">:: Pilih CoA Kas</option>
+                                                                                                    <?php
+                                                                                                    foreach ($coa_kas as $c) :
+                                                                                                    ?>
+                                                                                                        <option value="<?= $c->no_sbb ?>"><?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?></option>
+                                                                                                    <?php
+                                                                                                    endforeach; ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-4 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="tanggal_bayar" class="form-label">Tanggal bayar</label>
+                                                                                                <input type="date" name="tanggal_bayar" id="tanggal_bayar" class="form-control">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-2 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="Lunas" class="form-label">Lunas</label>
+                                                                                                <div class="checkbox text-end">
+                                                                                                    <input type="checkbox" class="flat" name="status_bayar" id="status_bayar<?= $i['Id'] ?>" value="1" <?= ($i['opsi_termin'] == 0) ? 'checked ' : '' ?>> Ya
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-sm-12 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="keterangan" class="form-label">Keterangan</label>
+                                                                                                <textarea name="keterangan" id="keterangan" class="form-control" oninput="this.value = this.value.toUpperCase()" required></textarea>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                                        Close
+                                                                                    </button>
+                                                                                    <button type="submit" class="btn btn-primary">
+                                                                                        Process
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="modal fade" id="void<?= $i['Id'] ?>" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                    <div class="modal-dialog modal-sm">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h4 class="modal-title" id="myModalLabel">
+                                                                                    <?= $i['no_invoice'] ?>
+                                                                                </h4>
+                                                                            </div>
+                                                                            <form action="<?= base_url('financial/void_invoice/' . $i['no_invoice']) ?>" method="post">
+                                                                                <div class="modal-body">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-xs-12">
+                                                                                            <div class="form-group">
+                                                                                                <label for="keterangan" class="form-label">Keterangan</label>
+                                                                                                <textarea name="keterangan" id="keterangan" class="form-control" oninput="this.value = this.value.toUpperCase()" required></textarea>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                                        Close
+                                                                                    </button>
+                                                                                    <button type="submit" class="btn btn-primary">
+                                                                                        Process
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            <?php
+                                                            } ?>
+                                                        </td>
+                                                    </tr>
+
+                                                <?php
+                                                    $total += $angka;
+                                                endforeach; ?>
+                                                <tr>
+                                                    <td colspan="2" class="text-center"><strong>TOTAL</strong></td>
+                                                    <td class="text-right"><strong><?= number_format($total) ?></strong></td>
+                                                    <td colspan="2" class="text-center"></td>
+                                                </tr>
+                                            <?php
+                                            } else {
+                                            ?>
+                                                <tr>
+                                                    <td colspan="8">Tidak ada data yang ditampilkan</td>
+                                                </tr>
+                                            <?php
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -349,42 +424,25 @@
 
         <!-- /footer content -->
 
-        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="tambahCustomer">
-            <div class="modal-dialog">
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="jurnalModal">
+            <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="myModalLabel">
-                            Tambah customer
+                            Lihat laporan
                         </h4>
                     </div>
-                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('customer/store') ?>">
+                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/showReport') ?>">
                         <div class="modal-body">
                             <div class="form-group row">
                                 <div class="col-md-12 col-xs-12">
-                                    <label for="no_invoice" class="form-label">Jenis jurnal</label>
-                                    <select name="status_customer" id="status_customer" class="form-control">
-                                        <option value="">:: Pilih jenis customer</option>
-                                        <option value="reguler">Reguler</option>
-                                        <option value="khusus">Khusus</option>
+                                    <label for="no_invoice" class="form-label">Jenis laporan</label>
+                                    <select name="jenis_laporan" id="jenis_laporan" class="form-control">
+                                        <option value="">:: Pilih jenis laporan</option>
+                                        <option value="neraca">Neraca</option>
+                                        <option value="laba_rugi">Laba Rugi</option>
+                                        <option value="invoice_nol">Invoice Nol</option>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12 col-xs-12">
-                                    <label for="nama_customer" class="form-label">Nama</label>
-                                    <input type="text" class="form-control uppercase" name="nama_customer" placeholder="Masukkan nama customer...">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12 col-xs-12">
-                                    <label for="alamat_customer" class="form-label">Alamat</label>
-                                    <textarea type="text" class="form-control" name="alamat_customer" placeholder="Masukkan alamat customer untuk ditampilkan saat cetak invoice..."></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-12 col-xs-12">
-                                    <label for="telepon_customer" class="form-label">No. Kontak</label>
-                                    <input type="text" class="form-control" name="telepon_customer" placeholder="Masukkan nomor kontak customer...">
                                 </div>
                             </div>
                         </div>
@@ -454,11 +512,7 @@
     <script>
         $(document).ready(function() {
             $('.js-example-basic-multiple').select2();
-            $('#reportPerCoa').on('shown.bs.modal', function() {
-                $('.select2').select2({
-                    dropdownParent: $('#reportPerCoa') // Menetapkan parent dropdown ke modal
-                });
-            });
+            $('.select2').select2();
 
             $("form").on("submit", function() {
                 Swal.fire({
@@ -486,11 +540,9 @@
         //     document.getElementById('input_nominal').value = formattedValue;
         // }
 
-
         <?php
         if ($this->session->flashdata('message_name')) {
-        ?>
-            Swal.fire({
+        ?> Swal.fire({
                 title: "Success!! ",
                 text: '<?= $this->session->flashdata('message_name') ?>',
                 type: "success",

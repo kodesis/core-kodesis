@@ -10,7 +10,6 @@
 
     <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
     <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
-    <title>Kodesis | Business Development</title>
     <!-- Bootstrap -->
     <link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->

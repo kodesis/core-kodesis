@@ -52,6 +52,7 @@ class Customer extends CI_Controller
 			'telepon_customer' => $this->input->post('telepon_customer'),
 			'status_customer' => $this->input->post('status_customer'),
 			'slug' => $slug,
+			'id_cabang' => $this->session->userdata('kode_cabang'),
 		];
 
 		// echo '<pre>';

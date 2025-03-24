@@ -66,6 +66,8 @@
         <?php
         $month = substr($invoice['tanggal_invoice'], 5, 2);
         $year = substr($invoice['tanggal_invoice'], 2, 2);
+
+        $nomor = $invoice['no_invoice'] . "/KSI-01/" .  intToRoman($month) . "/" .  $year
         ?>
 
         <table class="" style="margin-bottom: 30px; width: 100%">
@@ -84,7 +86,7 @@
                         Tanggal
                     </td>
                     <td class="text-end" style="width: 25%;">
-                        <?= $invoice['no_invoice'] ?>/KSI/<?= intToRoman($month) ?>/<?= $year ?> <br>
+                        <?= ($invoice['slug_invoice']) ? $invoice['slug_invoice'] : $nomor  ?> <br>
                         <?= format_indo($invoice['tanggal_invoice']) ?>
                     </td>
                 </tr>
@@ -127,6 +129,7 @@
                     <!-- <th style="width: 10%">No.</th> -->
                     <th>Keterangan</th>
                     <th>Item</th>
+                    <th>Harga</th>
                     <th>Total Amount</th>
                 </tr>
             </thead>
@@ -137,7 +140,8 @@
                 ?>
                     <tr>
                         <td><?= $d->item ?></td>
-                        <td class="text-end"><?= ($d->qty) ?></td>
+                        <td class="text-end"><?= number_format($d->qty) ?></td>
+                        <td class="text-end"><?= number_format($d->total) ?></td>
                         <td class="text-end"><?= number_format($d->total_amount) ?></td>
                     </tr>
                 <?php
@@ -181,7 +185,7 @@
             </tbody>
         </table>
 
-        <p class="mb-50">Terbilang: <?= terbilang($invoice['total_nonpph']) ?></p>
+        <p class="mb-50">Terbilang: <?= terbilang(round($invoice['total_nonpph'])) ?> Rupiah</p>
         <table>
             <tbody>
                 <tr>

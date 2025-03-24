@@ -270,29 +270,26 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
                             <div class="x_title">
-                                <h2>Create Invoice</h2>
+                                <h2>Create Nota</h2>
                             </div>
                             <div class="x_content">
-                                <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/store_invoice/khusus') ?>">
+                                <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/store_nota') ?>">
                                     <div class="form-group row">
-                                        <!-- <div class="col-md-2 col-xs-12">
-                                            <label for="no_invoice" class="form-label">Number</label>
-                                            <input type="text" class="form-control" name="no_invoice" value="<?= $no_invoice ?>" readonly>
-                                        </div> -->
                                         <div class="col-md-2 col-xs-12">
-                                            <label for="tgl_invoice" class="form-label">Date</label>
-                                            <input type="date" class="form-control" name="tgl_invoice" value="<?= date('Y-m-d') ?>">
+                                            <label for="tgl_nota" class="form-label">Date</label>
+                                            <input type="date" class="form-control" name="tgl_nota" value="<?= date('Y-m-d') ?>">
                                         </div>
-                                        <div class="col-md-3 col-xs-12">
+                                        <div class="col-md-4 col-xs-12">
                                             <label for="customer" class="form-label">Bill to</label>
-                                            <select name="customer" id="customer" class="form-control select2" style="width: 100%" required>
+                                            <input type="text" name="customer" id="customer" class="form-control" placeholder="Customer" required>
+                                            <!-- <select name="customer" id="customer" class="form-control select2" style="width: 100%" required>
                                                 <option value="">:: Pilih customer</option>
                                                 <?php
                                                 foreach ($customers as $c) : ?>
                                                     <option value="<?= $c->id ?>"><?= $c->nama_customer ?></option>
                                                 <?php
                                                 endforeach; ?>
-                                            </select>
+                                            </select> -->
                                         </div>
                                         <!-- <div class="col-md-2 col-xs-12">
                                             <label for="diskon" class="form-label">Discount</label>
@@ -306,20 +303,23 @@
                                             <label for="ppn" class="form-label">PPN</label>
                                             <select name="ppn" id="ppn" class="form-control">
                                                 <option value="0">0%</option>
-                                                <!-- <option value="0.01">1%</option>
-                                                <option value="0.02">2%</option>
-                                                <option value="0.10">10%</option> -->
-                                                <!-- <option value="0.11">11%</option> -->
                                                 <option value="<?= $this->session->userdata('ppn') ?>"><?= $this->session->userdata('nama_ppn') ?></option>
                                             </select>
                                         </div>
-                                        <div class="col-md-5">
-                                            <label for="keterangan" class="form-label">Notes</label>
-                                            <input name="keterangan" id="keterangan" class="form-control uppercase" placeholder="Enter notes here..." required>
+                                        <div class="col-md-4 col-xs-12">
+                                            <label for="keterangan" class="form-label">Jenis nota</label>
+                                            <select name="jenis" id="jenis" class="form-control" required>
+                                                <option value="">:: Pilih jenis nota</option>
+                                                <?php
+                                                if ($jenis) {
+                                                    foreach ($jenis as $j) : ?>
+                                                        <option value="<?= $j->Id ?>"><?= $j->nama_jenis_nota ?></option>
+                                                <?php
+                                                    endforeach;
+                                                } ?>
+                                            </select>
                                         </div>
                                     </div>
-                                    <!-- <div class="form-group row">
-                                    </div> -->
                                     <div class="form-group row">
                                         <div class="col-md-2 col-xs-12">
                                             <label for="nominal" class="form-label">Subtotal</label>
@@ -333,78 +333,28 @@
                                             <label for="besaran_ppn" class="form-label">PPN</label>
                                             <input type="text" class="form-control" name="besaran_ppn" id="besaran_ppn" value="0" readonly>
                                         </div>
-                                        <div class="col-md-2 col-xs-12">
-                                            <label for="besaran_pph" class="form-label">PPh 23</label>
-                                            <input type="text" class="form-control" name="besaran_pph" id="besaran_pph" value="0" readonly>
-                                        </div>
-                                        <div class="col-md-2 col-xs-12">
+                                        <!-- <div class="col-md-2 col-xs-12">
                                             <label for="total_nonpph" class="form-label">Total (non PPh)</label>
                                             <input type="text" class="form-control" name="total_nonpph" id="total_nonpph" value="0" readonly>
                                         </div>
                                         <div class="col-md-2 col-xs-12">
                                             <label for="total_denganpph" class="form-label">Total (w/ PPh)</label>
                                             <input type="text" class="form-control" name="total_denganpph" id="total_denganpph" value="0" readonly>
-                                        </div>
+                                        </div> -->
                                         <div class="col-md-2 col-xs-12">
                                             <label for="total_denganpph" class="form-label">Pendapatan</label>
                                             <input type="text" class="form-control" name="nominal_pendapatan" id="nominal_pendapatan" value="0" readonly>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
                                         <div class="col-md-2 col-xs-12">
                                             <label for="nominal_bayar" class="form-label">Nominal bayar</label>
                                             <input type="text" class="form-control" name="nominal_bayar" id="nominal_bayar" value="0" readonly>
-                                        </div>
-
-                                        <div class="col-md-3">
-                                            <label for="coa_debit" class="form-label">CoA Debit</label>
-                                            <select name="coa_debit" id="coa_debit" class="form-control select2" style="width: 100%" required>
-                                                <option value="">:: Pilih CoA Debit</option>
-                                                <?php
-                                                foreach ($pendapatan as $pd) :
-                                                ?>
-                                                    <option value="<?= $pd->no_sbb ?>"><?= $pd->no_sbb . ' - ' . $pd->nama_perkiraan ?></option>
-                                                <?php
-                                                endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label for="coa_kredit" class="form-label">CoA Kredit</label>
-                                            <select name="coa_kredit" id="coa_kredit" class="form-control select2" style="width: 100%" required>
-                                                <option value="">:: Pilih CoA Kredit</option>
-                                                <?php
-                                                foreach ($persediaan as $ps) :
-                                                ?>
-                                                    <option value="<?= $ps->no_sbb ?>"><?= $ps->no_sbb . ' - ' . $ps->nama_perkiraan ?></option>
-                                                <?php
-                                                endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-1 col-xs-12">
-                                            <label for="termin" class="form-label">Termin</label>
-                                            <div class="checkbox text-end">
-                                                <input type="checkbox" class="icheckbox_flat-green" style="margin-left: 0px;" name="opsi_termin" value="1">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1 col-xs-12">
-                                            <label for="opsi_pph" class="form-label">PPh 23</label>
-                                            <div class="checkbox text-end">
-                                                <input type="checkbox" class="icheckbox_flat-green" style="margin-left: 0px;" name="opsi_pph" id="opsi_pph" value="1">
-                                                <!-- <input id="toggleSwitch" type="checkbox" data-toggle="toggle" class="flat"> -->
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-xs-12 text-right">
-                                            <label for="keterangan" class="form-label">&nbsp;</label>
-                                            <div class="mt-2">
-                                                <a href="<?= base_url('financial/invoice') ?>" class="btn btn-sm btn-warning"><i class="bi bi-arrow-return-left"></i> Back</a>
-                                                <button type="submit" class="btn btn-primary btn-sm">Save <i class="bi bi-save"></i></button>
-                                            </div>
                                         </div>
                                     </div>
                                     <table class="table mt-5 table-responsive">
                                         <thead>
                                             <tr>
                                                 <th>Keterangan</th>
+                                                <th>Stok</th>
                                                 <th>Jumlah</th>
                                                 <th>Nominal</th>
                                                 <th>Amount</th>
@@ -414,7 +364,11 @@
                                         <tbody>
                                             <tr class="baris">
                                                 <td>
-                                                    <input type="text" class="form-control uppercase" name="item[]">
+                                                    <input type="hidden" name="id_item[]" id="id_item[]" class="form-control" readonly>
+                                                    <input type="text" class="form-control uppercase autocomplete" name="item[]">
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" name="stok_gudang[]" value="0" readonly>
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control" name="jumlah[]" value="0">
@@ -432,8 +386,14 @@
                                         </tbody>
                                     </table>
                                     <div class="row">
-                                        <div class="col-lg-12 text-end">
+                                        <div class="col-lg-6 col-xs-12">
                                             <button type="button" class="btn btn-secondary btn-sm" id="addRow">Add new row</button>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12 text-right">
+                                            <div class="">
+                                                <a href="<?= base_url('financial/nota') ?>" class="btn btn-sm btn-warning"><i class="bi bi-arrow-return-left"></i> Back</a>
+                                                <button type="submit" class="btn btn-primary btn-sm">Save <i class="bi bi-save"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -539,10 +499,6 @@
             return parts.join(",");
         }
 
-        // Contoh penggunaan
-        // let formattedNumber = formatNumber(10000.952);
-        // console.log(formattedNumber); // Out
-
         <?php
         if ($this->session->flashdata('message_name')) {
         ?>
@@ -612,7 +568,7 @@
                 previousRow.after(newRow);
             });
 
-            $(document).on('change click keyup input paste', 'input[name="jumlah[]"], input[name="total[]"]', function(event) {
+            $(document).on('change click keyup input paste', 'input[name="jumlah[]"], input[name="total[]"], input[name="stok_gudang[]"]', function(event) {
                 $(this).val(function(index, value) {
                     return value.replace(/(?!\.)\D/g, "")
                         .replace(/(?<=\..*)\./g, "")
@@ -627,43 +583,23 @@
                 updateTotal();
             });
 
-            // Saat input qty atau harga diubah
-            // $(document).on('input', 'input[name="chargeable_weight[]"], input[name="harga[]"], input[name="awb_fee[]"], input[name="jumlah[]"]', function() {
-            // $(document).on('input', 'input[name="jumlah[]"], input[name="total[]"]', function() {
-            //     var value = $(this).val();
-            //     var formattedValue = parseFloat(value.split('.').join(''));
-            //     $(this).val(formattedValue);
-
-            //     var row = $(this).closest('.baris');
-            //     hitungTotal(row);
-            //     updateTotalBelanja();
-            //     updateTotal();
-            // });
-
-            // // Tambahkan event listener untuk event keyup
-            // $(document).on('keyup', 'input[name="jumlah[]"], input[name="total[]"]', function() {
-            //     var value = $(this).val().trim(); // Hapus spasi di awal dan akhir nilai
-            //     var formattedValue = formatNumber(parseFloat(value.split('.').join('')));
-            //     $(this).val(formattedValue);
-            //     if (isNaN(value)) { // Jika nilai input kosong
-            //         $(this).val(''); // Atur nilai input menjadi 0
-            //     }
-            //     var row = $(this).closest('.baris');
-            //     hitungTotal(row);
-            //     updateTotalBelanja();
-            //     updateTotal();
-            // });
 
             function hitungTotal(row) {
                 var total = row.find('input[name="total[]"]').val().replace(/\,/g, '');
                 var jumlah = row.find('input[name="jumlah[]"]').val().replace(/\,/g, '');
+                var stok = row.find('input[name="stok_gudang[]"]').val().replace(/\,/g, '');
 
                 total = (total) || 0;
                 jumlah = (jumlah) || 0;
+                stok = (stok) || 0;
+
+                // Batasi jumlah agar tidak lebih dari stok
+                jumlah = Math.min(jumlah, stok);
 
                 var total_amount = Number(total) * Number(jumlah);
 
                 row.find('input[name="total_amount[]"]').val(formatNumber(total_amount.toFixed(0)));
+                row.find('input[name="jumlah[]"]').val(jumlah)
                 updateTotalBelanja();
             }
 
@@ -707,9 +643,6 @@
             function updateTotal() {
                 var diskon = parseFloat($('#diskon').val());
                 var ppn = parseFloat($('#ppn').val());
-                var pph = 0.02;
-                // var opsi_pph = document.getElementById("opsi_pph").value;
-                var besaranpph = parseFloat($('#besaran_pph').val());
 
                 var subtotal = 0;
                 // Hitung subtotal dari total setiap baris
@@ -723,30 +656,18 @@
                 // Hitung total setelah diskon
                 var total = subtotal;
 
-                // Jika opsi_pph dicentang
-                if ($('#opsi_pph').is(':checked')) {
-                    besaranpph = total * pph;
-                } else {
-                    besaranpph = 0;
-                }
-
                 // console.log(besaranpph)
                 var besaranppn = total * ppn;
-                var total_nonpph = total + besaranppn;
-                var total_denganpph = total + besaranppn - besaranpph;
-                var pendapatan = total - besaranpph;
-                var nominal_bayar = total + besaranppn - besaranpph;
+                var nominal_bayar = total + besaranppn;
 
                 // console.log(subtotal);
                 // console.log((ppn));
                 // console.log(formatNumber(besaranppn));
                 // Atur nilai input besaran_diskon dan total dengan format angka yang sesuai
                 $('#besaran_ppn').val(formatNumber(besaranppn.toFixed(0)));
-                $('#besaran_pph').val(formatNumber(besaranpph.toFixed(0)));
+                // $('#besaran_pph').val(formatNumber(besaranpph.toFixed(0)));
                 $('#besaran_diskon').val(formatNumber(besaranDiskon));
-                $('#total_nonpph').val(formatNumber(total_nonpph.toFixed(0)));
-                $('#total_denganpph').val(formatNumber(total_denganpph.toFixed(0)));
-                $('#nominal_pendapatan').val(formatNumber(pendapatan.toFixed(0)));
+                $('#nominal_pendapatan').val(formatNumber(total.toFixed(0)));
                 $('#nominal_bayar').val(formatNumber(nominal_bayar.toFixed(0)));
             }
 
@@ -773,30 +694,6 @@
                 // Panggil fungsi untuk mengupdate besaran diskon dan total
                 updateTotalEdit();
             });
-
-
-            $(document).on('input', 'input[name="qty"], input[name="harga"]', function() {
-                var value = $(this).val();
-                var formattedValue = parseFloat(value.split('.').join(''));
-                $(this).val(formattedValue);
-
-                var row = $(this).closest('.baris');
-                hitungTotalItem(row);
-            });
-
-            function hitungTotalItem(row) {
-                var qty = row.find('input[name="qty"]').val().replace(/\,/g, ''); // Hapus tanda titik
-                var harga = row.find('input[name="harga"]').val().replace(/\,/g, ''); // Hapus tanda titik
-                qty = parseInt(qty); // Ubah string ke angka float
-                harga = parseInt(harga); // Ubah string ke angka float
-
-                qty = isNaN(qty) ? 0 : qty;
-                harga = isNaN(harga) ? 0 : harga;
-
-                var total = qty * harga;
-                row.find('input[name="harga"]').val(formatNumber(harga));
-                row.find('input[name="total"]').val(formatNumber(total));
-            }
 
             $('#addNewRow').on('click', function() {
                 // Periksa apakah ada input yang kosong di baris sebelumnya
@@ -893,10 +790,12 @@
                     select: function(event, ui) {
                         var $row = $(this).closest('tr.baris');
                         var harga = ui.item.harga;
+                        var stok = ui.item.stok;
                         var formattedValue = (parseInt(ui.item.harga.split('.').join('')));
 
                         $row.find('input[name="id_item[]"]').val(ui.item.id_item);
-                        $row.find('input[name="harga[]"]').val(formatNumber(Math.round(harga)));
+                        $row.find('input[name="total[]"]').val(formatNumber(Math.round(harga)));
+                        $row.find('input[name="stok_gudang[]"]').val(formatNumber((stok)));
                     }
                 });
             }

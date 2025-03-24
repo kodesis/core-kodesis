@@ -78,6 +78,15 @@
             text-align: left;
             vertical-align: middle;
         }
+
+        .select2-container .select2-dropdown .select2-results__option {
+            text-align: left;
+            /* Pastikan opsi dropdown rata kiri */
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
     </style>
 </head>
 
@@ -220,207 +229,85 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
-                            <!-- <div class="x_title">
-                    <h2>Tabel</h2>
-
-                </div> -->
-                            <div class="x_content">
-                                <?php
-                                if ($this->input->post('no_coa')) { ?>
-                                    <div class="row">
-                                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>">
-                                            <div class="col-md-5 col-xs-12">
-                                                <label for="" class="form-label">No. CoA</label>
-                                                <select name="no_coa" id="no_coa" class="form-control select2">
-                                                    <option value="">:: Pilih nomor coa</option>
-                                                    <?php
-                                                    foreach ($coas as $c) {
-                                                    ?>
-                                                        <option <?= ($this->input->post('no_coa') == $c->no_sbb) ? "selected" : "" ?> value="<?= $c->no_sbb ?>"><?= $c->no_sbb ?> - <?= $c->nama_perkiraan ?></option>
-                                                    <?php
-                                                    } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3 col-xs-12">
-                                                <label for="tgl_dari" class="form-label">Dari</label>
-                                                <input type="date" class="form-control" name="tgl_dari" value="<?= $this->input->post('tgl_dari') ?>">
-                                            </div>
-                                            <div class="col-md-3 col-xs-12">
-                                                <label for="tgl_sampai" class="form-label">Sampai</label>
-                                                <input type="date" class="form-control" name="tgl_sampai" value="<?= $this->input->post('tgl_sampai') ?>">
-                                            </div>
-                                            <div class="col-md-1 col-xs-12">
-                                                <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Lihat</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div class="row" style="margin-top: 10px;">
-                                        <div class="col-md-12 col-xs-12 table-responsive">
-                                            <table id="datatable" class="table table-bordered" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="text-right" colspan="2">Total:</th>
-                                                        <th class="text-right"><?= number_format($sum_debit, 2) ?></th>
-                                                        <th class="text-right"><?= number_format($sum_kredit, 2) ?></th>
-                                                        <!-- <th class="text-right" colspan="2">Saldo Awal: <?= number_format($saldo_awal, 2) ?></th> -->
-                                                    </tr>
-                                                    <tr>
-                                                        <th class="text-center">#</th>
-                                                        <th class="text-center">Tanggal</th>
-                                                        <th class="text-center">Debit</th>
-                                                        <th class="text-center">Kredit</th>
-                                                        <th class="text-center">Saldo Akhir</th>
-                                                        <th class="text-center">Keterangan</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $no = 1;
-                                                    if ($coa) {
-
-                                                        foreach ($coa as $a) :
-                                                    ?>
-                                                            <tr>
-                                                                <td><?= $no++ ?></td>
-                                                                <td><?= format_indo($a->tanggal) ?></td>
-                                                                <!-- <td><?= ($a->akun_debit == $detail_coa['no_sbb']) ? $a->akun_debit : $a->akun_kredit ?></td> -->
-                                                                <td class="text-right"><?= ($a->akun_debit == $detail_coa['no_sbb']) ? (($a->jumlah_debit) ? number_format($a->jumlah_debit) : '0') : '0' ?></td>
-                                                                <!-- <td class="text-right"><?= ($a->akun_debit == $detail_coa['no_sbb']) ? (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') : '0' ?></td> -->
-                                                                <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->jumlah_kredit) ? number_format($a->jumlah_kredit) : '0') : '0' ?></td>
-                                                                <!-- <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) : '0') : '0' ?></td> -->
-                                                                <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) :  '0') : (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') ?></td>
-                                                                <td><?= $a->keterangan ?></td>
-                                                            </tr>
-                                                        <?php
-                                                        endforeach;
-                                                    } else {
-                                                        ?>
-                                                        <tr>
-                                                            <td colspan="6">Tidak ada transaksi pada periode yang dipilih</td>
-                                                        </tr>
-                                                    <?php
-                                                    } ?>
-                                                </tbody>
-                                                <!-- <tbody>
-                                                    <?php
-                                                    $no = 1;
-                                                    $saldo = $saldo_awal;
-                                                    if ($coa) {
-                                                        foreach ($coa as $a) {
-                                                            $posisi = $detail_coa["posisi"];
-                                                            $no_sbb = $detail_coa["no_sbb"];
-
-                                                            if ($posisi == "AKTIVA") {
-                                                                if ($a->akun_debit == $no_sbb) {
-                                                                    $saldo += $a->jumlah_debit;
-                                                                } else {
-                                                                    $saldo -= $a->jumlah_kredit;
-                                                                }
-                                                            } else { // PASIVA
-                                                                if ($a->akun_kredit == $no_sbb) {
-                                                                    $saldo += $a->jumlah_kredit;
-                                                                } else {
-                                                                    $saldo -= $a->jumlah_debit;
-                                                                }
-                                                            } ?>
-                                                            <tr>
-                                                                <td><?= $no++ ?></td>
-                                                                <td><?= format_indo($a->tanggal) ?></td>
-                                                                <td class="text-right">
-                                                                    <?= ($a->akun_debit == $detail_coa['no_sbb']) ? number_format(($a->jumlah_debit ?: 0), 2) : '0.00' ?>
-                                                                </td>
-                                                                <td class="text-right">
-                                                                    <?= ($a->akun_kredit == $detail_coa['no_sbb']) ? number_format(($a->jumlah_kredit ?: 0), 2) : '0.00' ?>
-                                                                </td>
-                                                                <td class="text-right"><?= number_format($saldo) ?></td>
-                                                                <td><?= $a->keterangan ?></td>
-                                                            </tr>
-                                                        <?php
-                                                        }
-                                                    } else {
-                                                        ?>
-                                                        <tr>
-                                                            <td colspan="6">Tidak ada transaksi pada periode yang dipilih</td>
-                                                        </tr>
-                                                    <?php
-                                                    }
-                                                    ?>
-
-                                                </tbody> -->
-                                            </table>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else {
-                                ?>
-                                    <div class="row">
-
-                                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>">
-                                            <div class="col-md-5 col-xs-12">
-                                                <label for="" class="form-label">No. CoA </label>
-                                                <select name="no_coa" id="no_coa" class="form-control select2">
-                                                    <option value="">:: Pilih nomor coa</option>
-                                                    <?php
-                                                    foreach ($coas as $c) {
-                                                    ?>
-                                                        <option value="<?= $c->no_sbb ?>"><?= $c->no_sbb ?> - <?= $c->nama_perkiraan ?></option>
-                                                    <?php
-                                                    } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3 col-xs-12">
-                                                <label for="tgl_invoice" class="form-label">Dari</label>
-                                                <input type="date" class="form-control" name="tgl_dari" value="">
-                                            </div>
-                                            <div class="col-md-3 col-xs-12">
-                                                <label for="tgl_invoice" class="form-label">Sampai</label>
-                                                <input type="date" class="form-control" name="tgl_sampai" value="<?= date('Y-m-d') ?>">
-                                            </div>
-                                            <div class="col-md-1 col-xs-12">
-                                                <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Lihat</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <!-- <div class="row">
-                            <div class="col-md-12 col-xs-12">
-                                <h4>Tidak ada nomor coa yang dipilih</h4>
+                            <div class="x_title">
+                                <h2>Invoices</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <a href="<?= base_url('financial/create_nota') ?>" class="btn btn-primary">Buat nota</a>
+                                </ul>
                             </div>
-                        </div> -->
-                                <?php
-                                } ?>
+                            <div class="x_content">
+                                <div class="row">
+                                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/nota') ?>">
+                                        <div class="col-md-5 col-xs-12">
+                                            <div class="form-group">
+                                                <input type="text" name="keyword" id="keyword" class="form-control" placeholder="Masukkan nomor nota">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-xs-12">
+                                            <button type="submit" class="btn btn-success">Cari</button>
+                                            <a href="<?= base_url('financial/nota') ?>" class="btn btn-warning">Reset</a>
+                                        </div>
+                                    </form>
+                                    <div class="col-md-1"></div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="datatable" class="table table-striped table-bordered" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Tanggal</th>
+                                                <th>Total</th>
+                                                <th>User</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            if ($invoices) {
+                                                foreach ($invoices as $i) : ?>
+                                                    <tr>
+                                                        <td><?= $i['slug'] ?></td>
+                                                        <td><?= format_indo($i['tanggal_nota']) ?></td>
+                                                        <td class="text-right"><?= number_format($i['total_transaksi'], 0) ?></td>
+                                                        <td><?= isset($i['created_by_name']) ? $i['created_by_name'] : 'N/A' ?></td>
+                                                        <td>
+                                                            <a href="<?= base_url('financial/print_nota/' . $i['slug']) ?>" class="badge bg-orange" target="_blank" style="vertical-align: top;">
+                                                                Cetak
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+
+                                                <?php
+                                                endforeach;
+                                            } else {
+                                                ?>
+                                                <tr>
+                                                    <td colspan="5">Tidak ada data yang ditampilkan</td>
+                                                </tr>
+                                            <?php
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>*klik nomor nota untuk lihat detail nota</h6>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <?= $this->pagination->create_links() ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <link rel="stylesheet" href="<?= base_url(); ?>assets/select2/css/select2.min.css">
-            <script type="text/javascript" src="<?= base_url(); ?>assets/select2/js/select2.min.js"></script>
-            <script>
-                $(document).ready(function() {
-                    $('.select2').select2();
-
-                    $("form").on("submit", function() {
-                        Swal.fire({
-                            title: "Loading...",
-                            timerProgressBar: true,
-                            allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading()
-                            },
-                        });
-                    });
-                });
-            </script>
 
             <!-- Finish content-->
 
         </div>
 
         <!-- /page content -->
-
-        <!-- footer content -->
-
-        <!-- /footer content -->
 
     </div>
 
@@ -495,19 +382,17 @@
             return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        function format_angka() {
-            var nominal = document.getElementById('input_nominal').value;
+        // function format_angka() {
+        //     var nominal = document.getElementById('input_nominal').value;
 
-            var formattedValue = formatNumber(parseFloat(nominal.split('.').join('')));
+        //     var formattedValue = formatNumber(parseFloat(nominal.split('.').join('')));
 
-            document.getElementById('input_nominal').value = formattedValue;
-        }
-
+        //     document.getElementById('input_nominal').value = formattedValue;
+        // }
 
         <?php
         if ($this->session->flashdata('message_name')) {
-        ?>
-            Swal.fire({
+        ?> Swal.fire({
                 title: "Success!! ",
                 text: '<?= $this->session->flashdata('message_name') ?>',
                 type: "success",
@@ -550,6 +435,64 @@
         });
     </script>
 
+    <script>
+        $(document).ready(function() {
+            <?php foreach ($invoices as $i) : ?>
+                    (function() {
+                        var invoiceId = '<?= $i['Id'] ?>';
+
+                        // Event listener saat modal ditampilkan
+                        $('#modal<?= $i['Id'] ?>').on('shown.bs.modal', function() {
+                            var checkbox = $('#status_bayar' + invoiceId);
+                            var nominalBayarInput = $('#nominal_bayar' + invoiceId);
+                            var piutangElement = $('#piutang' + invoiceId);
+
+                            // console.log('Modal shown for invoice ID:', invoiceId); // Debug log
+
+                            if (piutangElement.length > 0 && piutangElement.val() !== '') {
+                                var piutang = parseFloat(piutangElement.val().replace(/,/g, ''));
+
+                                // Fungsi untuk memperbarui nilai nominal bayar
+                                function updateNominalBayar() {
+                                    // console.log('Checkbox checked:', checkbox.is(':checked')); // Debug log
+
+                                    if (checkbox.is(':checked')) {
+                                        nominalBayarInput.val(piutang.toLocaleString('id-ID')).attr('readonly', true);
+                                    } else {
+                                        nominalBayarInput.val('0').attr('readonly', false);
+                                    }
+                                }
+
+                                // Inisialisasi
+                                updateNominalBayar();
+
+                                // Event handler untuk checkbox menggunakan click event
+                                checkbox.on('click', function() {
+                                    updateNominalBayar();
+                                });
+
+                                // Event handler untuk input nominal bayar
+                                nominalBayarInput.on('input', function() {
+                                    var value = $(this).val().replace(/\./g, '').replace(',', '.');
+
+                                    if (value === '' || isNaN(parseFloat(value))) {
+                                        $(this).val('0').attr('readonly', false);
+                                    } else {
+                                        value = parseFloat(value);
+                                        if (value > piutang) {
+                                            alert('Nilai nominal bayar tidak boleh lebih dari piutang.');
+                                            $(this).val(piutang.toLocaleString('id-ID'));
+                                        } else {
+                                            $(this).val(value.toLocaleString('id-ID'));
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    })();
+            <?php endforeach; ?>
+        });
+    </script>
 
 </body>
 

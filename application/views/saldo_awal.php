@@ -248,7 +248,7 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                            if (isset($saldo) && is_iterable($saldo)) :
+                                            if (($saldo)) {
                                                 $no = 1;
                                                 foreach ($saldo as $c) : ?>
                                                     <tr>
@@ -259,12 +259,12 @@
                                                     </tr>
                                                 <?php
                                                 endforeach;
-                                            else : ?>
+                                            } else { ?>
                                                 <tr>
                                                     <td colspan="4" class="text-center">No data available</td>
                                                 </tr>
                                             <?php
-                                            endif; ?>
+                                            } ?>
                                         </tbody>
                                     </table>
 

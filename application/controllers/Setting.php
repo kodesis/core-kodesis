@@ -12,6 +12,8 @@ class Setting extends CI_Controller
         $this->load->database();
         $this->load->helper(['url', 'form', 'download', 'date', 'number']);
 
+        $this->cb = $this->load->database('corebank', TRUE);
+
         if (!$this->session->userdata('nip')) {
             redirect('login');
         }
@@ -19,7 +21,6 @@ class Setting extends CI_Controller
 
     public function index()
     {
-
         $nip = $this->session->userdata('nip');
         $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
         $query = $this->db->query($sql);
@@ -88,5 +89,27 @@ class Setting extends CI_Controller
         } else {
             echo "File tidak ditemukan!";
         }
+    }
+
+    public function cabang()
+    {
+        $nip = $this->session->userdata('nip');
+        $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+        $query = $this->db->query($sql);
+        $res2 = $query->result_array();
+        $result = $res2[0]['COUNT(Id)'];
+
+        $sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+        $query2 = $this->db->query($sql2);
+        $res2 = $query2->result_array();
+        $result2 = $res2[0]['COUNT(id)'];
+
+        $data = [
+            'count_inbox' => $result,
+            'count_inbox2' => $result2,
+            'branchs' => $this->cb->get('t_cabang')->result()
+        ];
+
+        $this->load->view('cabang', $data);
     }
 }

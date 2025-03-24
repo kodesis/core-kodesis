@@ -10,13 +10,20 @@ class M_Customer extends CI_Model
         $this->load->database();
     }
 
+    private function apply_cabang_filter()
+    {
+        $kode_cabang = $this->session->userdata('kode_cabang');
+        return $this->cb->where('id_cabang', $kode_cabang);
+    }
+
     public function customer()
     {
-        return $this->cb->order_by('nama_customer', 'ASC')->get('customer')->result();
+        return $this->apply_cabang_filter()->order_by('nama_customer', 'ASC')->get('customer')->result();
     }
 
     public function list_customer($status = NULL)
     {
+        $this->apply_cabang_filter();
         if ($status) {
             $this->cb->where('status_customer', $status);
         }

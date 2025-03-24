@@ -52,8 +52,6 @@
 		.btn_footer_panel .tag_ {
 			padding-top: 37px;
 		}
-
-		body {}
 	</style>
 </head>
 

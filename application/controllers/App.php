@@ -14,6 +14,7 @@ class App extends CI_Controller
 		$this->load->library('pagination');
 		$this->load->database();
 		$this->load->helper('url', 'form', 'download');
+		$this->cb = $this->load->database('corebank', TRUE);
 	}
 
 	public function dummy_over()
@@ -122,6 +123,8 @@ class App extends CI_Controller
 				$res4 = $query4->result_array();
 				$result4 = $res4[0]['COUNT(Id)'];
 				$data['count_inbox2'] = $result4;
+
+				$data['coa_list'] = $this->cb->get('v_coa_all')->result_array();
 
 				$this->load->view('asset_list', $data);
 			}
@@ -280,7 +283,7 @@ class App extends CI_Controller
 		}
 	}
 
-	public function add_asset()
+	public function add_asset_old()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
 			redirect('home');
@@ -360,7 +363,289 @@ class App extends CI_Controller
 		}
 	}
 
-	public function simpan_update()
+	public function add_asset()
+	{
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			$a = $this->session->userdata('level');
+			if (strpos($a, '501') !== false) {
+				date_default_timezone_set('Asia/Jakarta');
+				$jenis_asset 	= $this->input->post('jenis_asset');
+				$kode 			= $this->input->post('kode');
+				$nama_asset 	= $this->input->post('nama_asset');
+				$spesifikasi 	= $this->input->post('spesifikasi');
+				$ruangan		= $this->input->post('ruangan');
+				$lokasi			= $this->input->post('lokasi');
+				$remark			= $this->input->post('remark');
+				$jumlah			= $this->input->post('jumlah');
+				$date_pic		= $this->input->post('date_pic');
+				$kondisi		= $this->input->post('kondisi');
+				$harga			= $this->input->post('salary');
+				$umur			= $this->input->post('umur');
+				$coa_asset = $this->input->post('coa_asset');
+				$coa_beban = $this->input->post('coa_beban');
+				$coa_penyusutan = $this->input->post('coa_penyusutan');
+				$coa_kas = $this->input->post('coa_kas');
+
+				// Form Validation
+				$this->form_validation->set_rules('kode', 'Kode asset', 'required|trim', array(
+					'required' => '%s wajib diisi!'
+				));
+				$this->form_validation->set_rules('jenis_asset', 'Jenis Asset', 'required', array(
+					'required' => '%s wajib dipilih!'
+				));
+				$this->form_validation->set_rules('nama_asset', 'Nama Asset', 'required|trim', array(
+					'required' => '%s wajib diisi!'
+				));
+				$this->form_validation->set_rules('spesifikasi', 'Spesifikasi', 'required|trim', array(
+					'required' => '%s wajib diisi!'
+				));
+				$this->form_validation->set_rules('ruangan', 'Ruangan', 'required|trim', array(
+					'required' => '%s wajib dipilih!'
+				));
+				$this->form_validation->set_rules('lokasi', 'Lokasi', 'required', array(
+					'required' => '%s wajib dipilih!'
+				));
+				$this->form_validation->set_rules('jumlah', 'Jumlah', 'required|numeric|trim', array(
+					'required' => '%s wajib diisi!',
+					'numeric' => '%s hanya boleh berisi angka!'
+				));
+				$this->form_validation->set_rules('date_pic', 'Tanggal perolehan', 'required', array(
+					'required' => '%s wajib diisi!'
+				));
+				$this->form_validation->set_rules('kondisi', 'Kondisi', 'required', array(
+					'required' => '%s wajib diisi!'
+				));
+
+				$this->form_validation->set_rules('umur', 'Umur', 'required|trim|numeric', array(
+					'required' => '%s wajib diisi!',
+					'numeric' => '%s hanya boleh berisi angka!'
+				));
+
+				$this->form_validation->set_rules('coa_asset', 'Coa asset', 'required|trim', array(
+					'required' => '%s wajib dipilih!',
+				));
+
+				$this->form_validation->set_rules('coa_beban', 'Coa beban', 'required|trim', array(
+					'required' => '%s wajib dipilih!',
+				));
+
+				$this->form_validation->set_rules('coa_kas', 'Coa kas', 'required|trim', array(
+					'required' => '%s wajib dipilih!',
+				));
+
+				$this->form_validation->set_rules('coa_penyusutan', 'Coa penyusutan', 'required|trim', array(
+					'required' => '%s wajib dipilih!',
+				));
+
+				$this->form_validation->set_rules('remark', 'Detail', 'required|trim', array(
+					'required' => '%s wajib diisi!',
+				));
+
+				$file_size = $_FILES['foto_asset']['size'];
+				$file_name = $_FILES['foto_asset']['name'];
+
+				if ($this->form_validation->run() == FALSE) {
+					$response = [
+						'success' => false,
+						'msg' => array_values($this->form_validation->error_array())[0]
+					];
+				} else {
+					$penyusutanBulan =  preg_replace('/[^a-zA-Z0-9\']/', '', $harga) / $umur;
+
+					if ($file_name) {
+						$image_info = getimagesize($_FILES['foto_asset']['tmp_name']);
+						$original_width = $image_info[0];
+						$original_height =  $image_info[1];
+
+						if ($file_size > 500000) {
+							// Define the percentage for resizing
+							$width_percentage = 25; // e.g., 25% of the original width
+							$height_percentage = 25; // e.g., 25% of the original height
+						} else {
+							// Define the percentage for resizing
+							$width_percentage = 50; // e.g., 50% of the original width
+							$height_percentage = 50; // e.g., 50% of the original height
+						}
+
+						// Calculate new dimensions
+						$new_width = ($original_width * $width_percentage) / 100;
+						$new_height = ($original_height * $height_percentage) / 100;
+
+						$config['upload_path']          = './upload/asset';
+						$config['allowed_types']        = 'jpg|png|jpeg';
+						$config['max_size']             = 5024;
+						$config['max_width']            = 1024;
+						$config['max_height']           = 768;
+						$config['encrypt_name']					= TRUE;
+						$this->load->library('upload', $config);
+						if (!$this->upload->do_upload('foto_asset')) {
+							$response = [
+								'success' => FALSE,
+								'msg' => $this->upload->display_errors()
+							];
+						} else {
+							$gbr = $this->upload->data();
+							// Compress image
+							$config['image_library'] = 'gd2';
+							$config['source_image'] = './upload/asset/' . $gbr['file_name'];
+							$config['maintain_ration'] = TRUE;
+							$config['quality'] = '50%';
+							$config['widht'] = $new_width;
+							$config['height'] = $new_height;
+							$this->load->library('image_lib', $config);
+							$this->image_lib->resize();
+
+							// Update Asset List
+							$insert_assetList = [
+								'jenis_asset'	=> $jenis_asset,
+								'nama_asset'	=> $nama_asset,
+								'kode'			=> $kode,
+								'spesifikasi'	=> $spesifikasi,
+								'ruangan'		=> $ruangan,
+								'lokasi'		=> $lokasi,
+								'keterangan'	=> $remark,
+								'jumlah'		=> $jumlah,
+								'tgl_perolehan'	=> $date_pic,
+								'kondisi'		=> $kondisi,
+								'harga'			=> preg_replace('/[^a-zA-Z0-9\']/', '', $harga),
+								'umur'			=> $umur,
+								'last_update'	=> date('Y-m-d'),
+								'pic' => $gbr['file_name'] . '-' . $kode,
+								'sisa_umur' => $umur,
+								'coa_asset' => $coa_asset,
+								'coa_beban' => $coa_beban,
+								'coa_penyusutan' => $coa_penyusutan,
+								'penyusutan_bulan' => $penyusutanBulan,
+								'nilai_buku' => preg_replace('/[^a-zA-Z0-9\']/', '', $harga)
+							];
+							//Tambah history Asset
+							$insert_history = [
+								'kode'		=> $kode,
+								'ruangan'	=> $ruangan,
+								'lokasi'	=> $lokasi,
+								'tanggal'	=> date('Y-m-d'),
+								'remark'	=> $remark,
+							];
+						}
+					} else {
+						// Update Asset List
+						$update = [
+							'jenis_asset'	=> $jenis_asset,
+							'nama_asset'	=> $nama_asset,
+							'kode'			=> $kode,
+							'spesifikasi'	=> $spesifikasi,
+							'ruangan'		=> $ruangan,
+							'lokasi'		=> $lokasi,
+							'keterangan'	=> $remark,
+							'jumlah'		=> $jumlah,
+							'tgl_perolehan'	=> $date_pic,
+							'kondisi'		=> $kondisi,
+							'harga'			=> preg_replace('/[^a-zA-Z0-9\']/', '', $harga),
+							'umur'			=> $umur,
+							'last_update'	=> date('Y-m-d'),
+							'sisa_umur' => $umur,
+							'coa_asset' => $coa_asset,
+							'coa_beban' => $coa_beban,
+							'coa_penyusutan' => $coa_penyusutan,
+							'penyusutan_bulan' => $penyusutanBulan,
+							'nilai_buku' => preg_replace('/[^a-zA-Z0-9\']/', '', $harga)
+						];
+
+						//Tambah history Asset
+						$insert_history = [
+							'kode'		=> $kode,
+							'ruangan'	=> $ruangan,
+							'lokasi'	=> $lokasi,
+							'tanggal'	=> date('Y-m-d'),
+							'remark'	=> $remark,
+						];
+					}
+
+					$this->db->insert('asset_list', $insert_assetList);
+					$this->db->insert('asset_history', $insert_history);
+
+					// arus kas
+					$coaAsset = $this->cb->get_where('v_coa_all', ['no_sbb' => $coa_asset])->row_array();
+					$coaKas = $this->cb->get_where('v_coa_all', ['no_sbb' => $coa_kas])->row_array();
+					$substr_coa_asset = substr($coa_asset, 0, 1);
+					$substr_coa_kas = substr($coa_asset, 0, 1);
+					$nominalAssetBaru = 0;
+					$nominalKasBaru = 0;
+
+					// Debit
+					if ($coaAsset['posisi'] == 'AKTIVA') {
+						$nominalAssetBaru = $coaAsset['nominal'] + $penyusutanBulan;
+					}
+
+					if ($coaAsset['posisi'] == 'PASIVA') {
+						$nominalAssetBaru = $coaAsset['nominal'] - $penyusutanBulan;
+					}
+
+					if ($substr_coa_asset == '1' || $substr_coa_asset == '3' || $substr_coa_asset == '2') {
+						$table_debit = 't_coa_sbb';
+						$kolom_debit = 'no_sbb';
+					}
+
+					if ($substr_coa_asset == '4' || $substr_coa_asset == '5' || $substr_coa_asset == '6' || $substr_coa_asset == '7' || $substr_coa_asset == '8' || $substr_coa_asset == '9') {
+						$table_debit = 't_coalr_sbb';
+						$kolom_debit = 'no_lr_sbb';
+					}
+
+					$this->cb->where([$kolom_debit => $coa_asset]);
+					$this->cb->update($table_debit, ['nominal' => $nominalAssetBaru]);
+
+					// Kredit
+					if ($coaKas['posisi'] == 'AKTIVA') {
+						$nominalKasBaru = $coaKas['nominal'] - $penyusutanBulan;
+					}
+
+					if ($coaKas['posisi'] == 'PASIVA') {
+						$nominalKasBaru = $coaKas['nominal'] + $penyusutanBulan;
+					}
+
+					if ($substr_coa_kas == '1' || $substr_coa_kas == '3' || $substr_coa_kas == '2') {
+						$table_kredit = 't_coa_sbb';
+						$kolom_kredit = 'no_sbb';
+					}
+
+					if ($substr_coa_kas == '4' || $substr_coa_kas == '5' || $substr_coa_kas == '6' || $substr_coa_kas == '7' || $substr_coa_kas == '8' || $substr_coa_kas == '9') {
+						$table_kredit = 't_coalr_sbb';
+						$kolom_kredit = 'no_lr_sbb';
+					}
+
+					$this->cb->where([$kolom_kredit => $coa_kas]);
+					$this->cb->update($table_kredit, ['nominal' => $nominalKasBaru]);
+
+					// create jurnal
+					$jurnal = [
+						'tanggal' => date('Y-m-d'),
+						'akun_debit' => $coa_asset,
+						'jumlah_debit' => $penyusutanBulan,
+						'akun_kredit' => $coa_kas,
+						'jumlah_kredit' => $penyusutanBulan,
+						'saldo_debit' => $nominalAssetBaru,
+						'saldo_kredit' => $nominalKasBaru,
+						'created_by' => $this->session->userdata('nip'),
+						'keterangan' => 'Nilai penyusutan perbulan asset ' . $nama_asset . ' (' . $kode . ')'
+					];
+
+					$this->cb->insert('jurnal_neraca', $jurnal);
+
+					$response = [
+						'success' => TRUE,
+						'msg' => 'Asset berhasil ditambahkan!',
+						'reload' => base_url('app/asset_list')
+					];
+				}
+
+				echo json_encode($response);
+			}
+		}
+	}
+
+	public function simpan_update_old()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
 			redirect('home');
@@ -422,6 +707,147 @@ class App extends CI_Controller
 
 					echo "<script>alert('Data update  Success');window.history.back();</script>";
 				}
+			}
+		}
+	}
+
+	public function simpan_update()
+	{
+		if ($this->session->userdata('isLogin') == FALSE) {
+			redirect('home');
+		} else {
+			$a = $this->session->userdata('level');
+			if (strpos($a, '501') !== false) {
+				date_default_timezone_set('Asia/Jakarta');
+				$nama_asset 	= $this->input->post('nama_asset');
+				$spesifikasi 	= $this->input->post('spesifikasi');
+				$ruangan		= $this->input->post('ruangan');
+				$lokasi			= $this->input->post('lokasi');
+				$remark			= $this->input->post('remark');
+				$Id				= $this->input->post('id_postf');
+				$kode			= $this->input->post('kode');
+				$kondisi 		= $this->input->post('kondisi');
+
+
+				$asset_list = $this->db->get_where('asset_list', ['Id' => $Id])->row_array();
+
+				$this->form_validation->set_rules('nama_asset', 'nama_asset', 'required');
+				$this->form_validation->set_rules('kondisi', 'kondisi', 'required');
+				$this->form_validation->set_rules('spesifikasi', 'spesifikasi', 'required|trim');
+				$this->form_validation->set_rules('ruangan', 'ruangan', 'required|trim');
+				$this->form_validation->set_rules('lokasi', 'lokasi', 'required');
+				$this->form_validation->set_rules('id_postf', 'id_postf', 'required');
+				$this->form_validation->set_rules('remark', 'detail perubahan', 'required|trim');
+
+				// $file_size = $_FILES['foto_asset']['size'];
+				// $file_name = $_FILES['foto_asset']['name'];
+
+				if ($this->form_validation->run() == FALSE) {
+					$response = [
+						'success' => false,
+						'msg' => array_values($this->form_validation->error_array())[0]
+					];
+				} else {
+					if ($_FILES['foto_asset']['name']) {
+						$image_info = getimagesize($_FILES['foto_asset']['tmp_name']);
+						$original_width = $image_info[0];
+						$original_height = $image_info[1];
+						if ($_FILES['foto_asset']['size'] > 500000) {
+							// Define the percentage for resizing
+							$width_percentage = 25; // e.g., 25% of the original width
+							$height_percentage = 25; // e.g., 25% of the original height
+						} else {
+							// Define the percentage for resizing
+							$width_percentage = 50; // e.g., 50% of the original width
+							$height_percentage = 50; // e.g., 50% of the original height
+						}
+
+						// Calculate new dimensions
+						$new_width = ($original_width * $width_percentage) / 100;
+						$new_height = ($original_height * $height_percentage) / 100;
+
+						$config['upload_path']          = './upload/asset';
+						$config['allowed_types']        = 'jpg|png|jpeg';
+						$config['max_size']             = 5024;
+						$config['max_width']            = 1024;
+						$config['max_height']           = 768;
+						$config['encrypt_name']					= TRUE;
+						$this->load->library('upload', $config);
+						if (!$this->upload->do_upload('foto_asset')) {
+							$response = [
+								'success' => FALSE,
+								'msg' => $this->upload->display_errors()
+							];
+						} else {
+							// Hapus gambar sebelumnya
+							if ($asset_list['pic'] && file_exists('./upload/asset/' . $asset_list['pic'])) {
+								unlink('./upload/asset/' . $asset_list['pic']);
+							}
+							$gbr = $this->upload->data();
+							// Compress image
+							$config['image_library'] = 'gd2';
+							$config['source_image'] = './upload/asset/' . $gbr['file_name'];
+							$config['maintain_ration'] = TRUE;
+							$config['quality'] = '50%';
+							$config['widht'] = $new_width;
+							$config['height'] = $new_height;
+							$this->load->library('image_lib', $config);
+							$this->image_lib->resize();
+
+							// Update Asset List
+							$update = [
+								'nama_asset'	=> $nama_asset,
+								'spesifikasi'	=> $spesifikasi,
+								'ruangan'		=> $ruangan,
+								'lokasi'		=> $lokasi,
+								'keterangan'	=> $remark,
+								'kondisi'		=> $kondisi,
+								'pic' => $gbr['file_name'] . '-' . $kode
+							];
+							//Tambah history Asset
+							$insert_history = [
+								'kode'		=> $kode,
+								'ruangan'	=> $ruangan,
+								'lokasi'	=> $lokasi,
+								'tanggal'	=> date('Y-m-d'),
+								'remark'	=> $remark,
+							];
+						}
+					} else {
+						// Update Asset List
+						$update = [
+							'nama_asset'	=> $nama_asset,
+							'spesifikasi'	=> $spesifikasi,
+							'ruangan'		=> $ruangan,
+							'lokasi'		=> $lokasi,
+							'keterangan'	=> $remark,
+							'kondisi'		=> $kondisi,
+						];
+
+						//Tambah history Asset
+						$insert_history = [
+							'kode'		=> $kode,
+							'ruangan'	=> $ruangan,
+							'lokasi'	=> $lokasi,
+							'tanggal'	=> date('Y-m-d'),
+							'remark'	=> $remark,
+						];
+					}
+
+					$this->db->where('Id', $Id);
+					$this->db->update('asset_list', $update);
+
+					$this->db->insert('asset_history', $insert_history);
+
+					$response = [
+						'success' => TRUE,
+						'msg' => 'Data asset berhasil diubah!'
+					];
+				}
+
+				echo json_encode($response);
+				// $file_size = $_FILES['foto_asset']['size'];
+				// $file_name = $_FILES['foto_asset']['name'];
 			}
 		}
 	}
@@ -1191,6 +1617,7 @@ class App extends CI_Controller
 							"nama_jabatan" => $this->input->post('nama_jabatan'),
 							"supervisi" => $this->input->post('supervisi'),
 							"cuti" => $this->input->post('cuti'),
+							"id_lokasi_presensi" => $this->input->post('lokasi_presensi'),
 							"jam_masuk" => $this->input->post('jam_masuk'),
 							"jam_keluar" => $this->input->post('jam_keluar')
 						];
@@ -2953,50 +3380,6 @@ class App extends CI_Controller
 		}
 	}
 
-	public function umrah()
-	{
-		if ($this->session->userdata('isLogin') == FALSE) {
-			redirect('login');
-		} else {
-			if ($this->input->post('save_umrah')) {
-				$this->form_validation->set_rules('package_name', 'package_name', 'required');
-				$this->form_validation->set_rules('userfile', 'userfile', 'required');
-				$this->form_validation->set_rules('date_depart', 'date_depart', 'required');
-				$this->form_validation->set_rules('duration', 'duration', 'required');
-				$this->form_validation->set_rules('price4', 'price4', 'required|trim');
-				$this->form_validation->set_rules('price3', 'price3', 'required|trim');
-				$this->form_validation->set_rules('price2', 'price2', 'required|trim');
-				$this->form_validation->set_rules('discount', 'discount', 'required|trim');
-				$this->form_validation->set_rules('quota_awal', 'quota_awal', 'required|trim');
-				$this->form_validation->set_rules('quota_sisa', 'quota_sisa', 'required|trim');
-				$this->form_validation->set_rules('voucher', 'voucher', 'required|trim');
-				$this->form_validation->set_rules('airline', 'airline', 'required');
-				$this->form_validation->set_rules('hotel_mekah', 'hotel_mekah', 'required|trim');
-				$this->form_validation->set_rules('hotel_madinah', 'hotel_madinah', 'required|trim');
-				$this->form_validation->set_rules('special_guest', 'special_guest');
-				$this->form_validation->set_rules('halal_tourism', 'halal_tourism');
-				$this->form_validation->set_rules('dateline_payment', 'dateline_payment', 'required');
-				$this->form_validation->set_rules('dateline_document', 'dateline_document', 'required');
-				$this->form_validation->set_rules('dateline_visa', 'dateline_visa', 'required');
-				$this->form_validation->set_rules('manasik_date', 'manasik_date', 'required');
-				$this->form_validation->set_rules('manasik_info', 'manasik_info');
-				$this->form_validation->set_rules('itinerary', 'itinerary');
-				$this->form_validation->set_rules('include', 'include');
-				$this->form_validation->set_rules('other_info', 'other_info');
-
-				$this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-				if ($this->form_validation->run() == FALSE) {
-					echo '<script>alert("Save ERROR! Check your input");</script>';
-					$this->input_umrah();
-				} else {
-
-					echo '<script>alert("New umrah successfully saved!");</script>';
-					$this->input_umrah();
-				}
-			}
-		}
-	}
-
 	public function simpan_resale()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {
@@ -3020,58 +3403,6 @@ class App extends CI_Controller
 					//invalid project to sale
 					echo '<script>alert("Invalid Project to Resale you have a payable less than 0");</script>';
 					$this->list_project();
-				}
-			}
-		}
-	}
-
-	function save_project()
-	{
-		if ($this->session->userdata('isLogin') == FALSE) {
-			redirect('login');
-		} else {
-			//check otorisation
-			if ($this->session->userdata('level') == 3) {
-				echo '<script>alert("ERROR!!! Sorry, your user is not allowed to create a project!");</script>';
-				$this->input_form();
-			} else {
-				//check limit
-				$query = $this->m_app->list_ttl_username();
-				if (($this->session->userdata('limit') <= $query->project_modal)) {
-					echo '<script>alert("ERROR!!! your project limit is over!");</script>';
-					$this->input_form();
-				} else {
-					//check NIK
-					$nik = $this->m_app->get_identity($this->input->post('identity_number'));
-					if (empty($nik)) {
-						echo '<script>alert("ERROR!!! Customer Identity Not found!");</script>';
-						$this->input_form();
-					} elseif ($nik->customer_status == 9) {
-						echo '<script>alert("ERROR!!! Customer Identity is Banned!");</script>';
-						$this->input_form();
-					} else {
-						$this->form_validation->set_rules('project_name', 'project_name', 'required');
-						$this->form_validation->set_rules('identity_number', 'identity_number', 'required|trim');
-						//$this->form_validation->set_rules('gender', 'gender', 'required');
-						$this->form_validation->set_rules('product', 'product', 'required');
-						$this->form_validation->set_rules('product_series', 'product_series', 'required');
-						$this->form_validation->set_rules('quantity', 'quantity', 'required|trim');
-						$this->form_validation->set_rules('price', 'price', 'required|trim');
-						$this->form_validation->set_rules('down_payment', 'down_payment', 'required|trim');
-						//$this->form_validation->set_rules('invesment', 'invesment', 'required|trim');
-						$this->form_validation->set_rules('monthly', 'monthly', 'required|trim');
-						$this->form_validation->set_rules('tenor', 'tenor', 'required|trim');
-						$this->form_validation->set_rules('project_detail', 'project_detail');
-						$this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-						if ($this->form_validation->run() == FALSE) {
-							echo '<script>alert("Have an error Input!");</script>';
-							$this->input_form();
-						} else {
-							$this->m_app->insert_project();
-							echo '<script>alert("New projects successfully saved!");</script>';
-							$this->input_form();
-						}
-					}
 				}
 			}
 		}
@@ -3905,7 +4236,7 @@ class App extends CI_Controller
 
 	public function ajax_lokasi_presensi_list()
 	{
-		$this->load->model('lokasi_presensi_m', 'lpm');
+		$this->load->model('Lokasi_Presensi_m', 'lpm');
 
 		$list = $this->lpm->get_datatables();
 		$data = array();
@@ -3974,7 +4305,7 @@ class App extends CI_Controller
 	}
 	public function edit_lokasi_presensi($id)
 	{
-		$this->load->model('lokasi_presensi_m', 'lpm');
+		$this->load->model('Lokasi_Presensi_m', 'lpm');
 
 		if ($this->session->userdata('isLogin') == FALSE) {
 			redirect('home');

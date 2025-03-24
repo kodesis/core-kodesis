@@ -247,6 +247,7 @@ class Member extends CI_Controller
     }
     public function proses_tambah_member()
     {
+        $time =  Date('Y-m-d h:i:s');
         $data_insert = array(
             'nama' => $this->input->post('nama'),
             'alamat' => $this->input->post('alamat'),
@@ -262,7 +263,7 @@ class Member extends CI_Controller
             'tempat_lahir' => $this->input->post('tempat_lahir'),
             'kota' => $this->input->post('kota'),
             'cabang' => $this->input->post('cabang'),
-            'tgl_pendaftaran' => $this->input->post('tgl_pendaftaran'),
+            'tgl_pendaftaran' => $time,
             'tipe_nasabah' => $this->input->post('tipe_nasabah'),
             'segmen_nasabah' => $this->input->post('segmen_nasabah'),
             'warga_negara' => $this->input->post('warga_negara'),
@@ -290,11 +291,11 @@ class Member extends CI_Controller
             'tempat_lahir' => $this->input->post('tempat_lahir'),
             'kota' => $this->input->post('kota'),
             'cabang' => $this->input->post('cabang'),
-            'tgl_pendaftaran' => $this->input->post('tgl_pendaftaran'),
+            // 'tgl_pendaftaran' => $this->input->post('tgl_pendaftaran'),
             'tipe_nasabah' => $this->input->post('tipe_nasabah'),
             'segmen_nasabah' => $this->input->post('segmen_nasabah'),
             'warga_negara' => $this->input->post('warga_negara'),
-            'no_cib' => $this->input->post('no_cib'),
+            // 'no_cib' => $this->input->post('no_cib'),
         );
         $this->cb->where('no_cib', $this->input->post('id_member')); // Ensure to specify the record to update
         $this->cb->update('t_nasabah', $data_insert);

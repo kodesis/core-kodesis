@@ -200,7 +200,7 @@
 							<?php
 							}
 							?>
-							Member Nasabah
+							Tabungan Nasabah
 							<hr />
 
 						</font>
@@ -229,7 +229,7 @@
 									</div>
 									<div class="col-md-6" style="margin-bottom: 10px;">
 										<label for="no_cib">No CIB</label>
-										<select class="form-control" name="no_cib" id="no_cib">
+										<select class="form-control select2" name="no_cib" id="no_cib">
 											<?php
 											foreach ($nasabah as $n) {
 											?>
@@ -272,6 +272,19 @@
 										<label for="nolsp">NOLSP (Rp.)</label>
 										<input type="number" min="0" class="form-control" name="nolsp" id="nolsp">
 									</div>
+									<div class="col-md-6">
+										<label for="tempat_lahir">Cabang</label>
+										<select class="form-control select2" name="cabang" id="cabang">
+											<option selected disabled>-- Pilih Cabang --</option>
+											<?php
+											foreach ($cabang as $c) {
+											?>
+												<option value="<?= $c->uid ?>"><?= $c->uid ?> - <?= $c->nama_cabang ?></option>
+											<?php
+											}
+											?>
+										</select>
+									</div>
 								</div>
 								<button type="submit" class="btn btn-primary">Submit</button>
 								<button type="reset" class="btn btn-warning">Reset</button>
@@ -304,7 +317,7 @@
 									</div>
 									<div class="col-md-6" style="margin-bottom: 10px;">
 										<label for="no_cib">No CIB</label>
-										<select class="form-control" name="no_cib" id="no_cib">
+										<select class="form-control select2" name="no_cib" id="no_cib">
 											<?php
 											foreach ($nasabah as $n) {
 											?>
@@ -349,6 +362,21 @@
 									<div class="col-md-6" style="margin-bottom: 10px;">
 										<label for="nolsp">NOLSP (Rp.)</label>
 										<input type="number" min="0" class="form-control" name="nolsp" id="nolsp" value="<?= $detail->nolsp ?>">
+									</div>
+									<div class="col-md-6">
+										<label for="tempat_lahir">Cabang</label>
+										<select class="form-control select2" name="cabang" id="cabang">
+											<option selected disabled>-- Pilih Cabang --</option>
+											<?php
+											foreach ($cabang as $c) {
+											?>
+												<option <?php if ($c->uid == $detail->cabang)
+															echo "Selected";
+														?> value="<?= $c->uid ?>"><?= $c->uid ?> - <?= $c->nama_cabang ?></option>
+											<?php
+											}
+											?>
+										</select>
 									</div>
 								</div>
 								<button type="submit" class="btn btn-primary">Submit</button>
@@ -436,6 +464,10 @@
 	<script src="<?= base_url() ?>src/vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
 
 	<script>
+		$(document).ready(() => {
+			$('.select2').select2();
+
+		})
 		document.addEventListener('DOMContentLoaded', function() {
 			const today = new Date().toISOString().split('T')[0];
 			document.getElementById('tgl_lahir').value = today;
@@ -443,6 +475,7 @@
 		});
 
 		$(document).ready(function() {
+
 			$(document).ready(function() {
 				$('#jenis_tabungan').change(function() {
 					let jenisTabungan = $(this).val(); // Get selected 'jenis_tabungan'

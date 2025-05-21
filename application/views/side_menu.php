@@ -244,7 +244,7 @@
 						<li>
 							<a href="<?= base_url(); ?>financial/list_coa">List CoA</a>
 						</li>
-						<!-- <li>
+						<li>
 							<a>
 								Nota<span class="fa fa-chevron-down"></span>
 							</a>
@@ -255,7 +255,7 @@
 								<li><a href="<?= base_url(); ?>customer">Closing</a>
 								</li>
 							</ul>
-						</li> -->
+						</li>
 					<?php } ?>
 				</ul>
 			</li>

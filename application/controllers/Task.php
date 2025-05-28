@@ -216,6 +216,7 @@ class Task extends CI_Controller
 							$res3 = $query3->result_array();
 							$result3 = $res3[0]['COUNT(id)'];
 							$data['count_inbox2'] = $result3;
+
 							//update read warna merah
 							if ($this->uri->segment(4)) {
 								$nip = $this->session->userdata('nip');

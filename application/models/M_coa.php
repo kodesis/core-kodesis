@@ -25,10 +25,10 @@ class M_coa extends CI_Model
         return $this->apply_cabang_filter()->where($kolom, $no_coa)->update($tabel, $data);
     }
 
-    function update_nominal_coa_new($no_coa, $nominal, $kolom, $tabel, $operator)
+    function update_nominal_coa_new($id, $nominal, $tabel, $operator)
     {
         $this->db->set('nominal', "nominal {$operator} {$nominal}", false);
-        $this->db->where($kolom, $no_coa);
+        $this->db->where('Id', $id);
         $this->db->update($tabel);
     }
 

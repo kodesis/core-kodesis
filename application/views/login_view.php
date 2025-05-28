@@ -65,8 +65,10 @@
          <div class="wrap-login390 p-t-10 p-b-10">
 
             <span class="login100-form-title p-b-41">
+               <?php
+               $logo = $this->db->get('utility')->row_array()['logo']; ?>
 
-               <img src="<?php echo base_url(); ?>img/logo-kodesis.png" alt="..." width="150" height="100">
+               <img src="<?= $logo; ?>" alt="..." width="150" height="100">
 
             </span>
 

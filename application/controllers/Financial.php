@@ -2852,7 +2852,7 @@ class Financial extends CI_Controller
             'coa_kredit' => $coa_kredit,
             'nominal' => $nominal,
             'id_cabang' => $this->session->userdata('kode_cabang'),
-            'user' => $this->session->userdata('nip'),
+            'nip' => $this->session->userdata('nip'),
         ];
 
         $this->cb->insert('general_ledger', $data);

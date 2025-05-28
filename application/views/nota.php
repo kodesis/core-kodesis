@@ -248,7 +248,19 @@
                                             <a href="<?= base_url('financial/nota') ?>" class="btn btn-warning">Reset</a>
                                         </div>
                                     </form>
-                                    <div class="col-md-1"></div>
+                                    <!-- <div class="col-md-1"></div> -->
+
+                                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/closing_harian') ?>">
+                                        <div class="col-md-3 col-xs-12">
+                                            <div class="form-group">
+                                                <!-- <label for="tgl_invoice" class="form-label">Tanggal</label> -->
+                                                <input type="date" class="form-control" name="periode" value="<?= $this->input->post('periode') ?>">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 col-xs-12">
+                                            <button type="submit" class="btn btn-primary">Closing EoM</button>
+                                        </div>
+                                    </form>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="datatable" class="table table-striped table-bordered" style="width:100%">
@@ -403,17 +415,19 @@
             unset($_SESSION['message_name']);
         } ?>
 
-        // const flashdata_error = $('<?= $this->session->flashdata("message_error") ?>').data("flashdata");
-        const flashdata_error = $(".flash-data-error").data("flashdata");
-        // const flashdata_error = $('.flash-data').data('flashdata');
-        if (flashdata_error) {
+        <?php
+        if ($this->session->flashdata('message_error')) {
+        ?>
             Swal.fire({
                 title: "Error!! ",
-                text: flashdata_error,
+                text: '<?= $this->session->flashdata('message_error') ?>',
                 type: "error",
                 icon: "error",
             });
-        }
+        <?php
+            // $this->session->sess_destroy('message_error');
+            unset($_SESSION['message_error']);
+        } ?>
 
         $(".btn-process").on("click", function(e) {
             e.preventDefault();

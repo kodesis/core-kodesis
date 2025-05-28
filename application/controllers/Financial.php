@@ -67,7 +67,7 @@ class Financial extends CI_Controller
         $keterangan = trim($this->input->post('input_keterangan'));
         $tanggal_transaksi = $this->input->post('tanggal');
 
-        $this->db->trans_start(); // Mulai transaksi
+        $this->cb->trans_start(); // Mulai transaksi
         $id_invoice = NULL;
 
         if ($jenis == "multi_kredit") {
@@ -103,13 +103,13 @@ class Financial extends CI_Controller
             $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal_transaksi, $id_invoice);
         }
 
-        $this->db->trans_complete(); // Selesaikan transaksi
+        $this->cb->trans_complete(); // Selesaikan transaksi
 
-        if ($this->db->trans_status() === FALSE) {
-            $this->db->trans_rollback();
+        if ($this->cb->trans_status() === FALSE) {
+            $this->cb->trans_rollback();
             $this->session->set_flashdata('message_error', 'Transaksi gagal, silakan coba lagi.');
         } else {
-            $this->db->trans_commit();
+            $this->cb->trans_commit();
             $this->session->set_flashdata('message_name', 'Transaksi berhasil.');
         }
 
@@ -189,11 +189,11 @@ class Financial extends CI_Controller
             }
 
             // Commit transaction
-            if ($this->db->trans_status() === FALSE) {
-                $this->db->trans_rollback();
+            if ($this->cb->trans_status() === FALSE) {
+                $this->cb->trans_rollback();
                 echo json_encode(['status' => false, 'message' => 'Database error']);
             } else {
-                $this->db->trans_commit();
+                $this->cb->trans_commit();
                 echo json_encode(['status' => true, 'message' => 'File processed successfully']);
             }
         } catch (Exception $e) {
@@ -728,6 +728,89 @@ class Financial extends CI_Controller
 
         $this->m_coa->add_transaksi($data_transaksi);
     }
+
+    private function posting_new($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $id_invoice = NULL)
+    {
+        $substr_coa_debit = substr($coa_debit, 0, 1);
+        $substr_coa_kredit = substr($coa_kredit, 0, 1);
+
+        $debit = $this->m_coa->cek_coa($coa_debit);
+        $kredit = $this->m_coa->cek_coa($coa_kredit);
+
+        // Tentukan operator berdasarkan posisi akun
+        $operator_debit = ($debit['posisi'] == "AKTIVA") ? '+' : '-';
+        $operator_kredit = ($kredit['posisi'] == "AKTIVA") ? '-' : '+';
+
+        // Tentukan tabel dan kolom untuk debit
+        if (in_array($substr_coa_debit, ['1', '2', '3'])) {
+            $tabel_debit = "t_coa_sbb";
+            $kolom_debit = "no_sbb";
+        } else {
+            $tabel_debit = "t_coalr_sbb";
+            $kolom_debit = "no_lr_sbb";
+        }
+
+        // Tentukan tabel dan kolom untuk kredit
+        if (in_array($substr_coa_kredit, ['1', '2', '3'])) {
+            $tabel_kredit = "t_coa_sbb";
+            $kolom_kredit = "no_sbb";
+        } else {
+            $tabel_kredit = "t_coalr_sbb";
+            $kolom_kredit = "no_lr_sbb";
+        }
+
+        // Mulai transaksi database
+        $this->db->trans_start();
+
+        // Update saldo debit
+        $this->m_coa->update_nominal_coa($coa_debit, $nominal, $kolom_debit, $tabel_debit, $operator_debit);
+
+        // Update saldo kredit
+        $this->m_coa->update_nominal_coa($coa_kredit, $nominal, $kolom_kredit, $tabel_kredit, $operator_kredit);
+
+        // Ambil saldo terbaru untuk jurnal (opsional: jika mau lebih presisi)
+        $saldo_debit_baru = $this->m_coa->get_nominal($coa_debit, $kolom_debit, $tabel_debit);
+        $saldo_kredit_baru = $this->m_coa->get_nominal($coa_kredit, $kolom_kredit, $tabel_kredit);
+
+        // Data untuk jurnal
+        $dt_jurnal = [
+            'tanggal' => $tanggal,
+            'akun_debit' => $coa_debit,
+            'jumlah_debit' => $nominal,
+            'akun_kredit' => $coa_kredit,
+            'jumlah_kredit' => $nominal,
+            'saldo_debit' => $saldo_debit_baru,
+            'saldo_kredit' => $saldo_kredit_baru,
+            'keterangan' => $keterangan,
+            'created_by' => $this->session->userdata('nip'),
+            'id_invoice' => $id_invoice ?? '',
+            'id_cabang' => $this->session->userdata('kode_cabang')
+        ];
+
+        $this->m_coa->addJurnal($dt_jurnal);
+
+        // Data untuk transaksi
+        $data_transaksi = [
+            'user_id' => $this->session->userdata('nip'),
+            'tgl_trs' => date('Y-m-d H:i:s'),
+            'nominal' => $nominal,
+            'debet' => $coa_debit,
+            'kredit' => $coa_kredit,
+            'keterangan' => trim($keterangan),
+            'id_cabang' => $this->session->userdata('kode_cabang')
+        ];
+
+        $this->m_coa->add_transaksi($data_transaksi);
+
+        // Selesai transaksi database
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === FALSE) {
+            // Jika ada gagal, rollback dan beri pesan error
+            throw new Exception('Gagal melakukan posting transaksi.');
+        }
+    }
+
 
     public function print_invoice($id)
     {
@@ -1914,6 +1997,11 @@ class Financial extends CI_Controller
 
         $cek = $this->m_coa->cek_saldo_awal($periode);
 
+        $data['total_pendapatan'] = 0;
+        $data['sum_biaya'] = 0;
+        $data['sum_pendapatan'] = 0;
+        $data['biaya'] = [];
+        $data['pendapatan'] = [];
         if ($cek) {
             $coaLastPeriod = json_decode($cek['coa']);
 
@@ -1986,6 +2074,8 @@ class Financial extends CI_Controller
             $this->session->set_flashdata('message_error', 'Closing bulan ' . format_indo($periode) . ' tidak ditemukan');
         }
 
+        // print_r($data['total_pendapatan']);
+        // exit;
         $data['title'] = 'Laba rugi per tanggal ' . format_indo($tanggal);
         $data['pages'] = 'pages/financial/v_labarugi_by_date';
 
@@ -2762,8 +2852,61 @@ class Financial extends CI_Controller
             'coa_kredit' => $coa_kredit,
             'nominal' => $nominal,
             'id_cabang' => $this->session->userdata('kode_cabang'),
+            'user' => $this->session->userdata('nip'),
         ];
 
         $this->cb->insert('general_ledger', $data);
+    }
+
+    public function closing_harian($tanggal)
+    {
+        $id_user = $this->session->userdata('nip');
+        $kode_cabang = $this->session->userdata('kode_cabang');
+
+        // Ambil semua transaksi GL yang belum diposting jadi jurnal
+        $gl_list = $this->cb->where('tanggal', $tanggal)
+            ->where('status', 0)
+            ->where('id_cabang', $kode_cabang)
+            ->where('user', $this->session->userdata('nip'))
+            ->get('general_ledger')->result_array();
+
+        if (empty($gl_list)) {
+            $this->session->set_flashdata('message_name', 'Tidak ada transaksi untuk closing.');
+            redirect('financial/closing');
+        }
+
+        $this->cb->trans_begin();
+
+        foreach ($gl_list as $gl) {
+            $data_jurnal = [
+                'tanggal' => $gl['tanggal'],
+                'akun_debit' => $gl['coa_debit'],
+                'jumlah_debit' => $gl['nominal'],
+                'akun_kredit' => $gl['coa_kredit'],
+                'jumlah_kredit' => $gl['nominal'],
+                'keterangan' => $gl['keterangan'], // opsional
+                'created_by' => $id_user,
+                'created_at' => date('Y-m-d H:i:s'),
+                'id_cabang' => $gl['id_cabang'],
+                'id_invoice' => $gl['nota_id'],
+                'saldo_debit' => 0, // opsional update nanti
+                'saldo_kredit' => 0,
+            ];
+
+            $insert = $this->cb->insert('jurnal_neraca', $data_jurnal);
+
+            if (!$insert) {
+                $this->cb->trans_rollback();
+                $this->session->set_flashdata('message_name', 'Gagal closing.');
+                redirect('financial/closing');
+            }
+
+            // Update status di general ledger jadi 1
+            $this->cb->where('id', $gl['id'])->update('general_ledger', ['status' => 1]);
+        }
+
+        $this->cb->trans_commit();
+        $this->session->set_flashdata('message_name', 'Berhasil melakukan closing jurnal harian.');
+        redirect('financial/closing');
     }
 }

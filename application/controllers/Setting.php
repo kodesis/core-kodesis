@@ -78,6 +78,8 @@ class Setting extends CI_Controller
                 'logo' => $base64_image
             ];
 
+            // print_r($data);
+            // exit;
             $update = $this->db->where('Id', '1')->update('utility', $data);
 
             if ($update) {

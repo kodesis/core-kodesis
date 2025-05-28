@@ -68,7 +68,7 @@
                <?php
                $logo = $this->db->get('utility')->row_array()['logo']; ?>
 
-               <img src="<?= $logo; ?>" alt="..." width="150" height="100">
+               <img src="<?= $logo; ?>" alt="..." width="150">
 
             </span>
 

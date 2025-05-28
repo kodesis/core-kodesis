@@ -229,7 +229,7 @@
           <div class="navbar nav_title" style="border: 0;">
 
             <a href="<?php echo base_url(); ?>" class="site_title">
-              <img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+              <img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
               <span><?= $this->session->userdata('nama_singkat') ?></span>
             </a>
 

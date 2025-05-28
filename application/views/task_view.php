@@ -118,7 +118,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
 							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
@@ -278,15 +278,15 @@
 								<span style="font-size: 15px; text-align:center"><?= $task->comment ?></span>
 								<p>
 									Member Name :<?php
-																$data_nip = explode(';', $task->member);
-																foreach ($data_nip as $x) {
-																	if ($x != '') {
-																		$this->db->where('nip', $x);
-																		$get = $this->db->get('users')->row_array();
-																		echo $get['nama'] . ', ';
-																	}
-																}
-																?>
+													$data_nip = explode(';', $task->member);
+													foreach ($data_nip as $x) {
+														if ($x != '') {
+															$this->db->where('nip', $x);
+															$get = $this->db->get('users')->row_array();
+															echo $get['nama'] . ', ';
+														}
+													}
+													?>
 								</p>
 
 								<hr>
@@ -576,17 +576,17 @@
 													<hr>
 													Attachment :
 													<b> <?php foreach (explode(';', $x->attachment_name) as $xx) {
-																if (file_exists('upload/task_comment/' . $xx)) {
-																	$url2 = base_url('upload/task_comment/' . $xx);
-																} else {
-																	$url2 = base_url('upload/card_task/' . $xx);
-																}
-															?>
+															if (file_exists('upload/task_comment/' . $xx)) {
+																$url2 = base_url('upload/task_comment/' . $xx);
+															} else {
+																$url2 = base_url('upload/card_task/' . $xx);
+															}
+														?>
 															<a style="color: white;" href="<?= $url2 ?>" download>
 																<?= $xx . " || " ?>
 															</a>
 													<?php }
-														} ?>
+													} ?>
 
 													</b>
 											</div>
@@ -608,17 +608,17 @@
 												<?php if ($x->attachment != null) { ?>
 													<hr>
 													Attachment : <b> <?php foreach (explode(';', $x->attachment_name) as $x) {
-																							if (file_exists('upload/task_comment/' . $x)) {
-																								$url3 = base_url('upload/task_comment/' . $x);
-																							} else {
-																								$url3 = base_url('upload/card_task/' . $x);
-																							}
-																						?>
+																			if (file_exists('upload/task_comment/' . $x)) {
+																				$url3 = base_url('upload/task_comment/' . $x);
+																			} else {
+																				$url3 = base_url('upload/card_task/' . $x);
+																			}
+																		?>
 															<a style="color: white;" href="<?= $url3 ?>" download>
 																<?= $x . " || " ?>
 															</a>
 													<?php }
-																					} ?>
+																	} ?>
 													</b>
 											</div>
 										</div>

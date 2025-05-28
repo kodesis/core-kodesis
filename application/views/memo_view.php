@@ -115,7 +115,7 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." height="42" width="60">
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
 							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
@@ -266,11 +266,11 @@
 						<font style="font-size:17px;">
 							E-MEMO INTERN</br>
 							No. <?php
-									$array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-									$bln = $array_bln[date('n', strtotime($memo->tanggal))];
+								$array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+								$bln = $array_bln[date('n', strtotime($memo->tanggal))];
 
-									echo sprintf("%03d", $memo->nomor_memo) . '/E-MEMO/' . $memo->kode_nama . '/' . $bln . '/' . date('Y', strtotime($memo->tanggal));
-									?>
+								echo sprintf("%03d", $memo->nomor_memo) . '/E-MEMO/' . $memo->kode_nama . '/' . $bln . '/' . date('Y', strtotime($memo->tanggal));
+								?>
 							<hr />
 						</font>
 					</div>
@@ -339,7 +339,7 @@
 						<table>
 							<tr>
 								<td width="80%">Jakarta, <?php $date = $memo->tanggal;
-																					echo $newDate = date("d F Y", strtotime($date)); ?></td>
+															echo $newDate = date("d F Y", strtotime($date)); ?></td>
 								<td></td>
 							</tr>
 							<!--tr>

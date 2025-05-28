@@ -30,20 +30,20 @@
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '70') !== false) { ?>
-			<li>
-				<a><i class="fa fa-edit"></i>External Letter<span class="fa fa-chevron-down"></span></a>
-				<ul class="nav child_menu">
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '701') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>app/letter_in">Letter In</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '701') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>app/x">Letter Out</a></li>
-					<?php } ?>
-
-				</ul>
-			</li>
+			<!-- Letter -->
+			<?php if (strpos($a, '70') !== false) { ?>
+				<li>
+					<a><i class="fa fa-edit"></i>Letter<span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu">
+						<?php if (strpos($a, '701') !== false) { ?>
+							<li><a href="<?php echo base_url(); ?>letter/create">Create</a></li>
+						<?php } ?>
+						<?php if (strpos($a, '701') !== false) { ?>
+							<li><a href="<?php echo base_url(); ?>letter/list">List Pengajuan</a></li>
+						<?php } ?>
+					</ul>
+				</li>
+			<?php } ?>
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '60') !== false) { ?>
@@ -73,7 +73,7 @@
 						<li><a href="<?php echo base_url(); ?>asset/list_penyusutan">Penyusutuan</a></li>
 					<?php } ?>
 					<!-- <?php $a = $this->session->userdata('level');
-							if (strpos($a, '501') !== false) { ?>
+								if (strpos($a, '501') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>app/abk_list">Mobil List</a></li>
 				<?php } ?>
 				<?php $a = $this->session->userdata('level');
@@ -296,7 +296,7 @@
          </ul>
       </li>
       <?php //if ($this->session->userdata('level')==1) {
-		?>
+			?>
 	  <li>
          <a><i class="fa fa-desktop"></i> Admin Board <span class="fa fa-chevron-down"></span></a>
          <ul class="nav child_menu">

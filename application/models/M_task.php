@@ -85,24 +85,6 @@ class M_task extends CI_Model
             $this->db->update('task', $data_update1);
         }
 
-        // if (preg_match("/$nip/i", $kalimat) == false) {
-        //     $kalimat1 = $kalimat . ' ' . $nip;
-        //     $data_update1    = array(
-        //         'read'    => $kalimat1
-        //     );
-        //     $this->db->where('id', $id);
-        //     $this->db->update('task', $data_update1);
-        // }
-        // if (preg_match("/$nip/i", $kalimat)) {
-        //     // return 0;
-        // } else {
-        //     $kalimat1 = $kalimat . ' ' . $nip;
-        //     $data_update1    = array(
-        //         'read'    => $kalimat1
-        //     );
-        //     $this->db->where('id', $id);
-        //     $this->db->update('task', $data_update1);
-        // }
         $sql2 = "
             SELECT * FROM task where id='$id'";
         //$query = $this->db->query($sql);

@@ -266,11 +266,11 @@
 						<font style="font-size:17px;">
 							E-MEMO INTERN</br>
 							No. <?php
-								$array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-								$bln = $array_bln[date('n', strtotime($memo->tanggal))];
+									$array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+									$bln = $array_bln[date('n', strtotime($memo->tanggal))];
 
-								echo sprintf("%03d", $memo->nomor_memo) . '/E-MEMO/' . $memo->kode_nama . '/' . $bln . '/' . date('Y', strtotime($memo->tanggal));
-								?>
+									echo sprintf("%03d", $memo->nomor_memo) . '/E-MEMO/' . $memo->kode_nama . '/' . $bln . '/' . date('Y', strtotime($memo->tanggal));
+									?>
 							<hr />
 						</font>
 					</div>
@@ -339,7 +339,7 @@
 						<table>
 							<tr>
 								<td width="80%">Jakarta, <?php $date = $memo->tanggal;
-															echo $newDate = date("d F Y", strtotime($date)); ?></td>
+																					echo $newDate = date("d F Y", strtotime($date)); ?></td>
 								<td></td>
 							</tr>
 							<!--tr>
@@ -367,7 +367,7 @@
 											<button type="submit" class="btn btn-primary">Reply All</button>
 										</form>
 									</td>
-									<td style="text-align:right"><a href="<?= base_url('app/memo_pdf/' . $memo->Id) ?>" class="btn btn-success" target="_blank">Cetak PDF</a></td>
+									<td style="text-align:right"><a href="<?= base_url('app/memo_pdf/' . $memo->Id) ?>" class="btn btn-success" target="_blank">PDF</a></td>
 								</tr>
 							<?php } else { ?>
 								<!--tr style="height:100px;">

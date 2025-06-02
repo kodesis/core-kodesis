@@ -473,7 +473,7 @@ class Financial extends CI_Controller
 
     public function edit_invoice($id)
     {
-        $inv =  $this->m_invoice->showById($id);
+        $inv =  $this->m_invoice->show($id);
         $nip = $this->session->userdata('nip');
         $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
         $query = $this->db->query($sql);

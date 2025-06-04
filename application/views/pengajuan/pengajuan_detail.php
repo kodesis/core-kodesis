@@ -228,7 +228,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['no_pengajuan']])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -245,47 +245,14 @@
                                     <option value="<?= $c['no_sbb'] ?>"><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
                                   <?php } ?>
                                 </select>
-                                <div style="margin: 5px 0;"></div>
-                                <input type="text" class="form-control" name="anggaran_credit[]" id="anggaran_credit<?= $i['Id'] ?>" readonly>
+                                <!-- <div style="margin: 5px 0;"></div>
+                                <input type="text" class="form-control" name="anggaran_credit[]" id="anggaran_credit<?= $i['Id'] ?>" readonly> -->
                               </td>
                             </tr>
                             <script>
                               $(document).ready(function() {
                                 $('.coa_debit<?= $i['Id'] ?>').select2();
                                 $('.coa_credit<?= $i['Id'] ?>').select2();
-
-                                $('#coa_debit<?= $i['Id'] ?>').change(function() {
-                                  var id = $(this).val();
-                                  $.ajax({
-                                    url: '<?= base_url('pengajuan/getDataCoa/') ?>' + id,
-                                    method: 'GET',
-                                    dataType: 'JSON',
-                                    success: function(res) {
-                                      if (res.anggaran) {
-                                        $('#anggaran<?= $i['Id'] ?>').val(formatNumber(res.anggaran));
-                                      } else {
-                                        $('#anggaran<?= $i['Id'] ?>').val(0);
-                                      }
-                                    }
-                                  })
-                                })
-
-                                $('#coa_credit<?= $i['Id'] ?>').change(function() {
-                                  var id = $(this).val();
-                                  $.ajax({
-                                    url: '<?= base_url('pengajuan/getDataCoa/') ?>' + id,
-                                    method: 'GET',
-                                    dataType: 'JSON',
-                                    success: function(res) {
-                                      if (res.nominal) {
-                                        $('#anggaran_credit<?= $i['Id'] ?>').val(formatNumber(res.nominal));
-                                      } else {
-                                        $('#anggaran_credit<?= $i['Id'] ?>').val(0);
-                                      }
-                                    }
-                                  })
-                                })
-
                               })
                             </script>
                           <?php } ?>
@@ -428,7 +395,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['no_pengajuan']])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -575,7 +542,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['no_pengajuan']])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -730,7 +697,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['no_pengajuan']])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -877,7 +844,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['no_pengajuan']])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           $total_realisasi = 0;
                           foreach ($item as $i) {
                             $total_realisasi += $i['realisasi'];
@@ -1062,7 +1029,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['no_pengajuan']])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">

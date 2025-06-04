@@ -28,9 +28,7 @@ class Financial extends CI_Controller
     //     $this->M_Logging->add_log($user_id, $action, $tableName, $record_id);
     // }
 
-    public function index()
-    {
-    }
+    public function index() {}
 
     public function financial_entry($jenis = NULL)
     {
@@ -649,56 +647,97 @@ class Financial extends CI_Controller
         redirect('financial/invoice');
     }
 
+    // private function posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $id_invoice = NULL)
+    // {
+    //     $substr_coa_debit = substr($coa_debit, 0, 1);
+    //     $substr_coa_kredit = substr($coa_kredit, 0, 1);
+
+    //     $debit = $this->m_coa->cek_coa($coa_debit);
+    //     $kredit = $this->m_coa->cek_coa($coa_kredit);
+
+    //     $saldo_debit_baru = 0;
+    //     $saldo_kredit_baru = 0;
+
+    //     if ($debit['posisi'] == "AKTIVA") {
+    //         $saldo_debit_baru = $debit['nominal'] + $nominal;
+    //     } else if ($debit['posisi'] == "PASIVA") {
+    //         $saldo_debit_baru = $debit['nominal'] - $nominal;
+    //     }
+
+    //     if ($kredit['posisi'] == "AKTIVA") {
+    //         $saldo_kredit_baru = $kredit['nominal'] - $nominal;
+    //     } else if ($kredit['posisi'] == "PASIVA") {
+    //         $saldo_kredit_baru = $kredit['nominal'] + $nominal;
+    //     }
+
+    //     // cek tabel
+    //     if ($substr_coa_debit == "1" || $substr_coa_debit == "2" || $substr_coa_debit == "3") {
+    //         $tabel_debit = "t_coa_sbb";
+    //         $kolom_debit = "no_sbb";
+    //     } else {
+    //         $tabel_debit = "t_coalr_sbb";
+    //         $kolom_debit = "no_lr_sbb";
+    //     }
+
+    //     if ($substr_coa_kredit == "1" || $substr_coa_kredit == "2" || $substr_coa_debit == "3") {
+    //         $tabel_kredit = "t_coa_sbb";
+    //         $kolom_kredit = "no_sbb";
+    //     } else {
+    //         $tabel_kredit = "t_coalr_sbb";
+    //         $kolom_kredit = "no_lr_sbb";
+    //     }
+
+    //     $data_debit = [
+    //         'nominal' => $saldo_debit_baru
+    //     ];
+    //     $data_kredit = [
+    //         'nominal' => $saldo_kredit_baru
+    //     ];
+
+    //     $this->m_coa->update_nominal_coa($coa_debit, $data_debit, $kolom_debit, $tabel_debit);
+
+    //     $this->m_coa->update_nominal_coa($coa_kredit, $data_kredit, $kolom_kredit, $tabel_kredit);
+
+    //     $dt_jurnal = [
+    //         'tanggal' => $tanggal,
+    //         'akun_debit' => $coa_debit,
+    //         'jumlah_debit' => $nominal,
+    //         'akun_kredit' => $coa_kredit,
+    //         'jumlah_kredit' => $nominal,
+    //         'saldo_debit' => $saldo_debit_baru,
+    //         'saldo_kredit' => $saldo_kredit_baru,
+    //         'keterangan' => $keterangan,
+    //         'created_by' => $this->session->userdata('nip'),
+    //         'id_invoice' => ($id_invoice) ? $id_invoice : '',
+    //         'id_cabang' => $this->session->userdata('kode_cabang')
+    //     ];
+
+    //     $this->m_coa->addJurnal($dt_jurnal);
+
+    //     $data_transaksi = [
+    //         'user_id' => $this->session->userdata('nip'),
+    //         'tgl_trs' => date('Y-m-d H:i:s'),
+    //         'nominal' => $nominal,
+    //         'debet' => $coa_debit,
+    //         'kredit' => $coa_kredit,
+    //         'keterangan' => trim($keterangan),
+    //         'id_cabang' => $this->session->userdata('kode_cabang')
+    //     ];
+
+    //     $this->m_coa->add_transaksi($data_transaksi);
+    // }
+
     private function posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $id_invoice = NULL)
     {
-        $substr_coa_debit = substr($coa_debit, 0, 1);
-        $substr_coa_kredit = substr($coa_kredit, 0, 1);
+        // Update coa debit 
+        $this->update_saldo_coa($coa_debit, $nominal, 'debit');
+        // Update coa kredit
+        $this->update_saldo_coa($coa_kredit, $nominal, 'kredit');
 
-        $debit = $this->m_coa->cek_coa($coa_debit);
-        $kredit = $this->m_coa->cek_coa($coa_kredit);
-
-        $saldo_debit_baru = 0;
-        $saldo_kredit_baru = 0;
-
-        if ($debit['posisi'] == "AKTIVA") {
-            $saldo_debit_baru = $debit['nominal'] + $nominal;
-        } else if ($debit['posisi'] == "PASIVA") {
-            $saldo_debit_baru = $debit['nominal'] - $nominal;
-        }
-
-        if ($kredit['posisi'] == "AKTIVA") {
-            $saldo_kredit_baru = $kredit['nominal'] - $nominal;
-        } else if ($kredit['posisi'] == "PASIVA") {
-            $saldo_kredit_baru = $kredit['nominal'] + $nominal;
-        }
-
-        // cek tabel
-        if ($substr_coa_debit == "1" || $substr_coa_debit == "2" || $substr_coa_debit == "3") {
-            $tabel_debit = "t_coa_sbb";
-            $kolom_debit = "no_sbb";
-        } else {
-            $tabel_debit = "t_coalr_sbb";
-            $kolom_debit = "no_lr_sbb";
-        }
-
-        if ($substr_coa_kredit == "1" || $substr_coa_kredit == "2" || $substr_coa_debit == "3") {
-            $tabel_kredit = "t_coa_sbb";
-            $kolom_kredit = "no_sbb";
-        } else {
-            $tabel_kredit = "t_coalr_sbb";
-            $kolom_kredit = "no_lr_sbb";
-        }
-
-        $data_debit = [
-            'nominal' => $saldo_debit_baru
-        ];
-        $data_kredit = [
-            'nominal' => $saldo_kredit_baru
-        ];
-
-        $this->m_coa->update_nominal_coa($coa_debit, $data_debit, $kolom_debit, $tabel_debit);
-
-        $this->m_coa->update_nominal_coa($coa_kredit, $data_kredit, $kolom_kredit, $tabel_kredit);
+        // Ambil saldo debit
+        $saldo_debit = $this->get_saldo_coa($coa_debit);
+        // Ambil saldo kredit
+        $saldo_kredit = $this->get_saldo_coa($coa_kredit);
 
         $dt_jurnal = [
             'tanggal' => $tanggal,
@@ -706,15 +745,15 @@ class Financial extends CI_Controller
             'jumlah_debit' => $nominal,
             'akun_kredit' => $coa_kredit,
             'jumlah_kredit' => $nominal,
-            'saldo_debit' => $saldo_debit_baru,
-            'saldo_kredit' => $saldo_kredit_baru,
+            'saldo_debit' => $saldo_debit,
+            'saldo_kredit' => $saldo_kredit,
             'keterangan' => $keterangan,
             'created_by' => $this->session->userdata('nip'),
             'id_invoice' => ($id_invoice) ? $id_invoice : '',
             'id_cabang' => $this->session->userdata('kode_cabang')
         ];
 
-        $this->m_coa->addJurnal($dt_jurnal);
+        $this->M_coa->addJurnal($dt_jurnal);
 
         $data_transaksi = [
             'user_id' => $this->session->userdata('nip'),
@@ -726,7 +765,69 @@ class Financial extends CI_Controller
             'id_cabang' => $this->session->userdata('kode_cabang')
         ];
 
-        $this->m_coa->add_transaksi($data_transaksi);
+        $this->M_coa->add_transaksi($data_transaksi);
+    }
+
+    private function update_saldo_coa($akun_no, $jumlah, $tipe)
+    {
+        $substr_coa = substr($akun_no, 0, 1);
+        if ($substr_coa == "1" || $substr_coa == "2" || $substr_coa == "3") {
+            $table = "t_coa_sbb";
+            $kolom = "no_sbb";
+        } else if ($substr_coa == "4" || $substr_coa == "5" || $substr_coa == "6" || $substr_coa == "7" || $substr_coa == "8" || $substr_coa == "9") {
+            $table = "t_coalr_sbb";
+            $kolom = "no_lr_sbb";
+        }
+
+        $query = $this->cb->query(
+            "SELECT posisi, nominal FROM $table WHERE " . $kolom . " = ? AND id_cabang = " . $this->session->userdata('kode_cabang') . " FOR UPDATE",
+            [$akun_no]
+        );
+
+        $row = $query->row();
+        if (!$row) return;
+
+        $posisi = $row->posisi;
+        $nominal = $row->nominal;
+
+        if ($posisi == 'AKTIVA') {
+            if ($tipe == 'debit') {
+                $nominal += $jumlah;
+            } else { // kredit
+                $nominal -= $jumlah;
+            }
+        } elseif ($posisi == 'PASIVA') {
+            if ($tipe == 'debit') {
+                $nominal -= $jumlah;
+            } else { // kredit
+                $nominal += $jumlah;
+            }
+        }
+
+        // Update saldo
+        $this->cb->where(($table == 't_coa_sbb') ? 'no_sbb' : 'no_lr_sbb', $akun_no);
+        $this->cb->where('id_cabang', $this->session->userdata('kode_cabang'));
+        $this->cb->update($table, ['nominal' => $nominal]);
+    }
+
+    private function get_saldo_coa($akun_no)
+    {
+        $substr_coa = substr($akun_no, 0, 1);
+        if ($substr_coa == "1" || $substr_coa == "2" || $substr_coa == "3") {
+            $table = "t_coa_sbb";
+            $kolom = "no_sbb";
+        } else if ($substr_coa == "4" || $substr_coa == "5" || $substr_coa == "6" || $substr_coa == "7" || $substr_coa == "8" || $substr_coa == "9") {
+            $table = "t_coalr_sbb";
+            $kolom = "no_lr_sbb";
+        }
+
+        $row = $this->cb->select('nominal')
+            ->where($kolom, $akun_no)
+            ->where('id_cabang', $this->session->userdata('kode_cabang'))
+            ->get($table)
+            ->row();
+
+        return $row->nominal;
     }
 
     private function posting_new($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $id_invoice = NULL)

@@ -73,7 +73,7 @@
 						<li><a href="<?php echo base_url(); ?>asset/list_penyusutan">Penyusutuan</a></li>
 					<?php } ?>
 					<!-- <?php $a = $this->session->userdata('level');
-								if (strpos($a, '501') !== false) { ?>
+							if (strpos($a, '501') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>app/abk_list">Mobil List</a></li>
 				<?php } ?>
 				<?php $a = $this->session->userdata('level');
@@ -159,15 +159,6 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '302') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>cuti/view">Cuti</a></li>
-					<?php } ?>
-
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '302') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>member">Member</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '302') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>tabungan">Tabungan</a></li>
 					<?php } ?>
 				</ul>
 			</li>
@@ -296,7 +287,7 @@
          </ul>
       </li>
       <?php //if ($this->session->userdata('level')==1) {
-			?>
+		?>
 	  <li>
          <a><i class="fa fa-desktop"></i> Admin Board <span class="fa fa-chevron-down"></span></a>
          <ul class="nav child_menu">

@@ -28,7 +28,9 @@ class Financial extends CI_Controller
     //     $this->M_Logging->add_log($user_id, $action, $tableName, $record_id);
     // }
 
-    public function index() {}
+    public function index()
+    {
+    }
 
     public function financial_entry($jenis = NULL)
     {
@@ -753,7 +755,7 @@ class Financial extends CI_Controller
             'id_cabang' => $this->session->userdata('kode_cabang')
         ];
 
-        $this->M_coa->addJurnal($dt_jurnal);
+        $this->m_coa->addJurnal($dt_jurnal);
 
         $data_transaksi = [
             'user_id' => $this->session->userdata('nip'),
@@ -765,7 +767,7 @@ class Financial extends CI_Controller
             'id_cabang' => $this->session->userdata('kode_cabang')
         ];
 
-        $this->M_coa->add_transaksi($data_transaksi);
+        $this->m_coa->add_transaksi($data_transaksi);
     }
 
     private function update_saldo_coa($akun_no, $jumlah, $tipe)
@@ -960,41 +962,31 @@ class Financial extends CI_Controller
 
     public function paid()
     {
-        // print_r($_POST);
-        // exit;
-        $id = $this->uri->segment(3);
+        $this->db->trans_begin(); // MULAI TRANSAKSI
 
+        $id = $this->uri->segment(3);
         $inv =  $this->m_invoice->showById($id);
         $coa_debit = $this->input->post('coa_debit');
         $coa_kredit = $this->input->post('coa_kredit');
-        $nominal_bayar = $this->convertToNumber(($this->input->post('nominal_bayar')));
+        $nominal_bayar = $this->convertToNumber($this->input->post('nominal_bayar'));
         $keterangan = $this->input->post('keterangan');
         $status_bayar = $this->input->post('status_bayar');
         $tanggal_bayar = $this->input->post('tanggal_bayar');
 
-        $nominal_j2 = $inv['subtotal'] - $inv['besaran_pph'];
-        // if ($inv['besaran_ppn'] !== '0.00') {
-        //     echo 'true';
-        // } else {
-        //     echo 'false';
-        // }
-        // exit;
-        // kalau tidak 
-
-        // J1: PAD berkurang sebesar nominal pendapatan, Pendapatan bertambah sebesar nominal pendapatan
+        // J1
         $j1_coa_debit = $inv['coa_kredit'];
         $j1_coa_kredit = $coa_kredit;
         $this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['nominal_pendapatan'], $tanggal_bayar);
 
-        // J3: Kas/Bank bertambah sebesar nominal bayar, piutang usaha keluaran berkurang sebesar nominal bayar
+        // J3
         $j1_coa_debit = $coa_debit;
         $j1_coa_kredit = $inv['coa_debit'];
         $this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
 
-        // J2: Kas/Bank bertambah sebesar ppn, ppn keluaran bertambah sebesar ppn keluaran
+        // J2
         if ($inv['besaran_ppn'] !== '0.00') {
             $j1_coa_debit = $inv['coa_debit'];
-            $j1_coa_kredit = "23011"; // buat di tabel utility
+            $j1_coa_kredit = "23011";
             $this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
 
             $j2_coa_debit = $inv['coa_kredit'];
@@ -1002,10 +994,10 @@ class Financial extends CI_Controller
             $this->posting($j2_coa_debit, $j2_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
         }
 
+        // J4 (PPH23)
         if ($inv['opsi_pph23'] == '1') {
-            // J4: Kas/Bank bertambah sebesar pph, utang pph 23 bertambah sebesar pph
             $j1_coa_debit = $coa_debit;
-            $j1_coa_kredit = "23014"; // buat di tabel utility
+            $j1_coa_kredit = "23014";
             $this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
         }
 
@@ -1015,15 +1007,23 @@ class Financial extends CI_Controller
             'status_pendapatan' => ($status_bayar == 1) ? '2' : '1',
             'status_bayar' => ($status_bayar == 1) ? '1' : '0',
             'total_termin' => $inv['total_termin'] + $nominal_bayar,
-            'tanggal_bayar' => $this->input->post('tanggal_bayar'),
+            'tanggal_bayar' => $tanggal_bayar,
         ];
 
         $this->m_invoice->update_invoice($inv['Id'], $data_invoice);
 
-        $this->session->set_flashdata('message_name', 'The invoice has been successfully updated. ' . $inv['no_invoice']);
-        // After that you need to used redirect function instead of load view such as 
+        // CEK APAKAH SEMUA BERHASIL
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback(); // ROLLBACK TRANSAKSI
+            $this->session->set_flashdata('message_name', 'Gagal memperbarui invoice. Silakan coba lagi.');
+        } else {
+            $this->db->trans_commit(); // KOMIT TRANSAKSI
+            $this->session->set_flashdata('message_name', 'The invoice has been successfully updated. ' . $inv['no_invoice']);
+        }
+
         redirect("financial/invoice");
     }
+
 
     public function showReport()
     {

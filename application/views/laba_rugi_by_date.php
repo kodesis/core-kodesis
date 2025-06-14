@@ -344,7 +344,7 @@
                                     </div>
                                     <div class="col-md-6 col-xs-12">
                                         <label for="tgl_sampai" class="form-label">Sampai</label>
-                                        <input type="date" class="form-control" name="tgl_sampai" required>
+                                        <input type="date" class="form-control" name="tgl_sampai" value="<?= date('Y-m-d') ?>" required>
                                     </div>
                                 </div>
                             </div>

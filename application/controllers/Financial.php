@@ -994,7 +994,7 @@ class Financial extends CI_Controller
         // J2: Kas/Bank bertambah sebesar ppn, ppn keluaran bertambah sebesar ppn keluaran
         if ($inv['besaran_ppn'] !== '0.00') {
             $j1_coa_debit = $inv['coa_debit'];
-            $j1_coa_kredit = "23011";
+            $j1_coa_kredit = "23011"; // buat di tabel utility
             $this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
 
             $j2_coa_debit = $inv['coa_kredit'];
@@ -1005,7 +1005,7 @@ class Financial extends CI_Controller
         if ($inv['opsi_pph23'] == '1') {
             // J4: Kas/Bank bertambah sebesar pph, utang pph 23 bertambah sebesar pph
             $j1_coa_debit = $coa_debit;
-            $j1_coa_kredit = "23014";
+            $j1_coa_kredit = "23014"; // buat di tabel utility
             $this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
         }
 

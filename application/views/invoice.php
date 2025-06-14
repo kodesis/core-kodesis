@@ -371,7 +371,7 @@
                                                                                             <div class="form-group">
                                                                                                 <label for="coa_kredit" class="form-label">CoA Kredit</label>
                                                                                                 <select name="coa_kredit" id="coa_kredit<?= $i['Id'] ?>" class="form-control" required>
-                                                                                                    <option value="">:: Pilih CoA Kas</option>
+                                                                                                    <option value="">:: Pilih CoA Pendapatan</option>
                                                                                                     <?php
                                                                                                     foreach ($coa_pendapatan as $c) :
                                                                                                     ?>
@@ -540,7 +540,7 @@
     <script type="text/javascript" src="<?= base_url(); ?>src/select2/js/select2.min.js"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="<?= base_url(); ?>src/build/js/custom.min.js"></script>
+    <script src="<?= base_url(); ?>src/build/js/custom.js"></script>
 
     <script>
         $(document).ready(function() {

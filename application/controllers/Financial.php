@@ -965,6 +965,9 @@ class Financial extends CI_Controller
         $this->db->trans_begin(); // MULAI TRANSAKSI
 
         $id = $this->uri->segment(3);
+
+        // print_r($id);
+        // exit;
         $inv =  $this->m_invoice->showById($id);
         $coa_debit = $this->input->post('coa_debit');
         $coa_kredit = $this->input->post('coa_kredit');

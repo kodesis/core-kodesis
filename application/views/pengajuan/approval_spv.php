@@ -364,7 +364,7 @@
                                               </tr>
                                             </thead>
                                             <tbody>
-                                              <?php $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $value['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                                              <?php $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $value['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                                               $no = 1;
                                               foreach ($detail as $row) {
                                               ?>

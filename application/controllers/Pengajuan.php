@@ -226,8 +226,9 @@ class Pengajuan extends CI_Controller
       $data['count_inbox2'] = $result4;
 
       $data['pengajuan'] = $this->M_pengajuan->get_pengajuan($config['per_page'], $page, $search, $this->session->userdata('nip'));
+      $data['count_spv'] = $this->M_pengajuan->count_spv($this->session->userdata('nip'));
       $data['count_keuangan'] = $this->M_pengajuan->count_keuangan();
-      $data['count_direksi'] = $this->M_pengajuan->count_direksi();
+      $data['count_direksi'] = $this->M_pengajuan->count_direksi($this->session->userdata('nip'));
       $this->load->view('pengajuan/pengajuan_list', $data);
     } else {
       redirect('home');
@@ -712,10 +713,49 @@ class Pengajuan extends CI_Controller
     echo json_encode($response);
   }
 
+
   public function approval_direksi()
   {
     $a = $this->session->userdata('level');
     if (strpos($a, '804') !== false) {
+      // Pagination
+      $search = htmlspecialchars($this->input->get('search') ?? '', ENT_QUOTES, 'UTF-8');
+      // Pagination
+      $config['base_url'] = base_url('pengajuan/approval_spv');
+      $config['total_rows'] = $this->M_pengajuan->countPengajuanDireksi($search);
+      $config['per_page'] = 10;
+      $config['uri_segment'] = 3;
+      $config['num_links'] = 3;
+      $config['enable_query_strings'] = TRUE;
+      $config['page_query_string'] = TRUE;
+      $config['use_page_numbers'] = TRUE;
+      $config['reuse_query_string'] = TRUE;
+      $config['query_string_segment'] = 'page';
+
+      // Bootstrap style pagination
+      $config['full_tag_open'] = '<ul class="pagination">';
+      $config['full_tag_close'] = '</ul>';
+      $config['first_link'] = false;
+      $config['last_link'] = false;
+      $config['first_tag_open'] = '<li>';
+      $config['first_tag_close'] = '</li>';
+      $config['prev_link'] = '«';
+      $config['prev_tag_open'] = '<li class="prev">';
+      $config['prev_tag_close'] = '</li>';
+      $config['next_link'] = '»';
+      $config['next_tag_open'] = '<li>';
+      $config['next_tag_close'] = '</li>';
+      $config['last_tag_open'] = '<li>';
+      $config['last_tag_close'] = '</li>';
+      $config['cur_tag_open'] = '<li class="active"><a href="#">';
+      $config['cur_tag_close'] = '</a></li>';
+      $config['num_tag_open'] = '<li>';
+      $config['num_tag_close'] = '</li>';
+
+      // Initialize paginaton
+      $this->pagination->initialize($config);
+      $page = ($this->input->get('page')) ? (($this->input->get('page') - 1) * $config['per_page']) : 0;
+      $data['pagination'] = $this->pagination->create_links();
       //inbox notif
       $nip = $this->session->userdata('nip');
       $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
@@ -739,8 +779,7 @@ class Pengajuan extends CI_Controller
       $result4 = $res4[0]['COUNT(Id)'];
       $data['count_inbox2'] = $result4;
 
-      $data['pengajuan'] = $this->M_pengajuan->get_pengajuan($this->session->userdata('nip'));
-      $data['approval_direksi'] = $this->M_pengajuan->approval_direksi();
+      $data['approval_direksi'] = $this->M_pengajuan->approval_direksi($config['per_page'], $page, $search, $this->session->userdata('nip'));
       $this->load->view('pengajuan/approval_direksi', $data);
     } else {
       redirect('home');
@@ -1248,7 +1287,7 @@ class Pengajuan extends CI_Controller
             'jumlah_kredit' => $item[$i]['total'],
             'saldo_debit' => $saldo_debit,
             'saldo_kredit' => $saldo_kredit,
-            'keterangan' => $item[$i]['item'] . ' - Pengajuan ' . $item[$i]['no_pengajuan'],
+            'keterangan' => $item[$i]['item'] . ' - Pengajuan ' . $pengajuan['kode'],
             'created_by' => $this->session->userdata('nip'),
             'id_cabang' => $this->session->userdata('kode_cabang')
           ];

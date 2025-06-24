@@ -11,8 +11,10 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
 
    <!--===============================================================================================-->
+   <?php
+   $logo = $this->db->get('utility')->row_array()['logo']; ?>
 
-   <link rel="icon" type="image/png" href="<?php echo base_url(); ?>img/logo-kodesis.png" />
+   <link rel="icon" type="image/png" href="<?= $logo ?>" />
 
    <!--===============================================================================================-->
 

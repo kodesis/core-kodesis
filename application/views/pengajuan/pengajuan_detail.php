@@ -11,7 +11,6 @@
 
   <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
   <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
-  <title>Kodesis | Business Development</title>
   <!-- Bootstrap -->
   <link href="<?= base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
@@ -210,7 +209,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel card">
               <div class="x_title">
-                <h2>Detail Pengajuan <?= $detail['no_pengajuan'] ?></h2>
+                <h2>Detail Pengajuan <?= $detail['kode'] ?></h2>
               </div>
               <div class="x_content">
                 <a href="<?= base_url('pengajuan/approval_keuangan') ?>" class="btn btn-warning">Back</a>
@@ -228,7 +227,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -358,7 +357,7 @@
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
                             foreach ($direksi as $d) {
                             ?>
-                              <option value="<?= $d['nip'] ?>"><?= $d['nama'] ?></option>
+                              <option value="<?= $d['nip'] ?>" <?= $d['nip'] == $detail['direksi'] ? 'selected' : '' ?>><?= $d['nama'] ?></option>
                             <?php } ?>
                           </select>
                         </div>
@@ -380,149 +379,147 @@
                 <?php } ?>
                 <?php if ($detail['posisi'] == 'Sudah Dibayar' && $this->uri->segment(2) == 'detail') {
                 ?>
-                  <form action="<?= base_url('pengajuan/update_keuangan') ?>" method="post" enctype="multipart/form-data" id="update-keuangan">
-                    <input type="hidden" name="id_pengajuan" id="id_pengajuan" value="<?= $detail['Id'] ?>">
-                    <div class="table-responsive">
-                      <table class="table table-bordered">
-                        <thead>
+                  <input type="hidden" name="id_pengajuan" id="id_pengajuan" value="<?= $detail['Id'] ?>">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                          <th>COA</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                        foreach ($item as $i) {
+                        ?>
+                          <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
+                          <input type="hidden" class="form-control" name="id_item[]" id="id_item<?= $i['Id'] ?>" value="<?= $i['Id'] ?>">
                           <tr>
-                            <th>Item</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                            <th>COA</th>
+                            <td><?= $i['item'] ?></td>
+                            <td><?= $i['qty'] ?></td>
+                            <td><?= number_format($i['price']) ?></td>
+                            <td><?= number_format($i['total']) ?></td>
+                            <td>
+                              <select name="coa_debit[]" id="coa_debit<?= $i['Id'] ?>" class="form-control coa_debit<?= $i['Id'] ?>" style="width: 100%;" disabled>
+                                <?php foreach ($coa as $c) { ?>
+                                  <option value="<?= $c['no_sbb'] ?>" <?= $c['no_sbb'] == $i['debit'] ? 'selected' : '' ?>><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
+                                <?php } ?>
+                              </select>
+                              <select name="coa_debit[]" id="coa_debit<?= $i['Id'] ?>" class="form-control coa_debit<?= $i['Id'] ?>" style="width: 100%;" disabled>
+                                <?php foreach ($coa as $c) { ?>
+                                  <option value="<?= $c['no_sbb'] ?>" <?= $c['no_sbb'] == $i['kredit'] ? 'selected' : '' ?>><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
+                                <?php } ?>
+                              </select>
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
-                          foreach ($item as $i) {
-                          ?>
-                            <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
-                            <input type="hidden" class="form-control" name="id_item[]" id="id_item<?= $i['Id'] ?>" value="<?= $i['Id'] ?>">
-                            <tr>
-                              <td><?= $i['item'] ?></td>
-                              <td><?= $i['qty'] ?></td>
-                              <td><?= number_format($i['price']) ?></td>
-                              <td><?= number_format($i['total']) ?></td>
-                              <td>
-                                <select name="coa_debit[]" id="coa_debit<?= $i['Id'] ?>" class="form-control coa_debit<?= $i['Id'] ?>" style="width: 100%;" disabled>
-                                  <?php foreach ($coa as $c) { ?>
-                                    <option value="<?= $c['no_sbb'] ?>" <?= $c['no_sbb'] == $i['debit'] ? 'selected' : '' ?>><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
-                                  <?php } ?>
-                                </select>
-                                <select name="coa_debit[]" id="coa_debit<?= $i['Id'] ?>" class="form-control coa_debit<?= $i['Id'] ?>" style="width: 100%;" disabled>
-                                  <?php foreach ($coa as $c) { ?>
-                                    <option value="<?= $c['no_sbb'] ?>" <?= $c['no_sbb'] == $i['kredit'] ? 'selected' : '' ?>><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
-                                  <?php } ?>
-                                </select>
-                              </td>
-                            </tr>
-                          <?php } ?>
-                          <tr>
-                            <td colspan="3" align="end"><b>Total</b></td>
-                            <td><input type="text" class="form-control" name="total_pengajuan[]" id="total_pengajuan" value="<?= number_format($detail['total']) ?>" readonly></td>
-                          </tr>
-                          <tr>
-                            <td><b>Lampiran</b></td>
-                            <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
-                          </tr>
-                          <tr>
-                            <td><b>Catatan User</b></td>
-                            <td colspan="4"><?= $detail['catatan'] ?></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="rekening" class="form-label">No. Rekening</label>
-                          <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
-                        </div>
-                        <div class="form-group">
-                          <label for="pembayaran" class="form-label">Jenis Pembayaran</label>
-                          <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['metode_pembayaran'] ?>" readonly>
-                        </div>
-                        <div class="form-group">
-                          <?php if ($detail['status_keuangan'] == 0) { ?>
-                            <label for="catatan" class="form-label">Catatan</label>
-                            <textarea name="catatan" id="catatan" class="form-control"></textarea>
-                          <?php } else if ($detail['status_keuangan'] == 1) { ?>
-                            <label for="catatan" class="form-label">Catatan</label>
-                            <textarea name="catatan" id="catatan" class="form-control" disabled><?= $detail['catatan_keuangan'] ?></textarea>
-                          <?php } else { ?>
-                            <label for="catatan" class="form-label">Catatan</label>
-                            <textarea name="catatan" id="catatan" class="form-control" disabled><?= $detail['catatan_keuangan'] ?></textarea>
-                          <?php } ?>
-                        </div>
+                        <?php } ?>
+                        <tr>
+                          <td colspan="3" align="end"><b>Total</b></td>
+                          <td><input type="text" class="form-control" name="total_pengajuan[]" id="total_pengajuan" value="<?= number_format($detail['total']) ?>" readonly></td>
+                        </tr>
+                        <tr>
+                          <td><b>Lampiran</b></td>
+                          <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
+                        </tr>
+                        <tr>
+                          <td><b>Catatan User</b></td>
+                          <td colspan="4"><?= $detail['catatan'] ?></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="rekening" class="form-label">No. Rekening</label>
+                        <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="status" class="form-label">Status Pengajuan</label>
-                          <?php if ($detail['status_keuangan'] == 0) { ?>
-                            <select name="status" id="status" class="form-control">
-                              <option value="">:: Pilih Status ::</option>
-                              <option value="1">Disetujui </option>
-                              <option value="2">Ditolak </option>
-                            </select>
-                          <?php } else if ($detail['status_keuangan'] == 1) { ?>
-                            <select name="status" id="status" class="form-control" disabled>
-                              <option value="">:: Pilih Status ::</option>
-                              <option value="1" selected>Disetujui </option>
-                              <option value="2">Ditolak </option>
-                            </select>
-                          <?php } else { ?>
-                            <select name="status" id="status" class="form-control" disabled>
-                              <option value="">:: Pilih Status ::</option>
-                              <option value="1">Disetujui </option>
-                              <option value="2" selected>Ditolak </option>
-                            </select>
-                          <?php } ?>
-                        </div>
-                        <div class="form-group">
-                          <label for="direksi" class="form-label">Approval Direksi</label>
-                          <?php if ($detail['status_keuangan'] == 0) { ?>
-                            <select name="direksi" id="direksi" class="form-control">
-                              <option value="">:: Pilih Status ::</option>
-                              <option value="1">Ya </option>
-                              <option value="2" selected>Tidak </option>
-                            </select>
-                          <?php } else if ($detail['status_keuangan'] == 1) { ?>
-                            <select name="direksi" id="direksi" class="form-control" disabled>
-                              <option value="">:: Pilih Status ::</option>
-                              <option value="1" <?= $detail['jenis_pengajuan'] == 1 ? 'selected' : '' ?>>Ya </option>
-                              <option value="2" <?= $detail['jenis_pengajuan'] == 2 ? 'selected' : '' ?>>Tidak </option>
-                            </select>
-                          <?php } else { ?>
-                            <select name="direksi" id="direksi" class="form-control" disabled>
-                              <option value="">:: Pilih Status ::</option>
-                              <option value="1" <?= $detail['jenis_pengajuan'] == 1 ? 'selected' : '' ?>>Ya </option>
-                              <option value="2" <?= $detail['jenis_pengajuan'] == 2 ? 'selected' : '' ?>>Tidak </option>
-                            </select>
-                          <?php } ?>
-                        </div>
-                        <div class="form-group">
-                          <label for="nama_direksi">Direksi</label>
-                          <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
-                            <option value=""> -- Pilih Direksi -- </option>
-                            <?php
-                            $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
-                            foreach ($direksi as $d) {
-                            ?>
-                              <option value="<?= $d['nip'] ?>"><?= $d['nama'] ?></option>
-                            <?php } ?>
+                      <div class="form-group">
+                        <label for="pembayaran" class="form-label">Jenis Pembayaran</label>
+                        <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['metode_pembayaran'] ?>" readonly>
+                      </div>
+                      <div class="form-group">
+                        <?php if ($detail['status_keuangan'] == 0) { ?>
+                          <label for="catatan" class="form-label">Catatan</label>
+                          <textarea name="catatan" id="catatan" class="form-control"></textarea>
+                        <?php } else if ($detail['status_keuangan'] == 1) { ?>
+                          <label for="catatan" class="form-label">Catatan</label>
+                          <textarea name="catatan" id="catatan" class="form-control" disabled><?= $detail['catatan_keuangan'] ?></textarea>
+                        <?php } else { ?>
+                          <label for="catatan" class="form-label">Catatan</label>
+                          <textarea name="catatan" id="catatan" class="form-control" disabled><?= $detail['catatan_keuangan'] ?></textarea>
+                        <?php } ?>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="status" class="form-label">Status Pengajuan</label>
+                        <?php if ($detail['status_keuangan'] == 0) { ?>
+                          <select name="status" id="status" class="form-control">
+                            <option value="">:: Pilih Status ::</option>
+                            <option value="1">Disetujui </option>
+                            <option value="2">Ditolak </option>
                           </select>
-                        </div>
+                        <?php } else if ($detail['status_keuangan'] == 1) { ?>
+                          <select name="status" id="status" class="form-control" disabled>
+                            <option value="">:: Pilih Status ::</option>
+                            <option value="1" selected>Disetujui </option>
+                            <option value="2">Ditolak </option>
+                          </select>
+                        <?php } else { ?>
+                          <select name="status" id="status" class="form-control" disabled>
+                            <option value="">:: Pilih Status ::</option>
+                            <option value="1">Disetujui </option>
+                            <option value="2" selected>Ditolak </option>
+                          </select>
+                        <?php } ?>
+                      </div>
+                      <div class="form-group">
+                        <label for="direksi" class="form-label">Approval Direksi</label>
+                        <?php if ($detail['status_keuangan'] == 0) { ?>
+                          <select name="direksi" id="direksi" class="form-control">
+                            <option value="">:: Pilih Status ::</option>
+                            <option value="1">Ya </option>
+                            <option value="2" selected>Tidak </option>
+                          </select>
+                        <?php } else if ($detail['status_keuangan'] == 1) { ?>
+                          <select name="direksi" id="direksi" class="form-control" disabled>
+                            <option value="">:: Pilih Status ::</option>
+                            <option value="1" <?= $detail['jenis_pengajuan'] == 1 ? 'selected' : '' ?>>Ya </option>
+                            <option value="2" <?= $detail['jenis_pengajuan'] == 2 ? 'selected' : '' ?>>Tidak </option>
+                          </select>
+                        <?php } else { ?>
+                          <select name="direksi" id="direksi" class="form-control" disabled>
+                            <option value="">:: Pilih Status ::</option>
+                            <option value="1" <?= $detail['jenis_pengajuan'] == 1 ? 'selected' : '' ?>>Ya </option>
+                            <option value="2" <?= $detail['jenis_pengajuan'] == 2 ? 'selected' : '' ?>>Tidak </option>
+                          </select>
+                        <?php } ?>
+                      </div>
+                      <div class="form-group">
+                        <label for="nama_direksi">Direksi</label>
+                        <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                          <option value=""> -- Pilih Direksi -- </option>
+                          <?php
+                          $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
+                          foreach ($direksi as $d) {
+                          ?>
+                            <option value="<?= $d['nip'] ?>" <?= $d['nip'] == $detail['direksi'] ? 'selected' : '' ?>><?= $d['nama'] ?></option>
+                          <?php } ?>
+                        </select>
                       </div>
                     </div>
-                    <div class="row">
-                      <?php if ($detail['status_keuangan'] == 0) { ?>
-                        <button class="btn btn-danger" type="reset">Reset</button>
-                        <button class="btn btn-primary" type="submit" id="btn-keuangan">Save</button>
-                      <?php } ?>
-                    </div>
-                  </form>
+                  </div>
+                  <div class="row">
+                    <?php if ($detail['status_keuangan'] == 0) { ?>
+                      <button class="btn btn-danger" type="reset">Reset</button>
+                      <button class="btn btn-primary" type="submit" id="btn-keuangan">Save</button>
+                    <?php } ?>
+                  </div>
                 <?php } ?>
 
                 <?php if ($detail['posisi'] == 'Diajukan kepada keuangan' && $this->uri->segment(2) == 'detail') {
@@ -542,7 +539,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -678,6 +675,47 @@
                       <?php } ?>
                     </div>
                   </form>
+                <?php } ?>
+
+                <?php if ($detail['posisi'] == 'Diajukan kepada direksi' && $this->uri->segment(2) == 'detail') {
+                ?>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th width="400px">Item</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id']])->result_array();
+                        foreach ($item as $i) {
+                        ?>
+                          <tr>
+                            <td><?= $i['item'] ?></td>
+                            <td><?= $i['qty'] ?></td>
+                            <td><?= number_format($i['price'], 2, '.', ',') ?></td>
+                            <td><?= number_format($i['total'], 2, '.', ',') ?></td>
+                          </tr>
+                        <?php } ?>
+                        <tr>
+                          <td colspan="3" align="end"><b>Total</b></td>
+                          <td><input type="text" class="form-control" name="total_pengajuan[]" id="total_pengajuan" value="<?= number_format($detail['total'], 2, '.', ',') ?>" readonly></td>
+                        </tr>
+                        <tr>
+                          <td><b>Lampiran</b></td>
+                          <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
+                        </tr>
+                        <tr>
+                          <td><b>Catatan User</b></td>
+                          <td colspan="4"><?= $detail['catatan'] ?></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 <?php } ?>
 
                 <?php if ($detail['posisi'] == 'Diarahkan ke pembayaran' && $this->uri->segment(2) == 'detail') {
@@ -844,7 +882,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           $total_realisasi = 0;
                           foreach ($item as $i) {
                             $total_realisasi += $i['realisasi'];
@@ -999,7 +1037,7 @@
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
                             foreach ($direksi as $d) {
                             ?>
-                              <option value="<?= $d['nip'] ?>"><?= $d['nama'] ?></option>
+                              <option value="<?= $d['nip'] ?>" <?= $d['nip'] == $detail['direksi'] ? 'selected' : '' ?>><?= $d['nama'] ?></option>
                             <?php } ?>
                           </select>
                         </div>
@@ -1029,7 +1067,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -1168,7 +1206,7 @@
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
                             foreach ($direksi as $d) {
                             ?>
-                              <option value="<?= $d['nip'] ?>"><?= $d['nama'] ?></option>
+                              <option value="<?= $d['nip'] ?>" <?= $d['nip']  == $detail['direksi'] ? 'selected' : '' ?>><?= $d['nama'] ?></option>
                             <?php } ?>
                           </select>
                         </div>

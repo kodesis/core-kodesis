@@ -164,15 +164,44 @@ class M_pengajuan extends CI_Model
     return $this->cb->order_by('a.no_pengajuan', 'DESC')->limit($limit, $start)->get();
   }
 
-  public function approval_direksi()
+  public function approval_direksi($limit, $start, $search)
   {
+    $this->cb->select('a.Id, a.status, a.kode, a.no_pengajuan, a.created_at, a.no_rekening, b.nama, a.total, a.status_keuangan, a.status_direksi, a.posisi, a.catatan, a.bukti_pengajuan');
+    $this->cb->from('t_pengajuan as a');
+    $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
+    if ($search) {
+      $this->cb->group_start();
+      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->or_like('b.nama', $search, 'both');
+      $this->cb->or_like('a.no_rekening', $search, 'both');
+      $this->cb->group_end();
+    }
+
     $this->cb->where(['status_keuangan' => 1, 'jenis_pengajuan' => 1, 'direksi' => $this->session->userdata('nip')]);
-    return $this->cb->get('t_pengajuan');
+    return $this->cb->order_by('a.no_pengajuan', 'DESC')->limit($limit, $start)->get();
   }
 
-  public function count_direksi()
+  public function countPengajuanDireksi($search)
   {
+
+    $this->cb->select('a.Id, a.status, a.no_pengajuan, a.created_at, a.no_rekening, b.nama, a.total, a.status_keuangan, a.status_direksi, a.posisi');
+    $this->cb->from('t_pengajuan as a');
+    $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
+    if ($search) {
+      $this->cb->group_start();
+      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->or_like('b.nama', $search, 'both');
+      $this->cb->or_like('a.no_rekening', $search, 'both');
+      $this->cb->group_end();
+    }
+
     $this->cb->where(['status_keuangan' => 1, 'jenis_pengajuan' => 1, 'direksi' => $this->session->userdata('nip')]);
+    return $this->cb->get()->num_rows();
+  }
+
+  public function count_direksi($nip)
+  {
+    $this->cb->where(['status_keuangan' => 1, 'jenis_pengajuan' => 1, 'direksi' => $nip]);
     return $this->cb->get('t_pengajuan');
   }
 }

@@ -247,27 +247,22 @@
                 <h2>List Pengajuan</h2>
               </div>
               <div class="x_content">
-                <div class="row">
-                  <?php $a = $this->session->userdata('level'); ?>
-                  <?php if (strpos($a, '804') !== false) { ?>
-                    <div class="tile_count">
-                      <div class="col-md-2 col-sm-4 tile_stats_count" style="background-color: green; color: white; cursor: pointer;" onclick="location.href='<?= base_url('pengajuan/approval_direksi') ?>'">
-                        <span class="count_top">Waiting Approval</span>
-                        <div class="count"><?= $count_direksi->num_rows() ?></div>
-                      </div>
-                    </div>
-                  <?php } ?>
-                </div>
+                <?php $a = $this->session->userdata('level'); ?>
                 <div class="row">
                   <a href="<?= base_url('pengajuan/create') ?>" class="btn btn-primary">Create Pengajuan</a>
                   <?php
                   if (strpos($a, '802') !== false) { ?>
-                    <a href="<?= base_url('pengajuan/approval_spv') ?>" class="btn btn-warning">Approval Supervisi</a>
+                    <a href="<?= base_url('pengajuan/approval_spv') ?>" class="btn btn-success">Approval Supervisi <span class="badge <?= $count_spv->num_rows() > 0 ? 'bg-red' : 'bg-success' ?>"><?= $count_spv->num_rows(); ?></span></a>
                   <?php } ?>
 
                   <?php
                   if (strpos($a, '803') !== false) { ?>
-                    <a href="<?= base_url('pengajuan/approval_keuangan') ?>" class="btn btn-warning">Approval Finance</a>
+                    <a href="<?= base_url('pengajuan/approval_keuangan') ?>" class="btn btn-success">Approval Finance <span class="badge <?= $count_keuangan->num_rows() > 0 ? 'bg-red' : 'bg-success' ?>"><?= $count_keuangan->num_rows(); ?></span></a>
+                  <?php } ?>
+
+                  <?php
+                  if (strpos($a, '804') !== false) { ?>
+                    <a href="<?= base_url('pengajuan/approval_direksi') ?>" class="btn btn-success">Approval Direksi <span class="badge <?= $count_direksi->num_rows() > 0 ? 'bg-red' : 'bg-success' ?>"><?= $count_direksi->num_rows(); ?></span></a>
                   <?php } ?>
                 </div>
                 <div class="table-responsive">

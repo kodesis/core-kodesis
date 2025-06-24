@@ -294,6 +294,7 @@
                             <th scope="col">Total</th>
                             <th scope="col">Catatan</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Posisi</th>
                             <th scope="col">#</th>
                           </tr>
                         </thead>
@@ -328,6 +329,7 @@
                                     echo "Belum diproses";
                                   } ?>
                                 </td>
+                                <td><?= $value['posisi'] ?></td>
                                 <td>
                                   <a href="<?= base_url('pengajuan/detail/' . $value['Id']) ?>" class="btn btn-warning btn-sm">View</a>
                                   <?php if ($value['posisi'] == 'Diarahkan ke pembayaran') { ?>

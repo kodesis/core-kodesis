@@ -569,15 +569,13 @@
 
                         foreach ($approval_direksi->result_array() as $value) {
 
-                          $user = $this->db->get_where('users', ['nip' => $value['user']])->row_array();
-
                         ?>
 
                           <tr>
 
                             <td><?= $value['no_pengajuan'] ?></td>
 
-                            <td><?= $user['nama'] ?></td>
+                            <td><?= $value['nama'] ?></td>
 
                             <td><?= $value['created_at'] ?></td>
 
@@ -620,7 +618,7 @@
 
                                       <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-                                      <h2 class="modal-title">Pengajuan <?= $value['no_pengajuan'] ?></h2>
+                                      <h2 class="modal-title">Pengajuan <?= $value['kode'] ?></h2>
 
                                     </div>
 
@@ -702,7 +700,7 @@
 
                                         <div class="panel-body">
 
-                                          <a href="<?= base_url('upload/pengajuan/' . $value['bukti_pengajuan']) ?>" class="btn btn-success btn-xs" download="">Download</a></th>
+                                          <a href="<?= base_url('upload/pengajuan/' . $value['bukti_pengajuan']) ?>" class="btn btn-success btn-xs" target="_blank">Lampiran Pengajuan</a></th>
 
                                         </div>
 

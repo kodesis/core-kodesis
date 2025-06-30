@@ -141,6 +141,13 @@ class Pengajuan extends CI_Controller
             $this->db->trans_commit();
             $this->cb->trans_commit();
 
+            $spv = $this->db->select('phone')->from('users')->where('supervisi', $user->supervisi)->get()->row();
+
+            $nama_session = $this->session->userdata('nama');
+
+            $msg = "*Pengajuan Biaya Baru*\nDari : *$nama_session*\nNo. Pengajuan :  *$kode*\n\nCatatan :" . $catatan ?? "-";
+            $this->api_whatsapp->wa_notif($msg, $spv->phone);
+
             $response = [
               'success' => true,
               'msg' => 'Pengajuan berhasil ditambahkan!',
@@ -376,6 +383,33 @@ class Pengajuan extends CI_Controller
 
       $this->cb->where(['Id' => $id]);
       $this->cb->update('t_pengajuan', $update);
+
+      $pengajuan = $this->cb->select('user,kode,catatan')->from('t_pengajuan')->where('Id', $id)->get()->row();
+      $user = $this->db->select('nama,phone')->from('users')->where('nip', $pengajuan->user)->get()->row();
+
+      $nama_session = $this->session->userdata('nama');
+
+      if ($status == 1) {
+        // Notifikasi ke user
+        $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai supervisi. Selanjutnya diajukan kepada bagian Finance\n\nCatatan : " . $catatan ?? "-";
+        $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+        // Notifikasi ke bagian keuangan
+        $finances = $this->db->select('phone')->from('users')->where('bagian', 3)->like('level', '803', 'both')->get()->result();
+
+        foreach ($finances as $fin) {
+          $phone_fin[] = $fin->phone;
+        }
+
+        $msgfin = "*Pengajuan Biaya Baru*\nDari : *$user->nama*\nNo. Pengajuan :  *$pengajuan->kode*\n\nCatatan: " . $pengajuan->catatan ?? "-";
+        $send_wa_fin = implode(',', $phone_fin);
+        $this->api_whatsapp->wa_notif($msgfin, $send_wa_fin);
+      } else {
+        // Notifikasi ke user
+        $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai supervisi.\n\nCatatan : " . $catatan ?? "-";
+        $this->api_whatsapp->wa_notif($msg, $user->phone);
+      }
+
 
       $response = [
         'success' => true,
@@ -671,11 +705,27 @@ class Pengajuan extends CI_Controller
         'msg' => array_values($this->form_validation->error_array())[0]
       ];
     } else {
+      $pengajuan = $this->cb->select('user,kode,catatan')->from('t_pengajuan')->where('Id', $id)->get()->row();
+      $user = $this->db->select('phone,nama')->from('users')->where('nip', $pengajuan->user)->get()->row();
+      $nama_session = $this->session->userdata('nama');
       if ($status == 1) {
         if ($direksi == 1) {
+          $user_direksi = $this->db->select('phone')->from('users')->where('nip', $nama_direksi)->get()->row();
+
+          // Notifikasi ke user
+          $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai Finance. Selanjutnya diajukan kepada Direksi\n\nCatatan : " . $catatan ?? "-";
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+          // Notifikasi Direksi
+          $msgdir = "*Pengajuan Baru*\nDari : *$user->nama*\nNo. Pengajuan :  *$pengajuan->kode*\n\nCatatan: " . $pengajuan->catatan ?? "-";
+          $this->api_whatsapp->wa_notif($msgdir, $user_direksi->phone);
+
           $posisi = 'Diajukan kepada direksi';
           $nama_direksi = $nama_direksi;
         } else {
+          // Notifikasi ke user
+          $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai Finance. Selanjutnya tunggu proses pembayaran.\n\nCatatan : " . $catatan ?? "-";
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
           $posisi = 'Diarahkan ke pembayaran';
           $nama_direksi = null;
         }
@@ -687,6 +737,10 @@ class Pengajuan extends CI_Controller
           ]);
         }
       } else {
+        // Notifikasi ke user
+        $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai Finance.\n\nCatatan : " . $catatan ?? "-";
+        $this->api_whatsapp->wa_notif($msg, $user->phone);
+
         $posisi = 'Ditolak oleh keuangan';
         $nama_direksi = null;
       }
@@ -816,6 +870,35 @@ class Pengajuan extends CI_Controller
 
       $this->cb->where('Id', $id);
       $this->cb->update('t_pengajuan', $update);
+
+
+      $pengajuan = $this->cb->select('user,kode,catatan')->from('t_pengajuan')->where('Id', $id)->get()->row();
+      $user = $this->db->select('nama,phone')->from('users')->where('nip', $pengajuan->user)->get()->row();
+
+      $nama_session = $this->session->userdata('nama');
+
+      if ($status == 1) {
+        // Notifikasi ke user
+        $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai direksi. Selanjutnya tunggu proses pembayaran\n\nCatatan : " . $catatan ?? "-";
+        $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+        // Notifikasi ke bagian keuangan
+        $finances = $this->db->select('phone')->from('users')->where('bagian', 3)->like('level', '803', 'both')->get()->result();
+
+        foreach ($finances as $fin) {
+          $phone_fin[] = $fin->phone;
+        }
+
+        $msgfin = "Pengajuan *$pengajuan->kode* sudah disetujui oleh direksi, harap segera proses pembayaran.\n\nCatatan: " . $catatan ?? "-";
+        $send_wa_fin = implode(',', $phone_fin);
+        $this->api_whatsapp->wa_notif($msgfin, $send_wa_fin);
+        $posisi = 'Diarahkan ke pembayaran';
+      } else {
+        // Notifikasi ke user
+        $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai direksi. \n\nCatatan : " . $catatan ?? "-";
+        $this->api_whatsapp->wa_notif($msg, $user->phone);
+        $posisi = 'Ditolak oleh direksi';
+      }
 
       $response = [
         'success' => true,
@@ -1202,7 +1285,7 @@ class Pengajuan extends CI_Controller
   public function update_bayar()
   {
     $id = $this->input->post('id_pengajuan');
-    $pengajuan = $this->cb->select('kode')->from('t_pengajuan')->where('Id', $id)->where('cabang', $this->session->userdata('kode_cabang'))->get()->row_array();
+    $pengajuan = $this->cb->select('user,kode')->from('t_pengajuan')->where('Id', $id)->where('cabang', $this->session->userdata('kode_cabang'))->get()->row_array();
     $coa_kredit = $this->input->post('coa_credit[]');
     $id_item = $this->input->post('id_item[]');
     $rows = $this->input->post('row_item[]');
@@ -1307,6 +1390,13 @@ class Pengajuan extends CI_Controller
           $this->cb->trans_rollback();
         } else {
           $this->cb->trans_commit();
+
+          $user = $this->db->select('phone,nama')->from('users')->where('nip', $pengajuan->user)->get()->row();
+          $nama_session = $this->session->userdata('nama');
+
+          // Notifikasi ke user
+          $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda sudah dibayarkan oleh *$nama_session* sebagai Finance.";
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
 
           $response = [
             'success' => true,

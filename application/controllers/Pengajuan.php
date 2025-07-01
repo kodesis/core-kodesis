@@ -7,7 +7,7 @@ class Pengajuan extends CI_Controller
   {
     parent::__construct();
     $this->load->model(['M_pengajuan', 'm_coa']);
-    $this->load->library(array('form_validation', 'session', 'user_agent', 'Api_Whatsapp'));
+    $this->load->library(array('form_validation', 'session', 'user_agent', 'Api_Whatsapp', 'pdfgenerator'));
     $this->load->library('pagination');
     $this->cb = $this->load->database('corebank', TRUE);
     $this->load->helper('url', 'form', 'download');
@@ -1659,5 +1659,27 @@ class Pengajuan extends CI_Controller
       ->row();
 
     return $row->nominal;
+  }
+
+  public function print($id)
+  {
+    $data['pengajuan'] = $this->cb->select('a.no_pengajuan, a.kode, a.created_at, a.user, a.spv, a.keuangan, a.direksi, a.status_spv, a.status_keuangan, a.total, a.catatan, a.date_spv, a.date_keuangan')->from('t_pengajuan a')->where('Id', $id)->get()->row();
+
+    $data['pengajuan_detail'] = $this->cb->select('*')->from('t_pengajuan_detail')->where('no_pengajuan', $data['pengajuan']->no_pengajuan)->get()->result();
+    // $this->load->view('pengajuan/print', $data);
+
+    // filename dari pdf ketika didownload
+    $file_pdf = 'Pengajuan No. ' . $data['pengajuan']->no_pengajuan;
+
+    // setting paper
+    $paper = 'A4';
+
+    //orientasi paper potrait / landscape
+    $orientation = "portrait";
+
+    $html = $this->load->view('pengajuan/print', $data, true);
+
+    // run dompdf
+    $this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
   }
 }

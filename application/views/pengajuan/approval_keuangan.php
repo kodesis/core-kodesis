@@ -331,7 +331,8 @@
                                 </td>
                                 <td><?= $value['posisi'] ?></td>
                                 <td>
-                                  <a href="<?= base_url('pengajuan/detail/' . $value['Id']) ?>" class="btn btn-warning btn-sm">View</a>
+                                  <a href="<?= base_url('pengajuan/detail/' . $value['Id']) ?>" class="btn btn-warning btn-xs">View</a>
+                                  <a href="<?= base_url('pengajuan/print/' . $value['Id']) ?>" class="btn btn-primary btn-xs" target="_blank">Print</a>
                                   <?php if ($value['posisi'] == 'Diarahkan ke pembayaran') { ?>
                                     <a href="<?= base_url('pengajuan/bayar/' . $value['Id']) ?>" class="btn btn-success btn-sm">Bayar</a>
                                   <?php } ?>

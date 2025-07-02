@@ -67,6 +67,8 @@ class Pengajuan extends CI_Controller
       $subtotal = $this->input->post('total[]');
       $total = $this->input->post('nominal');
 
+      $nama_perusahaan = $this->session->userdata('nama_singkat');
+
       $this->form_validation->set_rules('rekening', 'No. Rekening', 'required|trim');
       $this->form_validation->set_rules('metode', 'Metode Pembayaran', 'required');
       $this->form_validation->set_rules('catatan', 'Catatan', 'trim|required');
@@ -94,7 +96,7 @@ class Pengajuan extends CI_Controller
           $user = $this->db->select('supervisi')->from('users')->where('nip', $this->session->userdata('nip'))->get()->row();
           $max = $this->cb->select('max(no_pengajuan) as maximal')->from('t_pengajuan')->where('cabang', $cabang)->get()->row();
           $count = $max->maximal + 1;
-          $kode = $cabang . '-' . sprintf("%06d", $count);
+          $kode = $nama_perusahaan . '-' . $cabang . '-' . sprintf("%06d", $count);
 
           // $user = $this->db->get_where('users', ['nip' => $this->session->userdata('nip')])->row_array();
           // $count = $this->cb->get('t_pengajuan')->num_rows();

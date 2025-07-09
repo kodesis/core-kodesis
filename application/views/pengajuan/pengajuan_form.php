@@ -386,7 +386,7 @@
                       </thead>
                       <tbody>
                         <?php
-                        $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $pengajuan['kode']])->result_array();
+                        $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $pengajuan['Id']])->result_array();
                         foreach ($detail as $data) {
                         ?>
                           <tr class="baris">

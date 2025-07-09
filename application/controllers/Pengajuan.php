@@ -584,7 +584,7 @@ class Pengajuan extends CI_Controller
             'status_spv' => 0,
             'status_keuangan' => 0,
             'status_direksi' => 0,
-            'posisi' => 'Diajukan kepada spv',
+            'posisi' => 'Diajukan kepada supervisi',
             'bukti_pengajuan' => $upload['file_name'],
             'catatan' => $catatan,
             'total' => preg_replace('/[^a-zA-Z0-9\']/', '', $total)
@@ -597,7 +597,7 @@ class Pengajuan extends CI_Controller
 
           for ($i = 0; $i < count($rows); $i++) {
             $detail = [
-              'no_pengajuan' => $data['kode'],
+              'no_pengajuan' => $data['Id'],
               'item' => $item[$i],
               'qty' => preg_replace('/[^a-zA-Z0-9\']/', '', $qtys[$i]),
               'price' => preg_replace('/[^a-zA-Z0-9\']/', '', $price[$i]),
@@ -628,7 +628,7 @@ class Pengajuan extends CI_Controller
           'status_spv' => 0,
           'status_keuangan' => 0,
           'status_direksi' => 0,
-          'posisi' => 'Diajukan kepada spv',
+          'posisi' => 'Diajukan kepada supervisi',
           'catatan' => $catatan,
           'total' => preg_replace('/[^a-zA-Z0-9\']/', '', $total)
         ];
@@ -640,7 +640,7 @@ class Pengajuan extends CI_Controller
 
         for ($i = 0; $i < count($rows); $i++) {
           $detail = [
-            'no_pengajuan' => $data['no_pengajuan'],
+            'no_pengajuan' => $data['Id'],
             'item' => $item[$i],
             'qty' => preg_replace('/[^a-zA-Z0-9\']/', '', $qtys[$i]),
             'price' => preg_replace('/[^a-zA-Z0-9\']/', '', $price[$i]),

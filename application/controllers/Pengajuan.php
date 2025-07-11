@@ -1393,7 +1393,7 @@ class Pengajuan extends CI_Controller
         } else {
           $this->cb->trans_commit();
 
-          $user = $this->db->select('phone,nama')->from('users')->where('nip', $pengajuan['kode'])->get()->row();
+          $user = $this->db->select('phone,nama')->from('users')->where('nip', $pengajuan['user'])->get()->row();
           $nama_session = $this->session->userdata('nama');
 
           // Notifikasi ke user

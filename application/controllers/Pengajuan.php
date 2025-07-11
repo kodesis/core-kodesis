@@ -1393,11 +1393,11 @@ class Pengajuan extends CI_Controller
         } else {
           $this->cb->trans_commit();
 
-          $user = $this->db->select('phone,nama')->from('users')->where('nip', $pengajuan->user)->get()->row();
+          $user = $this->db->select('phone,nama')->from('users')->where('nip', $pengajuan['kode'])->get()->row();
           $nama_session = $this->session->userdata('nama');
 
           // Notifikasi ke user
-          $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda sudah dibayarkan oleh *$nama_session* sebagai Finance.";
+          $msg = "*Pengajuan $pengajuan[kode]*\nPengajuan anda sudah dibayarkan oleh *$nama_session* sebagai Finance.";
           $this->api_whatsapp->wa_notif($msg, $user->phone);
 
           $response = [

@@ -143,7 +143,7 @@ class Pengajuan extends CI_Controller
             $this->db->trans_commit();
             $this->cb->trans_commit();
 
-            $spv = $this->db->select('phone')->from('users')->where('supervisi', $user->supervisi)->get()->row();
+            $spv = $this->db->select('phone')->from('users')->where('nip', $user->supervisi)->get()->row();
 
             $nama_session = $this->session->userdata('nama');
 

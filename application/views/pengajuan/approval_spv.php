@@ -422,7 +422,7 @@
                                               </tbody>
                                             </table>
                                           </div>
-                                          <?php if ($value['status_spv'] != 0) { ?>
+                                          <?php if ($value['status_spv'] == 0) { ?>
                                             <form action="<?= base_url('pengajuan/update_spv') ?>" method="post" enctype="multipart/form-data" id="update-spv<?= $value['Id'] ?>">
                                               <input type="hidden" name="id_pengajuan" id="id_pengajuan<?= $value['Id'] ?>" value="<?= $value['Id'] ?>">
                                               <div class="form-group">

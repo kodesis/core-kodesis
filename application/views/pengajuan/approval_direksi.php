@@ -116,6 +116,11 @@
       padding-top: 37px;
 
     }
+
+    .swal2-container {
+      z-index: 9999999 !important;
+      /* atau angka lain yang lebih tinggi dari elemen lain */
+    }
   </style>
 
 </head>

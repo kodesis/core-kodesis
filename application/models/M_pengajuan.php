@@ -134,7 +134,7 @@ class M_pengajuan extends CI_Model
 
   public function approval_keuangan($limit, $start, $search, $filter)
   {
-    $this->cb->select('a.Id, a.status, a.kode, a.tanggal, a.no_rekening, a.catatan, b.nama, a.total, a.status_keuangan, a.posisi');
+    $this->cb->select('a.Id, a.status, a.status_spv,a.status_direksi, a.kode, a.tanggal, a.no_rekening, a.catatan, b.nama, a.total, a.status_keuangan, a.posisi');
     $this->cb->from('t_pengajuan as a');
     $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
 

@@ -423,7 +423,10 @@
                         </tr>
                         <tr>
                           <td><b>Lampiran</b></td>
-                          <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
+                          <td colspan="4">
+                            <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a>
+                            <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_bayar']) ?>" class="btn btn-success btn-sm" target="_blank">Bukti Bayar</a>
+                          </td>
                         </tr>
                         <tr>
                           <td><b>Catatan User</b></td>
@@ -1113,7 +1116,10 @@
                           </tr>
                           <tr>
                             <td><b>Lampiran</b></td>
-                            <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
+                            <td colspan="4">
+                              <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a>
+                              <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_bayar']) ?>" class="btn btn-success btn-sm" target="_blank">Bukti Bayar</a>
+                            </td>
                           </tr>
                           <tr>
                             <td><b>Catatan User</b></td>

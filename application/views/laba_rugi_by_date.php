@@ -247,6 +247,8 @@
                                                     <option <?= ($this->input->post('jenis_laporan') == "laba_rugi") ? "selected" : "" ?> value="laba_rugi">Laba Rugi SBB</option>
                                                     <option <?= ($this->input->post('jenis_laporan') == "neraca_bb") ? "selected" : "" ?> value="neraca_bb">Neraca BB</option>
                                                     <option <?= ($this->input->post('jenis_laporan') == "lr_bb") ? "selected" : "" ?> value="lr_bb">Laba Rugi BB</option>
+                                                    <option <?= ($this->input->post('jenis_laporan') == "neraca_monthly") ? "selected" : "" ?> value="neraca_monthly">Neraca per bulan</option>
+                                                    <option <?= ($this->input->post('jenis_laporan') == "lr_monthly") ? "selected" : "" ?> value="lr_monthly">Laba Rugi per bulan</option>
                                                 </select>
                                             </div>
                                         </div>

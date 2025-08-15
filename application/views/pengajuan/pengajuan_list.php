@@ -297,115 +297,127 @@
                               <?php } ?>
                               <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal<?= $value['Id'] ?>">View</button>
                               <!-- Modal Detail -->
-                              <div class="modal fade" id="myModal<?= $value['Id'] ?>" role="dialog">
+                              <div class="modal fade" id="myModal<?= $value['Id'] ?>" role="dialog" style="z-index: 999999 !important;">
                                 <div class="modal-dialog modal-lg">
                                   <!-- Modal content-->
                                   <div class="modal-content">
                                     <div class="modal-header">
                                       <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                      <h2 class="modal-title">Pengajuan <?= $value['no_pengajuan'] ?></h2>
+                                      <h2 class="modal-title">Pengajuan <?= $value['kode'] ?></h2>
                                     </div>
                                     <div class="modal-body">
-                                      <table class="table table-bordered">
-                                        <thead>
-                                          <tr>
-                                            <th>No.</th>
-                                            <th>Item</th>
-                                            <th>Qty</th>
-                                            <th>Price</th>
-                                            <th>Total</th>
-                                            <th>Realisasi</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <?php $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $value['no_pengajuan']])->result_array();
-                                          $no = 1;
-                                          foreach ($detail as $row) {
-                                          ?>
+                                      <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                          <thead>
                                             <tr>
-                                              <td><?= $no++ ?></td>
-                                              <td><?= $row['item'] ?></td>
-                                              <td><?= $row['qty'] ?></td>
-                                              <td><?= number_format($row['price'], 0) ?></td>
-                                              <td><?= number_format($row['total'], 0) ?></td>
-                                              <td><?= $row['realisasi'] ? number_format($row['realisasi'], 0) : "-" ?></td>
+                                              <th>No.</th>
+                                              <th>Item</th>
+                                              <th>Qty</th>
+                                              <th>Price</th>
+                                              <th>Total</th>
+                                              <th>Realisasi</th>
                                             </tr>
-                                          <?php } ?>
-                                          <tr>
-                                            <td colspan="4" align="right"><strong>TOTAL</strong></td>
-                                            <td><?= number_format($value['total']) ?></td>
-                                            <td><?= $value['total_realisasi'] ? number_format($value['total_realisasi']) : "-" ?></td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table style="margin-top: 20px; width: 70%;" class="table table-bordered">
-                                        <thead>
-                                          <tr>
-                                            <th>Catatan</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td><?= $value['catatan'] ?></td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table style="margin-top: 20px; width: 70%;" class="table table-bordered">
-                                        <thead>
-                                          <tr>
-                                            <th>Catatan SPV</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td><?= $value['catatan_spv'] ? $value['catatan_spv'] : "Tidak ada catatan" ?></td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table style="margin-top: 20px; width: 70%;" class="table table-bordered">
-                                        <thead>
-                                          <tr>
-                                            <th>Catatan Keuangan</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td><?= $value['catatan_keuangan'] ? $value['catatan_keuangan'] : "Tidak ada catatan" ?></td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table style="margin-top: 20px; width: 70%;" class="table table-bordered">
-                                        <thead>
-                                          <tr>
-                                            <th>Catatan Direksi</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td><?= $value['catatan_direksi'] ? $value['catatan_direksi'] : "Tidak ada catatan" ?></td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table style="margin-top: 20px; width:50%" class="table table-bordered">
-                                        <thead>
-                                          <tr>
-                                            <th>Attachment Pengajuan</th>
-                                            <th>Attachment Bayar</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td><a href="<?= base_url('upload/pengajuan/' . $value['bukti_pengajuan']) ?>" class="btn btn-success btn-xs" download="">Download</a></td>
-                                            <td>
-                                              <?php if ($value['bukti_bayar']) { ?>
-                                                <a href="<?= base_url('upload/pengajuan/' . $value['bukti_bayar']) ?>" class="btn btn-success btn-xs" download="">Download</a>
-                                              <?php } else { ?>
-                                                <span> -</span>
-                                              <?php } ?>
-                                            </td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
+                                          </thead>
+                                          <tbody>
+                                            <?php $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $value['no_pengajuan']])->result_array();
+                                            $no = 1;
+                                            foreach ($detail as $row) {
+                                            ?>
+                                              <tr>
+                                                <td><?= $no++ ?></td>
+                                                <td><?= $row['item'] ?></td>
+                                                <td><?= $row['qty'] ?></td>
+                                                <td><?= number_format($row['price'], 0) ?></td>
+                                                <td><?= number_format($row['total'], 0) ?></td>
+                                                <td><?= $row['realisasi'] ? number_format($row['realisasi'], 0) : "-" ?></td>
+                                              </tr>
+                                            <?php } ?>
+                                            <tr>
+                                              <td colspan="4" align="right"><strong>TOTAL</strong></td>
+                                              <td><?= number_format($value['total']) ?></td>
+                                              <td><?= $value['total_realisasi'] ? number_format($value['total_realisasi']) : "-" ?></td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="table-responsive">
+                                        <table style="margin-top: 20px;" class="table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>Catatan</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td><?= $value['catatan'] ?></td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="table-responsive">
+                                        <table style="margin-top: 20px;" class="table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>Catatan SPV</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td><?= $value['catatan_spv'] ? $value['catatan_spv'] : "Tidak ada catatan" ?></td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="table-responsive">
+                                        <table style="margin-top: 20px;" class="table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>Catatan Keuangan</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td><?= $value['catatan_keuangan'] ? $value['catatan_keuangan'] : "Tidak ada catatan" ?></td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="table-responsive">
+                                        <table style="margin-top: 20px;" class="table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>Catatan Direksi</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td><?= $value['catatan_direksi'] ? $value['catatan_direksi'] : "Tidak ada catatan" ?></td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <div class="table-responsive">
+                                        <table style="margin-top: 20px;" class="table table-bordered">
+                                          <thead>
+                                            <tr>
+                                              <th>Attachment Pengajuan</th>
+                                              <th>Attachment Bayar</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td><a href="<?= base_url('upload/pengajuan/' . $value['bukti_pengajuan']) ?>" class="btn btn-success btn-xs" target="_blank">File Pengajuan</a></td>
+                                              <td>
+                                                <?php if ($value['bukti_bayar']) { ?>
+                                                  <a href="<?= base_url('upload/pengajuan/' . $value['bukti_bayar']) ?>" class="btn btn-success btn-xs" target="_blank">File Bukti Bayar</a>
+                                                <?php } else { ?>
+                                                  <span> -</span>
+                                                <?php } ?>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>

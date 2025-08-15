@@ -116,6 +116,11 @@
       padding-top: 37px;
 
     }
+
+    .swal2-container {
+      z-index: 9999999 !important;
+      /* atau angka lain yang lebih tinggi dari elemen lain */
+    }
   </style>
 
 </head>
@@ -606,7 +611,7 @@
 
                               <!-- Modal Detail -->
 
-                              <div class="modal fade" id="myModal<?= $value['Id'] ?>" role="dialog">
+                              <div class="modal fade" id="myModal<?= $value['Id'] ?>" role="dialog" style="z-index: 99999 !important;">
 
                                 <div class="modal-dialog modal-lg">
 
@@ -716,7 +721,7 @@
 
                                             <div class="row" style="margin-bottom: 20px;">
 
-                                              <div class="col-md-8">
+                                              <div class="col-md-8 col-sm-8 col-xs-12">
 
                                                 <label for="status" class="form-label">Total Pengajuan</label>
 
@@ -728,7 +733,7 @@
 
                                             <div class="row" style="margin-bottom: 20px;">
 
-                                              <div class="col-md-8">
+                                              <div class="col-md-8 col-sm-8 col-xs-12">
 
                                                 <label for="status" class="form-label">Status</label>
 
@@ -748,7 +753,7 @@
 
                                             <div class="row" style="margin-bottom: 20px;">
 
-                                              <div class="col-md-8">
+                                              <div class="col-md-8 col-sm-8 col-xs-12">
 
                                                 <label for="catatan" class="form-label">Catatan</label>
 

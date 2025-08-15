@@ -24,7 +24,7 @@ class M_pengajuan extends CI_Model
   public function get_pengajuan($limit, $start, $search, $nip)
   {
     $this->cb->limit($limit, $start);
-    $this->cb->like('no_pengajuan', $search, 'both');
+    $this->cb->like('kode', $search, 'both');
     $this->cb->where('user', $nip);
     $this->cb->order_by('no_pengajuan', 'DESC');
     return $this->cb->get('t_pengajuan')->result_array();
@@ -39,7 +39,7 @@ class M_pengajuan extends CI_Model
 
     if ($search) {
       $this->cb->group_start();
-      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
       $this->cb->or_like('a.catatan', $search, 'both');
@@ -56,7 +56,7 @@ class M_pengajuan extends CI_Model
     $this->cb->from('t_pengajuan as a');
     $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
     if ($search) {
-      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
     }
@@ -90,7 +90,7 @@ class M_pengajuan extends CI_Model
       $sql = "SELECT * FROM t_pengajuan WHERE user = '$nip' AND cabang = '$cabang'";
       return $this->cb->query($sql)->num_rows();
     } else {
-      $sql = "SELECT * FROM t_pengajuan WHERE user = '$nip' AND cabang = '$cabang' AND t_pengajuan.no_pengajuan LIKE '%$search%'";
+      $sql = "SELECT * FROM t_pengajuan WHERE user = '$nip' AND cabang = '$cabang' AND t_pengajuan.kode LIKE '%$search%'";
       return $this->cb->query($sql)->num_rows();
     }
   }
@@ -121,7 +121,7 @@ class M_pengajuan extends CI_Model
 
     if ($search) {
       $this->cb->group_start();
-      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
       $this->cb->or_like('a.catatan', $search, 'both');
@@ -134,12 +134,12 @@ class M_pengajuan extends CI_Model
 
   public function approval_keuangan($limit, $start, $search, $filter)
   {
-    $this->cb->select('a.Id, a.status, a.kode, a.tanggal, a.no_rekening, a.catatan, b.nama, a.total, a.status_keuangan, a.posisi');
+    $this->cb->select('a.Id, a.status, a.status_spv,a.status_direksi, a.kode, a.tanggal, a.no_rekening, a.catatan, b.nama, a.total, a.status_keuangan, a.posisi');
     $this->cb->from('t_pengajuan as a');
     $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
 
     if ($search) {
-      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
     }
@@ -171,7 +171,7 @@ class M_pengajuan extends CI_Model
     $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
     if ($search) {
       $this->cb->group_start();
-      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
       $this->cb->group_end();
@@ -189,7 +189,7 @@ class M_pengajuan extends CI_Model
     $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
     if ($search) {
       $this->cb->group_start();
-      $this->cb->like('a.no_pengajuan', $search, 'both');
+      $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
       $this->cb->group_end();

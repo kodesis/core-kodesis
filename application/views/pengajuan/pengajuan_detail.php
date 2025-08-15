@@ -214,7 +214,7 @@
               <div class="x_content">
                 <a href="<?= base_url('pengajuan/approval_keuangan') ?>" class="btn btn-warning">Back</a>
                 <?php if ($detail['posisi'] == "Diarahkan ke pembayaran" && $this->uri->segment(2) == 'bayar') { ?>
-                  <form action="<?= base_url('pengajuan/update_bayar') ?>" method="post" enctype="multipart/form-data" id="update-bayar">
+                  <form action="<?= base_url('pengajuan/update_bayar') ?>" method="post" enctype="multipart/form-data" id="update-bayar" style="width: 100%;">
                     <input type="hidden" name="id_pengajuan" id="id_pengajuan" value="<?= $detail['Id'] ?>">
                     <div class="table-responsive">
                       <table class="table table-bordered">
@@ -274,7 +274,7 @@
                       </table>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="rekening" class="form-label">No. Rekening</label>
                           <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
@@ -296,7 +296,7 @@
                           <?php } ?>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="tanggal" class="form-label">Tanggal Bayar</label>
                           <?php if ($detail['date_bayar'] == null) { ?>
@@ -364,7 +364,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="file" class="form-label">Bukti Bayar</label>
                           <input type="file" class="form-control" name="bukti-bayar" id="bukti-bayar">
@@ -423,7 +423,10 @@
                         </tr>
                         <tr>
                           <td><b>Lampiran</b></td>
-                          <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
+                          <td colspan="4">
+                            <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a>
+                            <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_bayar']) ?>" class="btn btn-success btn-sm" target="_blank">Bukti Bayar</a>
+                          </td>
                         </tr>
                         <tr>
                           <td><b>Catatan User</b></td>
@@ -433,7 +436,7 @@
                     </table>
                   </div>
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <label for="rekening" class="form-label">No. Rekening</label>
                         <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
@@ -455,7 +458,7 @@
                         <?php } ?>
                       </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <label for="status" class="form-label">Status Pengajuan</label>
                         <?php if ($detail['status_keuangan'] == 0) { ?>
@@ -579,7 +582,7 @@
                       </table>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="rekening" class="form-label">No. Rekening</label>
                           <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
@@ -601,7 +604,7 @@
                           <?php } ?>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="tanggal" class="form-label">Tanggal</label>
                           <?php if ($detail['date_keuangan'] == null) { ?>
@@ -735,7 +738,7 @@
                         </thead>
                         <tbody>
                           <?php
-                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['kode'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
+                          $item = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $detail['Id'], 'cabang' => $this->session->userdata('kode_cabang')])->result_array();
                           foreach ($item as $i) {
                           ?>
                             <input type="hidden" class="form-control" name="row_item[]" id="row<?= $i['Id'] ?>">
@@ -775,7 +778,7 @@
                       </table>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="rekening" class="form-label">No. Rekening</label>
                           <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
@@ -797,7 +800,7 @@
                           <?php } ?>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="status" class="form-label">Status Pengajuan</label>
                           <?php if ($detail['status_keuangan'] == 0) { ?>
@@ -962,7 +965,7 @@
                       </table>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="rekening" class="form-label">No. Rekening</label>
                           <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
@@ -984,7 +987,7 @@
                           <?php } ?>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="status" class="form-label">Status Pengajuan</label>
                           <?php if ($detail['status_keuangan'] == 0) { ?>
@@ -1113,7 +1116,10 @@
                           </tr>
                           <tr>
                             <td><b>Lampiran</b></td>
-                            <td colspan="4"><a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a></td>
+                            <td colspan="4">
+                              <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_pengajuan']) ?>" class="btn btn-success btn-sm" target="_blank">Lampiran Pengajuan</a>
+                              <a href="<?= base_url('upload/pengajuan/' . $detail['bukti_bayar']) ?>" class="btn btn-success btn-sm" target="_blank">Bukti Bayar</a>
+                            </td>
                           </tr>
                           <tr>
                             <td><b>Catatan User</b></td>
@@ -1123,7 +1129,7 @@
                       </table>
                     </div>
                     <div class="row">
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="rekening" class="form-label">No. Rekening</label>
                           <input type="text" class="form-control" name="rekening" id="rekening" value="<?= $detail['no_rekening'] ?>" readonly>
@@ -1145,7 +1151,7 @@
                           <?php } ?>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="form-group">
                           <label for="tanggal" class="form-label">Tanggal Close</label>
                           <?php if ($detail['date_close'] == null) { ?>

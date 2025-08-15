@@ -332,13 +332,16 @@
                                 <td><?= $value['posisi'] ?></td>
                                 <td>
                                   <a href="<?= base_url('pengajuan/detail/' . $value['Id']) ?>" class="btn btn-warning btn-xs">View</a>
-                                  <a href="<?= base_url('pengajuan/print/' . $value['Id']) ?>" class="btn btn-primary btn-xs" target="_blank">Print</a>
+                                  <?php if ($value['status_spv'] != '2' and $value['status_keuangan'] != '2' and $value['status_direksi'] != 2) { ?>
+                                    <a href="<?= base_url('pengajuan/print/' . $value['Id']) ?>" class="btn btn-primary btn-xs" target="_blank">Print</a>
+                                  <?php } ?>
+
                                   <?php if ($value['posisi'] == 'Diarahkan ke pembayaran') { ?>
-                                    <a href="<?= base_url('pengajuan/bayar/' . $value['Id']) ?>" class="btn btn-success btn-sm">Bayar</a>
+                                    <a href="<?= base_url('pengajuan/bayar/' . $value['Id']) ?>" class="btn btn-success btn-xs">Bayar</a>
                                   <?php } ?>
                                   <?php if ($value['status'] == 1) { ?>
-                                    <!-- <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModalClose<?= $value['Id'] ?>">Close</button> -->
-                                    <a href="<?= base_url('pengajuan/close/' . $value['Id']) ?>" class="btn btn-success btn-sm">Close</a>
+                                    <!-- <button class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModalClose<?= $value['Id'] ?>">Close</button> -->
+                                    <a href="<?= base_url('pengajuan/close/' . $value['Id']) ?>" class="btn btn-success btn-xs">Close</a>
                                   <?php } ?>
                                 </td>
                               </tr>

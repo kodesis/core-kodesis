@@ -407,6 +407,7 @@
                             didOpen: () => {
                                 Swal.showLoading()
                             },
+                            timer: 1500
                         });
                     });
                 });
@@ -485,6 +486,7 @@
                     didOpen: () => {
                         Swal.showLoading()
                     },
+                    timer: 1500
                 });
             });
         });

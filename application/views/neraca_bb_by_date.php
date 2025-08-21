@@ -475,6 +475,7 @@
                     didOpen: () => {
                         Swal.showLoading()
                     },
+                    timer: 1500
                 });
             });
         });

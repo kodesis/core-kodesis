@@ -256,7 +256,7 @@
                                                     <?php
                                                     foreach ($customers as $c) :
                                                     ?>
-                                                        <option <?= ($this->input->post('customer_id') == $c->id) ? "selected" : "" ?> value="<?= $c->id ?>"><?= $c->nama_customer ?></option>
+                                                        <option <?= ($this->input->post('customer_id') == $c->id or $this->input->get('id_customer') == $c->id) ? "selected" : "" ?> value="<?= $c->id ?>"><?= $c->nama_customer ?></option>
                                                     <?php
                                                     endforeach;
                                                     ?>

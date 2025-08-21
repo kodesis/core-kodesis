@@ -211,7 +211,7 @@ class Financial extends CI_Controller
 
     public function invoice()
     {
-        $customer_id = $this->input->post('customer_id');
+        $customer_id = $this->input->post('customer_id') ? $this->input->post('customer_id') : $this->input->get('id_customer');
         $keyword = trim($this->input->post('keyword', true) ?? '');
 
         $config = [
@@ -575,7 +575,7 @@ class Financial extends CI_Controller
         $coa_kredit_lama = $inv['coa_kredit'];
         $coa_debit_lama = $inv['coa_debit'];
 
-        $this->posting($coa_kredit_lama, $coa_debit_lama, $keterangan_lama, $inv['nominal_pendapatan'], $inv['tanggal_invoice'], $inv['Id']);
+        $this->posting($coa_kredit_lama, $coa_debit_lama, $keterangan_lama, $inv['total_denganpph'], $inv['tanggal_invoice'], $inv['Id']);
 
         if (!$this->m_invoice->update_invoice($id, $invoice_data)) {
             $this->cb->trans_rollback();

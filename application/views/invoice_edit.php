@@ -245,7 +245,9 @@
                                             <label for="ppn" class="form-label">PPN</label>
                                             <select name="ppn" id="ppn" class="form-control">
                                                 <option <?= ($inv['ppn'] == "0.000") ? "selected" : "" ?> value="0.000">0%</option>
-                                                <option <?= ($inv['ppn'] == "0.110") ? "selected" : "" ?> value="0.110">11%</option>
+                                                <!-- <option <?= ($inv['ppn'] == "0.110") ? "selected" : "" ?> value="0.110">11%</option> -->
+
+                                                <option <?= ($inv['ppn'] == $this->session->userdata('ppn')) ? "selected" : "" ?> value="<?= $this->session->userdata('ppn') ?>"><?= $this->session->userdata('nama_ppn') ?></option>
                                             </select>
                                         </div>
                                     </div>

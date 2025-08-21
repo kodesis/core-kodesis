@@ -283,7 +283,11 @@
                                                 foreach ($outstanding as $i) : ?>
                                                     <tr>
                                                         <td><?= $no++ ?></td>
-                                                        <td><?= $i['nama_customer'] ?></td>
+                                                        <td>
+                                                            <a href="<?= base_url('financial/invoice?id_customer=' . $i['id_customer']) ?>">
+                                                                <?= $i['nama_customer'] ?>
+                                                            </a>
+                                                        </td>
                                                         <td class="text-right"><?= number_format($i['current']) ?></td>
                                                         <td class="text-right"><?= number_format($i['out1']) ?></td>
                                                         <td class="text-right"><?= number_format($i['out2']) ?></td>

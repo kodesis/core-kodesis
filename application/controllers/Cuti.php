@@ -878,10 +878,8 @@ class Cuti extends CI_Controller
                 $msghrd = "*Pengajuan Cuti*\n\nFrom: *$nama_session*\nJenis Cuti: *$jenis_nama*\nMohon untuk segera diproses.";
                 $hrd = $this->db->get_where('users', ['bagian' => 4])->result();
                 foreach ($hrd as $row) {
-                    $phone_hrd[] = $row->phone;
+                    $this->api_whatsapp->wa_notif($msghrd, $row->phone);
                 }
-                $send_notif = implode(',', $phone_hrd);
-                $this->api_whatsapp->wa_notif($msghrd, $send_notif);
             }
             // Jika Form Validation Gagal Dijalankan 
         } else {

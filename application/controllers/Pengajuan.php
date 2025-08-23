@@ -400,12 +400,9 @@ class Pengajuan extends CI_Controller
         $finances = $this->db->select('phone')->from('users')->where('bagian', 3)->like('level', '803', 'both')->get()->result();
 
         foreach ($finances as $fin) {
-          $phone_fin[] = $fin->phone;
+          $msgfin = "*Pengajuan Biaya Baru*\nDari : *$user->nama*\nNo. Pengajuan :  *$pengajuan->kode*\n\nCatatan: " . $pengajuan->catatan ?? "-";
+          $this->api_whatsapp->wa_notif($msgfin, $fin->phone);
         }
-
-        $msgfin = "*Pengajuan Biaya Baru*\nDari : *$user->nama*\nNo. Pengajuan :  *$pengajuan->kode*\n\nCatatan: " . $pengajuan->catatan ?? "-";
-        $send_wa_fin = implode(',', $phone_fin);
-        $this->api_whatsapp->wa_notif($msgfin, $send_wa_fin);
       } else {
         // Notifikasi ke user
         $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai supervisi.\n\nCatatan : " . $catatan ?? "-";
@@ -888,13 +885,10 @@ class Pengajuan extends CI_Controller
         $finances = $this->db->select('phone')->from('users')->where('bagian', 3)->like('level', '803', 'both')->get()->result();
 
         foreach ($finances as $fin) {
-          $phone_fin[] = $fin->phone;
+          $msgfin = "Pengajuan *$pengajuan->kode* sudah disetujui oleh direksi, harap segera proses pembayaran.\n\nCatatan: " . $catatan ?? "-";
+          $this->api_whatsapp->wa_notif($msgfin, $fin->phone);
+          $posisi = 'Diarahkan ke pembayaran';
         }
-
-        $msgfin = "Pengajuan *$pengajuan->kode* sudah disetujui oleh direksi, harap segera proses pembayaran.\n\nCatatan: " . $catatan ?? "-";
-        $send_wa_fin = implode(',', $phone_fin);
-        $this->api_whatsapp->wa_notif($msgfin, $send_wa_fin);
-        $posisi = 'Diarahkan ke pembayaran';
       } else {
         // Notifikasi ke user
         $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai direksi. \n\nCatatan : " . $catatan ?? "-";

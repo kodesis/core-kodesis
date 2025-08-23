@@ -987,8 +987,9 @@ class App extends CI_Controller
 						$phone_user = $phone;
 					}
 
-					$send_wa = implode(',', $phone_user);
-					$this->api_whatsapp->wa_notif($msg, $send_wa);
+					foreach ($phone_user as $p) {
+						$this->api_whatsapp->wa_notif($msg, $p);
+					}
 
 					redirect('app/create_memo');
 				}

@@ -899,7 +899,7 @@ class Task extends CI_Controller
 			foreach ($arr_member as $value) {
 				$user = $this->db->get_where('users', ['nip' => $value])->row();
 				$msg = "There's a new card\nTask Name:*$task->name*\nCard Name : *$card_name*\n\nCreated By :  *$user_session->nama*";
-				// $this->api_whatsapp->wa_notif($msg, $user->phone);
+				$this->api_whatsapp->wa_notif($msg, $user->phone);
 			}
 
 			redirect('task/task_view/' . $id_card);

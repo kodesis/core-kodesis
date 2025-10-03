@@ -183,14 +183,13 @@ class M_invoice extends CI_Model
                 'out5' => $out5,
                 'total' => $current + $out1 + $out2 + $out3 + $out4 + $out5,
             ];
-            // echo $c->nama_customer . ' - ' . $current . ' - ' . $out1 . ' - ' . $out2 . ' - ' . $out3 . ' - ' . $out4 . '<br>';
         }
-        // echo '<pre>';
-        // print_r($data);
-        // echo '</pre>';
+
+        usort($data, function ($a, $b) {
+            return $b['total'] <=> $a['total'];
+        });
 
         return $data;
-        // exit;
     }
 
     private function calculateOutstandingAmounts($customerId, $jenis_outstanding)

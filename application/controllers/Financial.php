@@ -733,6 +733,19 @@ class Financial extends CI_Controller
     //     $this->m_coa->add_transaksi($data_transaksi);
     // }
 
+    private function processDate($dateValue)
+    {
+        if (is_numeric($dateValue)) {
+            // Handle Excel date integer
+            return DateTime::createFromFormat('U', ($dateValue - 25569) * 86400)->format('Y-m-d');
+        } elseif (DateTime::createFromFormat('m/d/Y', $dateValue) !== false) {
+            // Handle string date format
+            return DateTime::createFromFormat('m/d/Y', $dateValue)->format('Y-m-d');
+        }
+        // If the date format is not recognized, return null or handle accordingly
+        return null;
+    }
+
     private function posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $id_invoice = NULL)
     {
         // Update coa debit 

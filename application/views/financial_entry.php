@@ -862,6 +862,154 @@
 
         }
 
+        function upload_fe() {
+            const ttlnamaValue = $('#format_data').val();
+
+
+            if (!ttlnamaValue) {
+                swal.fire({
+                    customClass: 'slow-animation',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    title: 'Kolom File Tidak Boleh Kosong',
+                    timer: 1500
+                });
+            } else {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        InputEvent: 'form-control',
+                        confirmButton: 'btn btn-primary',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+
+                swalWithBootstrapButtons.fire({
+                    title: 'Ingin Menambahkan Data?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Tambahkan',
+                    cancelButtonText: 'Tidak',
+                    reverseButtons: true
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        var url;
+                        var formData;
+                        url = "<?php echo site_url('financial/upload_financial_entry') ?>";
+
+                        // window.location = url_base;
+                        var formData = new FormData($("#upload_file_fe")[0]);
+                        let accumulatedResponse = ""; // Variable to accumulate the response
+
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            dataType: "text", // Change to 'text' to handle server-sent events
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            beforeSend: function() {
+                                // Show the progress dialog before sending the request
+                                Swal.fire({
+                                    title: 'Uploading...',
+                                    html: `
+                <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
+                <div id="progressText" style="margin-top: 10px; font-weight: bold;">0/0 Data</div>
+            `,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false
+                                });
+                            },
+                            xhrFields: {
+                                onprogress: function(e) {
+                                    // Read the response text for progress updates
+                                    accumulatedResponse += e.currentTarget.responseText; // Accumulate responses
+
+                                    var response = e.currentTarget.responseText.trim().split('\n');
+
+                                    // Loop through each line to find progress data
+                                    response.forEach(function(line) {
+                                        try {
+                                            var progressData = JSON.parse(line.replace("data: ", ""));
+                                            if (progressData.progress) {
+                                                $("#progressBar").val(progressData.progress);
+                                                $("#progressText").text(`${progressData.currentRow}/${progressData.totalRows} Data`);
+                                            }
+                                        } catch (error) {
+                                            console.error("Error parsing progress data:", error);
+                                        }
+                                    });
+                                },
+                            },
+                            success: function(data) {
+                                try {
+                                    // Attempt to parse the final response
+                                    var finalResponse = JSON.parse(accumulatedResponse.trim().split('\n').pop()); // Get the last line which should be the status
+                                    console.log("Response data:", finalResponse); // Log final response to see its structure
+                                    if (finalResponse.status) {
+                                        const noDebitRows = finalResponse.no_debit_rows ? finalResponse.no_debit_rows.join(', ') : 'Tidak ada';
+                                        const noKreditRows = finalResponse.no_kredit_rows ? finalResponse.no_kredit_rows.join(', ') : 'Tidak ada';
+
+                                        // document.getElementById('rumahadat').reset();
+                                        // $('#add_modal').modal('hide');
+                                        (JSON.stringify(data));
+                                        // alert(data)
+                                        // swal.fire({
+                                        //   customClass: 'slow-animation',
+                                        //   icon: 'success',
+                                        //   showConfirmButton: false,
+                                        //   title: 'Berhasil Menambahkan Data',
+                                        //   timer: 3000
+                                        // });
+                                        // document.getElementById('upload_file_fe').reset(); // Reset the form
+                                        // $('#upload_modal').modal('hide'); // Hide the modal
+                                        // location.reload();
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Proses Selesai',
+                                            html: `
+                                        <b>Berhasil:</b> ${finalResponse.success_count || 0} Data<br>
+                                        <b>COA Debit Tidak Ditemukan:</b> ${finalResponse.no_debit_rows.length || 0} Data<br>
+                                        (Baris: ${noDebitRows})<br><br>
+                                        <b>COA Kredit Tidak Ditemukan:</b> ${finalResponse.no_kredit_rows.length || 0} Data<br>
+                                        (Baris: ${noKreditRows})
+                                    `,
+                                            showConfirmButton: true,
+                                            allowOutsideClick: true
+                                        }).then(() => {
+                                            document.getElementById('upload_file_fe').reset();
+                                            $('#upload_modal').modal('hide');
+                                            // location.reload();
+                                        });
+
+                                    } else {
+
+                                        swal.fire('Gagal menyimpan data', 'error');
+                                    }
+                                } catch (error) {
+                                    // If parsing fails, log the error
+                                    console.error("Error parsing final response:", error);
+                                    // swal.fire('Gagal menyimpan data', 'error');
+                                    swal.fire('Gagal menyimpan data', 'Terjadi kesalahan pada respons server.', 'error');
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                swal.fire('Operation Failed!', errorThrown, 'error');
+                            },
+                            complete: function() {
+                                console.log('Editing job done');
+                            }
+                        });
+
+
+                    }
+
+                })
+            }
+        }
+
         $(document).ready(function() {
 
             $('.uang').mask('000.000.000.000.000', {

@@ -1681,6 +1681,23 @@ class App extends CI_Controller
 			redirect('app/user');
 		}
 	}
+
+	public function user_akses($id, $status)
+	{
+		$new_status = ($status == 1) ? 0 : 1;
+
+		// 2. Define the data to be updated
+		$data = array(
+			'akses_photo' => $new_status // Assuming 'akses_photo' is the column name
+		);
+
+		// 3. Define the WHERE condition to identify the row (by user ID)
+		$where = array(
+			'id' => $id // Assuming 'id' is the primary key column name
+		);
+		$this->db->update('users', $data, $where);
+		redirect('app/user');
+	}
 	public function memo_view()
 	{
 		if ($this->session->userdata('isLogin') == FALSE) {

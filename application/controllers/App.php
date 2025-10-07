@@ -4147,6 +4147,10 @@ class App extends CI_Controller
 		}
 
 		// Process and save the image
+		// var_dump($attendanceData);
+		$attendanceData = $attendanceData[0];
+		// var_dump($attendanceData);
+
 		$base64Data = explode(',', $attendanceData['capturedImage'])[1];
 		$imageData = base64_decode($base64Data);
 		$filename = 'Attendance_' . uniqid() . '.png';

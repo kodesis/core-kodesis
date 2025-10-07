@@ -853,6 +853,7 @@
 						nama,
 						attendanceStatus,
 						lokasiAttendance,
+						tanggalAttendance,
 						capturedImage
 					});
 				});

@@ -90,7 +90,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
             $row[] = $cat->tipe;
-            $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            $path = base_url("/upload/attendance/" . $cat->image);
             $row[] = "<img width='100px' src='" . $path . "'>";
 
             // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
@@ -147,7 +148,8 @@ class Absensi extends CI_Controller
 
             $row[] = $cat->lokasiAttendance;
             $row[] = $cat->tipe;
-            $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            $path = base_url("/upload/attendance/" . $cat->image);
             $row[] = "<img width='100px' src='" . $path . "'>";
             // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
 
@@ -206,7 +208,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
             $row[] = $cat->tipe;
-            $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            $path = base_url("/upload/attendance/" . $cat->image);
             $row[] = "<img width='100px' src='" . $path . "'>";
             // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
             if ($cat->attendanceStatus == 'Pending') {

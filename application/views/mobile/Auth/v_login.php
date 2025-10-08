@@ -7,8 +7,9 @@
             <div class="content">
 
                 <div class="text-center">
+                    <?php $logo = $this->db->get('utility')->row_array()['logo']; ?>
 
-                    <img src="<?= base_url() ?>assets/images/kodesis_kotak.png" alt="logo" width="50%" class="mb-5" id="logo-login">
+                    <img src="<?= $logo ?>" alt="logo" width="50%" class="mb-5" id="logo-login">
 
                 </div>
 

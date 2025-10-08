@@ -221,6 +221,11 @@ class Absensi extends CI_Controller
     public function user_photo()
     {
         $a = $this->session->userdata('level');
+        $this->db->select('*');
+        $this->db->from('users');
+        $this->db->where('username', $this->session->userdata('username')); // Filter by username
+        $users = $this->db->get()->row();
+        $data['users'] = $users;
         if (strpos($a, '401') !== false) {
             $search = htmlspecialchars($this->input->get('search') ?? '', ENT_QUOTES, 'UTF-8');
             $data['user'] = $this->m_app->user_get_detail($this->session->userdata('nip'));

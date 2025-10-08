@@ -13,9 +13,11 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/fonts/css/fontawesome-all.min.css" />
     <!-- <link rel="manifest" href="<?= base_url() ?>assets/json/_manifest.json" data-pwa-version="set_in_manifest_and_pwa_js" /> -->
     <link rel="manifest" href="<?= base_url() ?>assets/_manifest.json" />
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url() ?>aseets/images/kodesis_kotak.png" />
+    <?php $logo = $this->db->get('utility')->row_array()['logo']; ?>
+
+    <link rel="apple-touch-icon" sizes="180x180" src="<?= $logo ?>" />
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="<?= base_url() ?>assets/images/kodesis_kotak.png">
+    <link rel="icon" type="image/png" src="<?= $logo ?>">
 </head>
 
 <body class="theme-light">

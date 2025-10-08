@@ -152,7 +152,7 @@
                                 </tr>
                             <?php } ?>
                             <!-- Delete all images button -->
-                            <?php if (!empty($user->userImage)) { ?>
+                            <?php if (!empty($user->userImage || $user->akses_photo == 1)) { ?>
                                 <a id="delete-images" class="btn btn-danger mb-5" onclick="deleteUserImages('<?= $user->username ?>')">Delete All Images</a>
                             <?php } ?>
                             <tr>

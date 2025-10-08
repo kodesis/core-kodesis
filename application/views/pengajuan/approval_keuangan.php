@@ -292,10 +292,10 @@
                             <th scope="col">Tanggal</th>
                             <th scope="col">Rekening</th>
                             <th scope="col">Total</th>
-                            <th scope="col">Catatan</th>
                             <th scope="col">Status</th>
                             <th scope="col">Posisi</th>
                             <th scope="col">#</th>
+                            <th scope="col">Catatan</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -319,7 +319,6 @@
                                 <td><?= $value['tanggal'] ?></td>
                                 <td><?= $value['no_rekening'] ?></td>
                                 <td><?= number_format($value['total']) ?></td>
-                                <td><?= $value['catatan'] ?></td>
                                 <td style="color: <?= $color ?>;">
                                   <?php if ($value['status_keuangan'] == 1) {
                                     echo "Disetujui";
@@ -344,6 +343,7 @@
                                     <a href="<?= base_url('pengajuan/close/' . $value['Id']) ?>" class="btn btn-success btn-xs">Close</a>
                                   <?php } ?>
                                 </td>
+                                <td><?= $value['catatan'] ?></td>
                               </tr>
                           <?php }
                           } ?>

@@ -309,9 +309,9 @@
                             <th scope="col">User</th>
                             <th scope="col">Tanggal</th>
                             <th scope="col">Total</th>
-                            <th scope="col">Catatan</th>
                             <th scope="col">Status</th>
                             <th scope="col">#</th>
+                            <th scope="col">Catatan</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -334,7 +334,6 @@
                                 <td><?= $value['nama'] ?></td>
                                 <td><?= $value['tanggal'] ?></td>
                                 <td><?= number_format($value['total']) ?></td>
-                                <td><?= $value['catatan'] ?></td>
                                 <td style="color: <?= $color ?>">
                                   <?php if ($value['status_spv'] == 1) {
                                     echo "Disetujui";
@@ -532,6 +531,7 @@
                                     })
                                   </script>
                                 </td>
+                                <td><?= $value['catatan'] ?></td>
                               </tr>
                           <?php }
                           } ?>

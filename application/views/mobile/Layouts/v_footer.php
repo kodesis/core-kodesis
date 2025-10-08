@@ -80,7 +80,7 @@
         processing: true, // Feature control the processing indicator
         serverSide: true, // Feature control server-side processing mode
         ajax: {
-            url: "<?php echo site_url('absensi/ajax_list') ?>",
+            url: "<?php echo site_url('mobile/absensi/ajax_list') ?>",
             type: "POST"
         },
         order: [], // Initial no order
@@ -99,7 +99,7 @@
         processing: true, // Feature control the processing indicator
         serverSide: true, // Feature control server-side processing mode
         ajax: {
-            url: "<?php echo site_url('absensi/ajax_list2') ?>",
+            url: "<?php echo site_url('mobile/absensi/ajax_list2') ?>",
             type: "POST"
         },
         order: [], // Initial no order
@@ -117,7 +117,7 @@
         processing: true, // Feature control the processing indicator
         serverSide: true, // Feature control server-side processing mode
         ajax: {
-            url: "<?php echo site_url('absensi/ajax_list3') ?>",
+            url: "<?php echo site_url('mobile/absensi/ajax_list3') ?>",
             type: "POST"
         },
         order: [], // Initial no order

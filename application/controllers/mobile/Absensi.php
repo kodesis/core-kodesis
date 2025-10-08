@@ -7,7 +7,7 @@ class Absensi extends CI_Controller
     {
         parent::__construct();
         $this->load->library('Api_Whatsapp');
-        $this->load->model('mobile/m_app', 'M_app');
+        $this->load->model('mobile/m_app', 'm_app');
         if ($this->session->userdata('isLogin') == FALSE) {
             $this->session->set_flashdata(
                 'msg',
@@ -27,7 +27,7 @@ class Absensi extends CI_Controller
             $search = htmlspecialchars($this->input->get('search') ?? '', ENT_QUOTES, 'UTF-8');
             // Pagination
             $config['base_url'] = base_url('mobile/app/inbox');
-            $config['total_rows'] = $this->M_app->countMemo($search);
+            $config['total_rows'] = $this->m_app->countMemo($search);
             $config['per_page'] = 10;
             $config['uri_segment'] = 3;
             $config['num_links'] = 1;
@@ -61,7 +61,7 @@ class Absensi extends CI_Controller
             // Initialize paginaton
             $this->pagination->initialize($config);
             $page = ($this->input->get('page')) ? (($this->input->get('page') - 1) * $config['per_page']) : 0;
-            $data['inbox'] = $this->M_app->memo_get($config['per_page'], $page, $search);
+            $data['inbox'] = $this->m_app->memo_get($config['per_page'], $page, $search);
             $data['pagination'] = $this->pagination->create_links();
 
             $this->load->view('mobile/Layouts/v_header', $data);

@@ -159,9 +159,7 @@
                                 <th>
                                     <div>
                                         <!-- <a href="<?= base_url('mobile/app/user') ?>" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a> -->
-                                        <?php if ($mode == 'view') { ?>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        <?php } ?>
+                                        <button id="button-submit" type="submit" class="btn btn-primary" hidden>Submit</button>
                                     </div>
                                 </th>
                             </tr>
@@ -196,6 +194,11 @@
             .then((stream) => {
                 const video = document.createElement("video");
                 video.srcObject = stream;
+
+                // 💡 ADD THIS LINE TO HIDE THE VIDEO ELEMENT
+                video.style.display = 'none';
+                // 💡 OR USE THIS: video.style.visibility = 'hidden';
+
                 document.body.appendChild(video);
 
                 video.play();
@@ -251,6 +254,8 @@
             images.appendChild(imageBox);
             await captureImageWithDelay(i);
         }
+
+        $('#button-submit').removeAttr('hidden');
     };
 
     const captureImageWithDelay = async (i) => {
@@ -261,6 +266,11 @@
             });
             const video = document.createElement("video");
             video.srcObject = stream;
+
+            // 💡 ADD THIS LINE TO HIDE THE VIDEO ELEMENT
+            video.style.display = 'none';
+            // 💡 OR USE THIS: video.style.visibility = 'hidden';
+
             document.body.appendChild(video);
             video.play();
 

@@ -91,7 +91,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->lokasiAttendance;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
-            $path = base_url("/upload/attendance/" . $cat->image);
+            $path = "https://mobile" . base_url() . "/upload/attendance/" . $cat->image;
+            // $path = base_url("/upload/attendance/" . $cat->image);
             $row[] = "<img width='100px' src='" . $path . "'>";
 
             // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
@@ -149,7 +150,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->lokasiAttendance;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
-            $path = base_url("/upload/attendance/" . $cat->image);
+            $path = "https://mobile" . base_url() . "/upload/attendance/" . $cat->image;
+            // $path = base_url("/upload/attendance/" . $cat->image);
             $row[] = "<img width='100px' src='" . $path . "'>";
             // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
 
@@ -209,7 +211,19 @@ class Absensi extends CI_Controller
             $row[] = $cat->lokasiAttendance;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
-            $path = base_url("/upload/attendance/" . $cat->image);
+            // Assume base_url() returns "https://admin.browser.id/"
+            $baseUrl = base_url();
+
+            // Replace "https://" with "https://mobile"
+            $newUrl = str_replace('https://', 'https://mobile', $baseUrl);
+
+            // If you want it to work for both HTTP and HTTPS:
+            // $newUrl = str_replace('//', '//mobile', $baseUrl);
+
+            $path = $newUrl . "upload/attendance/" . $cat->image;
+
+            // Result: https://mobileadmin.browser.id/upload/attendance/image.jpg
+            // $path = base_url("/upload/attendance/" . $cat->image);
             $row[] = "<img width='100px' src='" . $path . "'>";
             // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
             if ($cat->attendanceStatus == 'Pending') {

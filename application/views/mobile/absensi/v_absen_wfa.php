@@ -485,6 +485,11 @@
 
         async function getLabeledFaceDescriptions() {
             const labeledDescriptors = [];
+            <?php
+            // PHP part of your view
+            $image_base_path = base_url('resources/labels/');
+            ?>
+            const BASE_IMAGE_PATH = "<?= $image_base_path ?>";
 
             for (const label of labels) {
                 console.log(labels);
@@ -498,7 +503,9 @@
                     for (let i = 1; i <= 5; i++) {
                         try {
                             const img = await faceapi.fetchImage(
-                                `../resources/labels/${label}/${i}.png`
+                                // `../resources/labels/${label}/${i}.png`
+                                `${BASE_IMAGE_PATH}${label}/${i}.png`
+
                             );
                             const detections = await faceapi
                                 .detectSingleFace(img)

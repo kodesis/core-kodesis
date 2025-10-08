@@ -224,7 +224,7 @@
 
         const images = document.getElementById("multiple-images");
 
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 5; i++) {
             // Create the image box element
             const imageBox = document.createElement("div");
             imageBox.classList.add("image-box");

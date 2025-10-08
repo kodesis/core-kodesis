@@ -185,7 +185,7 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                url = "<?php echo site_url('absensi/approval/Approved/') ?>" + id;
+                url = "<?php echo site_url('mobile/absensi/approval/Approved/') ?>" + id;
 
                 $.ajax({
                     url: url,
@@ -249,7 +249,7 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                url = "<?php echo site_url('absensi/approval/NotApproved/') ?>" + id;
+                url = "<?php echo site_url('mobile/absensi/approval/NotApproved/') ?>" + id;
 
                 $.ajax({
                     url: url,

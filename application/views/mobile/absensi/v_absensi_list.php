@@ -297,7 +297,7 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                url = "<?php echo site_url('absensi/approval/Approved/') ?>" + id;
+                url = "<?php echo site_url('mobile/absensi/approval/Approved/') ?>" + id;
 
                 $.ajax({
                     url: url,
@@ -361,7 +361,7 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                url = "<?php echo site_url('absensi/approval/NotApproved/') ?>" + id;
+                url = "<?php echo site_url('mobile/absensi/approval/NotApproved/') ?>" + id;
 
                 $.ajax({
                     url: url,
@@ -447,7 +447,7 @@
         } else {
             // var url;
             // var formData;
-            // url = "<?php echo site_url('absensi/process_export') ?>";
+            // url = "<?php echo site_url('mobile/absensi/process_export') ?>";
             // var formData = new FormData($("#form_export")[0]);
             // $.ajax({
             //     url: url,

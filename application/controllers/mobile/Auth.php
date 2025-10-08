@@ -68,6 +68,17 @@ class Auth extends CI_Controller
                 $this->session->set_userdata('bagian', $data->bagian);
                 $this->session->set_userdata('id_lokasi_presensi', $data->id_lokasi_presensi);
                 $this->session->set_userdata('kode_nama', $kod);
+
+                $setting = $this->db->where('Id', '1')->get('utility')->row();
+                $this->session->set_userdata('icon', $setting->logo);
+                $this->session->set_userdata('nama_singkat', $setting->nama_singkat);
+                $this->session->set_userdata('nama_perusahaan', $setting->nama_perusahaan);
+                $this->session->set_userdata('alamat_perusahaan', $setting->alamat_perusahaan);
+                $this->session->set_userdata('nomor_rekening', $setting->nomor_rekening);
+                $this->session->set_userdata('nama_ppn', $setting->nama_ppn);
+                $this->session->set_userdata('ppn', $setting->besaran_ppn);
+                $this->session->set_userdata('kode_cabang', $data->id_cabang);
+                $this->session->set_userdata('nama_akronim', $setting->nama_akronim);
                 redirect('mobile/home');
             } else {
                 $this->session->set_flashdata('msg', '

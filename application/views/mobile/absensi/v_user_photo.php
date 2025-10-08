@@ -61,7 +61,7 @@
     .image-box {
         position: relative;
         display: inline-block;
-        height: 15rem;
+        /* height: 15rem; */
         width: 15rem;
     }
 
@@ -159,7 +159,7 @@
                                 <th>
                                     <div>
                                         <!-- <a href="<?= base_url('mobile/app/user') ?>" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a> -->
-                                        <?php if ($mode != 'view') { ?>
+                                        <?php if ($mode == 'view') { ?>
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         <?php } ?>
                                     </div>

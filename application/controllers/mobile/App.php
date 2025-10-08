@@ -17,7 +17,7 @@ class App extends CI_Controller
                 </div>'
 
             );
-            redirect('auth');
+            redirect('mobile/auth');
         }
     }
 
@@ -70,7 +70,7 @@ class App extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -81,7 +81,7 @@ class App extends CI_Controller
             $data['memo'] = $this->M_app->memo_get_detail($id);
             if (empty($data['memo'])) {
                 $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-                redirect('app/inbox');
+                redirect('mobile/app/inbox');
             } else {
                 $this->load->view('mobile/Layouts/v_header', $data);
                 $this->load->view('mobile/memo/v_memo', $data);
@@ -89,7 +89,7 @@ class App extends CI_Controller
             }
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -116,7 +116,7 @@ class App extends CI_Controller
             // $dompdf->stream('memo_view.pdf', array("Attachment" => 0));
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -130,7 +130,7 @@ class App extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -183,7 +183,7 @@ class App extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -210,7 +210,7 @@ class App extends CI_Controller
             }
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -341,7 +341,7 @@ class App extends CI_Controller
             echo json_encode($response);
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
     public function user()
@@ -393,13 +393,13 @@ class App extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
     public function absen_wfa()
     {
         if ($this->session->userdata('isLogin') == FALSE) {
-            redirect('home');
+            redirect('mobile/home');
         } else {
             //inbox notif
             $nip = $this->session->userdata('nip');
@@ -477,7 +477,7 @@ class App extends CI_Controller
     public function user_photo()
     {
         if ($this->session->userdata('isLogin') == FALSE) {
-            redirect('home');
+            redirect('mobile/home');
         } else {
             $a = $this->session->userdata('level');
             if (strpos($a, '401') !== false) {
@@ -547,7 +547,7 @@ class App extends CI_Controller
 
 
 
-        redirect('app/user');
+        redirect('mobile/app/user');
     }
     public function recordAttendance()
     {

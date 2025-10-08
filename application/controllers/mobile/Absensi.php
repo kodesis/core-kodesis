@@ -17,7 +17,7 @@ class Absensi extends CI_Controller
                 </div>'
 
             );
-            redirect('auth');
+            redirect('mobile/auth');
         }
     }
     public function user()
@@ -69,7 +69,7 @@ class Absensi extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
     public function absen_wfa()
@@ -137,7 +137,7 @@ class Absensi extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 
@@ -231,7 +231,7 @@ class Absensi extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
     public function add_photo()
@@ -277,7 +277,7 @@ class Absensi extends CI_Controller
 
 
 
-        redirect('absensi/user_photo');
+        redirect('mobile/absensi/user_photo');
     }
     public function recordAttendance()
     {
@@ -437,7 +437,7 @@ class Absensi extends CI_Controller
     //         $this->load->view('mobile/Layouts/v_footer');
     //     } else {
     //         $this->session->set_flashdata('forbidden', 'Not Allowed!');
-    //         redirect('home');
+    //         redirect('mobile/home');
     //     }
     // }
     public function absen_list()
@@ -457,7 +457,7 @@ class Absensi extends CI_Controller
             $this->load->view('mobile/Layouts/v_footer');
         } else {
             $this->session->set_flashdata('forbidden', 'Not Allowed!');
-            redirect('home');
+            redirect('mobile/home');
         }
     }
 

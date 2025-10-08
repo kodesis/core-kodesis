@@ -16,7 +16,7 @@ class Home extends CI_Controller
                   <button type="button" class="close color-white opacity-60 font-16" data-bs-dismiss="alert" aria-label="Close">&times;</button>
                </div>'
             );
-            redirect('auth');
+            redirect('mobile/auth');
         }
     }
 

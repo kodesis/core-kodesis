@@ -16,7 +16,7 @@ class Task extends CI_Controller
             <button type="button" class="close color-white opacity-60 font-16" data-bs-dismiss="alert" aria-label="Close">&times;</button>
          </div>'
       );
-      redirect('auth');
+      redirect('mobile/auth');
     }
   }
 
@@ -69,7 +69,7 @@ class Task extends CI_Controller
       $this->load->view('mobile/Layouts/v_footer');
     } else {
       $this->session->set_flashdata('forbidden', 'Not Allowed!');
-      redirect('home');
+      redirect('mobile/home');
     }
   }
 
@@ -142,18 +142,18 @@ class Task extends CI_Controller
         } else {
           if ($data['task']->pic !== $this->session->userdata('nip')) {
             $this->session->set_flashdata('forbidden', "PIC has'nt created a task card yet!");
-            redirect('task/task');
+            redirect('mobile/task/task');
           } else {
-            redirect('task/detail_task/' . $id);
+            redirect('mobile/task/detail_task/' . $id);
           }
         }
       } else {
         $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-        redirect('task/task');
+        redirect('mobile/task/task');
       }
     } else {
       $this->session->set_flashdata('forbidden', 'Not Allowed!');
-      redirect('home');
+      redirect('mobile/home');
     }
   }
 
@@ -170,7 +170,7 @@ class Task extends CI_Controller
       $this->load->view('mobile/Layouts/v_footer');
     } else {
       $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-      redirect('task/task');
+      redirect('mobile/task/task');
     }
   }
 
@@ -222,11 +222,11 @@ class Task extends CI_Controller
 
         // Alert berhasil insert
         $this->session->set_flashdata('success', 'Task successfully created!');
-        redirect('task/detail_task/' . $last_id);
+        redirect('mobile/task/detail_task/' . $last_id);
       }
     } else {
       $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-      redirect('task/task');
+      redirect('mobile/task/task');
     }
   }
 
@@ -237,7 +237,7 @@ class Task extends CI_Controller
       $get_task = $this->db->get_where('task', ['id' => $id])->row_array();
       if ($get_task['pic'] !== $this->session->userdata('nip')) {
         $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-        redirect('task/task');
+        redirect('mobile/task/task');
       }
 
       $data['task'] = $get_task['member'];
@@ -250,7 +250,7 @@ class Task extends CI_Controller
       $this->load->view('mobile/Layouts/v_footer');
     } else {
       $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-      redirect('task/task');
+      redirect('mobile/task/task');
     }
   }
 
@@ -317,7 +317,7 @@ class Task extends CI_Controller
       }
 
       $this->session->set_flashdata('success', 'Card successfully created!');
-      redirect('task/task_view/' . $id);
+      redirect('mobile/task/task_view/' . $id);
     }
   }
 
@@ -346,7 +346,7 @@ class Task extends CI_Controller
 
     if ($this->form_validation->run() == FALSE) {
       $this->session->set_flashdata('forbidden', array_values($this->form_validation->error_array())[0]);
-      redirect('task/card_edit/' . $id_task . '/' . $id_card);
+      redirect('mobile/task/card_edit/' . $id_task . '/' . $id_card);
     } else {
       if ($_FILES['attachment']['name'][0] != "") {
         $nama_file = array();
@@ -380,7 +380,7 @@ class Task extends CI_Controller
 
 
       $this->session->set_flashdata('success', 'Card successfully updated!');
-      redirect('task/task_view/' . $id_task);
+      redirect('mobile/task/task_view/' . $id_task);
     }
   }
 
@@ -455,12 +455,12 @@ class Task extends CI_Controller
         $this->db->set('read', '0');
         $this->db->where('id', $task->id);
         $this->db->update('task');
-        redirect('task/task_view/' . $this->input->post('id_task') . '/' . $this->input->post('id_detail'));
+        redirect('mobile/task/task_view/' . $this->input->post('id_task') . '/' . $this->input->post('id_detail'));
       } else {
         echo "<script>alert('File Tidak boleh lebih dari 10Mb !');window.history.back();</script>";
       }
     } else {
-      redirect('task/task_view/' . $this->input->post('id_task') . '/' . $this->input->post('id_detail'));
+      redirect('mobile/task/task_view/' . $this->input->post('id_task') . '/' . $this->input->post('id_detail'));
     }
   }
 
@@ -518,11 +518,11 @@ class Task extends CI_Controller
 
         // Alert berhasil insert
         $this->session->set_flashdata('success', 'Task successfully updated!');
-        redirect('task/task');
+        redirect('mobile/task/task');
       }
     } else {
       $this->session->set_flashdata('forbidden', 'Unauthorize Privilage!');
-      redirect('task/task');
+      redirect('mobile/task/task');
     }
   }
 
@@ -555,6 +555,6 @@ class Task extends CI_Controller
     $this->db->set('activity', '3');
     $this->db->update('task');
     $this->session->set_flashdata('success', 'Task successfully closed!');
-    redirect('task/task_view/' . $id);
+    redirect('mobile/task/task_view/' . $id);
   }
 }

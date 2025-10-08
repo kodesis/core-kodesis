@@ -257,6 +257,9 @@
 					<div class="clearfix"></div>
 					<div class="row justify-content-center">
 						<div class="col-md-8 col-sm-8 col-xs-12">
+							<div class="justify-content-center d-flex">
+								<a href="<?= base_url('mobile/home') ?>" class="btn btn-primary"><i class="fa fa-phone"></i> Go To Mobile</a>
+							</div>
 							<div class="owl-carousel owl-theme">
 								<?php $bg = $this->db->get_where('utility', ['Id' => 1])->row_array() ?>
 								<div class="item">

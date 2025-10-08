@@ -196,7 +196,7 @@
 										Film festivals used to be do-or-die moments for movie makers. They were where...
 										</span>
 									</a>
-									</li>
+							</li>
 									<li>
 									<a>
 										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
@@ -207,8 +207,8 @@
 										<span class="message">
 										Film festivals used to be do-or-die moments for movie makers. They were where...
 										</span>
-									</a>
-									</li>
+								</a>
+							</li>
 									<li>
 									<a>
 										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
@@ -219,8 +219,8 @@
 										<span class="message">
 										Film festivals used to be do-or-die moments for movie makers. They were where...
 										</span>
-									</a>
-									</li>
+								</a>
+							</li>
 									<li>
 									<a>
 										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>

@@ -12,6 +12,15 @@ class Login extends CI_Controller
 		$this->load->library(array('form_validation', 'session', 'user_agent'));
 		$this->load->database();
 		$this->load->helper('url');
+		$mobile_segment = 'mobile/auth';
+		if ($this->agent->is_mobile() && strpos(current_url(), '/' . $mobile_segment) === FALSE) {
+
+			// The device is mobile, and the user is NOT on the /mobile segment yet.
+
+			// Redirects to: https://admin.website.id/mobile
+			redirect(base_url($mobile_segment), 'refresh');
+			exit();
+		}
 	}
 
 	public function index()

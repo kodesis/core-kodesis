@@ -166,12 +166,12 @@
 
         if (isWithinRange) {
             $('#lokasi_sekarang').text('Lokasi Sekarang ' + locationName);
-            Swal.fire('Success', `You are within range of ${locationName}. Updating table...`, 'success');
+            Swal.fire('Sukses', `Anda berada dalam jangkauan ${locationName}. Memperbarui tabel...`, 'success');
             updateTable();
         } else {
             $('#lokasi_sekarang').text('Lokasi Sekarang Di Luar Jangkauan');
             Swal.fire({
-                title: 'You are not within range! Ingin Tetap Absen?',
+                title: 'Anda tidak berada dalam jangkauan! Ingin Tetap Absen?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Absen',
@@ -190,16 +190,16 @@
     function showError(error) {
         switch (error.code) {
             case error.PERMISSION_DENIED:
-                Swal.fire('Error', 'Permission to access location was denied.', 'error');
+                Swal.fire('error', 'Izin untuk mengakses lokasi ditolak.', 'error');
                 break;
             case error.POSITION_UNAVAILABLE:
-                Swal.fire('Error', 'Location information is unavailable.', 'error');
+                Swal.fire('error', 'Informasi lokasi tidak tersedia.', 'error');
                 break;
             case error.TIMEOUT:
-                Swal.fire('Error', 'The request to get your location timed out.', 'error');
+                Swal.fire('error', 'Permintaan untuk mendapatkan lokasi Anda kehabisan waktu (timeout).', 'error');
                 break;
             case error.UNKNOWN_ERROR:
-                Swal.fire('Error', 'An unknown error occurred.', 'error');
+                Swal.fire('error', 'Terjadi kesalahan yang tidak diketahui.', 'error');
                 break;
         }
     }

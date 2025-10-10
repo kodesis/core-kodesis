@@ -102,9 +102,6 @@
                     $mode = ($this->uri->segment(4) == 'e') ? 'edit' : (($this->uri->segment(3) == true) ? 'view' : 'add');
                     ?>
 
-                    </br>
-                    <?= $this->session->flashdata('msg') ?>
-
 
                     <!-- Add/Edit mode -->
                     <form action="<?= base_url('mobile/absensi/add_photo') ?>" method="POST">
@@ -152,8 +149,8 @@
                                 </tr>
                             <?php } ?>
                             <!-- Delete all images button -->
-                            <?php if (!empty($user->userImage || $user->akses_photo == 1)) { ?>
-                                <a id="delete-images" class="btn btn-danger mb-5" onclick="deleteUserImages('<?= $user->username ?>')">Delete All Images</a>
+                            <?php if (!empty($user->userImage) && $user->akses_photo == 1) { ?>
+                                <button type="button" id="delete-images" class="btn btn-danger mb-5" onclick="deleteUserImages('<?= $user->username ?>')">Delete All Images</button>
                             <?php } ?>
                             <tr>
                                 <th>
@@ -313,7 +310,7 @@
             return;
         }
 
-        fetch('<?= base_url('app/delete_user_images') ?>', {
+        fetch('<?= base_url('mobile/app/delete_user_images') ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -326,7 +323,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     alert(data.message);
-                    // location.reload(); // Refresh the page to update the image gallery
+                    location.reload(); // Refresh the page to update the image gallery
                 } else {
                     alert("Error: " + data.message);
                 }

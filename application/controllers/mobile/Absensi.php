@@ -89,7 +89,7 @@ class Absensi extends CI_Controller
 
             // Ensure $cek_user is not null and contains jam_masuk and jam_keluar
             if ($data_user && isset($data_user->jam_masuk) && isset($data_user->jam_keluar)) {
-                $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+2 hours')->format('H:i:s');
+                $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+15 minutes')->format('H:i:s');
                 $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
             } else {
                 echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
@@ -148,8 +148,8 @@ class Absensi extends CI_Controller
         $users = $this->user->get_user(); // Fetch all users from the database
         $data['tipe'] = $tipe;
         if ($data_user && isset($data_user->jam_masuk) && isset($data_user->jam_keluar)) {
-            $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+2 hours')->format('H:i:s');
-            $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+2 hours')->format('H:i:s');
+            $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+15 minutes')->format('H:i:s');
+            $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
         } else {
             echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
             return;

@@ -226,125 +226,119 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel card">
                             <div class="x_title">
-                                <h2>Neraca per tanggal <?= format_indo($per_tanggal) ?> </h2>
+                                <h2>Buku besar per tahun <?= ($per_tahun) ?> </h2>
                             </div>
                             <div class="x_content">
-                                <div class="row">
-                                    <div class="col-md-4 col-xs-12">
-                                        <h5>
-                                            Neraca: <strong>Rp <?= (isset($neraca)) ? number_format($neraca, 2) : 0 ?></strong>
-                                        </h5>
-                                    </div>
-                                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/reportByDate') ?>">
-                                        <div class="col-md-2 col-xs-12">
+                                <div class="row" style="margin-bottom: 10px">
+                                    <form class="form-inline" method="POST" action="<?= base_url('financial/reportBB') ?>">
+                                        <div class="col-xs-12 text-right">
 
-                                            <div class="form-group row">
-                                                <input type="date" name="per_tanggal" id="per_tanggal" class="form-control" value="<?= $per_tanggal ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 col-xs-12">
-
-                                            <div class="form-group row">
-                                                <select name="jenis_laporan" id="jenis_laporan" class="form-control">
-                                                    <option <?= ($this->input->post('jenis_laporan') == "neraca") ? "selected" : "" ?> value="neraca">Neraca SBB</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "laba_rugi") ? "selected" : "" ?> value="laba_rugi">Laba Rugi SBB</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "neraca_bb") ? "selected" : "" ?> value="neraca_bb">Neraca BB</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "lr_bb") ? "selected" : "" ?> value="lr_bb">Laba Rugi BB</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "neraca_monthly") ? "selected" : "" ?> value="neraca_monthly">Neraca per bulan</option>
-                                                    <option <?= ($this->input->post('jenis_laporan') == "lr_monthly") ? "selected" : "" ?> value="lr_monthly">Laba Rugi per bulan</option>
+                                            <div class="form-group row" style="margin-right: 15px">
+                                                <select name="per_tahun" id="per_tahun" class="form-control">
+                                                    <?php
+                                                    $current_year = date('Y');
+                                                    for ($year = $current_year; $year >= 2020; $year--) :
+                                                    ?>
+                                                        <option value="<?= $year ?>" <?= $year == $per_tahun ? 'selected' : '' ?>>
+                                                            <?= $year ?>
+                                                        </option>
+                                                    <?php endfor; ?>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="col-md-3 col-xs-12 text-right">
-
                                             <div class="form-group row">
-                                                <button type="submit" name="button_sbm" class="btn btn-primary btn-sm" value="lihat">Lihat</button>
-                                                <button type="submit" name="button_sbm" class="btn btn-success btn-sm" value="excel"><i class='fa fa-file'></i> Excel</button>
-                                                <button type="submit" name="button_sbm" class="btn btn-info btn-sm" value="buku_besar"><i class='fa fa-file'></i> Buku besar</button>
+                                                <button type="submit" name="button_sbm" class="btn btn-primary" value="lihat">Lihat</button>
+                                                <button type="submit" name="button_sbm" class="btn btn-success" value="excel"><i class='fa fa-file'></i> Excel</button>
+                                                <button type="submit" name="button_sbm" class="btn btn-info" value="pdf"><i class='fa fa-file'></i> PDF</button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-xs-12">
-                                        <h2 class="text-center">Activa</h2>
-                                        <p class="text-right">Total: <strong><?= (isset($sum_activa)) ? number_format($sum_activa, 2) : 0 ?></strong></p>
+                                    <div class="col-xs-12">
                                         <div class="table-responsive">
-                                            <table id="" class="table" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No. Coa</th>
-                                                        <th>Nama Coa</th>
-                                                        <th>Nominal</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    if (isset($activa)) :
-                                                        foreach ($activa as $a) :
-                                                            $coa = $this->m_coa->getCoa($a->no_sbb);
+                                            <table id="" class="table jambo_table" style="width:100%">
+                                                <?php
+                                                if ($list_coa) {
+                                                    foreach ($list_coa as $lc) :
+                                                        $saldo_awal_value = isset($saldo_awal[$lc->no_sbb]) ? $saldo_awal[$lc->no_sbb] : 0;
 
-                                                            if ($coa['table_source'] == "t_coa_sbb" && $coa['posisi'] == 'AKTIVA' && $a->saldo_awal != '0') : ?>
-                                                                <tr>
-                                                                    <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></button></td>
-                                                                    <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal, 2) ?></td>
-                                                                </tr>
-                                                        <?php
-                                                            endif;
-                                                        endforeach;
-                                                    else : ?>
-                                                        <tr>
-                                                            <td colspan="3">Tidak ada activa yang ditampilkan</td>
-                                                        </tr>
-                                                    <?php
-                                                    endif; ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-xs-12">
-                                        <div class="row justify-content-between">
-                                            <h2 class="text-center">Pasiva</h2>
-                                            <p class="text-right">Total: <strong><?= (isset($sum_pasiva)) ? number_format($sum_pasiva, 2) : 0 ?></strong></p>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table id="" class="table" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No. Coa</th>
-                                                        <th>Nama Coa</th>
-                                                        <th>Nominal</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    if (isset($pasiva)) :
-                                                        foreach ($pasiva as $a) :
-                                                            $coa = $this->m_coa->getCoa($a->no_sbb);
+                                                        $transaction = $this->m_coa->getCoaReportAnnually($lc->no_sbb, $per_tahun);
 
-                                                            if ($coa['table_source'] == "t_coa_sbb" && $coa['posisi'] == 'PASIVA' && $a->saldo_awal != '0') : ?>
-                                                                <tr>
-                                                                    <td><button class="bg-blue arus_kas" data-id="<?= $a->no_sbb ?>"><?= $a->no_sbb ?></td>
-                                                                    <td><?= $coa['nama_perkiraan'] ?></td>
-                                                                    <td class="text-right"><?= number_format($a->saldo_awal, 2) ?></td>
+                                                        if ($transaction) { ?>
+                                                            <thead>
+                                                                <tr class="headings">
+                                                                    <th style="width: 15%"><?= $lc->no_sbb ?></th>
+                                                                    <th style="width: 40%"><?= strtoupper($lc->nama_perkiraan) ?></th>
+                                                                    <th class="text-right" colspan="3">IDR</th>
                                                                 </tr>
-                                                        <?php
-                                                            endif;
-                                                        endforeach; ?>
-                                                        <tr>
-                                                            <td>31030</td>
-                                                            <td>LABA TAHUN BERJALAN</td>
-                                                            <td class="text-right"><?= number_format($laba, 2) ?></td>
-                                                        </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th class="text-center">Tanggal</th>
+                                                                    <th class="text-center" colspan="2">Keterangan</th>
+                                                                    <th class="text-center">Debit</th>
+                                                                    <th class="text-center">Kredit</th>
+                                                                </tr>
+                                                                <?php
+
+                                                                $total_debit = 0;
+                                                                $total_kredit = 0;
+                                                                $selisih = 0;
+
+                                                                foreach ($transaction as $tr) :
+                                                                    if ($lc->no_sbb == $tr->akun_debit) { ?>
+                                                                        <tr>
+                                                                            <td><?= format_indo($tr->tanggal) ?></td>
+                                                                            <td colspan="2"><?= $tr->keterangan ?></td>
+                                                                            <td class="text-right"><?= number_format($tr->jumlah_debit) ?></td>
+                                                                            <td class="text-right">-</td>
+                                                                        </tr>
+                                                                    <?php
+                                                                        $total_debit += $tr->jumlah_debit;
+                                                                        $total_kredit += 0;
+                                                                    } else {
+                                                                    ?>
+                                                                        <tr>
+                                                                            <td><?= format_indo($tr->tanggal) ?></td>
+                                                                            <td colspan="2"><?= $tr->keterangan ?></td>
+                                                                            <td class="text-right">-</td>
+                                                                            <td class="text-right"><?= number_format($tr->jumlah_kredit) ?></td>
+                                                                        </tr>
+                                                                    <?php
+                                                                        $total_kredit += $tr->jumlah_kredit;
+                                                                        $total_debit += 0;
+                                                                    } ?>
+                                                                <?php
+                                                                endforeach;
+
+                                                                if ($lc->posisi === "AKTIVA") {
+                                                                    $selisih = $total_debit - $total_kredit;
+                                                                } else {
+                                                                    $selisih = $total_kredit - $total_debit;
+                                                                }
+                                                                ?>
+
+                                                                <tr>
+                                                                    <th class="text-right">Saldo awal:</th>
+                                                                    <th class="text-right"><?= number_format($saldo_awal_value) ?></th>
+                                                                    <th class="text-right">Total</th>
+                                                                    <th class="text-right"><?= number_format($total_debit) ?></th>
+                                                                    <th class="text-right"><?= number_format($total_kredit) ?></th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th class="text-right">Saldo akhir:</th>
+                                                                    <th class="text-right"><?= number_format($saldo_awal_value + $selisih) ?></th>
+                                                                    <th class="text-right">Mutasi</th>
+                                                                    <th class="text-right"><?= number_format($selisih) ?></th>
+                                                                    <th class="text-right"></th>
+                                                                </tr>
+                                                            </tbody>
                                                     <?php
-                                                    else : ?>
-                                                        <tr>
-                                                            <td colspan="3">Tidak ada pasiva yang ditampilkan</td>
-                                                        </tr>
-                                                    <?php
-                                                    endif; ?>
-                                                </tbody>
+                                                        }
+                                                    endforeach;
+                                                    ?>
+                                                <?php
+                                                } ?>
                                             </table>
                                         </div>
                                     </div>

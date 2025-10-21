@@ -417,8 +417,9 @@
             // hiddenInputs.value = capturedImage;
             const capturedImage = captureImage(video);
 
-            // stopWebcam();
             sendAttendanceDataToServer(capturedImage);
+
+            stopWebcam();
 
         }
         // });

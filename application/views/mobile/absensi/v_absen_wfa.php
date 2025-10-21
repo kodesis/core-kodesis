@@ -417,7 +417,7 @@
             // hiddenInputs.value = capturedImage;
             const capturedImage = captureImage(video);
 
-            stopWebcam();
+            // stopWebcam();
             sendAttendanceDataToServer(capturedImage);
 
         }
@@ -676,8 +676,9 @@
                 if (xhr.status === 200) {
                     // try {
                     const response = JSON.parse(xhr.responseText);
-                    if (response.status === "success") {
+                    if (response.status == "success") {
                         Swal.fire('Success', response.message || 'Attendance recorded successfully.', 'success');
+                        stopWebcam();
                     } else {
                         Swal.fire('Error', response.message || 'An error occurred while recording attendance.', 'error');
                         console.log('gagal input');
@@ -694,6 +695,7 @@
         };
 
         xhr.send(JSON.stringify(attendanceData));
+
     }
 
     function showMessage(message) {

@@ -73,7 +73,7 @@
 						<li><a href="<?php echo base_url(); ?>asset/list_penyusutan">Penyusutuan</a></li>
 					<?php } ?>
 					<!-- <?php $a = $this->session->userdata('level');
-								if (strpos($a, '501') !== false) { ?>
+							if (strpos($a, '501') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>app/abk_list">Mobil List</a></li>
 				<?php } ?>
 				<?php $a = $this->session->userdata('level');
@@ -189,6 +189,9 @@
 						<li>
 							<a href="<?= base_url(); ?>financial/reportByDate">Neraca L/R</a>
 						</li>
+						<li>
+							<a href="<?= base_url(); ?>financial/reportBB">Buku Besar</a>
+						</li>
 					<?php }
 					if (strpos($a, '803') !== false) { ?>
 						<li>
@@ -287,7 +290,7 @@
          </ul>
       </li>
       <?php //if ($this->session->userdata('level')==1) {
-			?>
+		?>
 	  <li>
          <a><i class="fa fa-desktop"></i> Admin Board <span class="fa fa-chevron-down"></span></a>
          <ul class="nav child_menu">

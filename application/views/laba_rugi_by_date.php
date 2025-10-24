@@ -255,7 +255,8 @@
                                         <div class="col-md-2 col-xs-12 text-right">
                                             <div class="form-group row">
                                                 <button type="submit" name="button_sbm" class="btn btn-primary btn-sm" value="lihat">Lihat</button>
-                                                <button type="submit" name="button_sbm" class="btn btn-success btn-sm" value="excel"><i class='fa fa-file'></i> Excel</button>
+                                                <!-- <button type="submit" name="button_sbm" class="btn btn-success btn-sm" value="excel"><i class='fa fa-file'></i> Excel</button> -->
+                                                <button type="submit" name="button_sbm" class="btn btn-danger btn-sm" value="pdf"><i class='fa fa-file'></i> PDF</button>
                                             </div>
                                         </div>
                                     </form>

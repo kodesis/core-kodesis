@@ -248,7 +248,9 @@
                                             <div class="form-group row">
                                                 <button type="submit" name="button_sbm" class="btn btn-primary" value="lihat">Lihat</button>
                                                 <button type="submit" name="button_sbm" class="btn btn-success" value="excel"><i class='fa fa-file'></i> Excel</button>
-                                                <button type="submit" name="button_sbm" class="btn btn-info" value="pdf"><i class='fa fa-file'></i> PDF</button>
+                                                <button type="submit" name="button_sbm" class="btn btn-danger" value="pdf"><i class='fa fa-file'></i> PDF</button>
+
+                                                <button class="btn btn-info text-white" data-toggle="modal" data-target="#reportBBMonthly" type="button" style="color: white;">Per bulan</button>
                                             </div>
                                         </div>
                                     </form>
@@ -348,30 +350,52 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="detailModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+
+            <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="reportBBMonthly">
+                <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
-                            <h4 class="modal-title" id="myModalLabel2">Lacak arus kas</h4>
+                            <h4 class="modal-title" id="myModalLabel">
+                                Report BB per Bulan
+                            </h4>
                         </div>
-                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>" target="_blank">
+                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/reportBBMonthly') ?>">
                             <div class="modal-body">
-                                <div class="row">
-                                    <input type="hidden" class="form-control" name="no_coa">
-                                    <div class="col-md-6 col-xs-12">
-                                        <label for="tgl_dari" class="form-label">Dari</label>
-                                        <input type="date" class="form-control" name="tgl_dari" required>
+                                <div class="form-group row">
+                                    <div class="col-xs-6">
+                                        <select id="per_bulan" name="per_bulan" class="form-control">
+                                            <option value="">Select Month</option>
+                                            <?php
+                                            $months = [
+                                                'January', 'February', 'March', 'April', 'May', 'June',
+                                                'July', 'August', 'September', 'October', 'November', 'December'
+                                            ];
+
+                                            foreach ($months as $key => $monthName) {
+                                                echo '<option value="' . ($key + 1) . '">' . $monthName . '</option>';
+                                            }
+                                            ?>
+                                        </select>
                                     </div>
-                                    <div class="col-md-6 col-xs-12">
-                                        <label for="tgl_sampai" class="form-label">Sampai</label>
-                                        <input type="date" class="form-control" name="tgl_sampai" value="<?= date('Y-m-d') ?>" required>
+                                    <div class="col-xs-6">
+                                        <select name="per_tahun" id="per_tahun" class="form-control">
+                                            <?php
+                                            $current_year = date('Y');
+                                            for ($year = $current_year; $year >= 2020; $year--) :
+                                            ?>
+                                                <option value="<?= $year ?>" <?= $year == $per_tahun ? 'selected' : '' ?>>
+                                                    <?= $year ?>
+                                                </option>
+                                            <?php endfor; ?>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Lihat</button>
+                                <button type="submit" class="btn btn-primary">
+                                    Lihat buku besar
+                                </button>
                             </div>
                         </form>
                     </div>

@@ -2117,6 +2117,8 @@ class Financial extends CI_Controller
             $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
             $objWriter->save('php://output');
             exit;
+        } else if ($button_sbm === "pdf") {
+            $this->load->view('print_pdf_neraca_per_tanggal', $data);
         } else {
             $this->load->view('neraca_by_date', $data);
         }
@@ -2168,6 +2170,10 @@ class Financial extends CI_Controller
                     $combinedPendapatan[$item->no_sbb]->saldo_awal += $item->saldo_awal;
                 }
             }
+
+            usort($combinedPendapatan, function ($a, $b) {
+                return strcmp($a->no_sbb, $b->no_sbb);
+            });
             $total_pendapatan = array_sum(array_column($combinedPendapatan, 'saldo_awal'));
 
             // Part Beban
@@ -2197,6 +2203,10 @@ class Financial extends CI_Controller
                     $combinedBeban[$item->no_sbb]->saldo_awal += $item->saldo_awal;
                 }
             }
+
+            usort($combinedBeban, function ($a, $b) {
+                return strcmp($a->no_sbb, $b->no_sbb);
+            });
             $total_beban = array_sum(array_column($combinedBeban, 'saldo_awal'));
 
             $data['biaya'] = $combinedBeban;
@@ -2287,6 +2297,8 @@ class Financial extends CI_Controller
             $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
             $objWriter->save('php://output');
             exit;
+        } else if ($button_sbm === "pdf") {
+            $this->load->view('print_pdf_laba_rugi_per_tanggal', $data);
         } else {
             $this->load->view('laba_rugi_by_date', $data);
         }
@@ -3303,6 +3315,77 @@ class Financial extends CI_Controller
             // $this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
         } else {
             $this->load->view('report_bb_annually', $data);
+        }
+    }
+
+    public function reportBBMonthly()
+    {
+        $nip = $this->session->userdata('nip');
+
+        // Fetch counts
+        $result = $this->db->query("SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');")->row()->{'COUNT(Id)'};
+        $result2 = $this->db->query("SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` LIKE '%$nip%') AND activity='1'")->row()->{'COUNT(id)'};
+
+        $per_tanggal = ($this->input->post('per_tanggal') ? $this->input->post('per_tanggal') : date('Y-m-d'));
+
+        $data = [
+            'count_inbox' => $result,
+            'count_inbox2' => $result2,
+            'per_tanggal' => $per_tanggal
+        ];
+
+        $button_sbm = $this->input->post('button_sbm');
+        $tahun = $this->input->post('per_tahun') ? $this->input->post('per_tahun') : date('Y');
+        $bulan = $this->input->post('per_bulan') ? $this->input->post('per_bulan') : date('m');
+
+        $tahun_before = $tahun - 1;
+        $bulan_before = str_pad($bulan - 1, 2, '0', STR_PAD_LEFT);
+
+        $bulan_saldo_awal = $tahun_before . '-' . $bulan_before;
+
+        $saldo_awal = $this->cb->where('periode', $bulan_saldo_awal)->get('saldo_awal')->row_array();
+        $saldo_awal_data = $saldo_awal ? json_decode($saldo_awal['coa']) : [];
+
+        $saldo_awal_indexed = [];
+        foreach ($saldo_awal_data as $sa) {
+            $saldo_awal_indexed[$sa->no_sbb] = $sa->saldo_awal;
+        }
+        $data['saldo_awal'] = $saldo_awal_indexed; // Sudah dalam format array dengan key no_sbb
+        // $data['saldo_awal_raw'] = $saldo_awal_data;
+
+        $list_coa = $this->cb->get('v_coa_all')->result();
+
+        $periode = $tahun . '-' . $bulan;
+
+        $data['list_coa'] = $list_coa;
+        $data['per_periode'] = $periode;
+        $data['per_tahun'] = $tahun;
+        $data['per_bulan'] = $bulan;
+
+        $a = date('F Y', strtotime($periode . '-01'));
+
+        $description = 'Buku besar ' . $this->session->userdata('nama_perusahaan') . ' per bulan ' . $a;
+        $data['description'] = $description;
+
+
+        if ($button_sbm == "pdf") {
+
+            $data['description'] = $description;
+            $data = [
+                'description' => $description,
+                'per_periode' => $periode,
+                'list_coa' => $list_coa,
+                'tahun' => $tahun,
+                'saldo_awal' => $saldo_awal_indexed
+            ];
+
+            $this->load->view('print_pdf_buku_besar_monthly', $data);
+            // Build HTML
+            // $html = $this->load->view('print_pdf_buku_besar', $data, true);
+
+            // $this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
+        } else {
+            $this->load->view('report_bb_monthly', $data);
         }
     }
 

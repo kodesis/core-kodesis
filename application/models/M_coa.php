@@ -111,6 +111,25 @@ class M_coa extends CI_Model
         return $result;
     }
 
+    public function getCoaReportMonthly($no_coa, $periode)
+    {
+        $this->cb->select('*');
+        $this->cb->from('jurnal_neraca');
+        $this->cb->where('tanggal >=', "$periode-01");
+        $this->cb->where('tanggal <=', "$periode-31");
+        $this->cb->group_start();
+        $this->cb->where('id_cabang', $this->session->userdata('kode_cabang'));
+        $this->cb->where('akun_debit', $no_coa);
+        $this->cb->or_where('akun_kredit', $no_coa);
+        $this->cb->group_end();
+        $this->cb->order_by('tanggal', 'ASC');
+        $query = $this->cb->get();
+
+        $result = $query->result();
+
+        return $result;
+    }
+
     public function getCoa($no_coa)
     {
         return $this->cb->where('no_sbb', $no_coa)->get('v_coa_all')->row_array();

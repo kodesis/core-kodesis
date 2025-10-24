@@ -79,7 +79,7 @@
                                         <?php } ?>
                                     <?php endforeach; ?>
                                 </select>
-                            <?php } else if (empty($memo->nip_cc) && $this->uri->segment(3)) { ?>
+                            <?php } else if (empty($memo->nip_cc) && $this->uri->segment(4)) { ?>
                                 <select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
                                     <?php foreach ($sendto as $data) : ?>
                                         <?php if (strpos($memo->nip_kpd, $data->nip) !== false) {
@@ -122,7 +122,7 @@
                         <label for="isi_memo" class="form-label">Contents E-Memo <em>(required)</em></label>
                         <textarea class="form-control" name="isi_memo" id="isi_memo"><?= set_value('isi_memo') ?>
                         <?php
-                        if ($this->uri->segment(3) == true) {
+                        if ($this->uri->segment(4) == true) {
                             $array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
                             $bln = $array_bln[date('n', strtotime($memo->tanggal))];
                         }
@@ -133,7 +133,7 @@
 
                             $query = $this->db->query("SELECT nama,nama_jabatan FROM users WHERE nip='$nip';")->row()->nama;
                             echo $query;
-                            if ($this->uri->segment(3) == true) {
+                            if ($this->uri->segment(4) == true) {
                                 echo "<br>";
                                 echo "No Memo : " . sprintf("%03d", $memo->nomor_memo) . '/E-MEMO/' . $memo->kode_nama . '/' . $bln . '/' . date('Y', strtotime($memo->tanggal));
                             }

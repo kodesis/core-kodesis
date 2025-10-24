@@ -156,6 +156,11 @@ class Financial extends CI_Controller
             $totalRows -= 2; // Adjust for headers
             $insertedRows = 0;
 
+            // --- Initialize counters ---  
+            $no_debit_rows = [];
+            $no_kredit_rows = [];
+            $success_count = 0;
+
             // Process rows
             foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
                 // Skip header rows
@@ -176,7 +181,7 @@ class Financial extends CI_Controller
                 $tanggal = isset($data[3]) ? $this->processDate($data[3]) : null;
                 $keterangan = isset($data[4]) ? $data[4] : null;
 
-                $this->posting(
+                $posting = $this->posting(
                     $coa_debit,
                     $coa_kredit,
                     $keterangan,
@@ -184,6 +189,15 @@ class Financial extends CI_Controller
                     $tanggal,
                     $jenis_fe = 'single'
                 );
+
+                // --- Store row index if an error occurs ---
+                if ($posting == "No Debit") {
+                    $no_debit_rows[] = $rowIndex;
+                } else if ($posting == "No Kredit") {
+                    $no_kredit_rows[] = $rowIndex;
+                } else {
+                    $success_count++;
+                }
 
                 $insertedRows++;
                 $progress = round(($insertedRows / $totalRows) * 100);
@@ -198,7 +212,14 @@ class Financial extends CI_Controller
                 echo json_encode(['status' => false, 'message' => 'Database error']);
             } else {
                 $this->cb->trans_commit();
-                echo json_encode(['status' => true, 'message' => 'File processed successfully']);
+                // echo json_encode(['status' => true, 'message' => 'File processed successfully']);
+                echo json_encode([
+                    'status' => true,
+                    'message' => 'File processed successfully',
+                    'success_count' => $success_count,
+                    'no_debit_rows' => $no_debit_rows,
+                    'no_kredit_rows' => $no_kredit_rows
+                ]);
             }
         } catch (Exception $e) {
             // Handle exceptions

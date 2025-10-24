@@ -305,7 +305,7 @@ class Task extends CI_Controller
 			$nama_member = $get_user["nama"];
 			$comment = $this->input->post("commentt");
 			$nama_session = $this->session->userdata('nama');
-			$msg = "There's a new comment\nCard Name : *$task_name*\nStatus : *$statusx*\n\nChange from :  *$nama_session*";
+			$msg = "There's a new comment\nCard Name : *$task_name*\nStatus : *$statusx*\n\nChange from :  *$nama_session*\n\n" . base_url();
 			$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
 		}
 
@@ -386,7 +386,7 @@ class Task extends CI_Controller
 							$nama_member = $get_user["nama"];
 							$comment = $this->input->post("commentt");
 							$nama_session = $this->session->userdata('nama');
-							$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";
+							$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*\n\n" . base_url();
 							$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
 						}
 					}
@@ -428,7 +428,7 @@ class Task extends CI_Controller
 					$nama_member = $get_user["nama"];
 					$comment = $this->input->post("commentt");
 					$nama_session = $this->session->userdata('nama');
-					$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*";
+					$msg = "There's a new comment\nCard Name : *$task_name*\nComment : *$comment*\n\nComment from :  *$nama_session*\n\n" . base_url();
 					$this->api_whatsapp->wa_notif($msg, $get_user['phone']);
 				}
 			}
@@ -454,7 +454,7 @@ class Task extends CI_Controller
 			$data['task_edit'] = $this->db->get_where('task', ['id' => $this->uri->segment(3)])->row_array();
 
 			if (strpos($a, '601') !== false || $data['task_edit']['pic'] == $this->session->userdata('nip')) {
-				$data['sendto'] = $this->m_task->sendto($this->session->userdata('level_jabatan'), $this->session->userdata('bagian'));
+				$data['sendto'] = $this->m_task->sendto();
 
 
 				//inbox notif
@@ -516,7 +516,7 @@ class Task extends CI_Controller
 
 					$nama_session = $this->session->userdata('nama');
 					$project = $this->input->post('project_name');
-					$msg = "There's a new task\nTask Name : *$project*\n\nCreated By :  *$nama_session*";
+					$msg = "There's a new task\nTask Name : *$project*\n\nCreated By :  *$nama_session*\n\n" . base_url();
 
 					$send_wa = implode(',', $phone_member);
 					$this->api_whatsapp->wa_notif($msg, $send_wa);
@@ -898,7 +898,7 @@ class Task extends CI_Controller
 
 			foreach ($arr_member as $value) {
 				$user = $this->db->get_where('users', ['nip' => $value])->row();
-				$msg = "There's a new card\nTask Name:*$task->name*\nCard Name : *$card_name*\n\nCreated By :  *$user_session->nama*";
+				$msg = "There's a new card\nTask Name:*$task->name*\nCard Name : *$card_name*\n\nCreated By :  *$user_session->nama*\n\n" . base_url();
 				$this->api_whatsapp->wa_notif($msg, $user->phone);
 			}
 

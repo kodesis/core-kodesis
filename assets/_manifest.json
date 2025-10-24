@@ -1,58 +1,19 @@
 {
     "version": "2.0",
-    "comment": "---Above version must be the same as data-pwa-version",
-    "comment": "---data-pwa-version can be found in index.html in the manifest tag",
-    "comment": "---if versions are not the same it will cause an update loop",
     "lang" : "en",
-    "name" : "Kodesis Mobile",
-    "scope" : "/",
-    "display" : "fullscreen",
-    "short_name" : "Kodesis Mobile",
-    "description" : "",
-    "orientation" : "portrait",
-    "background_color": "#ffffff",
-    "theme_color": "#ffffff",
+   "name": "My Mobile PWA",
+  "short_name": "Mobile PWA",
+  "description": "The description of your mobile application for the PWA install prompt.",
+"start_url": "/mobile/home",
+  "scope": "/mobile/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1c3d5a",
     "generated" : "true",
-      "icons": [
-        {
-          "src": "icons/kodesis-bg-72x72.png",
-          "sizes": "72x72",
-          "type": "image/png",
-          "purpose": "any maskable"
-        },
-        {
-          "src": "icons/kodesis-bg-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png",
-          "purpose": "any maskable"
-        },
-        {
-          "src": "icons/kodesis-bg-128x128.png",
-          "sizes": "128x128",
-          "type": "image/png",
-          "purpose": "any maskable"
-        },
-        {
-          "src": "icons/kodesis-bg-144x144.png",
-          "sizes": "144x144",
-          "type": "image/png",
-          "purpose": "any maskable"
-        },
-        {
-          "src": "icons/kodesis-bg-152x152.png",
-          "sizes": "152x152",
-          "type": "image/png",
-          "purpose": "any maskable"
-        },
+    "icons": [
         {
           "src": "icons/kodesis-bg-192x192.png",
           "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "any maskable"
-        },
-        {
-          "src": "icons/kodesis-bg-384x384.png",
-          "sizes": "384x384",
           "type": "image/png",
           "purpose": "any maskable"
         },
@@ -62,5 +23,5 @@
           "type": "image/png",
           "purpose": "any maskable"
         }
-      ]
-    }
+    ]
+}

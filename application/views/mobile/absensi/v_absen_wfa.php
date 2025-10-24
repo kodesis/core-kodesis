@@ -166,12 +166,12 @@
 
         if (isWithinRange) {
             $('#lokasi_sekarang').text('Lokasi Sekarang ' + locationName);
-            Swal.fire('Success', `You are within range of ${locationName}. Updating table...`, 'success');
+            Swal.fire('Sukses', `Anda berada dalam jangkauan ${locationName}. Memperbarui tabel...`, 'success');
             updateTable();
         } else {
             $('#lokasi_sekarang').text('Lokasi Sekarang Di Luar Jangkauan');
             Swal.fire({
-                title: 'You are not within range! Ingin Tetap Absen?',
+                title: 'Anda tidak berada dalam jangkauan! Ingin Tetap Absen?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Absen',
@@ -190,16 +190,16 @@
     function showError(error) {
         switch (error.code) {
             case error.PERMISSION_DENIED:
-                Swal.fire('Error', 'Permission to access location was denied.', 'error');
+                Swal.fire('error', 'Izin untuk mengakses lokasi ditolak.', 'error');
                 break;
             case error.POSITION_UNAVAILABLE:
-                Swal.fire('Error', 'Location information is unavailable.', 'error');
+                Swal.fire('error', 'Informasi lokasi tidak tersedia.', 'error');
                 break;
             case error.TIMEOUT:
-                Swal.fire('Error', 'The request to get your location timed out.', 'error');
+                Swal.fire('error', 'Permintaan untuk mendapatkan lokasi Anda kehabisan waktu (timeout).', 'error');
                 break;
             case error.UNKNOWN_ERROR:
-                Swal.fire('Error', 'An unknown error occurred.', 'error');
+                Swal.fire('error', 'Terjadi kesalahan yang tidak diketahui.', 'error');
                 break;
         }
     }
@@ -351,7 +351,7 @@
 
         date_default_timezone_set('Asia/Jakarta');
         $current_time = new DateTime();
-        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+2 hours');
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+15 minutes');
         $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
         ?>
         if (detectedFaces.includes(username)) {
@@ -417,8 +417,9 @@
             // hiddenInputs.value = capturedImage;
             const capturedImage = captureImage(video);
 
-            stopWebcam();
             sendAttendanceDataToServer(capturedImage);
+
+            stopWebcam();
 
         }
         // });
@@ -676,8 +677,9 @@
                 if (xhr.status === 200) {
                     // try {
                     const response = JSON.parse(xhr.responseText);
-                    if (response.status === "success") {
+                    if (response.status == "success") {
                         Swal.fire('Success', response.message || 'Attendance recorded successfully.', 'success');
+                        stopWebcam();
                     } else {
                         Swal.fire('Error', response.message || 'An error occurred while recording attendance.', 'error');
                         console.log('gagal input');
@@ -694,6 +696,7 @@
         };
 
         xhr.send(JSON.stringify(attendanceData));
+
     }
 
     function showMessage(message) {
@@ -734,7 +737,7 @@
     } else {
         date_default_timezone_set('Asia/Jakarta');
         $current_time = new DateTime();
-        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+2 hours');
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+15 minutes');
         $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
     ?>
         <?php if ($current_time <= $jam_masuk_plus_two) { ?>

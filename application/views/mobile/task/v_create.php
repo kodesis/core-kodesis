@@ -3,7 +3,7 @@
   <div class="page-content">
     <div class="card card-style">
       <div class="content mb-0">
-        <?php if (!$this->uri->segment(3)) { ?>
+        <?php if (!$this->uri->segment(4)) { ?>
           <h3>Create Task</h3>
           <form action="<?= base_url('mobile/task/save_task') ?>" method="post" enctype="multipart/form-data" id="form-create-task">
             <div class="has-borders no-icon mb-2">
@@ -41,7 +41,7 @@
           </form>
         <?php } else { ?>
           <h3>Update Task</h3>
-          <form action="<?= base_url('mobile/task/update_task/' . $this->uri->segment(3)) ?>" method="post" enctype="multipart/form-data" id="form-create-task">
+          <form action="<?= base_url('mobile/task/update_task/' . $this->uri->segment(4)) ?>" method="post" enctype="multipart/form-data" id="form-create-task">
             <div class="has-borders no-icon mb-2">
               <label for="project_name" class="form-label">Task Name <em>(required)</em></label>
               <input type="text" class="form-control" name="project_name" id="project_name" value="<?= $task_edit['name'] ?>">

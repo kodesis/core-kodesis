@@ -192,7 +192,7 @@ class App extends CI_Controller
         $a = $this->session->userdata('level');
         $nip = $this->session->userdata('nip');
         if (strpos($a, '401') !== false) {
-            $memo_id = $this->uri->segment(3);
+            $memo_id = $this->uri->segment(4);
             $data['sendto'] = $this->M_app->sendto($this->session->userdata('level_jabatan'), $this->session->userdata('bagian'));
             // $sql = "select * FROM memo WHERE Id =$memo_id AND (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%')"; //sebelum penambahan nomor memo
             $sql = "SELECT a.*,b.nama_jabatan,b.nama,b.supervisi,c.kode_nama,b.level_jabatan 

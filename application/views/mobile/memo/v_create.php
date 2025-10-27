@@ -4,32 +4,15 @@
         <div class="card card-style">
             <div class="content mb-0">
                 <h3>Create New Digital Memo</h3>
-                <form action="<?= base_url('app/simpan_memo') ?>" class="my-3" enctype="multipart/form-data" id="form-memo" method="post">
+                <form action="<?= base_url('mobile/app/simpan_memo') ?>" class="my-3" enctype="multipart/form-data" id="form-memo" method="post">
                     <div class="has-borders mb-2">
                         <label for="kepada" class="form-label">Send To <em>(required)</em></label>
-                        <?php if (!empty($this->uri->segment(4))) { ?>
-                            <div class="">
-                                <?php if (!empty($memo->nip_kpd)) { ?>
-                                    <select class="form-control js-example-basic-multiple" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
-                                        <?php foreach ($sendto as $data) : ?>
-                                            <?php
-                                            if (($data->nip == $memo->nip_dari)) { ?>
-                                                <option selected="selected" value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
-                                            <?php } else { ?>
-                                                <option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
-                                            <?php } ?>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <?= form_error('tujuan_memo[]') ?>
-                                <?php } else { ?>
-                                    <select class="form-control js-example-basic-multiple" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
-                                        <?php foreach ($sendto as $data) : ?>
-                                            <option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <?= form_error('tujuan_memo[]') ?>
-                                <?php } ?>
-                            </div>
+                        <?php if (!$this->uri->segment(4)) { ?>
+                            <select class="form-control js-example-basic-multiple" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
+                                <?php foreach ($sendto as $data) : ?>
+                                    <option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         <?php } else { ?>
                             <?php if (!empty($memo->nip_kpd)) { ?>
                                 <select class="form-control js-example-basic-multiple" name="tujuan_memo[]" id="tujuan_memo" multiple="multiple">
@@ -56,7 +39,7 @@
 
                     <div class="has-borders mb-2">
                         <label for="cc" class="form-label">CC BOC</label>
-                        <?php if (!empty($this->uri->segment(4))) { ?>
+                        <?php if (!$this->uri->segment(4)) { ?>
                             <select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
                                 <?php foreach ($sendto as $data) : ?>
                                     <option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?></option>
@@ -149,7 +132,7 @@
                         <p class="text-danger">(*) Make sure the memo is made correctly before the memo is sent.</p>
                     </div>
                     <div>
-                        <a href="<?= base_url('app/inbox') ?>" class="btn btn-warning">Back</a>
+                        <a href="<?= base_url('mobile/app/inbox') ?>" class="btn btn-warning">Back</a>
                         <button type="submit" class="btn btn-success" id="send-memo">Send</button>
                     </div>
                 </form>

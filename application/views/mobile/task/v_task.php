@@ -56,7 +56,7 @@
               <?php } ?>
             </div>
 
-            <?= preg_match("/$nip/i", $value->read) ? "" : "<span class='badge gradient-yellow color-white'>New</span>"; ?>
+            <?= $value->read ? preg_match("/$nip/i", $value->read) ? "" : "<span class='badge gradient-yellow color-white'>New</span>" : ''; ?>
             <?php
             if ($value->activity == '1' && $cek_task == 1) {
               echo "<span class='badge gradient-blue color-white'>Open</span>";
@@ -68,7 +68,7 @@
             ?>
 
             <div class="text-start">
-              <p class="mb-0 my-2" style="font-weight: <?= preg_match("/$nip/i", $value->read) ? '' : 'bolder' ?>; cursor:pointer" onclick="location.href='<?= base_url('mobile/task/task_view/' . $value->id) ?>'">
+              <p class="mb-0 my-2" style="font-weight: <?= $value->read ? preg_match("/$nip/i", $value->read) ? '' : 'bolder' : '' ?>; cursor:pointer" onclick="location.href='<?= base_url('mobile/task/task_view/' . $value->id) ?>'">
                 <?php
                 $pic = $this->db->get_where('users', ['nip' => $value->pic])->row_array();
                 ?>
@@ -77,7 +77,7 @@
             </div>
             <div class="d-flex">
               <div class="flex-grow-1">
-                <p class="mb-n1" style="font-weight: <?= preg_match("/$nip/i", $value->read) ? '' : 'bolder' ?>; cursor:pointer" onclick="location.href='<?= base_url('mobile/task/task_view/' . $value->id) ?>'"><?= $value->name ?></p>
+                <p class="mb-n1" style="font-weight: <?= $value->read ? preg_match("/$nip/i", $value->read) ? '' : 'bolder' : '' ?>; cursor:pointer" onclick="location.href='<?= base_url('mobile/task/task_view/' . $value->id) ?>'"><?= $value->name ?></p>
               </div>
             </div>
           </div>

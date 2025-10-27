@@ -3,7 +3,7 @@
   <div class="page-content">
     <div class="card card-style">
       <div class="content mb-0">
-        <?php if (!$this->uri->segment(4)) { ?>
+        <?php if (!$this->uri->segment(5)) { ?>
           <h3>Create Card</h3>
           <form action="<?= base_url('mobile/task/save_detail_task/' . $this->uri->segment(3)) ?>" method="post" enctype="multipart/form-data" id="form-create-card">
             <div class="has-borders no-icon mb-2">
@@ -64,8 +64,8 @@
         <?php } else { ?>
           <h3>Update Card</h3>
           <form action="<?= base_url('mobile/task/update_detail_task') ?>" method="post" enctype="multipart/form-data" id="form-create-card">
-            <input type="hidden" value="<?= $this->uri->segment(3) ?>" name="id_task">
-            <input type="hidden" value="<?= $this->uri->segment(4) ?>" name="id_card">
+            <input type="hidden" value="<?= $this->uri->segment(4) ?>" name="id_task">
+            <input type="hidden" value="<?= $this->uri->segment(5) ?>" name="id_card">
             <div class="has-borders no-icon mb-2">
               <label for="project_name" class="form-label">Card Name <em>(required)</em></label>
               <input type="text" class="form-control" name="card_name" id="card_name" value="<?= $row_edit['task_name'] ?>">
@@ -117,7 +117,7 @@
               <?= form_error('activity') ?>
             </div>
             <div class="my-3">
-              <a href="<?= base_url('mobile/task/task_view/' . $this->uri->segment(3)) ?>" class="btn btn-warning">Back</a>
+              <a href="<?= base_url('mobile/task/task_view/' . $this->uri->segment(4)) ?>" class="btn btn-warning">Back</a>
               <button type="reset" class="btn btn-primary">Reset</button>
               <button type="submit" class="btn btn-success" id="btn-submit-card">Update Card</button>
             </div>

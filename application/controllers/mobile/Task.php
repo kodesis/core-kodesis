@@ -160,7 +160,7 @@ class Task extends CI_Controller
   public function create_task()
   {
     $a = $this->session->userdata('level');
-    $data['task_edit'] = $this->db->get_where('task', ['id' => $this->uri->segment(3)])->row_array();
+    $data['task_edit'] = $this->db->get_where('task', ['id' => $this->uri->segment(4)])->row_array();
 
     if (strpos($a, '601') !== false || $data['task_edit']['pic'] == $this->session->userdata('nip')) {
       $data['sendto'] = $this->M_task->sendto($this->session->userdata('level_jabatan'), $this->session->userdata('bagian'));
@@ -178,10 +178,10 @@ class Task extends CI_Controller
   {
     $a = $this->session->userdata('level');
     if (strpos($a, '601') !== false) {
-      $project_name = htmlspecialchars($this->input->post('project_name'), ENT_QUOTES, 'UTF-8');
+      $project_name = $this->input->post('project_name');
       $activity = $this->input->post('activity');
       $member_name = $this->input->post('member_task[]');
-      $comment = htmlspecialchars($this->input->post('comment'), ENT_QUOTES, 'UTF-8');
+      $comment = $this->input->post('comment');
 
       $this->form_validation->set_rules('project_name', 'Project or task name', 'required|trim');
       $this->form_validation->set_rules('member_task[]', 'Member name', 'required');

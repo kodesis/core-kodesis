@@ -41,7 +41,7 @@ $(document).ready(function () {
 								timer: 1500,
 							}).then(function () {
 								Swal.close();
-								location.href = base_url + "app/inbox";
+								location.href = base_url + "mobile/app/inbox";
 							});
 						} else {
 							Swal.fire({

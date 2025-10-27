@@ -49,7 +49,10 @@
                 text: "<?= $this->session->flashdata('forbidden') ?>",
                 icon: "error",
             })
-        <?php } ?>
+
+        <?php
+            $this->session->unset_userdata('forbidden');
+        } ?>
 
         <?php if ($this->session->flashdata('success')) { ?>
             Swal.fire({
@@ -57,7 +60,9 @@
                 text: "<?= $this->session->flashdata('success') ?>",
                 icon: "success",
             })
-        <?php } ?>
+        <?php
+            $this->session->unset_userdata('success');
+        } ?>
     })
 
     function PageReload() {

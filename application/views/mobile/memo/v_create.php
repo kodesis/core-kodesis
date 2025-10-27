@@ -1,3 +1,15 @@
+<style>
+    .ck-editor__editable {
+        /* Set a fixed height */
+        height: 200px;
+
+        /* OR set a minimum height to allow it to grow if content overflows */
+        min-height: 100px;
+
+        /* IMPORTANT: Force the scrollbar inside the editor when content overflows */
+        overflow-y: auto;
+    }
+</style>
 <div id="page">
     <?php include APPPATH . 'views/mobile/v_nav.php' ?>
     <div class="page-content">

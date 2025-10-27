@@ -455,6 +455,7 @@ class Absensi extends CI_Controller
             $this->db->select('*'); // Fetch only these columns
             $this->db->from('tblattendance'); // Table name
             $this->db->where('attendanceStatus', 'Pending');
+            $this->db->join('users', 'users.username = tblattendance.username');
             $this->db->where('supervisi', $this->session->userdata('nip'));
             $data['notif'] = $this->db->get()->num_rows();
 
@@ -683,6 +684,77 @@ class Absensi extends CI_Controller
         );
         echo json_encode($output);
     }
+
+
+    public function ajax_list4()
+    {
+        $this->load->model('mobile/M_absen', 'user');
+
+        $list = $this->user->get_datatables4();
+        $data = array();
+        $crs = "";
+        $no = $_POST['start'];
+
+        $months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'Mei',
+            'Jun',
+            'Jul',
+            'Agu',
+            'Sep',
+            'Okt',
+            'Nov',
+            'Des'
+        ];
+
+        foreach ($list as $cat) {
+            $date = new DateTime($cat->date);
+
+            $no++;
+            $row = array();
+            // $row[] = $no;
+            $maxLength = 10; // Define the max length
+            if (strlen($cat->nama) > $maxLength) {
+                $truncated = substr($cat->nama, 0, strrpos(substr($cat->nama, 0, $maxLength), ' ')) . '';
+            } else {
+                $truncated = $cat->nama;
+            }
+            $row[] = $truncated;
+
+            $monthIndex = (int) $date->format('n') - 1; // Get the month index (0-based)
+            $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
+            $row[] = $cat->attendanceStatus;
+
+            $row[] = $cat->nip;
+            $row[] = $cat->nama;
+            $row[] = $cat->attendanceStatus;
+            $row[] = $cat->lokasiAttendance;
+            $row[] = $cat->tipe;
+            $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
+            $row[] = $cat->waktu;
+            if (isset($cat->image)) {
+                $row[] = "<img width='200px' src='" . base_url('upload/attendance/' . $cat->image) . "'>";
+            } else {
+                $row[] = 'No Image';
+            }            // $row[] = $cat->halaman_page;
+
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->user->count_all4(),
+            "recordsFiltered" => $this->user->count_filtered4(),
+            "data" => $data,
+        );
+        echo json_encode($output);
+    }
+
     public function approval($tipe, $id)
     {
         $this->load->model('mobile/M_absen', 'user');

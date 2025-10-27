@@ -26,7 +26,7 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea name="description" id="description" class="form-control"><?= set_value('description') ?></textarea>
+              <textarea name="description" id="description" class="form-control" rows="10"><?= set_value('description') ?></textarea>
             </div>
             <div class="has-borders no-icon mb-2">
               <div class="row">
@@ -86,7 +86,7 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea name="description" id="description" class="form-control"><?= $row_edit['description'] ?></textarea>
+              <textarea name="description" id="description" class="form-control" rows="10"><?= $row_edit['description'] ?></textarea>
             </div>
             <div class="has-borders no-icon mb-2">
               <div class="row">

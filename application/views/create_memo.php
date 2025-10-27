@@ -53,6 +53,13 @@
 		.btn_footer_panel .tag_ {
 			padding-top: 37px;
 		}
+
+		.info-message {
+			color: gray;
+			font-size: 0.875em;
+			margin-top: 5px;
+			display: block;
+		}
 	</style>
 </head>
 
@@ -295,7 +302,7 @@
 								<?php echo form_open_multipart('app/simpan_memo', 'class="form-horizontal form-label-left" name="form_input" id="form_input" enctype="multipart/form-data"'); ?>
 								<!-- <form action="<?= base_url('app/simpan_memo') ?>" method="POST" class="form-horizontal form-label-left" enctype="multipart/form-data"> -->
 								<div class="item form-group">
-									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Tujuan <span class="required"> *</span></label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Tujuan KOC <span class="required"> *</span></label>
 									<?php if (!empty($this->uri->segment(4))) { ?>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<?php if (!empty($memo->nip_kpd)) { ?>
@@ -349,7 +356,7 @@
 
 								<?php if (!empty($this->uri->segment(4))) { ?>
 									<div class="item form-group">
-										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC KOC</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 
 											<select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
@@ -362,7 +369,7 @@
 
 								<?php } else { ?>
 									<div class="item form-group">
-										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC KOC</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<!--select class="form-control" multiple="multiple" name="cc_memo[]" id="cc_memo">
 									<?php foreach ($sendto as $data) : ?>        
@@ -451,6 +458,8 @@
 										</div>
 									<?php } else { ?>
 										<input type="file" name="file[]" id="file" multiple>
+										<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
+
 									<?php } ?>
 								</div>
 							</div>
@@ -594,6 +603,14 @@
 				})
 			<?php
 				$this->session->unset_userdata('msg_memo');
+			} else if ($this->session->userdata('msg_error')) { ?>
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: '<?php echo $this->session->userdata('msg_error') ?>',
+				})
+			<?php
+				$this->session->unset_userdata('msg_error');
 			} ?>
 
 			$("#submit-memo").on('click', function(e) {

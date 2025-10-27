@@ -127,6 +127,24 @@
             orderable: false // Disable sorting on this column
         }]
     });
+    let jquery_datatable4 = new DataTable('#table4', {
+        responsive: true, // Enable responsive behavior
+        rowReorder: {
+            selector: 'td:nth-child(3)' // Enable row reordering
+        },
+        processing: true, // Feature control the processing indicator
+        serverSide: true, // Feature control server-side processing mode
+        ajax: {
+            url: "<?php echo site_url('mobile/absensi/ajax_list4') ?>",
+            type: "POST"
+        },
+        order: [], // Initial no order
+        iDisplayLength: 10, // Default number of rows per page
+        columnDefs: [{
+            targets: 8, // The 8th column (0-indexed)
+            orderable: false // Disable sorting on this column
+        }]
+    });
 </script>
 </body>
 

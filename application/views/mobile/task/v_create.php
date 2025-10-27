@@ -31,7 +31,7 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="comment">Description</label>
-              <textarea name="comment" id="comment" class="form-control"><?= set_value('comment') ?></textarea>
+              <textarea name="comment" id="comment" class="form-control" rows="10"><?= set_value('comment') ?></textarea>
             </div>
             <div class="my-3">
               <a href="<?= base_url('mobile/task/task') ?>" class="btn btn-warning">Back</a>
@@ -77,7 +77,7 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="comment">Description</label>
-              <textarea name="comment" id="comment" class="form-control"><?= $task_edit['comment'] ?></textarea>
+              <textarea name="comment" id="comment" class="form-control" rows="10"><?= $task_edit['comment'] ?></textarea>
             </div>
             <div class="my-3">
               <a href="<?= base_url('mobile/task/task') ?>" class="btn btn-warning">Back</a>

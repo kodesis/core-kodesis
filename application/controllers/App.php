@@ -958,22 +958,32 @@ class App extends CI_Controller
 					//$countfiles = count($_FILES['file']['name']);
 					$countfiles = count(array_filter($_FILES['file']['name']));
 
+					$max_file_size = 4 * 1024 * 1024; // 4MB in bytes
+
 					// Looping all files
 					for ($i = 0; $i < $countfiles; $i++) {
-						$filename_ = $_FILES['file']['name'][$i];
-						$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-						$s1 = substr(str_shuffle($permitted_chars), 0, 10);
-						$array = explode('.', $_FILES['file']['name'][$i]);
-						$extension = end($array);
-						$filename = $s1 . '.' . $extension;
+						$file_size = $_FILES['file']['size'][$i];
+						if ($file_size > $max_file_size) {
+							$filename_ = $_FILES['file']['name'][$i];
+							$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+							$s1 = substr(str_shuffle($permitted_chars), 0, 10);
+							$array = explode('.', $_FILES['file']['name'][$i]);
+							$extension = end($array);
+							$filename = $s1 . '.' . $extension;
 
-						$sql = "UPDATE memo SET attach = CONCAT_WS('$filename',attach, ';') WHERE Id=$last_id";
-						$query = $this->db->query($sql);
-						$sql1 = "UPDATE memo SET attach_name = CONCAT_WS('$filename_',attach_name, ';') WHERE Id=$last_id";
-						$query = $this->db->query($sql1);
+							$sql = "UPDATE memo SET attach = CONCAT_WS('$filename',attach, ';') WHERE Id=$last_id";
+							$query = $this->db->query($sql);
+							$sql1 = "UPDATE memo SET attach_name = CONCAT_WS('$filename_',attach_name, ';') WHERE Id=$last_id";
+							$query = $this->db->query($sql1);
 
-						// Upload file
-						move_uploaded_file($_FILES['file']['tmp_name'][$i], 'upload/att_memo/' . $filename);
+							// Upload file
+							move_uploaded_file($_FILES['file']['tmp_name'][$i], 'upload/att_memo/' . $filename);
+						} else {
+							$this->session->set_userdata('msg_error', 'File ' . $_FILES['file']['name'][$i] . ' terlalu besar. Batas maksimal adalah 4MB.');
+							redirect('app/create_memo');
+
+							exit();
+						}
 					}
 
 					//Send notif wa

@@ -516,17 +516,16 @@ class Task extends CI_Controller
 
 					$nama_session = $this->session->userdata('nama');
 					$project = $this->input->post('project_name');
-					$msg = "There's a new task\nTask Name : *$project*\n\nCreated By :  *$nama_session*\n\n" . base_url();
-
-					$send_wa = implode(',', $phone_member);
-					$this->api_whatsapp->wa_notif($msg, $send_wa);
+					foreach ($phone_member as $value) {
+						$user = $this->db->get_where('users', ['nip' => $value])->row();
+						$msg = "There's a new task\nTask Name : *$project*\n\nCreated By :  *$nama_session*\n\n" . base_url();
+						$this->api_whatsapp->wa_notif($msg, $user->phone);
+					}
 
 					$this->session->set_userdata('msg_memo', $xx);
 					if ($_FILES) {
 						$countfiles = count(array_filter($_FILES['file']['name']));
 					}
-
-
 
 					$this->session->set_userdata('id_task', $xx);
 					redirect('task/detail_task/' . $xx);

@@ -316,7 +316,7 @@ class App extends CI_Controller
                     $query = $this->db->query($sql1);
 
                     // Upload file
-                    move_uploaded_file($_FILES['file']['tmp_name'][$i], '../moc.mlejitoffice.id/upload/att_memo/' . $filename);
+                    move_uploaded_file($_FILES['file']['tmp_name'][$i], 'upload/att_memo/' . $filename);
                 }
 
                 //Send notif wa

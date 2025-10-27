@@ -325,7 +325,7 @@ class Absensi extends CI_Controller
         // Parse jam_masuk and jam_keluar as DateTime objects
         $startOfDay = new DateTime($jam->jam_masuk); // Assuming format is H:i:s
         $endOfDay = new DateTime($jam->jam_keluar);
-        $startOfDay->modify('+2 hours');
+        $startOfDay->modify('+15 minutes');
 
         // Debug outputs
         // echo "Current Time: " . $currentTime->format('H:i:s') . "<br>";

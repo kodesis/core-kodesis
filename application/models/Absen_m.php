@@ -4,8 +4,8 @@ class Absen_m extends CI_Model
 {
 
     var $table = 'tblattendance';
-    var $column_order = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
-    var $column_search = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable 
+    var $column_order = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable orderable
+    var $column_search = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable searchable 
     var $order = array('date' => 'desc', 'waktu' => 'desc'); // default order 
 
     function _get_datatables_query()
@@ -74,8 +74,8 @@ class Absen_m extends CI_Model
 
 
     var $table2 = 'tblattendance';
-    var $column_order2 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
-    var $column_search2 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable datatable searchable 
+    var $column_order2 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable orderable
+    var $column_search2 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable searchable datatable searchable 
     var $order2 = array('date' => 'desc', 'waktu' => 'desc'); // default order 
 
     function _get_datatables_query2()
@@ -145,8 +145,8 @@ class Absen_m extends CI_Model
 
 
     var $table3 = 'tblattendance';
-    var $column_order3 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
-    var $column_search3 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable datatable searchable 
+    var $column_order3 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable orderable
+    var $column_search3 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable searchable datatable searchable 
     var $order3 = array('date' => 'desc', 'waktu' => 'desc'); // default order 
 
     function _get_datatables_query3()
@@ -216,8 +216,8 @@ class Absen_m extends CI_Model
     }
 
     var $table4 = 'tblattendance';
-    var $column_order4 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable orderable
-    var $column_search4 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'tipe'); //set column field database for datatable searchable datatable searchable 
+    var $column_order4 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable orderable
+    var $column_search4 = array('tblattendance.id', 'tblattendance.nip', 'tblattendance.nama', 'tblattendance.date', 'waktu', 'attendanceStatus', 'lokasiAttendance', 'nama_lokasi', 'alamat_lokasi', 'tipe'); //set column field database for datatable searchable datatable searchable 
     var $order4 = array('date' => 'desc', 'waktu' => 'desc'); // default order 
 
     function _get_datatables_query4()

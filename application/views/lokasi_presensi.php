@@ -292,24 +292,24 @@
 										<font color="white">Tipe Lokasi</font>
 									</th>
 
-									<th bgcolor="#004e81">
+									<!-- <th bgcolor="#004e81">
 										<font color="white">Latitude</font>
 									</th>
 									<th bgcolor="#004e81">
 										<font color="white">Longitude</font>
-									</th>
+									</th> -->
 									<th bgcolor="#004e81">
 										<font color="white">Radius</font>
 									</th>
 									<!-- <th bgcolor="#004e81">
 										<font color="white">Zona Waktu</font>
 									</th> -->
-									<th bgcolor="#004e81">
+									<!-- <th bgcolor="#004e81">
 										<font color="white">Jam Masuk</font>
 									</th>
 									<th bgcolor="#004e81">
 										<font color="white">Jam Pulang</font>
-									</th>
+									</th> -->
 									<th bgcolor="#004e81">
 										<font color="white">Action</font>
 									</th>

@@ -81,11 +81,11 @@
                     ?>
                         <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-9" onclick="refreshTable4()">All
                         </a>
+
+                        <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-8" style="color: #198754;"><i class="fa-solid fa-file-excel"></i> Export</a>
                     <?php
                     }
                     ?>
-                    <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-8" style="color: #198754;"><i class="fa-solid fa-file-excel"></i> Export</a>
-
                     <!-- <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-7">Tab 7</a> -->
                 </div>
                 <div class="clearfix mb-3"></div>

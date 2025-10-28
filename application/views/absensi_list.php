@@ -284,6 +284,12 @@
                     <font color="white">Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
                   </th>
                   <th bgcolor="#34495e">
@@ -347,6 +353,12 @@
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
@@ -417,6 +429,12 @@
                     <font color="white">Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
                   </th>
                   <th bgcolor="#34495e">
@@ -480,6 +498,12 @@
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>

@@ -357,7 +357,11 @@ class M_absen extends CI_Model
                             'lokasiAttendance' => $data['lokasiAttendance'],
                             'date' => date("Y-m-d"),
                             'tipe' => $tipe,
-                            'image' => $data['image']
+                            'image' => $data['image'],
+                            'latitude' => $data['latitude'],
+                            'longitude' => $data['longitude'],
+                            'nama_lokasi' => $data['nama_lokasi'],
+                            'alamat_lokasi' => $data['alamat_lokasi'],
                         ]);
                     }
                 } else {

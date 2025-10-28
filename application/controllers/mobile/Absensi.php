@@ -359,7 +359,11 @@ class Absensi extends CI_Controller
                     'attendanceStatus' => $data['attendanceStatus'],
                     'lokasiAttendance' => $data['lokasiAttendance'],
                     'tanggalAttendance' => $data['tanggalAttendance'],
-                    'image' => $filename
+                    'image' => $filename,
+                    'latitude' => $data['latitude'],
+                    'longitude' => $data['longitude'],
+                    'nama_lokasi' => $data['nama_lokasi'],
+                    'alamat_lokasi' => $data['alamat_lokasi'],
                 ];
                 $response = $this->user->insertAttendance($attendance);
                 echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);

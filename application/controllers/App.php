@@ -4285,13 +4285,13 @@ class App extends CI_Controller
 			$row[] = $cat->alamat_lokasi;
 
 			$row[] = $cat->tipe_lokasi;
-			$row[] = $cat->latitude;
-			$row[] = $cat->longitude;
+			// $row[] = $cat->latitude;
+			// $row[] = $cat->longitude;
 			$radius_meter = $cat->radius * 1000;
 			$row[] = $radius_meter . ' Meter';
 			// $row[] = $cat->zona_waktu;
-			$row[] = $cat->jam_masuk . ' ' . $cat->zona_waktu;
-			$row[] = $cat->jam_pulang . ' ' . $cat->zona_waktu;
+			// $row[] = $cat->jam_masuk . ' ' . $cat->zona_waktu;
+			// $row[] = $cat->jam_pulang . ' ' . $cat->zona_waktu;
 
 			$row[] = '<a href="' . base_url('app/edit_lokasi_presensi/' . $cat->id) . '" class="btn btn-warning">
 								Update
@@ -4379,9 +4379,9 @@ class App extends CI_Controller
 			'latitude'			=> $this->input->post('latitude_lokasi'),
 			'longitude'				=> $this->input->post('longitude_lokasi'),
 			'radius'				=> $radius,
-			'zona_waktu'			=> $this->input->post('zona_waktu'),
-			'jam_masuk'				=> $this->input->post('jam_masuk'),
-			'jam_pulang'				=> $this->input->post('jam_pulang'),
+			// 'zona_waktu'			=> $this->input->post('zona_waktu'),
+			// 'jam_masuk'				=> $this->input->post('jam_masuk'),
+			// 'jam_pulang'				=> $this->input->post('jam_pulang'),
 		);
 		$this->db->insert('lokasi_presensi', $data_insert);
 		redirect('app/lokasi_presensi');
@@ -4401,9 +4401,9 @@ class App extends CI_Controller
 			'latitude'			=> $this->input->post('latitude_lokasi'),
 			'longitude'				=> $this->input->post('longitude_lokasi'),
 			'radius'				=> $radius,
-			'zona_waktu'			=> $this->input->post('zona_waktu'),
-			'jam_masuk'				=> $this->input->post('jam_masuk'),
-			'jam_pulang'				=> $this->input->post('jam_pulang'),
+			// 'zona_waktu'			=> $this->input->post('zona_waktu'),
+			// 'jam_masuk'				=> $this->input->post('jam_masuk'),
+			// 'jam_pulang'				=> $this->input->post('jam_pulang'),
 		);
 		$this->db->where('id', $this->input->post('id_lokasi')); // Ensure to specify the record to update
 		$this->db->update('lokasi_presensi', $data_insert);

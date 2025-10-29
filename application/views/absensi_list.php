@@ -227,12 +227,13 @@
               <div class="col-md-3">
                 <button class="btn btn-primary btn-block" onclick="showAll()">All List</button>
               </div>
+
+              <div class="col-md-3">
+                <button class="btn btn-success btn-block" onclick="showExport()"><i class="fa fa-file-excel-o"></i> Export List</button>
+              </div>
             <?php
             }
             ?>
-            <div class="col-md-3">
-              <button class="btn btn-success btn-block" onclick="showExport()"><i class="fa fa-file-excel-o"></i> Export List</button>
-            </div>
           </div>
         </div>
 

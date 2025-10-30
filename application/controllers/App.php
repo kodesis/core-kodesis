@@ -3945,7 +3945,7 @@ class App extends CI_Controller
 
 			// Access properties using '->' because $cek_user is an object
 			$data_user = $this->user->data_user();
-			$jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+15 minutes')->format('H:i:s');
+			$jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
 			$jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
 
 			$this->db->select('*');
@@ -3999,7 +3999,7 @@ class App extends CI_Controller
 
 		// Access properties using '->' because $cek_user is an object
 		$data_user = $this->user->data_user();
-		$jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+15 minutes')->format('H:i:s');
+		$jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
 		$jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
 
 		if ($users) {

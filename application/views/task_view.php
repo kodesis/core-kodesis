@@ -535,6 +535,7 @@
 										<input type="hidden" name="id_detail" value="<?= $this->uri->segment(4) ?>">
 										<div class="col-md-8">
 											<input style="border-radius: 20px;" type="file" name="file[]" class="form-control" multiple>
+											<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 										</div>
 									</div>
 									<br>
@@ -694,49 +695,58 @@
 							})
 
 						<?php unset($_SESSION['msg']);;
-						} ?>
-
-						$('a#btn-close-task').click(function(e) {
-							e.preventDefault();
-							var href = $(this).attr('href');
+						}
+						if ($this->session->userdata('msg_error')) {
+						?>
 							Swal.fire({
-								title: 'Are you sure?',
-								text: "You won't to closed this task?",
-								icon: 'warning',
-								showCancelButton: true,
-								confirmButtonColor: '#3085d6',
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Yes'
-							}).then((result) => {
-								if (result.isConfirmed) {
-									location.href = href;
-								}
+								icon: 'error',
+								title: 'Oops...',
+								text: '<?= $this->session->userdata('msg_error') ?>',
+							}) <?php
+								$this->session->unset_userdata('msg_error');
+							} ?>
+
+							$('a#btn-close-task').click(function(e) {
+								e.preventDefault();
+								var href = $(this).attr('href');
+								Swal.fire({
+									title: 'Are you sure?',
+									text: "You won't to closed this task?",
+									icon: 'warning',
+									showCancelButton: true,
+									confirmButtonColor: '#3085d6',
+									cancelButtonColor: '#d33',
+									confirmButtonText: 'Yes'
+								}).then((result) => {
+									if (result.isConfirmed) {
+										location.href = href;
+									}
+								})
 							})
-						})
 
-						$('form#form-comment-activity').on('submit', function() {
-							Swal.fire({
-								title: "Loading...",
-								timerProgressBar: true,
-								allowOutsideClick: false,
-								didOpen: () => {
-									Swal.showLoading();
-								},
-							});
-							$('#btn-comment-activity').attr('disabled', true)
-						})
+							$('form#form-comment-activity').on('submit', function() {
+								Swal.fire({
+									title: "Loading...",
+									timerProgressBar: true,
+									allowOutsideClick: false,
+									didOpen: () => {
+										Swal.showLoading();
+									},
+								});
+								$('#btn-comment-activity').attr('disabled', true)
+							})
 
-						$('form#form-change-status').on('submit', function() {
-							Swal.fire({
-								title: "Loading...",
-								timerProgressBar: true,
-								allowOutsideClick: false,
-								didOpen: () => {
-									Swal.showLoading();
-								},
-							});
-							$('#btn-change-status').attr('disabled', true)
-						})
+							$('form#form-change-status').on('submit', function() {
+								Swal.fire({
+									title: "Loading...",
+									timerProgressBar: true,
+									allowOutsideClick: false,
+									didOpen: () => {
+										Swal.showLoading();
+									},
+								});
+								$('#btn-change-status').attr('disabled', true)
+							})
 					})
 				</script>
 

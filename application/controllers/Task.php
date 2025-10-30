@@ -341,6 +341,17 @@ class Task extends CI_Controller
 				$_FILES['file']['tmp_name'] = $files['file']['tmp_name'][$i];
 				$_FILES['file']['error'] = $files['file']['error'][$i];
 				$_FILES['file']['size'] = $files['file']['size'][$i];
+				$max_size = 4194304;
+
+				if ($_FILES['file']['size'] > $max_size) {
+					// Handle the error (e.g., skip this file, log an error, set a flag)
+					echo "Error: File " . $_FILES['file']['size'] . " is too large! (Limit is 4MB)";
+					// continue; // Skip the rest of the loop for this file
+
+					$this->session->set_userdata('msg_error', 'Error: File ' . $_FILES['file']['name'] . ' is too large! (Limit is 4MB)');
+					redirect('task/task_view/' . $this->input->post('id_task') . '/' . $this->input->post('id_detail'));
+				}
+
 				$this->load->library('upload');
 				$this->upload->initialize($this->set_upload_options('upload/task_comment'));
 				if (!($this->upload->do_upload('file')) || $files['file']['error'][$i] != 0) {
@@ -791,10 +802,18 @@ class Task extends CI_Controller
 		if ($this->input->post('status') == 'edit') {
 			$target_file = './upload/card_task/';
 			$target_file2 = './upload/task_comment/';
-
+			$max_size = 4194304;
 			if ($_FILES['att']['name'][0] != "") {
 				$nama_filee = array();
 				for ($xx = 0; $xx < count($_FILES['att']['name']); $xx++) {
+					if ($_FILES['att']['size'][$xx] > $max_size) {
+						// Handle the error (e.g., skip this file, log an error, set a flag)
+						echo "Error: File " . $_FILES['att']['name'][$xx] . " is too large! (Limit is 4MB)";
+						// continue; // Skip the rest of the loop for this file
+
+						$this->session->set_userdata('msg_error', 'Error: File ' . $_FILES['att']['name'][$xx] . ' is too large! (Limit is 4MB)');
+						redirect('task/task_view/' . $id_task);
+					}
 					$newfilename = str_replace(' ', '', time() . '_' . $_FILES['att']['name'][$xx]);
 					move_uploaded_file($_FILES['att']["tmp_name"][$xx], $target_file2 . $newfilename);
 					$nama_filee[] = str_replace(' ', '', time() . '_' . $_FILES['att']['name'][$xx]);
@@ -849,10 +868,18 @@ class Task extends CI_Controller
 			$target_file = './upload/card_task/';
 			$target_file2 = './upload/task_comment/';
 
-
+			$max_size = 4194304;
 			if ($_FILES['att']['name'][0] != "") {
 				$nama_filee = array();
 				for ($xx = 0; $xx < count($_FILES['att']['name']); $xx++) {
+					if ($_FILES['att']['size'][$xx] > $max_size) {
+						// Handle the error (e.g., skip this file, log an error, set a flag)
+						echo "Error: File " . $_FILES['att']['name'][$xx] . " is too large! (Limit is 4MB)";
+						// continue; // Skip the rest of the loop for this file
+
+						$this->session->set_userdata('msg_error', 'Error: File ' . $_FILES['att']['name'][$xx] . ' is too large! (Limit is 4MB)');
+						redirect('task/task_view/' . $id_card);
+					}
 					$newfilename = str_replace(' ', '', time() . '_' . $_FILES['att']['name'][$xx]);
 					move_uploaded_file($_FILES['att']["tmp_name"][$xx], $target_file2 . $newfilename);
 					$nama_filee[] = str_replace(' ', '', time() . '_' . $_FILES['att']['name'][$xx]);

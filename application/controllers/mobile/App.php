@@ -217,10 +217,29 @@ class App extends CI_Controller
     public function simpan_memo()
     {
         $a = $this->session->userdata('level');
+        $max_file_size = 4 * 1024 * 1024; // 4MB in bytes
+
         if (strpos($a, '401') !== false) {
             $judul = $this->input->post('subject_memo');
             $isi_memo = $this->input->post('isi_memo');
+            $max_file_size = 4 * 1024 * 1024; // 4MB in bytes
             if (!empty($this->input->post('attch_exist'))) {
+                if (!empty($_FILES['att']['name'][0])) {
+                    for ($xx = 0; $xx < count($_FILES['att']['name']); $xx++) {
+                        $file_size = $_FILES['att']['size'][$xx];
+
+                        if ($file_size > $max_file_size) {
+                            // File is too big!
+                            // You should add error handling here instead of moving the file
+                            $file_name = $_FILES['att']['name'][$xx];
+                            $this->session->set_userdata('msg_error', 'Kesalahan: Berkas ' . $file_name . ' melebihi batas 4MB. Ukuran berkas adalah: ' . $file_size . ' bita.');
+                            redirect('app/create_memo');
+
+                            // echo "Error: File '$file_name' exceeds the 4MB limit. The size is: $file_size bytes.";
+                            // continue;
+                        }
+                    }
+                }
                 $attach_name = $this->input->post('attch_exist');
                 $attach = $this->input->post('attch_exist_nm');
             } else {

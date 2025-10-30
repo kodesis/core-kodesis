@@ -455,6 +455,7 @@
 											<input id="attch_exist" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="attch_exist" type="text" value="<?php echo $memo->attach_name; ?>" readonly>
 											<input id="attch_exist_nm" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" data-validate-words="1" name="attch_exist_nm" type="hidden" value="<?php echo $memo->attach; ?>">
 											<input type="file" name="file[]" id="file" multiple>
+											<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 										</div>
 									<?php } else { ?>
 										<input type="file" name="file[]" id="file" multiple>

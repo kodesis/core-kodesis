@@ -922,7 +922,25 @@ class App extends CI_Controller
 
 					$judul = $this->input->post('subject_memo');
 					$isi_memo = $this->input->post('ckeditor');
+
+					$max_file_size = 4 * 1024 * 1024; // 4MB in bytes
 					if (!empty($this->input->post('attch_exist'))) {
+						if (!empty($_FILES['att']['name'][0])) {
+							for ($xx = 0; $xx < count($_FILES['att']['name']); $xx++) {
+								$file_size = $_FILES['att']['size'][$xx];
+
+								if ($file_size > $max_file_size) {
+									// File is too big!
+									// You should add error handling here instead of moving the file
+									$file_name = $_FILES['att']['name'][$xx];
+									$this->session->set_userdata('msg_error', 'Kesalahan: Berkas ' . $file_name . ' melebihi batas 4MB. Ukuran berkas adalah: ' . $file_size . ' bita.');
+									redirect('app/create_memo');
+
+									// echo "Error: File '$file_name' exceeds the 4MB limit. The size is: $file_size bytes.";
+									// continue;
+								}
+							}
+						}
 						$attach_name = $this->input->post('attch_exist');
 						$attach = $this->input->post('attch_exist_nm');
 					} else {
@@ -958,32 +976,23 @@ class App extends CI_Controller
 					//$countfiles = count($_FILES['file']['name']);
 					$countfiles = count(array_filter($_FILES['file']['name']));
 
-					$max_file_size = 4 * 1024 * 1024; // 4MB in bytes
 
 					// Looping all files
 					for ($i = 0; $i < $countfiles; $i++) {
-						$file_size = $_FILES['file']['size'][$i];
-						if ($file_size > $max_file_size) {
-							$filename_ = $_FILES['file']['name'][$i];
-							$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-							$s1 = substr(str_shuffle($permitted_chars), 0, 10);
-							$array = explode('.', $_FILES['file']['name'][$i]);
-							$extension = end($array);
-							$filename = $s1 . '.' . $extension;
+						$filename_ = $_FILES['file']['name'][$i];
+						$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+						$s1 = substr(str_shuffle($permitted_chars), 0, 10);
+						$array = explode('.', $_FILES['file']['name'][$i]);
+						$extension = end($array);
+						$filename = $s1 . '.' . $extension;
 
-							$sql = "UPDATE memo SET attach = CONCAT_WS('$filename',attach, ';') WHERE Id=$last_id";
-							$query = $this->db->query($sql);
-							$sql1 = "UPDATE memo SET attach_name = CONCAT_WS('$filename_',attach_name, ';') WHERE Id=$last_id";
-							$query = $this->db->query($sql1);
+						$sql = "UPDATE memo SET attach = CONCAT_WS('$filename',attach, ';') WHERE Id=$last_id";
+						$query = $this->db->query($sql);
+						$sql1 = "UPDATE memo SET attach_name = CONCAT_WS('$filename_',attach_name, ';') WHERE Id=$last_id";
+						$query = $this->db->query($sql1);
 
-							// Upload file
-							move_uploaded_file($_FILES['file']['tmp_name'][$i], 'upload/att_memo/' . $filename);
-						} else {
-							$this->session->set_userdata('msg_error', 'File ' . $_FILES['file']['name'][$i] . ' terlalu besar. Batas maksimal adalah 4MB.');
-							redirect('app/create_memo');
-
-							exit();
-						}
+						// Upload file
+						move_uploaded_file($_FILES['file']['tmp_name'][$i], 'upload/att_memo/' . $filename);
 					}
 
 					//Send notif wa

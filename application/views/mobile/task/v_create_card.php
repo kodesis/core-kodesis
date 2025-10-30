@@ -45,6 +45,7 @@
             <div class="has-boders no-icon mb-2">
               <label for="attachment">Attachment</label>
               <input type="file" name="attachment[]" id="attachment" class="form-control" multiple>
+              <span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="activity" class="form-label">Card Activity <em>(required)</em></label>
@@ -105,6 +106,7 @@
             <div class="has-boders no-icon mb-2">
               <label for="attachment">Attachment</label>
               <input type="file" name="attachment[]" id="attachment" class="form-control" multiple>
+              <span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
               <p><?= $row_edit['attachment'] == null ? 'File tidak ada' : $row_edit['attachment'] ?></p>
             </div>
             <div class="has-borders no-icon mb-2">

@@ -283,9 +283,19 @@ class Task extends CI_Controller
     if ($this->form_validation->run() == FALSE) {
       $this->detail_task($this->uri->segment(3));
     } else {
+      $max_size = 4194304;
+
       if ($_FILES['attachment']['name'][0] != "") {
         $nama_file = array();
         for ($xx = 0; $xx < count($_FILES['attachment']['name']); $xx++) {
+          if ($_FILES['att']['size'][$xx] > $max_size) {
+            // Handle the error (e.g., skip this file, log an error, set a flag)
+            echo "Error: File " . $_FILES['att']['name'][$xx] . " is too large! (Limit is 4MB)";
+            // continue; // Skip the rest of the loop for this file
+
+            $this->session->set_flashdata('forbidden', 'Error: File ' . $_FILES['att']['name'][$xx] . ' is too large! (Limit is 4MB)');
+            redirect('mobile/task/task_view/' . $id_task);
+          }
           $newfilename = str_replace(' ', '', time() . '_' . $_FILES['attachment']['name'][$xx]);
           move_uploaded_file($_FILES['attachment']['tmp_name'][$xx], $target_file . $newfilename);
           $nama_file[] = str_replace(' ', '', time() . '_' . $_FILES['attachment']['name'][$xx]);
@@ -351,9 +361,19 @@ class Task extends CI_Controller
       $this->session->set_flashdata('forbidden', array_values($this->form_validation->error_array())[0]);
       redirect('mobile/task/card_edit/' . $id_task . '/' . $id_card);
     } else {
+      $max_size = 4194304;
+
       if ($_FILES['attachment']['name'][0] != "") {
         $nama_file = array();
         for ($xx = 0; $xx < count($_FILES['attachment']['name']); $xx++) {
+          if ($_FILES['att']['size'][$xx] > $max_size) {
+            // Handle the error (e.g., skip this file, log an error, set a flag)
+            echo "Error: File " . $_FILES['att']['name'][$xx] . " is too large! (Limit is 4MB)";
+            // continue; // Skip the rest of the loop for this file
+
+            $this->session->set_flashdata('forbidden', 'Error: File ' . $_FILES['att']['name'][$xx] . ' is too large! (Limit is 4MB)');
+            redirect('mobile/task/task_view/' . $id_task);
+          }
           $newfilename = str_replace(' ', '', time() . '_' . $_FILES['attachment']['name'][$xx]);
           move_uploaded_file($_FILES['attachment']['tmp_name'][$xx], $target_file . $newfilename);
           $nama_file[] = str_replace(' ', '', time() . '_' . $_FILES['attachment']['name'][$xx]);

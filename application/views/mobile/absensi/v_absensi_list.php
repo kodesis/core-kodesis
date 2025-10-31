@@ -77,9 +77,15 @@
                             ?></a>
                     <?php
                     }
+                    if ($this->session->userdata('bagian') == 4) {
                     ?>
-                    <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-8" style="color: #198754;"><i class="fa-solid fa-file-excel"></i> Export</a>
+                        <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-9" onclick="refreshTable4()">All
+                        </a>
 
+                        <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-8" style="color: #198754;"><i class="fa-solid fa-file-excel"></i> Export</a>
+                    <?php
+                    }
+                    ?>
                     <!-- <a href="#" data-bs-toggle="collapse" data-bs-target="#tab-7">Tab 7</a> -->
                 </div>
                 <div class="clearfix mb-3"></div>
@@ -236,6 +242,55 @@
                         </table>
                     </div>
                 </div>
+                <div data-bs-parent="#tab-group-2" class="collapse" id="tab-9">
+                    <div class="content" style="cursor: pointer;  margin: 0;">
+                        <table id="table4" class="display nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">Nama</th>
+                                    <th style="text-align:left;">Tanggal</th>
+                                    <th>Status</th>
+                                    <th>Nip</th>
+                                    <th>Full Name</th>
+                                    <th>Status</th>
+                                    <th>Lokasi</th>
+                                    <th>Tipe</th>
+                                    <th>Tanggal</th>
+                                    <th>Waktu</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align:left;">2</td>
+                                    <td>Tiger</td>
+                                    <td>Nixon</td>
+                                    <td>System Architect</td>
+                                    <td>Edinburgh</td>
+                                    <td>61</td>
+                                    <td>2011-04-25</td>
+                                    <td>$320,800</td>
+                                    <td>5421</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
+                                    <th>Nip</th>
+                                    <th>Full Name</th>
+                                    <th>Status</th>
+                                    <th>Lokasi</th>
+                                    <th>Tipe</th>
+                                    <th>Tanggal</th>
+                                    <th>Waktu</th>
+                                    <th>Image</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
                 <div data-bs-parent="#tab-group-2" class="collapse" id="tab-8">
                     <div class="content" style="cursor: pointer;  margin: 0;">
                         <form class="form" id="form_export" action="<?= base_url('mobile/absensi/process_export') ?>" method="POST">
@@ -326,6 +381,8 @@
                             });
                             $('#table1').DataTable().ajax.reload();
                             $('#table2').DataTable().ajax.reload();
+                            $('#table3').DataTable().ajax.reload();
+                            $('#table4').DataTable().ajax.reload();
                         }
 
                     },
@@ -388,9 +445,11 @@
                                 timer: 1500
 
                             });
+
                             $('#table1').DataTable().ajax.reload();
                             $('#table2').DataTable().ajax.reload();
-
+                            $('#table3').DataTable().ajax.reload();
+                            $('#table4').DataTable().ajax.reload();
                         }
 
                     },
@@ -420,6 +479,11 @@
     function refreshTable3() {
 
         $('#table3').DataTable().ajax.reload();
+    }
+
+    function refreshTable4() {
+
+        $('#table4').DataTable().ajax.reload();
     }
 
     function proccess_export() {

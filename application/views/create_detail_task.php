@@ -347,6 +347,7 @@
 									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
 										<input style="border-radius: 5px;" multiple type="file" name="att[]" class="form-control">
+										<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 									</div>
 								</div>
 
@@ -496,6 +497,7 @@
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
 										<div class="col-md-6 col-sm-3 col-xs-12">
 											<input style="border-radius: 5px;" multiple type="file" name="att[]" class="form-control">
+											<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 										</div>
 										<div class="col-md-6 col-sm-3 col-xs-12">
 											<b> <?= $x->attachment == null ? 'File tidak ada' : $x->attachment ?></b>
@@ -637,15 +639,23 @@
 					});
 				<?php
 							$this->session->unset_userdata('msg_memo');
+						} else if ($this->session->userdata('msg_error')) {
+				?>
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: '<?= $this->session->userdata('msg_error') ?>',
+					}) <?php
+							$this->session->unset_userdata('msg_error');
 						} ?>
-				$("#submit-memo").on('click', function(e) {
-					if (!confirm('Are you sure that you want to submit the form')) {
-						event.preventDefault();
-					}
+					$("#submit-memo").on('click', function(e) {
+						if (!confirm('Are you sure that you want to submit the form')) {
+							event.preventDefault();
+						}
 
-					// event.preventDefault();
+						// event.preventDefault();
 
-				});
+					});
 			});
 
 
@@ -694,6 +704,7 @@
 						'<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>' +
 						'<div class="col-md-6 col-sm-12 col-xs-12">' +
 						'<input style="border-radius: 5px;" type="file" class="form-control" multiple name="att' + x + '[]" placeholder="" >' +
+						'<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>' +
 						'</div>' +
 						'</div>' +
 						'<div class="item form-group">' +

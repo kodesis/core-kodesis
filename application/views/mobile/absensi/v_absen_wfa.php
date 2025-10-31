@@ -70,6 +70,10 @@
 
                     <div class="table-container">
 
+                        <input type="hidden" name="latitude" id="latitude_studentTable">
+                        <input type="hidden" name="longitude" id="longitude_studentTable">
+                        <input type="hidden" name="nama_lokasi" id="nama_lokasi">
+                        <input type="hidden" name="alamat_lokasi" id="alamat_lokasi">
                         <div id="studentTableContainer">
 
                         </div>
@@ -151,8 +155,12 @@
     }
 
     function showPosition(position) {
+        console.log(position);
+
         const userLatitude = position.coords.latitude;
         const userLongitude = position.coords.longitude;
+        console.log(userLatitude);
+        console.log(userLongitude);
 
 
         // Check each location
@@ -167,7 +175,7 @@
         if (isWithinRange) {
             $('#lokasi_sekarang').text('Lokasi Sekarang ' + locationName);
             Swal.fire('Sukses', `Anda berada dalam jangkauan ${locationName}. Memperbarui tabel...`, 'success');
-            updateTable();
+            updateTable(position);
         } else {
             $('#lokasi_sekarang').text('Lokasi Sekarang Di Luar Jangkauan');
             Swal.fire({
@@ -179,7 +187,7 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) { // Check if the confirm button was clicked
-                    updateTable(); // Execute this function only on confirmation
+                    updateTable(position); // Execute this function only on confirmation
                 }
             });
             // Swal.fire('Alert', `You are not within range. Updating table...`, 'warning');
@@ -221,7 +229,29 @@
         return distance <= radiusInKm;
     }
 
-    function updateTable() {
+    function updateTable(position) {
+        console.log('updateTable');
+        console.log(position);
+
+        const userLatitude = position.coords.latitude;
+        const userLongitude = position.coords.longitude;
+        console.log(userLatitude);
+        console.log(userLongitude);
+
+        $('#latitude_studentTable').val(userLatitude);
+        $('#longitude_studentTable').val(userLongitude);
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLatitude}&lon=${userLongitude}`)
+            .then(response => response.json())
+            .then(data => {
+                const address = data.display_name || "Unknown Address";
+                const name = data.address.road || "Unknown Location";
+
+                document.getElementById('nama_lokasi').value = name;
+                document.getElementById('alamat_lokasi').value = address;
+            })
+            .catch(error => console.error("Error fetching address:", error));
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "fetch_user", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -237,6 +267,9 @@
                     updateOtherElements();
 
                     document.getElementById("studentTableContainer").innerHTML = response.html;
+                    // console.log(position);
+
+
 
 
                 } else if (response.status === "No Picture") {
@@ -252,6 +285,8 @@
     }
 
     function updateTableMasuk() {
+        console.log('updateTableMasuk');
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "fetch_user/masuk", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -282,6 +317,8 @@
     }
 
     function updateTablePulang() {
+        console.log('updateTablePulang');
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "fetch_user/pulang", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -312,6 +349,8 @@
     }
 
     function updateTableAbsensi() {
+        console.log('updateTableAbsensi');
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "fetch_user/absensi", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -351,7 +390,7 @@
 
         date_default_timezone_set('Asia/Jakarta');
         $current_time = new DateTime();
-        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+15 minutes');
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+5 minutes');
         $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
         ?>
         if (detectedFaces.includes(username)) {
@@ -665,7 +704,11 @@
             attendanceStatus: AttendanceStatus,
             lokasiAttendance: locationName,
             tanggalAttendance: document.getElementById('tanggalonly').innerText.trim(),
-            capturedImage: capturedImage // Base64 encoded image data
+            capturedImage: capturedImage, // Base64 encoded image data
+            latitude: $('#latitude_studentTable').val(), // Base64 encoded image data
+            longitude: $('#longitude_studentTable').val(), // Base64 encoded image data
+            nama_lokasi: $('#nama_lokasi').val(), // Base64 encoded image data
+            alamat_lokasi: $('#alamat_lokasi').val(), // Base64 encoded image data
         };
 
         const xhr = new XMLHttpRequest();
@@ -737,7 +780,7 @@
     } else {
         date_default_timezone_set('Asia/Jakarta');
         $current_time = new DateTime();
-        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+15 minutes');
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+5 minutes');
         $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
     ?>
         <?php if ($current_time <= $jam_masuk_plus_two) { ?>

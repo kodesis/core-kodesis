@@ -89,6 +89,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->waktu;
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
+            $row[] = $cat->nama_lokasi;
+            $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // $path = "https://mobile" . base_url() . "/upload/attendance/" . $cat->image;
@@ -163,6 +165,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->attendanceStatus;
 
             $row[] = $cat->lokasiAttendance;
+            $row[] = $cat->nama_lokasi;
+            $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // $path = "https://mobile" . base_url() . "/upload/attendance/" . $cat->image;
@@ -239,6 +243,8 @@ class Absensi extends CI_Controller
 
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
+            $row[] = $cat->nama_lokasi;
+            $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // Assume base_url() returns "https://admin.browser.id/"
@@ -278,6 +284,77 @@ class Absensi extends CI_Controller
             "draw" => $_POST['draw'],
             "recordsTotal" => $this->user->count_all3(),
             "recordsFiltered" => $this->user->count_filtered3(),
+            "data" => $data,
+        );
+        echo json_encode($output);
+    }
+    public function ajax_list4()
+    {
+        $this->load->model('absen_m', 'user');
+
+        $list = $this->user->get_datatables4();
+        $data = array();
+        $crs = "";
+        $no = $_POST['start'];
+
+        $months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'Mei',
+            'Jun',
+            'Jul',
+            'Agu',
+            'Sep',
+            'Okt',
+            'Nov',
+            'Des'
+        ];
+
+        foreach ($list as $cat) {
+            $date = new DateTime($cat->date);
+
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $cat->nip;
+            $row[] = $cat->nama;
+
+            $monthIndex = (int) $date->format('n') - 1; // Get the month index (0-based)
+            $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
+            $row[] = $cat->waktu;
+
+            $row[] = $cat->attendanceStatus;
+            $row[] = $cat->lokasiAttendance;
+            $row[] = $cat->nama_lokasi;
+            $row[] = $cat->alamat_lokasi;
+            $row[] = $cat->tipe;
+            // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
+            // Assume base_url() returns "https://admin.browser.id/"
+            // $baseUrl = base_url();
+
+            // // Replace "https://" with "https://mobile"
+            // $newUrl = str_replace('https://', 'https://mobile', $baseUrl);
+
+            // // If you want it to work for both HTTP and HTTPS:
+            // // $newUrl = str_replace('//', '//mobile', $baseUrl);
+
+            // $path = $newUrl . "upload/attendance/" . $cat->image;
+
+            // Result: https://mobileadmin.browser.id/upload/attendance/image.jpg
+            $path = base_url("/upload/attendance/" . $cat->image);
+            $row[] = "<img width='100px' src='" . $path . "'>";
+            // $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->user->count_all4(),
+            "recordsFiltered" => $this->user->count_filtered4(),
             "data" => $data,
         );
         echo json_encode($output);

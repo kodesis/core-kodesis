@@ -26,7 +26,7 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea name="description" id="description" class="form-control"><?= set_value('description') ?></textarea>
+              <textarea name="description" id="description" class="form-control" rows="10"><?= set_value('description') ?></textarea>
             </div>
             <div class="has-borders no-icon mb-2">
               <div class="row">
@@ -45,6 +45,7 @@
             <div class="has-boders no-icon mb-2">
               <label for="attachment">Attachment</label>
               <input type="file" name="attachment[]" id="attachment" class="form-control" multiple>
+              <span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="activity" class="form-label">Card Activity <em>(required)</em></label>
@@ -86,7 +87,7 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="description" class="form-label">Description</label>
-              <textarea name="description" id="description" class="form-control"><?= $row_edit['description'] ?></textarea>
+              <textarea name="description" id="description" class="form-control" rows="10"><?= $row_edit['description'] ?></textarea>
             </div>
             <div class="has-borders no-icon mb-2">
               <div class="row">
@@ -105,6 +106,7 @@
             <div class="has-boders no-icon mb-2">
               <label for="attachment">Attachment</label>
               <input type="file" name="attachment[]" id="attachment" class="form-control" multiple>
+              <span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
               <p><?= $row_edit['attachment'] == null ? 'File tidak ada' : $row_edit['attachment'] ?></p>
             </div>
             <div class="has-borders no-icon mb-2">

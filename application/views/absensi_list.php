@@ -222,10 +222,18 @@
               </div>
             <?php
             }
+            if ($this->session->userdata('bagian') == 4) {
             ?>
-            <div class="col-md-3">
-              <button class="btn btn-success btn-block" onclick="showExport()"><i class="fa fa-file-excel-o"></i> Export List</button>
-            </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary btn-block" onclick="showAll()">All List</button>
+              </div>
+
+              <div class="col-md-3">
+                <button class="btn btn-success btn-block" onclick="showExport()"><i class="fa fa-file-excel-o"></i> Export List</button>
+              </div>
+            <?php
+            }
+            ?>
           </div>
         </div>
 
@@ -275,6 +283,12 @@
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
@@ -340,6 +354,12 @@
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
@@ -410,6 +430,12 @@
                     <font color="white">Lokasi</font>
                   </th>
                   <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
                     <font color="white">Tipe</font>
                   </th>
                   <th bgcolor="#34495e">
@@ -426,6 +452,73 @@
           </div>
         </div>
 
+        <div class="x_panel card" id="all_absensi" style="display: none;">
+          <?php if ($this->session->flashdata('success_reset')) { ?>
+            <div class="alert alert-success">
+              <a href="#" class="close" data-dismiss="alert">&times;</a>
+              <strong>Success!</strong> <?php echo $this->session->flashdata('success_reset'); ?>
+            </div>
+          <?php } ?>
+          <?php if ($this->session->flashdata('msg')) { ?>
+            <div class="alert alert-success">
+              <a href="#" class="close" data-dismiss="alert">&times;</a>
+              <strong>Success!</strong> <?php echo $this->session->flashdata('msg'); ?>
+            </div>
+          <?php } ?>
+
+
+          <!--div class="alert alert-info">Daftar Surat Kuasa </div-->
+          <div align="center">
+
+            <font color="brown">Absensi List All</font><br><br>
+          </div>
+
+
+          <div class="table-responsive">
+            <table id="table4" class="table table-striped" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th bgcolor="#34495e">
+                    <font color="white">No.</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nip</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nama</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Tanggal</font>
+                  </th>
+
+                  <th bgcolor="#34495e">
+                    <font color="white">Waktu</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Status</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Nama Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Alamat Lokasi</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Tipe</font>
+                  </th>
+                  <th bgcolor="#34495e">
+                    <font color="white">Gambar</font>
+                  </th>
+                  <!--th bgcolor="#004e81"><font color="white">Status</font></th-->
+                </tr>
+              </thead>
+
+            </table>
+          </div>
+        </div>
         <div class="x_panel card" id="excel" style="display: none;">
           <?php if ($this->session->flashdata('success_reset')) { ?>
             <div class="alert alert-success">
@@ -444,7 +537,7 @@
           <!--div class="alert alert-info">Daftar Surat Kuasa </div-->
           <div align="center">
 
-            <font color="brown">Absensi List Approval</font><br><br>
+            <font color="brown">Absensi List Export</font><br><br>
           </div>
 
 
@@ -621,6 +714,25 @@
             }]
           });
 
+          $('#table4').dataTable({
+            // responsive: true,
+            rowReorder: {
+              selector: 'td:nth-child(3)'
+            },
+            processing: true,
+            serverSide: true,
+            ajax: {
+              url: "<?php echo site_url('absensi/ajax_list4') ?>",
+              type: "POST"
+            },
+            order: [],
+            iDisplayLength: 10,
+            columnDefs: [{
+              targets: 8,
+              orderable: false
+            }]
+          });
+
         })
 
         function showUser() {
@@ -628,6 +740,7 @@
           document.getElementById('team').style.display = 'none';
           document.getElementById('excel').style.display = 'none';
           document.getElementById('approval').style.display = 'none';
+          document.getElementById('all_absensi').style.display = 'none';
         }
 
         function showTeam() {
@@ -635,6 +748,7 @@
           document.getElementById('team').style.display = 'flex';
           document.getElementById('excel').style.display = 'none';
           document.getElementById('approval').style.display = 'none';
+          document.getElementById('all_absensi').style.display = 'none';
         }
 
         function showApproval() {
@@ -642,14 +756,25 @@
           document.getElementById('team').style.display = 'none';
           document.getElementById('excel').style.display = 'none';
           document.getElementById('approval').style.display = 'flex';
+          document.getElementById('all_absensi').style.display = 'none';
+        }
+
+        function showAll() {
+          document.getElementById('user').style.display = 'none';
+          document.getElementById('team').style.display = 'none';
+          document.getElementById('excel').style.display = 'none';
+          document.getElementById('approval').style.display = 'none';
+          document.getElementById('all_absensi').style.display = 'flex';
         }
 
         function showExport() {
 
           document.getElementById('user').style.display = 'none';
           document.getElementById('team').style.display = 'none';
-          document.getElementById('approval').style.display = 'none';
           document.getElementById('excel').style.display = 'flex';
+          document.getElementById('approval').style.display = 'none';
+          document.getElementById('all_absensi').style.display = 'none';
+
 
         }
       </script>

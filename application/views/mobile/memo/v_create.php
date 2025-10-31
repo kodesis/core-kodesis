@@ -1,3 +1,15 @@
+<style>
+    .ck-editor__editable {
+        /* Set a fixed height */
+        height: 200px;
+
+        /* OR set a minimum height to allow it to grow if content overflows */
+        min-height: 100px;
+
+        /* IMPORTANT: Force the scrollbar inside the editor when content overflows */
+        overflow-y: auto;
+    }
+</style>
 <div id="page">
     <?php include APPPATH . 'views/mobile/v_nav.php' ?>
     <div class="page-content">
@@ -96,8 +108,12 @@
                             <input id="attch_exist" class="form-control" data-validate-length-range="6" data-validate-words="1" name="attch_exist" type="text" value="<?php echo $memo->attach_name; ?>" readonly>
                             <input id="attch_exist_nm" class="form-control" data-validate-length-range="6" data-validate-words="1" name="attch_exist_nm" type="hidden" value="<?php echo $memo->attach; ?>">
                             <input type="file" name="file[]" id="file" class="m" multiple>
+                            <br>
+                            <span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
                         <?php } else { ?>
                             <input type="file" name="file[]" id="file" class="form-control" multiple>
+                            <br>
+                            <span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
                         <?php } ?>
                     </div>
 

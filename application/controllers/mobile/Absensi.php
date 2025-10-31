@@ -89,7 +89,7 @@ class Absensi extends CI_Controller
 
             // Ensure $cek_user is not null and contains jam_masuk and jam_keluar
             if ($data_user && isset($data_user->jam_masuk) && isset($data_user->jam_keluar)) {
-                $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+15 minutes')->format('H:i:s');
+                $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
                 $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
             } else {
                 echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
@@ -148,7 +148,7 @@ class Absensi extends CI_Controller
         $users = $this->user->get_user(); // Fetch all users from the database
         $data['tipe'] = $tipe;
         if ($data_user && isset($data_user->jam_masuk) && isset($data_user->jam_keluar)) {
-            $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+15 minutes')->format('H:i:s');
+            $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
             $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
         } else {
             echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
@@ -325,7 +325,7 @@ class Absensi extends CI_Controller
         // Parse jam_masuk and jam_keluar as DateTime objects
         $startOfDay = new DateTime($jam->jam_masuk); // Assuming format is H:i:s
         $endOfDay = new DateTime($jam->jam_keluar);
-        $startOfDay->modify('+15 minutes');
+        $startOfDay->modify('+5 minutes');
 
         // Debug outputs
         // echo "Current Time: " . $currentTime->format('H:i:s') . "<br>";
@@ -359,7 +359,11 @@ class Absensi extends CI_Controller
                     'attendanceStatus' => $data['attendanceStatus'],
                     'lokasiAttendance' => $data['lokasiAttendance'],
                     'tanggalAttendance' => $data['tanggalAttendance'],
-                    'image' => $filename
+                    'image' => $filename,
+                    'latitude' => $data['latitude'],
+                    'longitude' => $data['longitude'],
+                    'nama_lokasi' => $data['nama_lokasi'],
+                    'alamat_lokasi' => $data['alamat_lokasi'],
                 ];
                 $response = $this->user->insertAttendance($attendance);
                 echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
@@ -455,7 +459,8 @@ class Absensi extends CI_Controller
             $this->db->select('*'); // Fetch only these columns
             $this->db->from('tblattendance'); // Table name
             $this->db->where('attendanceStatus', 'Pending');
-            $this->db->where('supervisi', $this->session->userdata('nip'));
+            $this->db->join('users', 'users.username = tblattendance.username');
+            $this->db->where('users.supervisi', $this->session->userdata('nip'));
             $data['notif'] = $this->db->get()->num_rows();
 
             $this->load->view('mobile/Layouts/v_header', $data);
@@ -683,6 +688,77 @@ class Absensi extends CI_Controller
         );
         echo json_encode($output);
     }
+
+
+    public function ajax_list4()
+    {
+        $this->load->model('mobile/M_absen', 'user');
+
+        $list = $this->user->get_datatables4();
+        $data = array();
+        $crs = "";
+        $no = $_POST['start'];
+
+        $months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'Mei',
+            'Jun',
+            'Jul',
+            'Agu',
+            'Sep',
+            'Okt',
+            'Nov',
+            'Des'
+        ];
+
+        foreach ($list as $cat) {
+            $date = new DateTime($cat->date);
+
+            $no++;
+            $row = array();
+            // $row[] = $no;
+            $maxLength = 10; // Define the max length
+            if (strlen($cat->nama) > $maxLength) {
+                $truncated = substr($cat->nama, 0, strrpos(substr($cat->nama, 0, $maxLength), ' ')) . '';
+            } else {
+                $truncated = $cat->nama;
+            }
+            $row[] = $truncated;
+
+            $monthIndex = (int) $date->format('n') - 1; // Get the month index (0-based)
+            $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
+            $row[] = $cat->attendanceStatus;
+
+            $row[] = $cat->nip;
+            $row[] = $cat->nama;
+            $row[] = $cat->attendanceStatus;
+            $row[] = $cat->lokasiAttendance;
+            $row[] = $cat->tipe;
+            $row[] = $date->format('d') . ' ' . $months[$monthIndex] . ' ' . $date->format('Y');
+            $row[] = $cat->waktu;
+            if (isset($cat->image)) {
+                $row[] = "<img width='200px' src='" . base_url('upload/attendance/' . $cat->image) . "'>";
+            } else {
+                $row[] = 'No Image';
+            }            // $row[] = $cat->halaman_page;
+
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->user->count_all4(),
+            "recordsFiltered" => $this->user->count_filtered4(),
+            "data" => $data,
+        );
+        echo json_encode($output);
+    }
+
     public function approval($tipe, $id)
     {
         $this->load->model('mobile/M_absen', 'user');

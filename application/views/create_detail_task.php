@@ -494,10 +494,10 @@
 									</div>
 									<div class="item form-group">
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
-										<div class="col-md6 col-sm-3 col-xs-12">
+										<div class="col-md-6 col-sm-3 col-xs-12">
 											<input style="border-radius: 5px;" multiple type="file" name="att[]" class="form-control">
 										</div>
-										<div class="col-md6 col-sm-3 col-xs-12">
+										<div class="col-md-6 col-sm-3 col-xs-12">
 											<b> <?= $x->attachment == null ? 'File tidak ada' : $x->attachment ?></b>
 										</div>
 

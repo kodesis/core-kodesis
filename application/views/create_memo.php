@@ -302,7 +302,7 @@
 								<?php echo form_open_multipart('app/simpan_memo', 'class="form-horizontal form-label-left" name="form_input" id="form_input" enctype="multipart/form-data"'); ?>
 								<!-- <form action="<?= base_url('app/simpan_memo') ?>" method="POST" class="form-horizontal form-label-left" enctype="multipart/form-data"> -->
 								<div class="item form-group">
-									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Tujuan KOC <span class="required"> *</span></label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">Tujuan <span class="required"> *</span></label>
 									<?php if (!empty($this->uri->segment(4))) { ?>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<?php if (!empty($memo->nip_kpd)) { ?>
@@ -356,7 +356,7 @@
 
 								<?php if (!empty($this->uri->segment(4))) { ?>
 									<div class="item form-group">
-										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC KOC</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 
 											<select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
@@ -369,7 +369,7 @@
 
 								<?php } else { ?>
 									<div class="item form-group">
-										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC KOC</label>
+										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12" for="name">CC</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
 											<!--select class="form-control" multiple="multiple" name="cc_memo[]" id="cc_memo">
 									<?php foreach ($sendto as $data) : ?>        

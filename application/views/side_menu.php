@@ -11,7 +11,7 @@
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '40') !== false) { ?>
 			<li>
-				<a><i class="fa fa-edit"></i>BOC Digital Memo<span class="fa fa-chevron-down"></span></a>
+				<a><i class="fa fa-edit"></i>Digital Memo<span class="fa fa-chevron-down"></span></a>
 				<ul class="nav child_menu">
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '401') !== false) { ?>
@@ -73,7 +73,7 @@
 						<li><a href="<?php echo base_url(); ?>asset/list_penyusutan">Penyusutuan</a></li>
 					<?php } ?>
 					<!-- <?php $a = $this->session->userdata('level');
-							if (strpos($a, '501') !== false) { ?>
+								if (strpos($a, '501') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>app/abk_list">Mobil List</a></li>
 				<?php } ?>
 				<?php $a = $this->session->userdata('level');
@@ -290,7 +290,7 @@
          </ul>
       </li>
       <?php //if ($this->session->userdata('level')==1) {
-		?>
+			?>
 	  <li>
          <a><i class="fa fa-desktop"></i> Admin Board <span class="fa fa-chevron-down"></span></a>
          <ul class="nav child_menu">

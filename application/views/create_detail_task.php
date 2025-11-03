@@ -495,11 +495,11 @@
 									</div>
 									<div class="item form-group">
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
-										<div class="col-md6 col-sm-3 col-xs-12">
+										<div class="col-md-6 col-sm-3 col-xs-12">
 											<input style="border-radius: 5px;" multiple type="file" name="att[]" class="form-control">
 											<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 										</div>
-										<div class="col-md6 col-sm-3 col-xs-12">
+										<div class="col-md-6 col-sm-3 col-xs-12">
 											<b> <?= $x->attachment == null ? 'File tidak ada' : $x->attachment ?></b>
 										</div>
 
@@ -629,25 +629,25 @@
 						title: 'Oops...',
 						text: 'Error Input!',
 					}) <?php
-						$this->session->unset_userdata('msg');
-					} else if ($this->session->userdata('msg_memo')) {
-						?>
+							$this->session->unset_userdata('msg');
+						} else if ($this->session->userdata('msg_memo')) {
+							?>
 					Swal.fire({
 						icon: 'success',
 						title: 'Success input',
 						text: 'Create & Send Success to ID <?php echo $this->session->userdata('msg_memo') ?>',
 					});
 				<?php
-						$this->session->unset_userdata('msg_memo');
-					} else if ($this->session->userdata('msg_error')) {
+							$this->session->unset_userdata('msg_memo');
+						} else if ($this->session->userdata('msg_error')) {
 				?>
 					Swal.fire({
 						icon: 'error',
 						title: 'Oops...',
 						text: '<?= $this->session->userdata('msg_error') ?>',
 					}) <?php
-						$this->session->unset_userdata('msg_error');
-					} ?>
+							$this->session->unset_userdata('msg_error');
+						} ?>
 					$("#submit-memo").on('click', function(e) {
 						if (!confirm('Are you sure that you want to submit the form')) {
 							event.preventDefault();

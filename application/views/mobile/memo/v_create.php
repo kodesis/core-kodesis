@@ -50,7 +50,7 @@
                     </div>
 
                     <div class="has-borders mb-2">
-                        <label for="cc" class="form-label">CC BOC</label>
+                        <label for="cc" class="form-label">CC</label>
                         <?php if (!$this->uri->segment(4)) { ?>
                             <select class="form-control js-example-basic-multiple" name="cc_memo[]" id="cc_memo" multiple="multiple">
                                 <?php foreach ($sendto as $data) : ?>

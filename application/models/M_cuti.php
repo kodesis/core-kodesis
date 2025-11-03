@@ -153,7 +153,8 @@ class M_cuti extends CI_Model
     {
         $this->db->where([
             'bagian !=' => null,
-            'level_jabatan !=' => null
+            'level_jabatan !=' => null,
+            'status' => 1
         ]);
         return $this->db->get('users')->result();
     }

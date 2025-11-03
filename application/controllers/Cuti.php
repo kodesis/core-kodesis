@@ -1736,14 +1736,14 @@ class Cuti extends CI_Controller
 
         $data_atasan = $this->db->get_where('users', ['nip' => $karyawan->supervisi])->row();
 
-        $this->db->select('nama, nip');
-        $this->db->where([
-            'supervisi' => $karyawan->supervisi,
-            'nip !=' => $karyawan->nip
-        ]);
-
-
-        $pengganti = $this->db->get('users');
+        $this->db->select('nama, nip')->from('users');
+        $this->db->group_start();
+        $this->db->where('supervisi', $karyawan->supervisi);
+        $this->db->or_where('bagian', $karyawan->bagian);
+        $this->db->group_end();
+        $this->db->where('nip !=', $karyawan->nip);
+        $this->db->where('status', 1);
+        $pengganti = $this->db->get();
 
         $data_pengganti = "<option value=''> -- Pilih Pengganti --</option>";
         foreach ($pengganti->result() as $row) {

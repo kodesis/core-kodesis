@@ -155,6 +155,13 @@
     }
 
     function showPosition(position) {
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Sedang Mencari Data Lokasi..',
+            icon: 'info',
+            showConfirmButton: false, // We don't want the user to click OK yet
+            allowOutsideClick: false // Optional: Prevent closing by clicking outside
+        });
         console.log(position);
 
         const userLatitude = position.coords.latitude;
@@ -230,6 +237,13 @@
     }
 
     function updateTable(position) {
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Mohon Tunggu, Sistem Sedang Mencari Data..',
+            icon: 'info',
+            showConfirmButton: false, // We don't want the user to click OK yet
+            allowOutsideClick: false // Optional: Prevent closing by clicking outside
+        });
         console.log('updateTable');
         console.log(position);
 
@@ -496,6 +510,7 @@
                 if (!webcamStarted && modelsLoaded) {
                     startWebcam();
                     webcamStarted = true;
+                    Swal.close();
                 }
             })
             .catch(() => {
@@ -805,6 +820,13 @@
             <?php if (empty($result1) && empty($result3)) { ?>
                 console.log('ada2');
                 getLocation(); // Call function
+                Swal.fire({
+                    title: 'Loading...',
+                    text: 'Sedang Mempersiapkan Lokasi..',
+                    icon: 'info',
+                    showConfirmButton: false, // We don't want the user to click OK yet
+                    allowOutsideClick: false // Optional: Prevent closing by clicking outside
+                });
             <?php } else { ?>
                 Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
                 updateTableAbsensi(); // Call function

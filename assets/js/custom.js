@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	var pwaNoCache = false; //Requires server and HTTPS/SSL. Will clear cache with each visit
 
 	//Setting Service Worker Locations scope = folder | location = service worker js location
-	var pwaScope = baseUrl + "/assets/js/";
+	// var pwaScope = baseUrl + "assets/js/";
+	var pwaScope = baseUrl; // This resolves to: https://admin.kodesis.id/mobile/
 	var pwaLocation = baseUrl + "assets/js/_service-worker.js";
 
 	//Place all your custom Javascript functions and plugin calls below this line

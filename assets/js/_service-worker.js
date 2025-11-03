@@ -8,7 +8,7 @@ var CACHE_NAME = APP_NAME + "-" + APP_VER;
 // NOTE: Paths are now absolute, relative to the root of the mobile scope (/mobile/).
 var REQUIRED_FILES = [
     // HTML Files
-    "/mobile/home", // Must match the manifest's start_url
+    "/mobile/home", // Resolves to: http://localhost/mobile/home
     // Styles
     "/assets/css/style.css",
     "/assets/css/bootstrap.css",
@@ -38,6 +38,23 @@ var REQUIRED_FILES = [
 // Service Worker Diagnostic. Set true to get console logs.
 var APP_DIAG = false;
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    // IMPORTANT: The path to your service worker script is relative to the *origin*.
+    // Assuming your script is at: http://localhost/core-kodesis/_service-worker.js
+    // If your app is at http://localhost/core-kodesis/mobile/auth, the SW should be registered from the root of the app.
+    
+    // Register the Service Worker
+    navigator.serviceWorker.register('/core-kodesis/_service-worker.js', {
+      // Optional: Set the scope explicitly to the directory where your app lives.
+      scope: '/core-kodesis/' 
+    }).then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }).catch(function(error) {
+      console.log('ServiceWorker registration failed: ', error);
+    });
+  });
+}
 //Service Worker Function Below.
 self.addEventListener("install", function (event) {
     event.waitUntil(

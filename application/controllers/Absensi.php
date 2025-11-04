@@ -89,8 +89,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->waktu;
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
-            $row[] = $cat->nama_lokasi;
-            $row[] = $cat->alamat_lokasi;
+            // $row[] = $cat->nama_lokasi;
+            // $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // $path = "https://mobile" . base_url() . "/upload/attendance/" . $cat->image;
@@ -165,8 +165,8 @@ class Absensi extends CI_Controller
             $row[] = $cat->attendanceStatus;
 
             $row[] = $cat->lokasiAttendance;
-            $row[] = $cat->nama_lokasi;
-            $row[] = $cat->alamat_lokasi;
+            // $row[] = $cat->nama_lokasi;
+            // $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // $path = "https://mobile" . base_url() . "/upload/attendance/" . $cat->image;
@@ -243,8 +243,8 @@ class Absensi extends CI_Controller
 
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
-            $row[] = $cat->nama_lokasi;
-            $row[] = $cat->alamat_lokasi;
+            // $row[] = $cat->nama_lokasi;
+            // $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // Assume base_url() returns "https://admin.browser.id/"
@@ -328,8 +328,8 @@ class Absensi extends CI_Controller
 
             $row[] = $cat->attendanceStatus;
             $row[] = $cat->lokasiAttendance;
-            $row[] = $cat->nama_lokasi;
-            $row[] = $cat->alamat_lokasi;
+            // $row[] = $cat->nama_lokasi;
+            // $row[] = $cat->alamat_lokasi;
             $row[] = $cat->tipe;
             // $path = "https://mobileadmin.kodesis.id/upload/attendance/" . $cat->image;
             // Assume base_url() returns "https://admin.browser.id/"

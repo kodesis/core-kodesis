@@ -51,7 +51,7 @@
     <?php include APPPATH . 'views/mobile/v_nav.php' ?>
     <div class="page-content">
         <div class="content mt-0 mb-3">
-            <h3 class="text-center my-3">Absensi LIST</h3>
+            <h3 class="text-center my-3">Absensi List</h3>
             <!-- <div class="search-box shadow-xl border-0 bg-theme rounded-sm bottom-0">
                 <form action="" method="get">
                     <i class="fa fa-search"></i>

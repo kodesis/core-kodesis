@@ -722,8 +722,8 @@
             capturedImage: capturedImage, // Base64 encoded image data
             latitude: $('#latitude_studentTable').val(), // Base64 encoded image data
             longitude: $('#longitude_studentTable').val(), // Base64 encoded image data
-            nama_lokasi: $('#nama_lokasi').val(), // Base64 encoded image data
-            alamat_lokasi: $('#alamat_lokasi').val(), // Base64 encoded image data
+            // nama_lokasi: $('#nama_lokasi').val(), // Base64 encoded image data
+            // alamat_lokasi: $('#alamat_lokasi').val(), // Base64 encoded image data
         };
 
         const xhr = new XMLHttpRequest();

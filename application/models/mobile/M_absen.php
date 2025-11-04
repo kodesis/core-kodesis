@@ -360,8 +360,8 @@ class M_absen extends CI_Model
                             'image' => $data['image'],
                             'latitude' => $data['latitude'],
                             'longitude' => $data['longitude'],
-                            'nama_lokasi' => $data['nama_lokasi'],
-                            'alamat_lokasi' => $data['alamat_lokasi'],
+                            // 'nama_lokasi' => $data['nama_lokasi'],
+                            // 'alamat_lokasi' => $data['alamat_lokasi'],
                         ]);
                     }
                 } else {

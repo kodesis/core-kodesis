@@ -400,7 +400,7 @@ class Absensi extends CI_Controller
         $sheet->setCellValue('G1', 'Tipe');
         $sheet->setCellValue('H1', 'Tanggal');
         $sheet->setCellValue('I1', 'Waktu');
-        $sheet->setCellValue('J1', 'Image');
+        // $sheet->setCellValue('J1', 'Image');
 
         // Get data from the database
         $this->load->database();
@@ -434,26 +434,26 @@ class Absensi extends CI_Controller
             $sheet->setCellValue('G' . $rowNumber, $row['tipe']);
             $sheet->setCellValue('H' . $rowNumber, $row['date']);
             $sheet->setCellValue('I' . $rowNumber, $row['waktu']);
-            if (!empty($row['image'])) {
-                $imagePath = FCPATH . 'upload' . DIRECTORY_SEPARATOR . 'attendance' . DIRECTORY_SEPARATOR . $row['image'];
+            // if (!empty($row['image'])) {
+            //     $imagePath = FCPATH . 'upload' . DIRECTORY_SEPARATOR . 'attendance' . DIRECTORY_SEPARATOR . $row['image'];
 
-                // Check if the image exists
-                if (file_exists($imagePath)) {
-                    // If the image exists, insert it into the spreadsheet
-                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $drawing->setName('Attendance Image');
-                    $drawing->setDescription('Attendance Image');
-                    $drawing->setPath($imagePath);  // Set the path to the image
-                    $drawing->setHeight(100); // Optional: Set the image height (you can adjust this)
-                    $drawing->setCoordinates('J' . $rowNumber); // Set the position of the image in the sheet
-                    $drawing->setWorksheet($sheet); // Attach the image to the worksheet
-                } else {
-                    // If the image is not found, set a message or placeholder
-                    $sheet->setCellValue('J' . $rowNumber, 'Image not found');  // Display a placeholder text in the cell
-                }
-            } else {
-                $sheet->setCellValue('J' . $rowNumber, 'Image Null');  // Display a placeholder text in the cell
-            }
+            //     // Check if the image exists
+            //     if (file_exists($imagePath)) {
+            //         // If the image exists, insert it into the spreadsheet
+            //         $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            //         $drawing->setName('Attendance Image');
+            //         $drawing->setDescription('Attendance Image');
+            //         $drawing->setPath($imagePath);  // Set the path to the image
+            //         $drawing->setHeight(100); // Optional: Set the image height (you can adjust this)
+            //         $drawing->setCoordinates('J' . $rowNumber); // Set the position of the image in the sheet
+            //         $drawing->setWorksheet($sheet); // Attach the image to the worksheet
+            //     } else {
+            //         // If the image is not found, set a message or placeholder
+            //         $sheet->setCellValue('J' . $rowNumber, 'Image not found');  // Display a placeholder text in the cell
+            //     }
+            // } else {
+            //     $sheet->setCellValue('J' . $rowNumber, 'Image Null');  // Display a placeholder text in the cell
+            // }
             $sheet->getRowDimension($rowNumber)->setRowHeight(80);
             $rowNumber++;
             $nomor++;
@@ -468,7 +468,7 @@ class Absensi extends CI_Controller
         $sheet->getColumnDimension('G')->setWidth(18); // Set width kolom E
         $sheet->getColumnDimension('H')->setWidth(18); // Set width kolom E
         $sheet->getColumnDimension('I')->setWidth(18); // Set width kolom E
-        $sheet->getColumnDimension('J')->setWidth(25); // Set width kolom E
+        // $sheet->getColumnDimension('J')->setWidth(25); // Set width kolom E
 
         // Set the filename and save the file
         $fileName = 'Export_' . date('Y-m-d_H-i-s') . '.xlsx';

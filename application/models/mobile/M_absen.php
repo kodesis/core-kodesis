@@ -309,7 +309,14 @@ class M_absen extends CI_Model
             try {
                 // foreach ($attendanceData as $data) {
                 // Fetch the user's jam_masuk and jam_keluar values
-                $this->db->select('jam_masuk, jam_keluar');
+                $jam_absen = $data['jam_absen'];
+                if ($jam_absen == 'reguler') {
+                    $this->db->select('jam_masuk, jam_keluar');
+                } else if ($jam_absen == 'shift1') {
+                    $this->db->select('jam_masuk2 as jam_masuk, jam_keluar2 as jam_keluar');
+                } else if ($jam_absen == 'shift2') {
+                    $this->db->select('jam_masuk3 as jam_masuk, jam_keluar3 as jam_keluar');
+                }
                 $this->db->from('users');
                 $this->db->where('username', $data['username']);
                 $jam = $this->db->get()->row();
@@ -340,6 +347,13 @@ class M_absen extends CI_Model
                         // After jam_keluar, it is 'Pulang'
                         $tipe = 'Pulang';
                     }
+                    $attendanceStatus = $data['attendanceStatus'];
+
+                    if ($data['lokasiAttendance'] == 'Di Luar') {
+                        $attendanceStatus = 'Pending';
+                    } else if ($tipe == 'Telat') {
+                        $attendanceStatus = 'Pending';
+                    }
 
                     $this->db->select('*');
                     $this->db->from('tblattendance');
@@ -353,13 +367,16 @@ class M_absen extends CI_Model
                             'username' => $data['username'],
                             'nip' => $data['nip'],
                             'nama' => $data['nama'],
-                            'attendanceStatus' => $data['attendanceStatus'],
+                            // 'attendanceStatus' => $data['attendanceStatus'],
+                            'attendanceStatus' => $attendanceStatus,
+                            // 'lokasiAttendance' => $data['lokasiAttendance'],
                             'lokasiAttendance' => $data['lokasiAttendance'],
                             'date' => date("Y-m-d"),
                             'tipe' => $tipe,
                             'image' => $data['image'],
                             'latitude' => $data['latitude'],
                             'longitude' => $data['longitude'],
+                            'jam_absen' => $data['jam_absen'],
                             // 'nama_lokasi' => $data['nama_lokasi'],
                             // 'alamat_lokasi' => $data['alamat_lokasi'],
                         ]);

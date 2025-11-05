@@ -116,6 +116,10 @@
                     echo "<td>:</td>";
                     echo "<td>" . htmlspecialchars($user["lokasiAttendance"]) . "</td>";
                     echo "</tr>";
+                    echo "<td>Jam Absen</td>";
+                    echo "<td>:</td>";
+                    echo "<td>" . htmlspecialchars($user["jam_absen"]) . "</td>";
+                    echo "</tr>";
 
                     echo "<tr>";
                     echo "<td colspan = '3' style='text-align: center;'><img style='display: block;

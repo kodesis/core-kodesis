@@ -1564,6 +1564,38 @@ class App extends CI_Controller
 						redirect('app/add_user');
 					} else {
 						$ex_level = implode(',', $this->input->post('level'));
+						$is_shift1_active = $this->input->post('shift1');
+
+						// Tentukan nilai untuk database:
+						if ($is_shift1_active) {
+							// Jika dicentang/aktif:
+							$shift1_value = 1;
+							$jam_masuk_2 = $this->input->post('jam_masuk2');
+							$jam_keluar_2 = $this->input->post('jam_keluar2');
+						} else {
+							// Jika TIDAK dicentang/tidak aktif:
+							$shift1_value = 0;
+							// Set ke NULL atau string kosong ('') sesuai tipe kolom database Anda
+							$jam_masuk_2 = NULL;
+							$jam_keluar_2 = NULL;
+						}
+
+						$is_shift2_active = $this->input->post('shift2');
+
+						// Tentukan nilai untuk database:
+						if ($is_shift2_active) {
+							// Jika dicentang/aktif:
+							$shift2_value = 1;
+							$jam_masuk_3 = $this->input->post('jam_masuk3');
+							$jam_keluar_3 = $this->input->post('jam_keluar3');
+						} else {
+							// Jika TIDAK dicentang/tidak aktif:
+							$shift2_value = 0;
+							// Set ke NULL atau string kosong ('') sesuai tipe kolom database Anda
+							$jam_masuk_3 = NULL;
+							$jam_keluar_3 = NULL;
+						}
+
 						$add = [
 							"nama" => $this->input->post('nama'),
 							"username" => $this->input->post('username'),
@@ -1582,7 +1614,17 @@ class App extends CI_Controller
 							"cuti" => $this->input->post('cuti'),
 							"id_lokasi_presensi" => $this->input->post('lokasi_presensi'),
 							"jam_masuk" => $this->input->post('jam_masuk'),
-							"jam_keluar" => $this->input->post('jam_keluar')
+							"jam_keluar" => $this->input->post('jam_keluar'),
+
+							// Data Shift 1 yang baru:
+							"shift1" => $shift1_value,
+							"jam_masuk2" => $jam_masuk_2,
+							"jam_keluar2" => $jam_keluar_2,
+
+							// Data Shift 1 yang baru:
+							"shift2" => $shift2_value,
+							"jam_masuk3" => $jam_masuk_3,
+							"jam_keluar3" => $jam_keluar_3
 						];
 						$this->db->insert('users', $add);
 						$this->session->set_flashdata('msg', '<div class="alert alert-success">Registrasi User ' . $this->input->post('nama') . '</div>');
@@ -1621,6 +1663,38 @@ class App extends CI_Controller
 					$data['count_inbox2'] = $result3;
 
 					if ($this->input->post('edit') == 'edit') {
+						$is_shift1_active = $this->input->post('shift1');
+
+						// Tentukan nilai untuk database:
+						if ($is_shift1_active) {
+							// Jika dicentang/aktif:
+							$shift1_value = 1;
+							$jam_masuk_2 = $this->input->post('jam_masuk2');
+							$jam_keluar_2 = $this->input->post('jam_keluar2');
+						} else {
+							// Jika TIDAK dicentang/tidak aktif:
+							$shift1_value = 0;
+							// Set ke NULL atau string kosong ('') sesuai tipe kolom database Anda
+							$jam_masuk_2 = NULL;
+							$jam_keluar_2 = NULL;
+						}
+
+						$is_shift2_active = $this->input->post('shift2');
+
+						// Tentukan nilai untuk database:
+						if ($is_shift2_active) {
+							// Jika dicentang/aktif:
+							$shift2_value = 1;
+							$jam_masuk_3 = $this->input->post('jam_masuk3');
+							$jam_keluar_3 = $this->input->post('jam_keluar3');
+						} else {
+							// Jika TIDAK dicentang/tidak aktif:
+							$shift2_value = 0;
+							// Set ke NULL atau string kosong ('') sesuai tipe kolom database Anda
+							$jam_masuk_3 = NULL;
+							$jam_keluar_3 = NULL;
+						}
+
 						$id_edit = $this->input->post('id');
 						$ex_level = implode(',', $this->input->post('level'));
 						$edit_data = [
@@ -1640,7 +1714,17 @@ class App extends CI_Controller
 							"cuti" => $this->input->post('cuti'),
 							"id_lokasi_presensi" => $this->input->post('lokasi_presensi'),
 							"jam_masuk" => $this->input->post('jam_masuk'),
-							"jam_keluar" => $this->input->post('jam_keluar')
+							"jam_keluar" => $this->input->post('jam_keluar'),
+
+							// Data Shift 1 yang baru:
+							"shift1" => $shift1_value,
+							"jam_masuk2" => $jam_masuk_2,
+							"jam_keluar2" => $jam_keluar_2,
+
+							// Data Shift 1 yang baru:
+							"shift2" => $shift2_value,
+							"jam_masuk3" => $jam_masuk_3,
+							"jam_keluar3" => $jam_keluar_3
 						];
 						$this->db->where('id', $id_edit);
 						$this->db->update('users', $edit_data);

@@ -46,7 +46,6 @@
             <?php
             echo 'Jam Masuk :' . $jam_masuk_plus_two;
             echo 'Jam Keluar :' . $jam_keluar_plus_two;
-            // var_dump($result3);
             ?>
             <!-- <div class="search-box shadow-xl border-0 bg-theme rounded-sm bottom-0">
                 <form action="" method="get">
@@ -406,8 +405,33 @@
         // const username = row.cells[0].innerText.trim();
         const username = document.getElementById('username').innerText; // Update attendance status
 
+        <?php
+
+        date_default_timezone_set('Asia/Jakarta');
+        $current_time = new DateTime();
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+5 minutes');
+        $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
+        ?>
         if (detectedFaces.includes(username)) {
             if (isWithinRange) {
+                // <?php
+                    // if ($current_time <= $jam_masuk_plus_two || $current_time >= $jam_keluar_plus_two) {
+                    // 
+                    ?>
+                //     document.getElementById('absent').innerText = "Present"; // Update attendance status
+                //     document.getElementById('lokasi').innerText = locationName; // Update location
+                //     AttendanceStatus = "Present";
+                // <?php
+                    // } else {
+                    // 
+                    ?>
+                //     document.getElementById('absent').innerText = "Pending"; // Update attendance status
+                //     document.getElementById('lokasi').innerText = locationName; // Update location
+                //     AttendanceStatus = "Pending";
+                // <?php
+                    // }
+                    // 
+                    ?>
                 document.getElementById('absent').innerText = "Present"; // Update attendance status
                 document.getElementById('lokasi').innerText = locationName; // Update location
                 AttendanceStatus = "Present";
@@ -637,7 +661,6 @@
                         });
 
                     } else {
-                        Swal.close();
                         $('#jam_absen').val('reguler');
                         startWebcamLogic();
                     }
@@ -945,17 +968,7 @@
     // NOTE: PHP will crash here if $jam_masuk_plus_two and $jam_keluar_plus_two
     // are not defined or passed into the view.
     // Assuming they are passed correctly as DateTime objects.
-    // Format the necessary times to H:i:s strings ONCE for reliable comparison
-    $current_time_str = $current_time->format('H:i:s');
-    // Safety check: ensure objects exist before formatting
 
-    $jam_masuk_str = ($jam_masuk_plus_two && method_exists($jam_masuk_plus_two, 'format'))
-        ? $jam_masuk_plus_two->format('H:i:s')
-        : '00:00:00';
-
-    $jam_keluar_str = ($jam_keluar_plus_two && method_exists($jam_keluar_plus_two, 'format'))
-        ? $jam_keluar_plus_two->format('H:i:s')
-        : '23:59:59';
     if (empty($data_users)) {
     ?>
         // --- JS Output for Empty User ---
@@ -978,7 +991,7 @@
 
     $absen_masuk_js = "
         Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Masuk', 'warning');
-        updateTableMasuk();
+        updateTableAbsensi();
     ";
 
     $absen_telat_js = "
@@ -988,10 +1001,15 @@
 
     $absen_pulang_js = "
         Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Pulang', 'warning');
-        updateTablePulang();
+        updateTableAbsensi();
     ";
     ?>
 
+    console.log('--- Debugging Times ---');
+    console.log('Current Time (C): <?php echo $current_time->format('H:i:s'); ?>');
+    console.log('Masuk Deadline (M): <?php echo $jam_masuk_plus_two->format('H:i:s'); ?>');
+    console.log('Keluar Time (K): <?php echo $jam_keluar_plus_two->format('H:i:s'); ?>');
+    console.log('--- Start Logic ---');
 
     console.log('Tes - User Data Found'); // Global Test Console Log
 
@@ -1000,7 +1018,7 @@
         console.log('ada2');
         <?php echo $loading_js; ?>
 
-    <?php } else if ($current_time_str <= $jam_masuk_str) { ?>
+    <?php } else if ($current_time <= $jam_masuk_plus_two) { ?>
         // --- Case 2: Before or at entry time deadline (Masuk) ---
         console.log('Masuk');
         <?php if (empty($result1) && empty($result3)) { ?>
@@ -1010,17 +1028,17 @@
             <?php echo $absen_masuk_js; ?>
         <?php } ?>
 
-    <?php } else if ($current_time_str > $jam_masuk_str && $current_time_str < $jam_keluar_str) { ?>
+    <?php } else if ($current_time > $jam_masuk_plus_two && $current_time < $jam_keluar_plus_two) { ?>
         // --- Case 3: After entry deadline AND before exit time (Telat Window) ---
         console.log('Telat');
         <?php if (empty($result1) && empty($result3)) { ?>
-            console.log('result3 - Needs Telat');
+            console.log('result1 - Needs Telat');
             <?php echo $loading_js; ?>
         <?php } else { ?>
             <?php echo $absen_telat_js; ?>
         <?php } ?>
 
-    <?php } else if ($current_time_str >= $jam_keluar_str) { ?>
+    <?php } else if ($current_time >= $jam_keluar_plus_two) { ?>
         // --- Case 4: At or after exit time (Pulang) ---
         console.log('Pulang');
         <?php if (empty($result2)) { ?>

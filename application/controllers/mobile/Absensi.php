@@ -87,49 +87,99 @@ class Absensi extends CI_Controller
             // Access properties using '->' because $cek_user is an object
             $data_user = $this->user->data_user();
 
+            $this->db->select('*');
+            $this->db->from('tblattendance');
+            $this->db->where('username', $this->session->userdata('username')); // Filter by username
+            $this->db->where('DATE(date)', 'DATE(NOW())', false);
+            // --- START GROUPING THE 'OR' CONDITIONS ---
+            $this->db->group_start();
+            $this->db->where('tipe', 'Masuk');
+            $this->db->or_where('tipe', 'Telat');
+            $this->db->group_end();
+            // --- END GROUPING ---
+            $query = $this->db->get(); // Execute the query
+            $data_user_masuk_telat = $query->row(); // Fetch results
             // Ensure $cek_user is not null and contains jam_masuk and jam_keluar
-            if ($data_user && isset($data_user->jam_masuk) && isset($data_user->jam_keluar)) {
-                $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
-                $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
-            } else {
-                echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
-                return;
+
+            // var_dump($data_user_masuk_telat);
+            $jam_masuk_plus_two = null;
+            $jam_keluar_plus_two = null;
+            // echo $data_user_masuk_telat->jam_absen;
+            if ($data_user_masuk_telat && $data_user_masuk_telat->jam_absen == 'reguler') {
+                if ($data_user && isset($data_user->jam_masuk) && isset($data_user->jam_keluar)) {
+                    $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
+                    $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
+                } else {
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    return;
+                }
+            } else if ($data_user_masuk_telat && $data_user_masuk_telat->jam_absen == 'shift1') {
+                if ($data_user && isset($data_user->jam_masuk2) && isset($data_user->jam_keluar2)) {
+                    $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk2))->modify('+5 minutes')->format('H:i:s');
+                    $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar2))->modify('+0 hours')->format('H:i:s');
+                } else {
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    return;
+                }
+            } else if ($data_user_masuk_telat && $data_user_masuk_telat->jam_absen == 'shift2') {
+                if ($data_user && isset($data_user->jam_masuk3) && isset($data_user->jam_keluar3)) {
+                    $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk3))->modify('+5 minutes')->format('H:i:s');
+                    $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar3))->modify('+0 hours')->format('H:i:s');
+                } else {
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    return;
+                }
             }
 
-            $this->db->select('*');
-            $this->db->from('tblattendance');
-            $this->db->where('username', $this->session->userdata('username')); // Filter by username
-            $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-            $this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
-            $query = $this->db->get(); // Execute the query
-            $result1 = $query->result_array(); // Fetch results
+            if ($data_user_masuk_telat) {
+                $this->db->select('*');
+                $this->db->from('tblattendance');
+                $this->db->where('username', $this->session->userdata('username')); // Filter by username
+                $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+                $this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
+                $query = $this->db->get(); // Execute the query
+                $result1 = $query->result_array(); // Fetch results
 
-            $this->db->select('*');
-            $this->db->from('tblattendance');
-            $this->db->where('username', $this->session->userdata('username')); // Filter by username
-            $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-            $this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
-            $query = $this->db->get(); // Execute the query
-            $result2 = $query->result_array(); // Fetch results
+                $this->db->select('*');
+                $this->db->from('tblattendance');
+                $this->db->where('username', $this->session->userdata('username')); // Filter by username
+                $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+                $this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
+                $query = $this->db->get(); // Execute the query
+                $result2 = $query->result_array(); // Fetch results
 
-            $this->db->select('*');
-            $this->db->from('tblattendance');
-            $this->db->where('username', $this->session->userdata('username')); // Filter by username
-            $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-            $this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
-            $this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
-            $query = $this->db->get(); // Execute the query
-            $result3 = $query->result_array(); // Fetch results
+                $this->db->select('*');
+                $this->db->from('tblattendance');
+                $this->db->where('username', $this->session->userdata('username')); // Filter by username
+                $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
+                $this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
+                $this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
+                $query = $this->db->get(); // Execute the query
+                $result3 = $query->result_array(); // Fetch results
 
+                $data['result1'] = $result1;
+                $data['result2'] = $result2;
+                $data['result3'] = $result3;
+            } else {
+
+                $data['result1'] = null;
+                $data['result2'] = null;
+                $data['result3'] = null;
+            }
+
+            $data['jam_masuk_plus_two'] = $jam_masuk_plus_two;
+            $data['jam_keluar_plus_two'] = $jam_keluar_plus_two;
             $this->db->select('*');
             $this->db->from('users');
             $this->db->where('username', $this->session->userdata('username')); // Filter by username
             $query = $this->db->get(); // Execute the query
             $lokasi_presensi_user = $query->row(); // Fetch results
 
-            $data['result1'] = $result1;
-            $data['result2'] = $result2;
-            $data['result3'] = $result3;
+            $shift1 = $data_user->shift1;
+            $shift2 = $data_user->shift2;
+
+            $data['shift1'] = $shift1;
+            $data['shift2'] = $shift2;
             $data['lokasi_presensi_user'] = $lokasi_presensi_user;
 
             $this->load->view('mobile/Layouts/v_header', $data);
@@ -316,7 +366,14 @@ class Absensi extends CI_Controller
 
         // if (file_put_contents($folderPath . $filename, $imageData)) {
         // Save attendance data to the database
-        $this->db->select('jam_masuk, jam_keluar');
+        $jam_absen = $data['jam_absen'];
+        if ($jam_absen == 'reguler') {
+            $this->db->select('jam_masuk, jam_keluar');
+        } else if ($jam_absen == 'shift1') {
+            $this->db->select('jam_masuk2 as jam_masuk, jam_keluar2 as jam_keluar');
+        } else if ($jam_absen == 'shift2') {
+            $this->db->select('jam_masuk3 as jam_masuk, jam_keluar3 as jam_keluar');
+        }
         $this->db->from('users');
         $this->db->where('username', $data['username']);
         $jam = $this->db->get()->row();
@@ -327,6 +384,9 @@ class Absensi extends CI_Controller
         $endOfDay = new DateTime($jam->jam_keluar);
         $startOfDay->modify('+5 minutes');
 
+        // echo 'Jam Absen : ' . $jam_absen;
+        // echo 'Jam startOfDay : ' . $startOfDay->format('Y-m-d H:i:s');
+        // echo 'Jam endOfDay : ' . $endOfDay->format('Y-m-d H:i:s');
         // Debug outputs
         // echo "Current Time: " . $currentTime->format('H:i:s') . "<br>";
         // echo "Start of Day: " . $startOfDay->format('H:i:s') . "<br>";
@@ -353,6 +413,7 @@ class Absensi extends CI_Controller
         if (empty($cek_absen)) {
             if (file_put_contents($folderPath . $filename, $imageData)) {
                 $attendance = [
+                    'jam_absen' => $data['jam_absen'],
                     'username' => $data['username'],
                     'nip' => $data['nip'],
                     'nama' => $data['nama'],
@@ -362,18 +423,18 @@ class Absensi extends CI_Controller
                     'image' => $filename,
                     'latitude' => $data['latitude'],
                     'longitude' => $data['longitude'],
-                    'nama_lokasi' => $data['nama_lokasi'],
-                    'alamat_lokasi' => $data['alamat_lokasi'],
+                    // 'nama_lokasi' => $data['nama_lokasi'],
+                    // 'alamat_lokasi' => $data['alamat_lokasi'],
                 ];
                 $response = $this->user->insertAttendance($attendance);
                 echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
             } else {
-                // echo json_encode(['status' => 'error', 'message' => 'Failed to save image.']);
+                echo json_encode(['status' => 'error', 'message' => 'Failed to save image.']);
             }
         } else {
-            echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
+            // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
         }
-        echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
+        // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
 
         // Call the method to insert attendance
 

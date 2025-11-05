@@ -500,6 +500,36 @@
 										<td><input type="time" name="jam_keluar" class="form-control"></td>
 									</tr>
 									<tr>
+										<th>Shift 1</th>
+										<td>
+											<input type="checkbox" name="shift1" value="shift1" id="shift1_toggle" class="form-checkbox">
+											<label for="" class="form-label">Aktifkan Shift 1</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Masuk</th>
+										<td><input type="time" name="jam_masuk2" id="jam_masuk2" class="form-control" disabled></td>
+									</tr>
+									<tr>
+										<th>Jam Keluar</th>
+										<td><input type="time" name="jam_keluar2" id="jam_keluar2" class="form-control" disabled></td>
+									</tr>
+									<tr style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc;">
+										<th>Shift 2</th>
+										<td>
+											<input type="checkbox" name="shift2" value="shift2" id="shift2_toggle" class="form-checkbox" disabled>
+											<label for="" class="form-label">Aktifkan Shift 2</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Masuk</th>
+										<td><input type="time" name="jam_masuk3" id="jam_masuk3" class="form-control" disabled></td>
+									</tr>
+									<tr>
+										<th>Jam Keluar</th>
+										<td><input type="time" name="jam_keluar3" id="jam_keluar3" class="form-control" disabled></td>
+									</tr>
+									<tr>
 										<th>
 											<a class="btn btn-warning" href="<?= base_url('app/user') ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
 										</th>
@@ -676,8 +706,51 @@
 											<input type="time" name="jam_keluar" class="form-control" value="<?= $user->jam_keluar ?>">
 										</div>
 									</div>
-
-									<div class="col-12">
+									<div class="col-md-12 mt-2">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label for="">Shift 1</label>
+												<div class="col-md-12">
+													<input type="checkbox" name="shift1" value="1" id="shift1_toggle" class="form-checkbox" <?= ($user->shift1 == 1) ? 'checked' : '' ?>>
+													<label for="" class="form-label">Aktifkan Shift 1</label>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label>Jam Masuk</label>
+														<input type="time" name="jam_masuk2" id="jam_masuk2" class="form-control" value="<?= $user->jam_masuk2 ?>" disabled>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label>Jam Keluar</label>
+														<input type="time" name="jam_keluar2" id="jam_keluar2" class="form-control" value="<?= $user->jam_keluar2 ?>" disabled>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label for="">Shift 2</label>
+												<div class="col-md-12">
+													<input type="checkbox" name="shift2" value="1" id="shift2_toggle" class="form-checkbox" <?= ($user->shift2 == 1) ? 'checked' : 'disabled' ?>>
+													<label for="" class="form-label">Aktifkan Shift 2</label>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label>Jam Masuk</label>
+														<input type="time" name="jam_masuk3" id="jam_masuk3" class="form-control" value="<?= $user->jam_masuk3 ?>" disabled>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label>Jam Keluar</label>
+														<input type="time" name="jam_keluar3" id="jam_keluar3" class="form-control" value="<?= $user->jam_keluar3 ?>" disabled>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12">
 										<div class="form-group">
 											<a class="btn btn-warning" href="<?= base_url('app/user') ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
 											<button type="submit" class="btn btn-primary">Update</button>
@@ -768,6 +841,52 @@
 				$(this).remove();
 			});
 		}, 3000);
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			// Fungsionalitas untuk Shift 1
+			$('#shift1_toggle').change(function() {
+				var isChecked = $(this).is(':checked');
+
+				// Aktifkan atau Nonaktifkan input jam SHIFT 1
+				$('#jam_masuk2').prop('disabled', !isChecked);
+				$('#jam_keluar2').prop('disabled', !isChecked);
+
+				// Kontrol status SHIFT 2
+				$('#jam_masuk3').prop('disabled', !isChecked);
+				$('#jam_keluar3').prop('disabled', !isChecked);
+				$('#shift2_toggle').prop('disabled', !isChecked);
+
+				// Opsional: Kosongkan nilai jika dinonaktifkan
+				if (!isChecked) {
+					$('#jam_masuk2').val('');
+					$('#jam_keluar2').val('');
+
+					// Nonaktifkan dan kosongkan juga SHIFT 2 dan pemicunya
+					$('#shift2_toggle').prop('checked', false);
+					$('#jam_masuk3').val('');
+					$('#jam_keluar3').val('');
+				}
+
+				// PENTING: Panggil event change Shift 2 agar dapat mengontrol Shift 3
+				$('#shift2_toggle').change();
+			});
+
+			$('#shift2_toggle').change(function() {
+				var isChecked = $(this).is(':checked');
+
+				$('#jam_masuk3').prop('disabled', !isChecked);
+				$('#jam_keluar3').prop('disabled', !isChecked);
+				// Opsional: Kosongkan nilai jika dinonaktifkan
+				if (!isChecked) {
+					$('#jam_masuk3').val('');
+					$('#jam_keluar3').val('');
+				}
+			});
+			$('#shift1_toggle').change();
+
+		});
 	</script>
 </body>
 

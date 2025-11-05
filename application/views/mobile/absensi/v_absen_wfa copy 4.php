@@ -43,11 +43,6 @@
     <div class="page-content">
         <div class="content mt-0 mb-3">
             <h3 class="text-center my-3">ABSEN WFA</h3>
-            <?php
-            echo 'Jam Masuk :' . $jam_masuk_plus_two;
-            echo 'Jam Keluar :' . $jam_keluar_plus_two;
-            // var_dump($result3);
-            ?>
             <!-- <div class="search-box shadow-xl border-0 bg-theme rounded-sm bottom-0">
                 <form action="" method="get">
                     <i class="fa fa-search"></i>
@@ -406,16 +401,35 @@
         // const username = row.cells[0].innerText.trim();
         const username = document.getElementById('username').innerText; // Update attendance status
 
+        <?php
+
+        date_default_timezone_set('Asia/Jakarta');
+        $current_time = new DateTime();
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+5 minutes');
+        $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
+        ?>
         if (detectedFaces.includes(username)) {
             if (isWithinRange) {
-                document.getElementById('absent').innerText = "Present"; // Update attendance status
-                document.getElementById('lokasi').innerText = locationName; // Update location
-                AttendanceStatus = "Present";
+                <?php
+                if ($current_time <= $jam_masuk_plus_two || $current_time >= $jam_keluar_plus_two) {
+                ?>
+                    document.getElementById('absent').innerText = "Present"; // Update attendance status
+                    document.getElementById('lokasi').innerText = locationName; // Update location
+                    AttendanceStatus = "Present";
+                <?php
+                } else {
+                ?>
+                    document.getElementById('absent').innerText = "Pending"; // Update attendance status
+                    document.getElementById('lokasi').innerText = locationName; // Update location
+                    AttendanceStatus = "Pending";
+                <?php
+                }
+                ?>
             } else {
                 document.getElementById('absent').innerText = "Pending"; // Update attendance status
                 document.getElementById('lokasi').innerText = "Di Luar"; // Update location
                 locationName = "Di Luar";
-                AttendanceStatus = "Present";
+                AttendanceStatus = "Pending";
 
             }
             const currentDate = new Date(); // Get the current date and time (UTC by default)
@@ -637,7 +651,6 @@
                         });
 
                     } else {
-                        Swal.close();
                         $('#jam_absen').val('reguler');
                         startWebcamLogic();
                     }
@@ -938,103 +951,32 @@
         stopWebcam();
     });
     <?php
-    // --- Setup and Initialization (Required PHP) ---
-    date_default_timezone_set('Asia/Jakarta');
-    $current_time = new DateTime();
-
-    // NOTE: PHP will crash here if $jam_masuk_plus_two and $jam_keluar_plus_two
-    // are not defined or passed into the view.
-    // Assuming they are passed correctly as DateTime objects.
-    // Format the necessary times to H:i:s strings ONCE for reliable comparison
-    $current_time_str = $current_time->format('H:i:s');
-    // Safety check: ensure objects exist before formatting
-
-    $jam_masuk_str = ($jam_masuk_plus_two && method_exists($jam_masuk_plus_two, 'format'))
-        ? $jam_masuk_plus_two->format('H:i:s')
-        : '00:00:00';
-
-    $jam_keluar_str = ($jam_keluar_plus_two && method_exists($jam_keluar_plus_two, 'format'))
-        ? $jam_keluar_plus_two->format('H:i:s')
-        : '23:59:59';
     if (empty($data_users)) {
     ?>
-        // --- JS Output for Empty User ---
         getLocation();
     <?php
-        return; // Exit if no user data
-    }
-
-    // --- Centralized JavaScript Messages for clean output ---
-    $loading_js = "
-        getLocation();
-        Swal.fire({
-            title: 'Loading...',
-            text: 'Sedang Mempersiapkan Lokasi..',
-            icon: 'info',
-            showConfirmButton: false,
-            allowOutsideClick: false
-        });
-    ";
-
-    $absen_masuk_js = "
-        Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Masuk', 'warning');
-        updateTableMasuk();
-    ";
-
-    $absen_telat_js = "
-        Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Telat', 'warning');
-        updateTableAbsensi();
-    ";
-
-    $absen_pulang_js = "
-        Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Pulang', 'warning');
-        updateTablePulang();
-    ";
+    } else {
+        date_default_timezone_set('Asia/Jakarta');
+        $current_time = new DateTime();
+        $jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+5 minutes');
+        $jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
     ?>
-
-
-    console.log('Tes - User Data Found'); // Global Test Console Log
-
-    <?php if (empty($result1) && empty($result2) && empty($result3)) { ?>
-        // --- Case 1: No attendance recorded yet (First action of the day) ---
-        console.log('ada2');
-        <?php echo $loading_js; ?>
-
-    <?php } else if ($current_time_str <= $jam_masuk_str) { ?>
-        // --- Case 2: Before or at entry time deadline (Masuk) ---
-        console.log('Masuk');
-        <?php if (empty($result1) && empty($result3)) { ?>
-            console.log('result1 - Needs Masuk');
-            <?php echo $loading_js; ?>
-        <?php } else { ?>
-            <?php echo $absen_masuk_js; ?>
-        <?php } ?>
-
-    <?php } else if ($current_time_str > $jam_masuk_str && $current_time_str < $jam_keluar_str) { ?>
-        // --- Case 3: After entry deadline AND before exit time (Telat Window) ---
-        console.log('Telat');
-        <?php if (empty($result1) && empty($result3)) { ?>
-            console.log('result3 - Needs Telat');
-            <?php echo $loading_js; ?>
-        <?php } else { ?>
-            <?php echo $absen_telat_js; ?>
-        <?php } ?>
-
-    <?php } else if ($current_time_str >= $jam_keluar_str) { ?>
-        // --- Case 4: At or after exit time (Pulang) ---
-        console.log('Pulang');
-        <?php if (empty($result2)) { ?>
-            console.log('result2s - Needs Pulang');
-            <?php echo $loading_js; ?>
-        <?php } else { ?>
-            <?php echo $absen_pulang_js; ?>
-        <?php } ?>
-
-    <?php } else { ?>
-        // --- Fallback Case (Should rarely happen with complete logic) ---
-        console.log('Tes 2 - Logic Fallback');
-    <?php } ?>
-
+        <?php if (empty($result1) && empty($result3)) {
+        ?>
+            console.log('ada2');
+            getLocation(); // Call function
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Sedang Mempersiapkan Lokasi..',
+                icon: 'info',
+                showConfirmButton: false, // We don't want the user to click OK yet
+                allowOutsideClick: false // Optional: Prevent closing by clicking outside
+            });
+        <?php
+        } else { ?>
+            Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
+            updateTableAbsensi(); // Call function
+        <?php } ?> <?php } ?>
     const currentTime = new Date("<?php echo $current_time->format('Y-m-d H:i:s'); ?>");
     console.log('Current time:', currentTime);
 </script>

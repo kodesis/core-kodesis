@@ -130,6 +130,14 @@ class Absensi extends CI_Controller
                     echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
                     return;
                 }
+            } else if ($data_user_masuk_pulang && $data_user_masuk_pulang->jam_absen == 'shift3') {
+                if ($data_user && isset($data_user->jam_masuk4) && isset($data_user->jam_keluar4)) {
+                    $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk4))->modify('+5 minutes')->format('H:i:s');
+                    $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar4))->modify('+0 hours')->format('H:i:s');
+                } else {
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    return;
+                }
             }
 
             if ($data_user_masuk_pulang) {
@@ -178,9 +186,11 @@ class Absensi extends CI_Controller
 
             $shift1 = $data_user->shift1;
             $shift2 = $data_user->shift2;
+            $shift3 = $data_user->shift3;
 
             $data['shift1'] = $shift1;
             $data['shift2'] = $shift2;
+            $data['shift3'] = $shift3;
             $data['lokasi_presensi_user'] = $lokasi_presensi_user;
 
             $this->load->view('mobile/Layouts/v_header', $data);
@@ -374,6 +384,8 @@ class Absensi extends CI_Controller
             $this->db->select('jam_masuk2 as jam_masuk, jam_keluar2 as jam_keluar');
         } else if ($jam_absen == 'shift2') {
             $this->db->select('jam_masuk3 as jam_masuk, jam_keluar3 as jam_keluar');
+        } else if ($jam_absen == 'shift3') {
+            $this->db->select('jam_masuk4 as jam_masuk, jam_keluar4 as jam_keluar');
         }
         $this->db->from('users');
         $this->db->where('username', $data['username']);
@@ -418,6 +430,7 @@ class Absensi extends CI_Controller
                     'username' => $data['username'],
                     'nip' => $data['nip'],
                     'nama' => $data['nama'],
+                    'tipe' => $tipe,
                     'attendanceStatus' => $data['attendanceStatus'],
                     'lokasiAttendance' => $data['lokasiAttendance'],
                     'tanggalAttendance' => $data['tanggalAttendance'],

@@ -49,11 +49,10 @@
             // $current_time = new DateTime();
             // $current_time = $current_time->format('H:i:s');
 
-            echo 'Jam Masuk :' . $jam_masuk_plus_two;
-            echo 'Jam Keluar :' . $jam_keluar_plus_two;
+            // echo 'Jam Masuk :' . $jam_masuk_plus_two;
+            // echo 'Jam Keluar :' . $jam_keluar_plus_two;
             // echo 'Jam Sekarang :' . $current_time;
             // var_dump($result3);
-            // var_dump($result2);
             // var_dump($result1);
             ?>
             <!-- <div class="search-box shadow-xl border-0 bg-theme rounded-sm bottom-0">
@@ -484,8 +483,104 @@
         return canvas.toDataURL("image/png");
     }
 
+    function showShiftSelection(shift1_active, shift2_active, shift3_active) {
 
+        // 1. Definisikan semua opsi yang mungkin dengan label yang ramah pengguna
+        const allOptions = {
+            'reguler': 'Jam Reguler (Default)',
+            'shift1': 'Jam Shift 1',
+            'shift2': 'Jam Shift 2',
+            'shift3': 'Jam Shift 3'
+        };
 
+        // 2. Buat objek untuk opsi yang benar-benar aktif/tersedia
+        const activeOptions = {};
+        activeOptions['reguler'] = allOptions['reguler']; // Reguler diasumsikan selalu aktif
+
+        if (shift1_active) {
+            activeOptions['shift1'] = allOptions['shift1'];
+        }
+        if (shift2_active) {
+            activeOptions['shift2'] = allOptions['shift2'];
+        }
+        if (shift3_active) {
+            activeOptions['shift3'] = allOptions['shift3'];
+        }
+
+        const availableCount = Object.keys(activeOptions).length;
+
+        // --- LOGIKA KONDISIONAL DINAMIS ---
+
+        // Kasus 1: Hanya ada satu shift yang tersedia (hanya Reguler, atau hanya 1 Shift Kustom)
+        if (availableCount <= 1) {
+            // Karena Reguler selalu ada, jika count <= 1, maka shift yang terpilih adalah yang ada (atau 'reguler' sebagai fallback)
+            const selectedShift = Object.keys(activeOptions)[0] ?? 'reguler';
+
+            Swal.close();
+            $('#jam_absen').val(selectedShift);
+
+            // Tampilkan notifikasi singkat sebelum memulai webcam
+            const shiftName = allOptions[selectedShift].replace('(Default)', '').trim();
+            startWebcamLogic();
+            // Swal.fire({
+            //     title: 'Jam Reguler Otomatis Dipilih',
+            //     text: 'Hanya satu Jam yang tersedia. Memilih ' + shiftName + ' secara otomatis.',
+            //     icon: 'info',
+            //     timer: 1500, // Notifikasi akan hilang setelah 1.5 detik
+            //     showConfirmButton: false
+            // }).then(() => {
+            //     // Lanjutkan ke logika webcam
+            //     startWebcamLogic();
+            // });
+            return;
+        }
+
+        // Kasus 2: Ada lebih dari satu shift yang tersedia, tampilkan modal SweetAlert
+        else {
+            Swal.fire({
+                title: 'Pilih Jam Shift', // Judul notifikasi
+                text: 'Anda telah mengaktifkan lebih dari satu shift (' + availableCount + ' shift tersedia). Silakan pilih shift untuk absensi hari ini:',
+                icon: 'question',
+
+                // Menggunakan input radio untuk pilihan dinamis
+                input: 'radio',
+                inputOptions: activeOptions, // Menggunakan opsi yang difilter
+                inputValue: 'reguler', // Default value adalah Reguler
+
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Anda harus memilih salah satu Shift!';
+                    }
+                },
+
+                showCancelButton: true,
+                confirmButtonText: 'Pilih Shift',
+                cancelButtonText: 'Batal Absen',
+                allowOutsideClick: false,
+                reverseButtons: true,
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const selectedShift = result.value;
+                    Swal.close();
+
+                    // Set nilai ke input tersembunyi
+                    $('#jam_absen').val(selectedShift);
+
+                    // Konfirmasi pilihan dan lanjutkan
+                    const shiftName = allOptions[selectedShift].replace('(Default)', '').trim();
+                    Swal.fire('Shift Terpilih!', 'Anda memilih untuk Absen pada ' + shiftName + '.', 'success');
+
+                    // Lanjutkan ke logika webcam/absensi setelah pemilihan
+                    startWebcamLogic();
+
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Aksi jika tombol Batal ditekan
+                    Swal.fire('Absensi Dibatalkan', 'Anda membatalkan proses pemilihan Shift.', 'error');
+                }
+            });
+        }
+    }
 
 
     function updateOtherElements() {
@@ -674,159 +769,6 @@
             }
         });
 
-        function showShiftSelection(shift1_active, shift2_active, shift3_active) {
-
-            // 1. Definisikan semua opsi yang mungkin dengan label yang ramah pengguna
-            const allOptions = {
-                'reguler': {
-                    label: 'Pilih Jam Reguler',
-                    style: 'background-color: #3085d6; color: white;'
-                }, // Biru/Primary
-                'shift1': {
-                    label: 'Pilih Jam Shift 1',
-                    style: 'background-color: #28a745; color: white;'
-                }, // Hijau/Success
-                'shift2': {
-                    label: 'Pilih Jam Shift 2',
-                    style: 'background-color: #ffc107; color: #333;'
-                }, // Kuning/Warning
-                'shift3': {
-                    label: 'Pilih Jam Shift 3',
-                    style: 'background-color: #dc3545; color: white;'
-                }, // Merah/Danger
-            };
-
-            // 2. Buat array untuk shift yang benar-benar aktif/tersedia
-            const activeShifts = [];
-            activeShifts.push('reguler'); // Reguler diasumsikan selalu aktif
-            if (shift1_active) {
-                activeShifts.push('shift1');
-            }
-            if (shift2_active) {
-                activeShifts.push('shift2');
-            }
-            if (shift3_active) {
-                activeShifts.push('shift3');
-            }
-            const availableCount = activeShifts.length;
-
-            // --- LOGIKA KONDISIONAL DINAMIS ---
-
-            // Kasus 1: Hanya ada satu shift yang tersedia (hanya Reguler, atau hanya 1 Shift Kustom)
-            if (availableCount <= 1) {
-                // Karena Reguler selalu ada, jika count <= 1, maka shift yang terpilih adalah yang ada (atau 'reguler' sebagai fallback)
-                const selectedShift = activeShifts[0] ?? 'reguler';
-
-                Swal.close();
-                $('#jam_absen').val(selectedShift);
-
-                // const shiftData = allOptions[selectedShift];
-                // const shiftName = shiftData.label.replace('Pilih Jam', '').trim();
-
-                // Swal.fire({
-                //     title: 'Shift Otomatis Dipilih',
-                //     text: 'Hanya satu shift yang tersedia. Memilih ' + shiftName + ' secara otomatis.',
-                //     icon: 'info',
-                //     timer: 1500,
-                //     showConfirmButton: false
-                // }).then(() => {
-                startWebcamLogic();
-                // });
-                return;
-            }
-
-            // Kasus 2: Ada lebih dari satu shift yang tersedia, tampilkan modal dengan tombol
-
-            // Bangun HTML untuk tombol dinamis
-            let buttonsHtml = '<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">';
-
-            // Tambahkan tombol untuk setiap shift aktif
-            activeShifts.forEach(shiftKey => {
-                const shiftData = allOptions[shiftKey];
-                buttonsHtml += `
-            <button 
-                class="swal2-styled custom-shift-button" 
-                data-shift="${shiftKey}" 
-                style="${shiftData.style} font-weight: 600; padding: 12px 20px; border-radius: 8px;">
-                ${shiftData.label}
-            </button>
-        `;
-            });
-
-            // Tambahkan tombol Batal di bagian bawah
-            buttonsHtml += `
-        <button 
-            id="cancel-shift-selection" 
-            class="swal2-styled" 
-            style="background-color: #6c757d; color: white; margin-top: 10px; padding: 12px 20px; border-radius: 8px;">
-            Batal Absen
-        </button>
-    </div>`;
-
-            Swal.fire({
-                title: 'Pilih Jam Shift',
-                text: 'Anda telah mengaktifkan ' + availableCount + ' shift. Silakan pilih shift untuk absensi hari ini:',
-                icon: 'question',
-
-                // Nonaktifkan tombol bawaan SweetAlert2 dan gunakan HTML kustom
-                showConfirmButton: false,
-                showDenyButton: false,
-                showCancelButton: false,
-
-                html: buttonsHtml,
-                allowOutsideClick: false,
-
-                // Tambahkan event listener setelah modal terbuka
-                didOpen: () => {
-                    // Aksi untuk tombol Shift (Reguler, Shift 1, 2, 3)
-                    document.querySelectorAll('.custom-shift-button').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const selectedShift = e.currentTarget.getAttribute('data-shift');
-                            // Menggunakan Swal.close() untuk mensimulasikan hasil konfirmasi
-                            Swal.close({
-                                isConfirmed: true,
-                                value: selectedShift
-                            });
-                        });
-                    });
-
-                    // Aksi untuk tombol Batal
-                    document.getElementById('cancel-shift-selection').addEventListener('click', () => {
-                        // Menggunakan Swal.close() untuk mensimulasikan hasil batal
-                        Swal.close({
-                            isDismissed: true,
-                            dismiss: 'cancel_button_pressed'
-                        });
-                    });
-                }
-
-            }).then((result) => {
-                let selectedShift = '';
-
-                // Menangkap hasil dari tombol kustom
-                if (result.isConfirmed && result.value) {
-                    selectedShift = result.value;
-
-                    // Set nilai ke input tersembunyi
-                    $('#jam_absen').val(selectedShift);
-
-                    // Konfirmasi pilihan dan lanjutkan
-                    const shiftData = allOptions[selectedShift];
-                    const shiftName = shiftData.label.replace('Pilih Jam', '').trim();
-                    Swal.fire('Shift Terpilih!', 'Anda memilih untuk Absen pada ' + shiftName + '.', 'success');
-
-                    // Lanjutkan ke logika webcam/absensi setelah pemilihan
-                    startWebcamLogic();
-
-                } else if (result.dismiss === 'cancel_button_pressed') {
-                    // Aksi jika tombol Batal Absen ditekan
-                    Swal.fire('Absensi Dibatalkan', 'Anda membatalkan proses pemilihan Shift.', 'error');
-                }
-                // Kasus dismiss lainnya (ESC, backdrop) diabaikan
-            });
-        }
-
-
         function startWebcamLogic() {
             // Tutup SweetAlert sebelumnya (jika ada)
             Swal.close();
@@ -838,6 +780,7 @@
             }
             console.log('Webcam Started: ' + webcamStarted);
         }
+
 
         function startWebcam() {
             navigator.mediaDevices.getUserMedia({
@@ -1116,6 +1059,13 @@
     $current_time_str = $current_time->format('H:i:s');
     // Safety check: ensure objects exist before formatting
 
+    $jam_masuk_str = ($jam_masuk_plus_two && method_exists($jam_masuk_plus_two, 'format'))
+        ? $jam_masuk_plus_two->format('H:i:s')
+        : '00:00:00';
+
+    $jam_keluar_str = ($jam_keluar_plus_two && method_exists($jam_keluar_plus_two, 'format'))
+        ? $jam_keluar_plus_two->format('H:i:s')
+        : '23:59:59';
     if (empty($data_users)) {
     ?>
         // --- JS Output for Empty User ---

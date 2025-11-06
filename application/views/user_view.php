@@ -529,6 +529,21 @@
 										<th>Jam Keluar</th>
 										<td><input type="time" name="jam_keluar3" id="jam_keluar3" class="form-control" disabled></td>
 									</tr>
+									<tr style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc;">
+										<th>Shift 3</th>
+										<td>
+											<input type="checkbox" name="shift3" value="shift3" id="shift3_toggle" class="form-checkbox" disabled>
+											<label for="" class="form-label">Aktifkan Shift 3</label>
+										</td>
+									</tr>
+									<tr>
+										<th>Jam Masuk</th>
+										<td><input type="time" name="jam_masuk4" id="jam_masuk4" class="form-control" disabled></td>
+									</tr>
+									<tr>
+										<th>Jam Keluar</th>
+										<td><input type="time" name="jam_keluar4" id="jam_keluar4" class="form-control" disabled></td>
+									</tr>
 									<tr>
 										<th>
 											<a class="btn btn-warning" href="<?= base_url('app/user') ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
@@ -707,7 +722,7 @@
 										</div>
 									</div>
 									<div class="col-md-12 mt-2">
-										<div class="col-md-6">
+										<div class="col-md-4">
 											<div class="form-group">
 												<label for="">Shift 1</label>
 												<div class="col-md-12">
@@ -728,7 +743,7 @@
 												</div>
 											</div>
 										</div>
-										<div class="col-md-6">
+										<div class="col-md-4">
 											<div class="form-group">
 												<label for="">Shift 2</label>
 												<div class="col-md-12">
@@ -745,6 +760,27 @@
 													<div class="form-group">
 														<label>Jam Keluar</label>
 														<input type="time" name="jam_keluar3" id="jam_keluar3" class="form-control" value="<?= $user->jam_keluar3 ?>" disabled>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Shift 3</label>
+												<div class="col-md-12">
+													<input type="checkbox" name="shift3" value="1" id="shift3_toggle" class="form-checkbox" <?= ($user->shift3 == 1) ? 'checked' : 'disabled' ?>>
+													<label for="" class="form-label">Aktifkan Shift 3</label>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label>Jam Masuk</label>
+														<input type="time" name="jam_masuk4" id="jam_masuk4" class="form-control" value="<?= $user->jam_masuk3 ?>" disabled>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label>Jam Keluar</label>
+														<input type="time" name="jam_keluar4" id="jam_keluar4" class="form-control" value="<?= $user->jam_keluar3 ?>" disabled>
 													</div>
 												</div>
 											</div>
@@ -878,12 +914,37 @@
 
 				$('#jam_masuk3').prop('disabled', !isChecked);
 				$('#jam_keluar3').prop('disabled', !isChecked);
+
+				// Kontrol status SHIFT 2
+				$('#jam_masuk4').prop('disabled', !isChecked);
+				$('#jam_keluar4').prop('disabled', !isChecked);
+				$('#shift3_toggle').prop('disabled', !isChecked);
 				// Opsional: Kosongkan nilai jika dinonaktifkan
 				if (!isChecked) {
 					$('#jam_masuk3').val('');
 					$('#jam_keluar3').val('');
+
+					// Nonaktifkan dan kosongkan juga SHIFT 2 dan pemicunya
+					$('#shift3_toggle').prop('checked', false);
+					$('#jam_masuk4').val('');
+					$('#jam_keluar4').val('');
+				}
+
+				$('#shift3_toggle').change();
+			});
+
+			$('#shift3_toggle').change(function() {
+				var isChecked = $(this).is(':checked');
+
+				$('#jam_masuk4').prop('disabled', !isChecked);
+				$('#jam_keluar4').prop('disabled', !isChecked);
+				// Opsional: Kosongkan nilai jika dinonaktifkan
+				if (!isChecked) {
+					$('#jam_masuk4').val('');
+					$('#jam_keluar4').val('');
 				}
 			});
+
 			$('#shift1_toggle').change();
 
 		});

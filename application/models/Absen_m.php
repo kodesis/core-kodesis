@@ -411,4 +411,32 @@ class Absen_m extends CI_Model
     {
         $this->db->update($this->table, $data, $where);
     }
+
+    public function get_user_export($data_absensi)
+    {
+        // $this->db->select('id, name, is_late_threshold'); // Select necessary fields
+        $this->db->from('users');
+
+        // Filtering based on 'User' or 'Team'
+        if ($data_absensi == 'User') {
+            $this->db->where('username', $this->session->userdata('username'));
+        } else if ($data_absensi == 'Team') {
+            $this->db->where('bagian', $this->session->userdata('bagian'));
+        }
+
+        $query = $this->db->get();
+        // Use result_array() because the Controller needs an array for processing
+        return $query->result_array();
+    }
+    public function get_Absensi_export($tanggal_mulai, $tanggal_akhir)
+    {
+        $this->db->from('tblattendance'); // Replace with your table name
+        // $this->db->where('YEAR(date)', $year);
+        // $this->db->where('MONTH(date)', $month);
+        $this->db->where('date >=', $tanggal_mulai);
+        $this->db->where('date <=', $tanggal_akhir);
+
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }

@@ -49,8 +49,8 @@
             // $current_time = new DateTime();
             // $current_time = $current_time->format('H:i:s');
 
-            echo 'Jam Masuk :' . $jam_masuk_plus_two;
-            echo 'Jam Keluar :' . $jam_keluar_plus_two;
+            // echo 'Jam Masuk :' . $jam_masuk_plus_two;
+            // echo 'Jam Keluar :' . $jam_keluar_plus_two;
             // echo 'Jam Sekarang :' . $current_time;
             // var_dump($result3);
             // var_dump($result2);
@@ -680,19 +680,19 @@
             const allOptions = {
                 'reguler': {
                     label: 'Pilih Jam Reguler',
-                    style: 'background-color: #3085d6; color: white;'
+                    style: 'background-color: #004e81; color: white;'
                 }, // Biru/Primary
                 'shift1': {
                     label: 'Pilih Jam Shift 1',
-                    style: 'background-color: #28a745; color: white;'
+                    style: 'background-color: #007da6; color: white;'
                 }, // Hijau/Success
                 'shift2': {
                     label: 'Pilih Jam Shift 2',
-                    style: 'background-color: #ffc107; color: #333;'
+                    style: 'background-color: #38a0b7ff; color: white;'
                 }, // Kuning/Warning
                 'shift3': {
                     label: 'Pilih Jam Shift 3',
-                    style: 'background-color: #dc3545; color: white;'
+                    style: 'background-color: #51babaff; color: white;'
                 }, // Merah/Danger
             };
 
@@ -1160,7 +1160,7 @@
         console.log('ada2');
         <?php echo $loading_js; ?>
 
-    <?php } else if ($current_time_str <= $jam_masuk_plus_two) { ?>
+    <?php } else if ($current_time_str <= $jam_masuk_plus_two || $result1) { ?>
         // --- Case 2: Before or at entry time deadline (Masuk) ---
         console.log('Masuk');
         <?php if (empty($result1) && empty($result3)) { ?>
@@ -1170,7 +1170,7 @@
             <?php echo $absen_masuk_js; ?>
         <?php } ?>
 
-    <?php } else if ($current_time_str > $jam_masuk_plus_two && $current_time_str < $jam_keluar_plus_two) { ?>
+    <?php } else if ($current_time_str > $jam_masuk_plus_two && $current_time_str < $jam_keluar_plus_two || $result3) { ?>
         // --- Case 3: After entry deadline AND before exit time (Telat Window) ---
         console.log('Telat');
         <?php if (empty($result1) && empty($result3)) { ?>
@@ -1180,7 +1180,7 @@
             <?php echo $absen_telat_js; ?>
         <?php } ?>
 
-    <?php } else if ($current_time_str >= $jam_keluar_plus_two) { ?>
+    <?php } else if ($current_time_str >= $jam_keluar_plus_two || $result2) { ?>
         // --- Case 4: At or after exit time (Pulang) ---
         console.log('Pulang');
         <?php if (empty($result2)) { ?>

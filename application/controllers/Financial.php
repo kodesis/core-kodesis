@@ -1062,8 +1062,8 @@ class Financial extends CI_Controller
         $this->log_pembayaran("invoice", $inv['Id'], $nominal_bayar, $keterangan);
 
         $data_invoice = [
-            'status_pendapatan' => ($status_bayar == 1) ? '2' : '1',
-            'status_bayar' => ($status_bayar == 1) ? '1' : '0',
+            'status_pendapatan' => ($status_bayar == '1') ? '2' : '1',
+            'status_bayar' => ($status_bayar == '1') ? '1' : '0',
             'total_termin' => $inv['total_termin'] + $nominal_bayar,
             'tanggal_bayar' => $tanggal_bayar,
         ];

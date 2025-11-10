@@ -169,11 +169,13 @@ class Absensi extends CI_Controller
                 $data['result1'] = $result1;
                 $data['result2'] = $result2;
                 $data['result3'] = $result3;
+                $data['tanggal_pulang_result'] = $data_user_masuk_pulang->date;
             } else {
 
                 $data['result1'] = null;
                 $data['result2'] = null;
                 $data['result3'] = null;
+                $data['tanggal_pulang_result'] = null;
             }
 
             $data['jam_masuk_plus_two'] = $jam_masuk_plus_two;

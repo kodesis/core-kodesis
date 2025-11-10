@@ -45,17 +45,17 @@
             <h3 class="text-center my-3">ABSEN WFA</h3>
             <?php
 
-            date_default_timezone_set('Asia/Jakarta');
-            $current_time = new DateTime();
-            $current_time = $current_time->format('H:i:s');
+            // date_default_timezone_set('Asia/Jakarta');
+            // $current_time = new DateTime();
+            // $current_time = $current_time->format('H:i:s');
 
-            echo 'Jam Masuk :' . $jam_masuk_plus_two;
-            echo 'Jam Keluar :' . $jam_keluar_plus_two;
-            echo 'Jam Sekarang :' . $current_time;
+            // echo 'Jam Masuk :' . $jam_masuk_plus_two;
+            // echo 'Jam Keluar :' . $jam_keluar_plus_two;
+            // echo 'Jam Sekarang :' . $current_time;
             // var_dump($result3);
-            var_dump($result2);
+            // var_dump($result2);
             // var_dump($result1);
-            echo ('Tanggal Masuk Pulang: ' . $tanggal_pulang_result);
+            // echo ('Tanggal Masuk Pulang: ' . $tanggal_pulang_result);
             ?>
             <!-- <div class="search-box shadow-xl border-0 bg-theme rounded-sm bottom-0">
                 <form action="" method="get">

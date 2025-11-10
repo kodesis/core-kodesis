@@ -289,16 +289,16 @@ class Financial extends CI_Controller
         ];
 
         // Ambil data COA pertama
-        $coa_410 = $this->m_coa->getCoaByCode('410');
+        $coa_410_arr = $this->m_coa->getCoaByCode('410');
 
         // Ambil data COA kedua
-        $coa_13020 = $this->m_coa->getCoaByCode('13020');
+        $coa_13020_arr = $this->m_coa->getCoaByCode('13020');
 
         // Gabungkan kedua hasil ke dalam satu array baru
-        $data['coa_pendapatan'] = [
-            'coa_410' => $coa_410,
-            'coa_13020' => $coa_13020
-        ];
+        $merged_coa_arr = array_merge($coa_410_arr, $coa_13020_arr);
+
+        // Jika perlu, konversi kembali menjadi objek
+        $data['coa_pendapatan'] = (object)$merged_coa_arr;
         // echo '<pre>';
         // print_r($data['invoices']);
         // echo '</pre>';

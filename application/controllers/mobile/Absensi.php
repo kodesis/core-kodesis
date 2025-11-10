@@ -145,7 +145,8 @@ class Absensi extends CI_Controller
                 $this->db->from('tblattendance');
                 $this->db->where('username', $this->session->userdata('username')); // Filter by username
                 $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-                $this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
+                // $this->db->where('TIME(waktu) <=', $jam_masuk_plus_two); // Check for records under jam_masuk_plus_two
+                $this->db->where('tipe', 'Masuk'); // Check for records under jam_keluar_plus_two
                 $query = $this->db->get(); // Execute the query
                 $result1 = $query->result_array(); // Fetch results
 
@@ -153,7 +154,8 @@ class Absensi extends CI_Controller
                 $this->db->from('tblattendance');
                 $this->db->where('username', $this->session->userdata('username')); // Filter by username
                 $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-                $this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
+                // $this->db->where('TIME(waktu) >=', $jam_keluar_plus_two); // Check for records under jam_keluar_plus_two
+                $this->db->where('tipe', 'Pulang'); // Check for records under jam_keluar_plus_two
                 $query = $this->db->get(); // Execute the query
                 $result2 = $query->result_array(); // Fetch results
 
@@ -161,8 +163,9 @@ class Absensi extends CI_Controller
                 $this->db->from('tblattendance');
                 $this->db->where('username', $this->session->userdata('username')); // Filter by username
                 $this->db->where('DATE(date)', date('Y-m-d')); // Today's date
-                $this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
-                $this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
+                // $this->db->where('TIME(waktu) >=', $jam_masuk_plus_two); // Check for records after jam_masuk_plus_two
+                // $this->db->where('TIME(waktu) <=', $jam_keluar_plus_two); // Check for records before jam_keluar_plus_two
+                $this->db->where('tipe', 'Telat'); // Check for records under jam_keluar_plus_two
                 $query = $this->db->get(); // Execute the query
                 $result3 = $query->result_array(); // Fetch results
 
@@ -417,6 +420,10 @@ class Absensi extends CI_Controller
         } elseif ($currentTime->format('H:i:s') >= $endOfDay->format('H:i:s')) {
             // After jam_keluar, it is 'Pulang'
             $tipe = 'Pulang';
+        }
+
+        if ($jam_absen != 'reguler') {
+            $tipe = $data['tipe_absensi'];
         }
 
         $this->db->select('*');

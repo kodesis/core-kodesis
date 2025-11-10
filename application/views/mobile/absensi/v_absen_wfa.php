@@ -89,6 +89,7 @@
                         <input type="hidden" name="nama_lokasi" id="nama_lokasi">
                         <input type="hidden" name="alamat_lokasi" id="alamat_lokasi">
                         <input type="hidden" name="jam_absen" id="jam_absen">
+                        <input type="hidden" name="tipe_absensi" id="tipe_absensi">
                         <div id="studentTableContainer">
 
                         </div>
@@ -708,6 +709,7 @@
             }
             if (shift3_active) {
                 activeShifts.push('shift3');
+
             }
             const availableCount = activeShifts.length;
 
@@ -718,7 +720,7 @@
                 // Karena Reguler selalu ada, jika count <= 1, maka shift yang terpilih adalah yang ada (atau 'reguler' sebagai fallback)
                 const selectedShift = activeShifts[0] ?? 'reguler';
 
-                Swal.close();
+                // Swal.close();
                 $('#jam_absen').val(selectedShift);
 
                 // const shiftData = allOptions[selectedShift];
@@ -732,6 +734,8 @@
                 //     showConfirmButton: false
                 // }).then(() => {
                 startWebcamLogic();
+                Swal.close();
+
                 // });
                 return;
             }
@@ -816,8 +820,48 @@
                     const shiftName = shiftData.label.replace('Pilih Jam', '').trim();
                     Swal.fire('Shift Terpilih!', 'Anda memilih untuk Absen pada ' + shiftName + '.', 'success');
 
+                    if (selectedShift != 'reguler') {
+                        Swal.fire({
+                            title: 'Pilih Tipe Absensi',
+                            text: "Anda akan melakukan absensi apa?",
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Masuk', // Tombol untuk "Masuk"
+                            cancelButtonText: 'Pulang', // Tombol untuk "Pulang"
+                            // reverseButtons: true, // Membalik urutan tombol (Masuk di kiri, Pulang di kanan, sesuai kebutuhan)
+
+                            // Atur warna tombol agar lebih jelas (opsional)
+                            confirmButtonColor: '#004e81', // Warna Biru untuk Masuk
+                            cancelButtonColor: '#007da6' // Warna Merah untuk Pulang
+
+                        }).then((result) => {
+                            // Logika setelah user menekan tombol
+
+                            if (result.isConfirmed) {
+                                // User menekan tombol "Masuk"
+                                $('#tipe_absensi').val('Masuk');
+
+                                // Opsional: Tampilkan feedback
+                                Swal.fire('Berhasil!', 'Tipe absensi diatur ke: Masuk', 'success');
+
+                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                // User menekan tombol "Pulang" (karena kita menggunakan tombol cancel untuk Pulang)
+                                $('#tipe_absensi').val('Pulang');
+
+                                // Opsional: Tampilkan feedback
+                                Swal.fire('Berhasil!', 'Tipe absensi diatur ke: Pulang', 'success');
+                            }
+
+                            startWebcamLogic();
+
+                            // Lanjutkan dengan logika Anda setelah tipe_absensi diatur (misalnya, submit form atau AJAX)
+                            console.log('Tipe Absensi saat ini:', $('#tipe_absensi').val());
+
+                        });
+                    }
+
                     // Lanjutkan ke logika webcam/absensi setelah pemilihan
-                    startWebcamLogic();
+                    // startWebcamLogic();
 
                 } else if (result.dismiss === 'cancel_button_pressed') {
                     // Aksi jika tombol Batal Absen ditekan
@@ -1039,6 +1083,7 @@
             latitude: $('#latitude_studentTable').val(), // Base64 encoded image data
             longitude: $('#longitude_studentTable').val(), // Base64 encoded image data
             jam_absen: $('#jam_absen').val(), // Base64 encoded image data
+            tipe_absensi: $('#tipe_absensi').val(), // Base64 encoded image data
             // nama_lokasi: $('#nama_lokasi').val(), // Base64 encoded image data
             // alamat_lokasi: $('#alamat_lokasi').val(), // Base64 encoded image data
         };

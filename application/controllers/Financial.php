@@ -282,10 +282,22 @@ class Financial extends CI_Controller
             'count_inbox2' => $result2,
             'coa' => $this->m_coa->list_coa(),
             'coa_kas' => $this->m_coa->getCoaByCode('120'),
-            'coa_pendapatan' => $this->m_coa->getCoaByCode('410'),
+            // 'coa_pendapatan' => $this->m_coa->getCoaByCode('410'),
             'keyword' => $keyword,
             'title' => "Invoice",
             'customers' => $this->M_Customer->list_customer(''),
+        ];
+
+        // Ambil data COA pertama
+        $coa_410 = $this->m_coa->getCoaByCode('410');
+
+        // Ambil data COA kedua
+        $coa_13020 = $this->m_coa->getCoaByCode('13020');
+
+        // Gabungkan kedua hasil ke dalam satu array baru
+        $data['coa_pendapatan'] = [
+            'coa_410' => $coa_410,
+            'coa_13020' => $coa_13020
         ];
         // echo '<pre>';
         // print_r($data['invoices']);

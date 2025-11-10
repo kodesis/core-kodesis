@@ -347,6 +347,9 @@ class M_absen extends CI_Model
                         // After jam_keluar, it is 'Pulang'
                         $tipe = 'Pulang';
                     }
+                    if ($jam_absen != 'reguler') {
+                        $tipe = $data['tipe'];
+                    }
                     $attendanceStatus = $data['attendanceStatus'];
 
                     if ($data['lokasiAttendance'] == 'Di Luar') {

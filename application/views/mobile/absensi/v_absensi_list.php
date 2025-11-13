@@ -497,19 +497,10 @@
     }
 
     function proccess_export() {
-        const ttlTanggalValue = $('#tanggal_export_absensi').val();
+        // const ttlTanggalValue = $('#tanggal_export_absensi').val();
         const ttlDataValue = $('#data_absensi').val();
 
-        if (!ttlTanggalValue) {
-            // alert('Input is empty. Please fill it out.');
-            swal.fire({
-                customClass: 'slow-animation',
-                icon: 'error',
-                showConfirmButton: false,
-                title: 'Kolom Tanggal Export Tidak Boleh Kosong',
-                timer: 1500
-            });
-        } else if (!ttlDataValue) {
+        if (!ttlDataValue) {
             // alert('Input is empty. Please fill it out.');
             swal.fire({
                 customClass: 'slow-animation',

@@ -537,6 +537,7 @@ class Absensi extends CI_Controller
             $userId = $record['nip'];
             $date = $record['date'];
             $type = $record['tipe'];
+            // echo $type;
             $jam_absen = $record['jam_absen'];
             $time = substr($record['waktu'], 0, 5);
 
@@ -554,6 +555,7 @@ class Absensi extends CI_Controller
 
             if ($type == 'Telat') {
                 $is_late = true;
+                $type = 'Masuk';
             }
 
             $organized_attendance[$userId][$date][$type] = [
@@ -641,7 +643,9 @@ class Absensi extends CI_Controller
                 if (!empty($time)) {
                     $sheet->setCellValue($cell_name, $time);
                     // Apply Green (On Time) or Yellow (Telat)
+                    // echo $record['is_late'];
                     $style = $record['is_late'] ? $style_yellow : $style_green;
+// var_dump($style);
                     $sheet->getStyle($cell_name)->applyFromArray($style);
                 } else {
                     $sheet->setCellValue($cell_name, '-');

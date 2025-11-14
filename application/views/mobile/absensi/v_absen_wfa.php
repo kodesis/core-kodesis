@@ -733,8 +733,8 @@
                 //     timer: 1500,
                 //     showConfirmButton: false
                 // }).then(() => {
-                startWebcamLogic();
                 Swal.close();
+                startWebcamLogic();
 
                 // });
                 return;
@@ -858,6 +858,8 @@
                             console.log('Tipe Absensi saat ini:', $('#tipe_absensi').val());
 
                         });
+                    }else{
+                        startWebcamLogic();
                     }
 
                     // Lanjutkan ke logika webcam/absensi setelah pemilihan

@@ -454,9 +454,10 @@ class Absensi extends CI_Controller
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to save image.']);
             }
-        } else {
+        } 
+        // else {
             // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
-        }
+        // }
         // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
 
         // Call the method to insert attendance

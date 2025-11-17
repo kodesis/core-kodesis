@@ -90,7 +90,8 @@ class Absensi extends CI_Controller
             $this->db->select('*');
             $this->db->from('tblattendance');
             $this->db->where('username', $this->session->userdata('username')); // Filter by username
-            $this->db->where('DATE(date)', 'DATE(NOW())', false);
+            // $this->db->where('DATE(date)', 'DATE(NOW())', false);
+            $this->db->where('date', date('Y-m-d'));
             // --- START GROUPING THE 'OR' CONDITIONS ---
             $this->db->group_start();
             $this->db->where('tipe', 'Masuk');
@@ -98,11 +99,12 @@ class Absensi extends CI_Controller
             $this->db->or_where('tipe', 'Pulang');
             $this->db->group_end();
             // --- END GROUPING ---
+            $this->db->order_by('waktu', 'DESC');
             $query = $this->db->get(); // Execute the query
             $data_user_masuk_pulang = $query->row(); // Fetch results
             // Ensure $cek_user is not null and contains jam_masuk and jam_keluar
 
-            // var_dump($data_user_masuk_telat);
+            // var_dump($data_user_masuk_pulang);
             $jam_masuk_plus_two = null;
             $jam_keluar_plus_two = null;
             // echo $data_user_masuk_telat->jam_absen;
@@ -111,7 +113,7 @@ class Absensi extends CI_Controller
                     $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk))->modify('+5 minutes')->format('H:i:s');
                     $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar))->modify('+0 hours')->format('H:i:s');
                 } else {
-                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data Reguler.';
                     return;
                 }
             } else if ($data_user_masuk_pulang && $data_user_masuk_pulang->jam_absen == 'shift1') {
@@ -119,7 +121,7 @@ class Absensi extends CI_Controller
                     $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk2))->modify('+5 minutes')->format('H:i:s');
                     $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar2))->modify('+0 hours')->format('H:i:s');
                 } else {
-                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data shift1.';
                     return;
                 }
             } else if ($data_user_masuk_pulang && $data_user_masuk_pulang->jam_absen == 'shift2') {
@@ -127,7 +129,7 @@ class Absensi extends CI_Controller
                     $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk3))->modify('+5 minutes')->format('H:i:s');
                     $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar3))->modify('+0 hours')->format('H:i:s');
                 } else {
-                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data shift2.';
                     return;
                 }
             } else if ($data_user_masuk_pulang && $data_user_masuk_pulang->jam_absen == 'shift3') {
@@ -135,7 +137,7 @@ class Absensi extends CI_Controller
                     $jam_masuk_plus_two = (new DateTime($data_user->jam_masuk4))->modify('+5 minutes')->format('H:i:s');
                     $jam_keluar_plus_two = (new DateTime($data_user->jam_keluar4))->modify('+0 hours')->format('H:i:s');
                 } else {
-                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data.';
+                    echo 'Error: Missing "jam_masuk" or "jam_keluar" data shift3.';
                     return;
                 }
             }
@@ -169,9 +171,42 @@ class Absensi extends CI_Controller
                 $query = $this->db->get(); // Execute the query
                 $result3 = $query->result_array(); // Fetch results
 
+                $all_check_in_times = [];
+                foreach ($result1 as $row) {
+                    $all_check_in_times[] = $row['waktu'];
+                }
+                foreach ($result3 as $row) {
+                    $all_check_in_times[] = $row['waktu'];
+                }
+
+                // Find the earliest time from all check-in/late entries
+                $earliest_check_in_time = empty($all_check_in_times) ? null : min($all_check_in_times);
+
+                // 2. Find the Latest Check-out Time (Pulang)
+                $latest_pulang_time = null;
+                if (!empty($result2)) {
+                    // Extract all 'waktu' values from the Pulang array
+                    $pulang_times = array_column($result2, 'waktu');
+
+                    // Find the latest (maximum) time from all check-out entries
+                    $latest_pulang_time = max($pulang_times);
+                }
+
+                // 3. Apply the Nullification Rule
+                if ($earliest_check_in_time !== null && $latest_pulang_time !== null) {
+                    // If the LATEST Pulang time is LESS THAN or EQUAL TO the EARLIEST Check-in time, 
+                    // the check-out is invalid (chronologically before check-in).
+                    if ($latest_pulang_time <= $earliest_check_in_time) {
+                        $result2 = []; // Nullify the Pulang result array
+                    }
+                }
+
+                // --- Final Output Array (Unchanged as requested) ---
+
                 $data['result1'] = $result1;
-                $data['result2'] = $result2;
+                $data['result2'] = $result2; // This will be [] if the condition was met
                 $data['result3'] = $result3;
+
                 $data['tanggal_pulang_result'] = $data_user_masuk_pulang->date;
             } else {
 
@@ -454,9 +489,9 @@ class Absensi extends CI_Controller
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to save image.']);
             }
-        } 
+        }
         // else {
-            // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
+        // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
         // }
         // echo json_encode(['status' => 'success', 'message' => 'Attendance recorded successfully.']);
 

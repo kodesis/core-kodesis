@@ -1661,7 +1661,7 @@ class Pengajuan extends CI_Controller
   {
     $data['pengajuan'] = $this->cb->select('a.no_pengajuan, a.kode, a.created_at, a.user, a.spv, a.keuangan, a.direksi, a.status_spv, a.status_keuangan, a.total, a.catatan, a.date_spv, a.date_keuangan')->from('t_pengajuan a')->where('Id', $id)->get()->row();
 
-    $data['pengajuan_detail'] = $this->cb->select('*')->from('t_pengajuan_detail')->where('no_pengajuan', $data['pengajuan']->no_pengajuan)->get()->result();
+    $data['pengajuan_detail'] = $this->cb->select('*')->from('t_pengajuan_detail')->where('no_pengajuan', $id)->get()->result();
     // $this->load->view('pengajuan/print', $data);
 
     // filename dari pdf ketika didownload

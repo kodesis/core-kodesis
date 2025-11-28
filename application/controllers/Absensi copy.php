@@ -536,19 +536,11 @@ class Absensi extends CI_Controller
         foreach ($raw_attendance as $record) {
             $userId = $record['nip'];
             $date = $record['date'];
-
-            $record_date = $record['date']; // Date the record was made (YYYY-MM-DD)
-
             $type = $record['tipe'];
             // echo $type;
             $jam_absen = $record['jam_absen'];
             $time = substr($record['waktu'], 0, 5);
 
-            // Store the full datetime string for duration calculation later
-            $time_raw = $record['waktu'];
-
-            // // The displayed time (H:i)
-            // $time_subtr = substr($datetime, 11, 5);
             // if (!isset($organized_attendance[$userId][$date])) {
             //     $organized_attendance[$userId][$date] = ['Masuk' => null, 'Pulang' => null];
             // }
@@ -561,92 +553,16 @@ class Absensi extends CI_Controller
             //     $is_late = ($record['time'] > $threshold);
             // }
 
-
             if ($type == 'Telat') {
                 $is_late = true;
                 $type = 'Masuk';
             }
 
-            // --- NIGHT SHIFT CORRECTION LOGIC ---
-            $shift_date = $date;
-            // Check if it's a Pulang record AND belongs to a recognized Night Shift type
-            if ($type === 'Pulang' && in_array($jam_absen, ['shift3', 'Night', 'shift1', 'shift2'])) { // Adjust 'shift3' or 'Night' to your actual night shift name(s)
-                // If the 'Pulang' time is early morning (e.g., before 6:00 AM)
-                if ($time < '12:00:00') {
-                    // Treat the 'Pulang' as belonging to the PREVIOUS day's shift.
-                    // Subtract one day from the current date.
-                    // $shift_date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
-                    $shift_date = date('Y-m-d', strtotime('-1 day', strtotime($record_date)));
-                }
-            }
-            // ------------------------------------
-
-            $organized_attendance[$userId][$shift_date][$type] = [
+            $organized_attendance[$userId][$date][$type] = [
                 'time' => $time,
                 'is_late' => $is_late,
-                'datetime' => $record_date . ' ' . $time_raw,
             ];
         }
-
-
-        // Step 2: Calculate the duration for each organized shift
-        foreach ($organized_attendance as $userId => $dates) {
-            foreach ($dates as $shift_date => $shift_data) {
-
-                // Initialize variables for the current shift (must be inside the loop)
-                $duration_formatted = '-';
-                $hours = '-';
-                $new_pulang_time = $shift_data['Pulang']['time'] ?? '';
-
-                // --- 1. Attempt to Calculate Duration (Requires both Masuk and Pulang) ---
-                if (isset($shift_data['Masuk']) && isset($shift_data['Pulang'])) {
-
-                    $in_time_str = $shift_data['Masuk']['datetime'];
-                    $out_time_str = $shift_data['Pulang']['datetime'];
-
-                    $timestamp_in = strtotime($in_time_str);
-                    $timestamp_out = strtotime($out_time_str);
-
-                    $duration_seconds = $timestamp_out - $timestamp_in;
-
-                    // Handle negative duration error
-                    if ($duration_seconds < 0) {
-                        // If duration is negative, it's an error/mis-clocking. Treat as 0 hours for display.
-                        $hours = 0;
-                        $minutes = 0;
-                        $duration_formatted = '0 Jam 00 Min (Error)';
-                    } else {
-                        $hours = floor($duration_seconds / 3600);
-                        $minutes = floor(($duration_seconds % 3600) / 60);
-                        $duration_formatted = sprintf('%d Jam %02d Min', $hours, $minutes);
-                    }
-
-                    // Generate the display time with the calculated hours
-                    $new_pulang_time = $shift_data['Pulang']['time'] . " (" . $hours . " Jam)";
-                } else {
-                    // --- 2. Handle Missing Masuk or Pulang ---
-
-                    // If Pulang exists but Masuk is missing, we still want to display Pulang time.
-                    if (isset($shift_data['Pulang'])) {
-                        // Pulang exists, but duration cannot be calculated.
-                        $new_pulang_time = $shift_data['Pulang']['time'] . " (- Jam)"; // Indicate missing duration
-                        $duration_formatted = 'Masuk Missing';
-                    }
-                    // If Masuk exists but Pulang is missing, $new_pulang_time will be empty.
-                }
-
-                // --- 3. Store Results (Regardless of calculation success) ---
-                // Only attempt to store if Pulang data was originally available for the shift date
-                if (isset($shift_data['Pulang'])) {
-                    $organized_attendance[$userId][$shift_date]['Pulang']['duration'] = $duration_formatted;
-                    $organized_attendance[$userId][$shift_date]['Pulang']['time_display'] = $new_pulang_time;
-                }
-
-                // Note: You may also want to handle the 'Masuk' record if 'Pulang' is missing, 
-                // e.g., setting Masuk's display time to show a "Pulang Missing" message.
-            }
-        }
-
 
         // --- 3. PHPSPREADSHEET GENERATION ---
 
@@ -748,13 +664,12 @@ class Absensi extends CI_Controller
             $col_index = $date_col_start_index;
             foreach ($date_range as $date) {
                 $record = $organized_attendance[$user_id][$date]['Pulang'] ?? null;
-                $time_display = $record['time_display'] ?? '';
                 $time = $record['time'] ?? '';
 
                 $cell_name = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col_index) . $row_index;
 
                 if (!empty($time)) {
-                    $sheet->setCellValue($cell_name, $time_display);
+                    $sheet->setCellValue($cell_name, $time);
                     // Always Green if recorded
                     $sheet->getStyle($cell_name)->applyFromArray($style_green);
                 } else {

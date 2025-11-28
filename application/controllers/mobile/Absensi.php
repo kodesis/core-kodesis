@@ -96,7 +96,7 @@ class Absensi extends CI_Controller
             $this->db->group_start();
             $this->db->where('tipe', 'Masuk');
             $this->db->or_where('tipe', 'Telat');
-            $this->db->or_where('tipe', 'Pulang');
+            // $this->db->or_where('tipe', 'Pulang');
             $this->db->group_end();
             // --- END GROUPING ---
             $this->db->order_by('waktu', 'DESC');
@@ -1070,10 +1070,28 @@ class Absensi extends CI_Controller
                 $is_late = true;
             }
 
-            $organized_attendance[$userId][$date][$type] = [
+            // --- NIGHT SHIFT CORRECTION LOGIC ---
+            $shift_date = $date;
+            // Check if it's a Pulang record AND belongs to a recognized Night Shift type
+            if ($type === 'Pulang' && in_array($jam_absen, ['shift3', 'Night'])) { // Adjust 'shift3' or 'Night' to your actual night shift name(s)
+                // If the 'Pulang' time is early morning (e.g., before 6:00 AM)
+                if ($time < '06:00:00') {
+                    // Treat the 'Pulang' as belonging to the PREVIOUS day's shift.
+                    // Subtract one day from the current date.
+                    $shift_date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
+                }
+            }
+            // ------------------------------------
+
+            $organized_attendance[$userId][$shift_date][$type] = [
                 'time' => $time,
                 'is_late' => $is_late,
             ];
+
+            // $organized_attendance[$userId][$date][$type] = [
+            //     'time' => $time,
+            //     'is_late' => $is_late,
+            // ];
         }
 
         // --- 3. PHPSPREADSHEET GENERATION ---

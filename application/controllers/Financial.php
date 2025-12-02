@@ -325,11 +325,38 @@ class Financial extends CI_Controller
             'title' => 'Create Invoice',
             // 'no_invoice' => $no_inv,
             'customers' => $this->M_Customer->list_customer(),
-            'pendapatan' => $this->m_coa->getCoaByCode('1'),
-            'persediaan' => $this->m_coa->getCoaByCode('4'),
+            // 'pendapatan' => $this->m_coa->getCoaByCode('1'),
+            // 'persediaan' => $this->m_coa->getCoaByCode('4'),
             'count_inbox' => $result,
             'count_inbox2' => $result2,
         ];
+
+        // Ambil data COA pertama
+        $coa_pendaatan_1_arr = $this->m_coa->getCoaByCode('1');
+
+        // Ambil data COA kedua
+        $coa_pendaatan_41043_arr = $this->m_coa->getCoaByCode('41043');
+
+
+        // Gabungkan kedua hasil ke dalam satu array baru
+        $merged_coa_pendapatan_arr = array_merge($coa_pendaatan_1_arr, $coa_pendaatan_41043_arr);
+
+        // Jika perlu, konversi kembali menjadi objek
+        $data['pendapatan'] = (object)$merged_coa_pendapatan_arr;
+
+
+        // Ambil data COA pertama
+        $coa_persediaan_4_arr = $this->m_coa->getCoaByCode('4');
+
+        // Ambil data COA kedua
+        $coa_persediaan_25021_arr = $this->m_coa->getCoaByCode('25021');
+
+
+        // Gabungkan kedua hasil ke dalam satu array baru
+        $merged_coa_persediaan_arr = array_merge($coa_persediaan_4_arr, $coa_persediaan_25021_arr);
+
+        // Jika perlu, konversi kembali menjadi objek
+        $data['persediaan'] = (object)$merged_coa_persediaan_arr;
 
         $this->load->view('invoice_create_khusus', $data);
     }

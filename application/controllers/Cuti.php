@@ -878,7 +878,11 @@ class Cuti extends CI_Controller
                 $msghrd = "*Pengajuan Cuti*\n\nFrom: *$nama_session*\nJenis Cuti: *$jenis_nama*\nMohon untuk segera diproses.";
                 $hrd = $this->db->get_where('users', ['bagian' => 4])->result();
                 foreach ($hrd as $row) {
-                    $this->api_whatsapp->wa_notif($msghrd, $row->phone);
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msghrd, $row->phone);
+                    }
                 }
             }
             // Jika Form Validation Gagal Dijalankan 
@@ -975,7 +979,11 @@ class Cuti extends CI_Controller
 
                         $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                         $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $atasan->nama . "* sebagai atasan/supervisi, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                        if ($utility['notif_wa'] == 1) {
+                            $this->api_whatsapp->wa_notif($msg, $user->phone);
+                        }
                     }
                 } else if ($cuti->jenis == 4) { // jenis cuti perjalan spiritual
                     $this->M_cuti->updateAtasan($params, $where);
@@ -990,7 +998,11 @@ class Cuti extends CI_Controller
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $atasan->nama . "* sebagai atasan/supervisi, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 } else if ($cuti->jenis == 5) { // jenis cuti ibadah haji
                     $this->M_cuti->updateAtasan($params, $where);
                     $this->db->set(['cuti_haji' => 1]);
@@ -1004,17 +1016,29 @@ class Cuti extends CI_Controller
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $atasan->nama . "* sebagai atasan/supervisi, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 } else if ($cuti->jenis == 2) { //Cuti Panjang
                     $this->M_cuti->updateAtasan($params, $where);
                     $cuti_jenis = $this->db->get_where('jenis_cuti', ['Id' => $cuti->jenis])->row();
                     $jenis_nama = $cuti_jenis->nama_jenis;
                     $msg = "*Pengajuan Cuti*\n\nFrom: *$user->nama*\nJenis Cuti: *$jenis_nama*\n\nSudah selesai diproses oleh *" . $atasan->nama . "*. Untuk selanjutnya diproses oleh Direksi.";
-                    $this->api_whatsapp->wa_notif($msg, $dirsdm->phone);
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $dirsdm->phone);
+                    }
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $atasan->nama . "* sebagai atasan/supervisi, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
 
                     $data = [
                         'error' => false,
@@ -1029,7 +1053,11 @@ class Cuti extends CI_Controller
                     $this->M_cuti->updateAtasan($params, $where);
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $atasan->nama . "* sebagai atasan/supervisi, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 }
             } else {
                 $data = [
@@ -1040,7 +1068,11 @@ class Cuti extends CI_Controller
 
                 $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                 $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $atasan->nama . "* sebagai atasan/supervisi, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                $this->api_whatsapp->wa_notif($msg, $user->phone);
+                $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                if ($utility['notif_wa'] == 1) {
+                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+                }
             }
         } else {
             $data = [
@@ -1092,30 +1124,54 @@ class Cuti extends CI_Controller
                         $cuti_jenis = $this->db->get_where('jenis_cuti', ['Id' => $cuti->jenis])->row();
                         $jenis_nama = $cuti_jenis->nama_jenis;
                         $msg = "*Pengajuan Cuti*\n\nFrom: *$user->nama*\nJenis Cuti: *$jenis_nama*\n\nSudah selesai diproses oleh *" . $hrd->nama . "* sebagai HRD. Untuk selanjutnya diproses oleh anda sebagai Direktur SDM.";
-                        $this->api_whatsapp->wa_notif($msg, $dirsdm->phone);
+                        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                        if ($utility['notif_wa'] == 1) {
+                            $this->api_whatsapp->wa_notif($msg, $dirsdm->phone);
+                        }
                     } else {
                         $cuti_jenis = $this->db->get_where('jenis_cuti', ['Id' => $cuti->jenis])->row();
                         $jenis_nama = $cuti_jenis->nama_jenis;
                         $msg = "*Pengajuan Cuti*\n\nFrom: *$user->nama*\nJenis Cuti: *$jenis_nama*\n\nSudah selesai diproses oleh *" . $hrd->nama . "* sebagai HRD. Untuk selanjutnya diproses oleh anda sebagai atasan/supervisi.";
-                        $this->api_whatsapp->wa_notif($msg, $atasan->phone);
+
+                        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                        if ($utility['notif_wa'] == 1) {
+                            $this->api_whatsapp->wa_notif($msg, $atasan->phone);
+                        }
                     }
                 } else {
                     $cuti_jenis = $this->db->get_where('jenis_cuti', ['Id' => $cuti->jenis])->row();
                     $jenis_nama = $cuti_jenis->nama_jenis;
                     $msg = "*Pengajuan Cuti*\n\nFrom: *$user->nama*\nJenis Cuti: *$jenis_nama*\n\nSudah selesai diproses oleh *" . $hrd->nama . "* sebagai HRD. Untuk selanjutnya diproses oleh atasan/supervisi.";
-                    $this->api_whatsapp->wa_notif($msg, $atasan->phone);
+
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $atasan->phone);
+                    }
                 }
             } else {
                 $cuti_jenis = $this->db->get_where('jenis_cuti', ['Id' => $cuti->jenis])->row();
                 $jenis_nama = $cuti_jenis->nama_jenis;
                 $msgg = "*Pengajuan Cuti*\n\nFrom: *$user->nama*\nJenis Cuti: *$jenis_nama*\n\nSudah selesai diproses oleh *" . $hrd->nama . "* sebagai HRD, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                $this->api_whatsapp->wa_notif($msgg, $atasan->phone);
+
+                $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                if ($utility['notif_wa'] == 1) {
+                    $this->api_whatsapp->wa_notif($msgg, $atasan->phone);
+                }
             }
 
             $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
 
             $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $hrd->nama . "* sebagai HRD, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-            $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+            $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+            if ($utility['notif_wa'] == 1) {
+                $this->api_whatsapp->wa_notif($msg, $user->phone);
+            }
         } else {
             $data = [
                 'error' => true,
@@ -1177,12 +1233,23 @@ class Cuti extends CI_Controller
 
                     if ($status == 'Disetujui') {
                         $msg = "*Pemberitahuan Pengganti*\n\nDikarenakan *$user->nama* mengajukan cuti, *$dirsdm->nama* sebagai Direktur SDM menunjuk anda sebagai pengganti.";
-                        $this->api_whatsapp->wa_notif($msg, $user_peng->phone);
+
+                        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                        if ($utility['notif_wa'] == 1) {
+                            $this->api_whatsapp->wa_notif($msg, $user_peng->phone);
+                        }
                     }
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $dirsdm->nama . "* sebagai atasan/supervisi dan Direktur SDM, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 } else {
                     $params = [
                         'status_dirsdm' => $status,
@@ -1191,14 +1258,24 @@ class Cuti extends CI_Controller
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $dirsdm->nama . "* sebagai Direktur SDM, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 }
 
                 if ($status == 'Disetujui') {
                     $cuti_jenis = $this->db->get_where('jenis_cuti', ['Id' => $cuti->jenis])->row();
                     $jenis_nama = $cuti_jenis->nama_jenis;
                     $msg = "*Pengajuan Cuti*\n\nFrom: *$user->nama*\nJenis Cuti: *$jenis_nama*\n\nSudah selesai diproses oleh *" . $dirsdm->nama . "* sebagai Direktur SDM. Untuk selanjutnya diproses oleh anda sebagai Direktur Utama.";
-                    $this->api_whatsapp->wa_notif($msg, $dirut->phone);
+
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $dirut->phone);
+                    }
                 }
             }
 
@@ -1218,12 +1295,22 @@ class Cuti extends CI_Controller
 
                     if ($status == 'Disetujui') {
                         $msg = "*Pemberitahuan Pengganti*\n\nDikarenakan *$user->nama* mengajukan cuti, *$dirut->nama* sebagai Direktur Utama menunjuk anda sebagai pengganti.";
-                        $this->api_whatsapp->wa_notif($msg, $user_peng->phone);
+
+                        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                        if ($utility['notif_wa'] == 1) {
+                            $this->api_whatsapp->wa_notif($msg, $user_peng->phone);
+                        }
                     }
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $dirut->nama . "* sebagai atasan/supervisi dan Direktur Utama, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 } else {
                     $params = [
                         'status_dirut' => $status,
@@ -1232,7 +1319,11 @@ class Cuti extends CI_Controller
 
                     $catatan = $catatan != "" || $catatan != null ? $catatan : "Tidak ada catatan";
                     $msg = "*Notifikasi Cuti*\n\nCuti anda selesai di proses oleh *" . $dirut->nama . "* sebagai Direktur Utama, dengan status *" . $status . "*.\n\n*Catatan* : " . $catatan;
-                    $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+                    if ($utility['notif_wa'] == 1) {
+                        $this->api_whatsapp->wa_notif($msg, $user->phone);
+                    }
                 }
 
                 if ($status == "Disetujui") {

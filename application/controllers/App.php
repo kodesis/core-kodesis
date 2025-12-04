@@ -4568,6 +4568,25 @@ class App extends CI_Controller
 		}
 	}
 
+	public function update_notif()
+	{
+		$notif_wa = $this->input->post('notif_wa');
+		if ($notif_wa == 1) {
+			$msg = 'Notifikasi whatsapp dinyalakan!';
+		} else {
+			$msg = 'Notifikasi whatsapp dimatikan!';
+		}
+		$this->db->set('notif_wa', $notif_wa);
+		$this->db->update('utility');
+
+		$res = [
+			'success' => true,
+			'msg' => $msg
+		];
+
+		echo json_encode($res);
+	}
+
 
 	public function tes()
 	{

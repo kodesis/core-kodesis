@@ -341,6 +341,10 @@
           <input type="button" class="btn btn-primary" value="Tampilkan Semua" onclick="window.location.href='<?php echo base_url(); ?>app/user'" />
           <a href="<?= base_url('app/add_user') ?>" class="btn btn-success">Add User</a>
           <a href="<?= base_url('cuti/reset_cuti') ?>" class="btn btn-warning" id="button-reset-cuti">Reset Cuti</a>
+          <?php
+              $notif = $this->db->get('utility')->row();
+          ?>
+          <label><input type="checkbox" value="<?= $notif->notif_wa ?>" id="notif_wa" <?= $notif->notif_wa == 1 ? 'checked' : '' ?>> Notif Wa</label>
         </form>
 
 
@@ -498,6 +502,34 @@
 
       <script>
         $(document).ready(function() {
+
+          $('input#notif_wa').change(function() {
+            var value = $(this).val();
+            if (value == 1) {
+              new_value = 0;
+            } else {
+              new_value = 1
+            }
+
+            $.ajax({
+              url: "<?= base_url('app/update_notif') ?>",
+              type: 'post',
+              dataType: 'json',
+              data: {
+                notif_wa: new_value
+              },
+              success: function(res) {
+                Swal.fire({
+                  icon: 'success',
+                  title: res.msg,
+                  showConfirmButton: false,
+                }, setTimeout(() => {
+                  location.reload();
+                }, 2000))
+              }
+            })
+          })
+
           $("a[id='button-reset-cuti']").click(function(e) {
             if (!confirm('Apakah anda yakin ingin mereset cuti?')) {
               e.preventDefault();

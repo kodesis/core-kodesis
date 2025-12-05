@@ -550,6 +550,27 @@ class Financial extends CI_Controller
         $res2 = $query2->result_array();
         $result2 = $res2[0]['COUNT(id)'];
 
+
+        // Ambil data COA pertama
+        $coa_pendaatan_1_arr = $this->m_coa->getCoaByCode('1');
+
+        // Ambil data COA kedua
+        $coa_25021 = $this->m_coa->getCoaByCode('25021');
+
+
+        // Gabungkan kedua hasil ke dalam satu array baru
+        $merged_coa_pendapatan_arr = array_merge($coa_pendaatan_1_arr, $coa_25021);
+
+        // Ambil data COA pertama
+        $coa_persediaan_4_arr = $this->m_coa->getCoaByCode('4');
+
+        // Ambil data COA kedua
+        $coa_41043 = $this->m_coa->getCoaByCode('41043');
+
+
+        // Gabungkan kedua hasil ke dalam satu array baru
+        $merged_coa_persediaan_arr = array_merge($coa_persediaan_4_arr, $coa_41043);
+
         $data = [
             'title' => 'Invoice No. ' . $inv['no_invoice'],
             'inv' => $inv,
@@ -558,8 +579,8 @@ class Financial extends CI_Controller
             'customers' => $this->M_Customer->list_customer(),
             'count_inbox' => $result,
             'count_inbox2' => $result2,
-            'pendapatan' => $this->m_coa->getCoaByCode('1'),
-            'persediaan' => $this->m_coa->getCoaByCode('4'),
+            'pendapatan' => (object)$merged_coa_pendapatan_arr,
+            'persediaan' => (object)$merged_coa_persediaan_arr,
         ];
 
         $pages = "invoice_edit";

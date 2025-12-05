@@ -44,6 +44,7 @@ class Absensi extends CI_Controller
             $this->db->from('tblattendance'); // Table name
             $this->db->where('attendanceStatus', 'Pending');
             $this->db->where('supervisi', $this->session->userdata('nip'));
+            $this->db->join('users', 'users.username = tblattendance.username');
             $data['notif'] = $this->db->get()->num_rows();
 
             $this->load->view('absensi_list', $data);

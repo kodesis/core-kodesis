@@ -148,7 +148,11 @@ class Pengajuan extends CI_Controller
             $nama_session = $this->session->userdata('nama');
 
             $msg = "*Pengajuan Biaya Baru*\nDari : *$nama_session*\nNo. Pengajuan :  *$kode*\n\nCatatan :" . $catatan ?? "-";
-            $this->api_whatsapp->wa_notif($msg, $spv->phone);
+            $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+            if ($utility['notif_wa'] == 1) {
+              $this->api_whatsapp->wa_notif($msg, $spv->phone);
+            }
 
             $response = [
               'success' => true,
@@ -394,19 +398,33 @@ class Pengajuan extends CI_Controller
       if ($status == 1) {
         // Notifikasi ke user
         $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai supervisi. Selanjutnya diajukan kepada bagian Finance\n\nCatatan : " . $catatan ?? "-";
-        $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+        if ($utility['notif_wa'] == 1) {
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
+        }
 
         // Notifikasi ke bagian keuangan
         $finances = $this->db->select('phone')->from('users')->where('bagian', 3)->like('level', '803', 'both')->get()->result();
 
         foreach ($finances as $fin) {
           $msgfin = "*Pengajuan Biaya Baru*\nDari : *$user->nama*\nNo. Pengajuan :  *$pengajuan->kode*\n\nCatatan: " . $pengajuan->catatan ?? "-";
-          $this->api_whatsapp->wa_notif($msgfin, $fin->phone);
+
+          $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+          if ($utility['notif_wa'] == 1) {
+            $this->api_whatsapp->wa_notif($msgfin, $fin->phone);
+          }
         }
       } else {
         // Notifikasi ke user
         $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai supervisi.\n\nCatatan : " . $catatan ?? "-";
-        $this->api_whatsapp->wa_notif($msg, $user->phone);
+        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+        if ($utility['notif_wa'] == 1) {
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
+        }
       }
 
 
@@ -713,18 +731,32 @@ class Pengajuan extends CI_Controller
 
           // Notifikasi ke user
           $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai Finance. Selanjutnya diajukan kepada Direksi\n\nCatatan : " . $catatan ?? "-";
-          $this->api_whatsapp->wa_notif($msg, $user->phone);
+
+          $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+          if ($utility['notif_wa'] == 1) {
+            $this->api_whatsapp->wa_notif($msg, $user->phone);
+          }
 
           // Notifikasi Direksi
           $msgdir = "*Pengajuan Baru*\nDari : *$user->nama*\nNo. Pengajuan :  *$pengajuan->kode*\n\nCatatan: " . $pengajuan->catatan ?? "-";
-          $this->api_whatsapp->wa_notif($msgdir, $user_direksi->phone);
+
+          $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+          if ($utility['notif_wa'] == 1) {
+            $this->api_whatsapp->wa_notif($msgdir, $user_direksi->phone);
+          }
 
           $posisi = 'Diajukan kepada direksi';
           $nama_direksi = $nama_direksi;
         } else {
           // Notifikasi ke user
           $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai Finance. Selanjutnya tunggu proses pembayaran.\n\nCatatan : " . $catatan ?? "-";
-          $this->api_whatsapp->wa_notif($msg, $user->phone);
+          $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+          if ($utility['notif_wa'] == 1) {
+            $this->api_whatsapp->wa_notif($msg, $user->phone);
+          }
           $posisi = 'Diarahkan ke pembayaran';
           $nama_direksi = null;
         }
@@ -738,7 +770,11 @@ class Pengajuan extends CI_Controller
       } else {
         // Notifikasi ke user
         $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda ditolak oleh *$nama_session* sebagai Finance.\n\nCatatan : " . $catatan ?? "-";
-        $this->api_whatsapp->wa_notif($msg, $user->phone);
+        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+        if ($utility['notif_wa'] == 1) {
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
+        }
 
         $posisi = 'Ditolak oleh keuangan';
         $nama_direksi = null;
@@ -879,14 +915,23 @@ class Pengajuan extends CI_Controller
       if ($status == 1) {
         // Notifikasi ke user
         $msg = "*Pengajuan $pengajuan->kode*\nPengajuan anda disetujui oleh *$nama_session* sebagai direksi. Selanjutnya tunggu proses pembayaran\n\nCatatan : " . $catatan ?? "-";
-        $this->api_whatsapp->wa_notif($msg, $user->phone);
+        $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+        if ($utility['notif_wa'] == 1) {
+          $this->api_whatsapp->wa_notif($msg, $user->phone);
+        }
 
         // Notifikasi ke bagian keuangan
         $finances = $this->db->select('phone')->from('users')->where('bagian', 3)->like('level', '803', 'both')->get()->result();
 
         foreach ($finances as $fin) {
           $msgfin = "Pengajuan *$pengajuan->kode* sudah disetujui oleh direksi, harap segera proses pembayaran.\n\nCatatan: " . $catatan ?? "-";
-          $this->api_whatsapp->wa_notif($msgfin, $fin->phone);
+
+          $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+          if ($utility['notif_wa'] == 1) {
+            $this->api_whatsapp->wa_notif($msgfin, $fin->phone);
+          }
           $posisi = 'Diarahkan ke pembayaran';
         }
       } else {
@@ -1392,7 +1437,11 @@ class Pengajuan extends CI_Controller
 
           // Notifikasi ke user
           $msg = "*Pengajuan $pengajuan[kode]*\nPengajuan anda sudah dibayarkan oleh *$nama_session* sebagai Finance.";
-          $this->api_whatsapp->wa_notif($msg, $user->phone);
+          $utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+          if ($utility['notif_wa'] == 1) {
+            $this->api_whatsapp->wa_notif($msg, $user->phone);
+          }
 
           $response = [
             'success' => true,

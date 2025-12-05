@@ -1007,7 +1007,11 @@ class App extends CI_Controller
 					}
 
 					foreach ($phone_user as $p) {
-						$this->api_whatsapp->wa_notif($msg, $p);
+						$utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+						if ($utility['notif_wa'] == 1) {
+							$this->api_whatsapp->wa_notif($msg, $p);
+						}
 					}
 
 					redirect('app/create_memo');
@@ -4562,6 +4566,25 @@ class App extends CI_Controller
 		} else {
 			echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus lokasi presensi.']);
 		}
+	}
+
+	public function update_notif()
+	{
+		$notif_wa = $this->input->post('notif_wa');
+		if ($notif_wa == 1) {
+			$msg = 'Notifikasi whatsapp dinyalakan!';
+		} else {
+			$msg = 'Notifikasi whatsapp dimatikan!';
+		}
+		$this->db->set('notif_wa', $notif_wa);
+		$this->db->update('utility');
+
+		$res = [
+			'success' => true,
+			'msg' => $msg
+		];
+
+		echo json_encode($res);
 	}
 
 

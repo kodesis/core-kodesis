@@ -335,11 +335,11 @@ class Financial extends CI_Controller
         $coa_pendaatan_1_arr = $this->m_coa->getCoaByCode('1');
 
         // Ambil data COA kedua
-        $coa_pendaatan_41043_arr = $this->m_coa->getCoaByCode('41043');
+        $coa_25021 = $this->m_coa->getCoaByCode('25021');
 
 
         // Gabungkan kedua hasil ke dalam satu array baru
-        $merged_coa_pendapatan_arr = array_merge($coa_pendaatan_1_arr, $coa_pendaatan_41043_arr);
+        $merged_coa_pendapatan_arr = array_merge($coa_pendaatan_1_arr, $coa_25021);
 
         // Jika perlu, konversi kembali menjadi objek
         $data['pendapatan'] = (object)$merged_coa_pendapatan_arr;
@@ -349,11 +349,11 @@ class Financial extends CI_Controller
         $coa_persediaan_4_arr = $this->m_coa->getCoaByCode('4');
 
         // Ambil data COA kedua
-        $coa_persediaan_25021_arr = $this->m_coa->getCoaByCode('25021');
+        $coa_41043 = $this->m_coa->getCoaByCode('41043');
 
 
         // Gabungkan kedua hasil ke dalam satu array baru
-        $merged_coa_persediaan_arr = array_merge($coa_persediaan_4_arr, $coa_persediaan_25021_arr);
+        $merged_coa_persediaan_arr = array_merge($coa_persediaan_4_arr, $coa_41043);
 
         // Jika perlu, konversi kembali menjadi objek
         $data['persediaan'] = (object)$merged_coa_persediaan_arr;

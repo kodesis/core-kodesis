@@ -282,6 +282,7 @@
                                                 <th>No.</th>
                                                 <th>Tanggal</th>
                                                 <th>Customer</th>
+                                                <th>Ket.</th>
                                                 <th>Total</th>
                                                 <th>User</th>
                                                 <!-- <th>Stt. Pendapatan</th> -->
@@ -297,6 +298,7 @@
                                                         <td><?= $i['no_invoice'] ?></td>
                                                         <td><?= format_indo($i['tanggal_invoice']) ?></td>
                                                         <td><?= $i['nama_customer'] ?></td>
+                                                        <td><?= ucwords($i['keterangan']) ?></td>
                                                         <td class="text-right"><?= number_format($i['total_nonpph'], 0) ?></td>
                                                         <td><?= isset($i['created_by_name']) ? $i['created_by_name'] : 'N/A' ?></td>
                                                         <td>

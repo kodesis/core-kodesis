@@ -607,7 +607,7 @@ class Pengajuan extends CI_Controller
           $this->cb->where(['Id' => $id]);
           $this->cb->update('t_pengajuan', $pengajuan);
 
-          $this->cb->where('no_pengajuan',  $data['no_pengajuan']);
+          $this->cb->where('no_pengajuan',  $data['Id']);
           $this->cb->delete('t_pengajuan_detail');
 
           for ($i = 0; $i < count($rows); $i++) {
@@ -650,7 +650,7 @@ class Pengajuan extends CI_Controller
         $this->cb->where(['Id' => $id]);
         $this->cb->update('t_pengajuan', $pengajuan);
 
-        $this->cb->where('no_pengajuan',  $data['no_pengajuan']);
+        $this->cb->where('no_pengajuan',  $data['Id']);
         $this->cb->delete('t_pengajuan_detail');
 
         for ($i = 0; $i < count($rows); $i++) {

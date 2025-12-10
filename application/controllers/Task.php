@@ -815,6 +815,7 @@ class Task extends CI_Controller
 		$id_task = $this->input->post('id_task');
 		$id_card = $this->input->post('id_card');
 		$total_row = count($this->input->post('row'));
+		$card = $this->db->select('attachment')->from('task_detail')->where('id_detail', $id_card)->get()->row();
 		if ($this->input->post('status') == 'edit') {
 			$target_file = './upload/card_task/';
 			$target_file2 = './upload/task_comment/';
@@ -834,12 +835,12 @@ class Task extends CI_Controller
 					move_uploaded_file($_FILES['att']["tmp_name"][$xx], $target_file2 . $newfilename);
 					$nama_filee[] = str_replace(' ', '', time() . '_' . $_FILES['att']['name'][$xx]);
 				}
+				$file_i = implode(';', $nama_filee);
 			} else {
-				$nama_filee[] = null;
+				$file_i = $card->attachment;
 			}
 			if ($this->input->post('project_name') != '') {
 				// if (count($_FILES['att'.$i]['name']) >= 0) {
-				$file_i = implode(';', $nama_filee);
 				// }else{
 				// $file_i = null;
 				// }

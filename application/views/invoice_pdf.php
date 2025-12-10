@@ -192,7 +192,7 @@
                     <td style="width: 80%;"></td>
                     <td>
                         <p style="margin-top: 20px;">Dengan Hormat</p>
-                        <p style="margin-top: 70px;"><?= $user['nama'] ?></p>
+                        <p style="margin-top: 130px;"><?= $user['nama'] ?></p>
                     </td>
                 </tr>
             </tbody>

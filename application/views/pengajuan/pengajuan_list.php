@@ -319,7 +319,7 @@
                                             </tr>
                                           </thead>
                                           <tbody>
-                                            <?php $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $value['no_pengajuan']])->result_array();
+                                            <?php $detail = $this->cb->get_where('t_pengajuan_detail', ['no_pengajuan' => $value['Id']])->result_array();
                                             $no = 1;
                                             foreach ($detail as $row) {
                                             ?>

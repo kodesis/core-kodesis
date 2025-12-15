@@ -78,7 +78,7 @@ class Pengajuan extends CI_Controller
 
       if ($this->form_validation->run()) {
         $config['upload_path']          = './upload/pengajuan';
-        $config['allowed_types']        = 'jpg|jpeg|png|pdf';
+        $config['allowed_types']        = 'jpg|jpeg|png|pdf|xlsx|xls|docx|doc';
         $config['encrypt_name']         = TRUE;
 
         $this->load->library('upload', $config);
@@ -579,7 +579,7 @@ class Pengajuan extends CI_Controller
 
     if ($this->form_validation->run()) {
       $config['upload_path']          = './upload/pengajuan';
-      $config['allowed_types']        = 'jpg|jpeg|png|pdf';
+      $config['allowed_types']        = 'jpg|jpeg|png|pdf|xlsx|xls|docx|doc';
       $config['encrypt_name']         = TRUE;
 
       $this->load->library('upload', $config);
@@ -1348,7 +1348,7 @@ class Pengajuan extends CI_Controller
       ];
     } else {
       $config['upload_path']          = './upload/pengajuan';
-      $config['allowed_types']        = 'jpg|jpeg|png|pdf';
+      $config['allowed_types']        = 'jpg|jpeg|png|pdf|xlsx|xls|docx|doc';
       $config['encrypt_name']         = TRUE;
 
       $this->load->library('upload', $config);

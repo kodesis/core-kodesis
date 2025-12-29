@@ -1019,29 +1019,52 @@ class Financial extends CI_Controller
 
 	public function print_invoice($id)
 	{
-		$inv =  $this->m_invoice->showById($id);
+		$inv = $this->m_invoice->showById($id);
+
+		// require_once APPPATH . 'third_party/phpqrcode/qrlib.php';
+
+		// // SIGNATURE DATA
+		// $raw = $inv['no_invoice'] . '|' . $inv['user_create'];
+		// $signature = hash_hmac('sha256', $raw, 'SECRET_KEY_PRIVATE');
+
+		// // QR PATH
+		// $tempDir = FCPATH . 'uploads/qr/';
+		// if (!file_exists($tempDir)) {
+		// 	mkdir($tempDir, 0777, true);
+		// }
+
+		// $fileName = 'qr_' . $inv['no_invoice'] . '.png';
+
+		// QRcode::png(
+		// 	$signature,
+		// 	$tempDir . $fileName,
+		// 	QR_ECLEVEL_H,
+		// 	6,
+		// 	2
+		// );
+
 		$data = [
 			'title_pdf' => 'Invoice No. ' . $inv['no_invoice'],
-			'invoice' => $inv,
-			'details' => $this->m_invoice->item_list($inv['Id']),
-			'user' => $this->m_invoice->cek_user($inv['user_create'])
+			'invoice'   => $inv,
+			'details'   => $this->m_invoice->item_list($inv['Id']),
+			'user'      => $this->m_invoice->cek_user($inv['user_create']),
+			// 'qr_path'   => base_url('uploads/qr/' . $fileName)
 		];
 
-		// filename dari pdf ketika didownload
+		// echo '<pre>';
+		// print_r($data['user']);
+		// echo '</pre>';
+		// exit;
+
 		$file_pdf = 'Invoice No. ' . $inv['no_invoice'];
-
-		// setting paper
 		$paper = 'A4';
+		$orientation = 'portrait';
 
-		//orientasi paper potrait / landscape
-		$orientation = "portrait";
-
-		$html = $this->load->view('invoice_pdf', $data, true);
-
-		// run dompdf
-		$this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
-		// $this->load->view('invoice_pdf', $data);
+		$this->load->view('invoice_pdf', $data);
+		// $html = $this->load->view('invoice_pdf', $data, true);
+		// $this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
+
 
 	public function autocomplete()
 	{
@@ -3985,4 +4008,8 @@ class Financial extends CI_Controller
 		// Load view
 		$this->load->view('print_kwitansi', $data);
 	}
+
+	// public function qr_signature()
+	// {
+	// }
 }

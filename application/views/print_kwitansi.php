@@ -50,7 +50,7 @@ $sudah_bayar = ($invoice->status_bayar == 1);
 			width: 65%;
 			height: 65%;
 			transform: translate(-50%, -50%);
-			background: url('<?= base_url('assets/img/logo.png') ?>') no-repeat center;
+			background: url('<?= $this->session->userdata('icon') ?>') no-repeat center;
 			background-size: contain;
 			opacity: 0.04;
 		}

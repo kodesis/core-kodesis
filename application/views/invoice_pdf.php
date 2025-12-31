@@ -194,15 +194,16 @@
 						<p style="margin-top: 20px;">Dengan Hormat</p>
 						<!-- <img src="<?= $qr_path ?>" width="80"> -->
 
-						<?php
-						if ($user['gambar_ttd']) {
-						?>
+						<!-- <?php
+								if ($user['gambar_ttd']) {
+								?>
 							<img src="<?= base_url('assets/signature/' . $user['gambar_ttd']) ?>" width="150">
 						<?php
-						}
-						?>
+								}
+						?> -->
 
-						<p style="margin-top: <?= ($user['gambar_ttd'] ? '10px' : '120px') ?>;"><?= $user['nama'] ?></p>
+						<!-- <p style="margin-top: <?= ($user['gambar_ttd'] ? '10px' : '120px') ?>;"><?= $user['nama'] ?></p> -->
+						<p style="margin-top: 120px"><?= $user['nama'] ?></p>
 					</td>
 				</tr>
 			</tbody>

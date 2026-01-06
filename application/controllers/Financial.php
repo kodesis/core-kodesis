@@ -423,7 +423,8 @@ class Financial extends CI_Controller
 		$tgl_invoice = $this->input->post('tgl_invoice');
 		$tahun = substr($tgl_invoice, 0, 4);
 
-		$max_num = $this->m_invoice->select_max($tahun);
+		// $max_num = $this->m_invoice->select_max($tahun);
+		$max_num = $this->m_invoice->select_max();
 
 		if (!$max_num['max']) {
 			$bilangan = 1; // Nilai Proses
@@ -1060,9 +1061,9 @@ class Financial extends CI_Controller
 		$paper = 'A4';
 		$orientation = 'portrait';
 
-		$this->load->view('invoice_pdf', $data);
-		// $html = $this->load->view('invoice_pdf', $data, true);
-		// $this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
+		// $this->load->view('invoice_pdf', $data);
+		$html = $this->load->view('invoice_pdf', $data, true);
+		$this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
 
 

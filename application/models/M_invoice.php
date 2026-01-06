@@ -61,11 +61,11 @@ class M_invoice extends CI_Model
 		return $this->cb->from('invoice')->count_all_results();
 	}
 
-	public function select_max($tahun)
+	public function select_max($tahun = null)
 	{
 		// Query untuk mendapatkan nomor invoice maksimum berdasarkan tahun
 		$query = $this->cb->select('MAX(no_invoice) AS max')
-			->where('YEAR(tanggal_invoice)', $tahun)
+			// ->where('YEAR(tanggal_invoice)', $tahun)
 			->get('invoice');
 
 		// Cek apakah hasil query tidak kosong

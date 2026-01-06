@@ -67,7 +67,7 @@
 		$month = substr($invoice['tanggal_invoice'], 5, 2);
 		$year = substr($invoice['tanggal_invoice'], 2, 2);
 
-		$nomor = $invoice['no_invoice'] . "/KSI-01/" .  intToRoman($month) . "/" .  $year
+		$nomor = $invoice['no_invoice'] . "/" . $this->session->userdata('nama_singkat') . "/" .  intToRoman($month) . "/" .  $year
 		?>
 
 		<table class="" style="margin-bottom: 30px; width: 100%">
@@ -86,7 +86,7 @@
 						Tanggal
 					</td>
 					<td class="text-end" style="width: 25%;">
-						<?= ($invoice['slug_invoice']) ? $invoice['slug_invoice'] : $nomor  ?> <br>
+						<?= $nomor  ?> <br>
 						<?= format_indo($invoice['tanggal_invoice']) ?>
 					</td>
 				</tr>

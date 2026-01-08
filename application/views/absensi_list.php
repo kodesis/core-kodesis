@@ -222,7 +222,7 @@
               </div>
             <?php
             }
-            if ($this->session->userdata('bagian') == 4) {
+            if ($this->session->userdata('bagian') == 4 || $this->session->userdata('bagian') == 1) {
             ?>
               <div class="col-md-3">
                 <button class="btn btn-primary btn-block" onclick="showAll()">All List</button>

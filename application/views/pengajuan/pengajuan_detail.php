@@ -220,6 +220,22 @@
                       <table class="table table-bordered">
                         <thead>
                           <tr>
+                            <td colspan="2"></td>
+                            <td>
+                              <select id="global_coa" class="form-control all-item" style="width:100%">
+                                <option value="">-- Pilih COA untuk Semua Item --</option>
+                                <?php foreach ($coa_credit as $c): ?>
+                                  <option value="<?= $c['no_sbb'] ?>">
+                                    <?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?>
+                                  </option>
+                                <?php endforeach; ?>
+                              </select>
+                              <button type="button" id="apply_global_coa" class="btn btn-primary" style="margin-top: 5px;">
+                                Terapkan ke Semua Item
+                              </button>
+                            </td>
+                          </tr>
+                          <tr>
                             <th>Item</th>
                             <th>Total</th>
                             <th>COA Credit</th>
@@ -238,7 +254,7 @@
                                 <input type="text" class="form-control" name="total_item[]" id="total_item<?= $i['Id'] ?>" value="<?= number_format($i['total']) ?>" readonly>
                               </td>
                               <td>
-                                <select name="coa_credit[]" id="coa_credit<?= $i['Id'] ?>" class="form-control coa_credit<?= $i['Id'] ?>" style="width: 100%;">
+                                <select name="coa_credit[]" id="coa_credit<?= $i['Id'] ?>" class="form-control coa_credit<?= $i['Id'] ?> coa-select" style="width: 100%;">
                                   <option value=""> -- Pilih COA Credit -- </option>
                                   <?php foreach ($coa_credit as $c) { ?>
                                     <option value="<?= $c['no_sbb'] ?>"><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
@@ -351,7 +367,7 @@
                         </div>
                         <div class="form-group">
                           <label for="nama_direksi">Direksi</label>
-                          <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                          <select name="nama_direksi" id="nama_direksi" class="form-control" style="width: 100%;" disabled>
                             <option value=""> -- Pilih Direksi -- </option>
                             <?php
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
@@ -505,7 +521,7 @@
                       </div>
                       <div class="form-group">
                         <label for="nama_direksi">Direksi</label>
-                        <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                        <select name="nama_direksi" id="nama_direksi" class="form-control" style="width: 100%;" disabled>
                           <option value=""> -- Pilih Direksi -- </option>
                           <?php
                           $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
@@ -533,6 +549,22 @@
                       <table class="table table-bordered">
                         <thead>
                           <tr>
+                            <td colspan="4"></td>
+                            <td>
+                              <select id="global_coa" class="form-control all-item" style="width:100%">
+                                <option value="">-- Pilih COA untuk Semua Item --</option>
+                                <?php foreach ($coa as $c): ?>
+                                  <option value="<?= $c['no_sbb'] ?>">
+                                    <?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?>
+                                  </option>
+                                <?php endforeach; ?>
+                              </select>
+                              <button type="button" id="apply_global_coa" class="btn btn-primary" style="margin-top: 5px;">
+                                Terapkan ke Semua Item
+                              </button>
+                            </td>
+                          </tr>
+                          <tr>
                             <th>Item</th>
                             <th>Qty</th>
                             <th>Price</th>
@@ -553,7 +585,7 @@
                               <td><?= number_format($i['price']) ?></td>
                               <td><?= number_format($i['total']) ?></td>
                               <td>
-                                <select name="coa_debit[]" id="coa_debit<?= $i['Id'] ?>" class="form-control coa_debit<?= $i['Id'] ?>" style="width: 100%;">
+                                <select name="coa_debit[]" id="coa_debit<?= $i['Id'] ?>" class="form-control coa_debit<?= $i['Id'] ?> coa-select" style="width: 100%;">
                                   <?php foreach ($coa as $c) { ?>
                                     <option value="<?= $c['no_sbb'] ?>" <?= $c['no_sbb'] == '15110' ? 'selected' : '' ?>><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
                                   <?php } ?>
@@ -659,7 +691,7 @@
                         </div>
                         <div class="form-group">
                           <label for="nama_direksi">Direksi</label>
-                          <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                          <select name="nama_direksi" id="nama_direksi" class="form-control" style="width: 100%;" disabled>
                             <option value=""> -- Pilih Direksi -- </option>
                             <?php
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
@@ -847,7 +879,7 @@
                         </div>
                         <div class="form-group">
                           <label for="nama_direksi">Direksi</label>
-                          <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                          <select name="nama_direksi" id="nama_direksi" class="form-control" style="width: 100%;" disabled>
                             <option value=""> -- Pilih Direksi -- </option>
                             <?php
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
@@ -1034,7 +1066,7 @@
                         </div>
                         <div class="form-group">
                           <label for="nama_direksi">Direksi</label>
-                          <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                          <select name="nama_direksi" id="nama_direksi" class="form-control" style="width: 100%;" disabled>
                             <option value=""> -- Pilih Direksi -- </option>
                             <?php
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
@@ -1062,6 +1094,22 @@
                       <table class="table table-bordered">
                         <thead>
                           <tr>
+                            <td colspan="2"></td>
+                            <td>
+                              <select id="global_coa" class="form-control all-item" style="width:100%">
+                                <option value="">-- Pilih COA untuk Semua Item --</option>
+                                <?php foreach ($coa_beban as $c): ?>
+                                  <option value="<?= $c['no_sbb'] ?>">
+                                    <?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?>
+                                  </option>
+                                <?php endforeach; ?>
+                              </select>
+                              <button type="button" id="apply_global_coa" class="btn btn-primary" style="margin-top: 5px;">
+                                Terapkan ke Semua Item
+                              </button>
+                            </td>
+                          </tr>
+                          <tr>
                             <th>Item</th>
                             <th>Total</th>
                             <th>COA</th>
@@ -1082,7 +1130,7 @@
                               </td>
                               <td>
                                 <?php if ($detail['posisi'] != 'Closed') { ?>
-                                  <select name="coa_beban[]" id="coa_beban<?= $i['Id'] ?>" class="form-control coa_beban<?= $i['Id'] ?>" style="width: 100%;">
+                                  <select name="coa_beban[]" id="coa_beban<?= $i['Id'] ?>" class="form-control coa_beban<?= $i['Id'] ?> coa-select" style="width: 100%;">
                                     <option value=""> -- Pilih COA Beban -- </option>
                                     <?php foreach ($coa_beban as $c) { ?>
                                       <option value="<?= $c['no_sbb'] ?>"><?= $c['no_sbb'] . ' - ' . $c['nama_perkiraan'] ?></option>
@@ -1206,7 +1254,7 @@
                         </div>
                         <div class="form-group">
                           <label for="nama_direksi">Direksi</label>
-                          <select name="nama_direksi" id="nama_direksi" class="form-control select2" style="width: 100%;" disabled>
+                          <select name="nama_direksi" id="nama_direksi" class="form-control" style="width: 100%;" disabled>
                             <option value=""> -- Pilih Direksi -- </option>
                             <?php
                             $direksi = $this->db->get_where('users', ['level_jabatan > ' => 4])->result_array();
@@ -1293,7 +1341,7 @@
 
   <script>
     $(document).ready(function() {
-      // $('.select2').select2();
+      $('.all-item').select2();
       $("select[name='direksi']").change(function() {
         var val = $(this).val();
         if (val == 1) {
@@ -1524,6 +1572,21 @@
     })
   </script>
   <script>
+    $('#apply_global_coa').on('click', function() {
+      let globalCoa = $('#global_coa').val();
+
+      if (!globalCoa) {
+        alert('Pilih COA global terlebih dahulu');
+        return;
+      }
+
+      $('.coa-select').each(function() {
+        $(this)
+          .val(globalCoa)
+          .trigger('change');
+      });
+    });
+
     function formatNumber(number) {
       return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }

@@ -168,6 +168,12 @@
 								<p><?= $this->session->userdata('nama_ppn') ?></p>
 							<?php
 							} ?>
+							<?php
+							if ($invoice['besaran_pph'] != '0.00') {
+							?>
+								<p>PPh 23</p>
+							<?php
+							} ?>
 							<p>Total</p>
 						</strong>
 					</td>
@@ -179,13 +185,30 @@
 							<p><?= number_format($invoice['besaran_ppn']) ?></p>
 						<?php
 						} ?>
-						<p><?= number_format($invoice['total_nonpph']) ?></p>
+						<?php
+						if ($invoice['besaran_pph'] != '0.00') {
+						?>
+							<p>(<?= number_format($invoice['besaran_pph']) ?>)</p>
+							<p><?= number_format($invoice['total_denganpph']) ?></p>
+						<?php
+						} else { ?>
+							<p><?= number_format($invoice['total_nonpph']) ?></p>
+						<?php } ?>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 
-		<p class="mb-50">Terbilang: <?= terbilang(round($invoice['total_nonpph'])) ?> Rupiah</p>
+		<p class="mb-50">Terbilang:
+			<?php
+			if ($invoice['besaran_pph'] != '0.00') {
+			?>
+				<?= terbilang(round($invoice['total_denganpph'])) ?> Rupiah
+			<?php } else { ?>
+				<?= terbilang(round($invoice['total_nonpph'])) ?> Rupiah
+			<?php } ?>
+		</p>
+
 		<table>
 			<tbody>
 				<tr>

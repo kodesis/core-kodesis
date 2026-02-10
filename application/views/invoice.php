@@ -303,7 +303,7 @@
 														<td><?= format_indo($i['tanggal_invoice']) ?></td>
 														<td><?= $i['nama_customer'] ?></td>
 														<td><?= ucwords($i['keterangan']) ?></td>
-														<td class="text-right"><?= number_format($i['total_nonpph'], 0) ?></td>
+														<td class="text-right"><?= number_format($i['subtotal'], 0) ?></td>
 														<td><?= isset($i['created_by_name']) ? $i['created_by_name'] : 'N/A' ?></td>
 														<td>
 															<?php

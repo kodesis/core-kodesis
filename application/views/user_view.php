@@ -455,7 +455,7 @@
 												<?php
 												$supervisi = $this->db->get_where('users', ['level_jabatan >=' => 3])->result();
 												foreach ($supervisi as $data) { ?>
-													<option value="<?= $data->nip ?>"><?= $data->nama_jabatan ?></option>
+													<option value="<?= $data->nip ?>"><?= $data->nama ?></option>
 												<?php } ?>
 											</select>
 										</td>
@@ -678,7 +678,7 @@
 														$selected = "";
 													}
 												?>
-													<option <?= $selected ?> value="<?= $data->nip ?>"><?= $data->nama_jabatan ?></option>
+													<option <?= $selected ?> value="<?= $data->nip ?>"><?= $data->nama ?></option>
 												<?php } ?>
 											</select>
 										</div>

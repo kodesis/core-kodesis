@@ -22,7 +22,7 @@ class M_invoice extends CI_Model
 
 		$this->cb->select('a.*, c.nama_customer, a.Id as nomor_id_invoice, a.slug as slug_invoice');
 		$this->cb->from('invoice a');
-		$this->cb->where('a.id_cabang', $kode_cabang);
+		// $this->cb->where('a.id_cabang', $kode_cabang);
 		$this->cb->join('customer c', 'a.id_customer = c.id', 'left');
 
 		if ($keyword) {

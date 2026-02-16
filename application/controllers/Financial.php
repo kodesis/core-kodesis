@@ -288,6 +288,11 @@ class Financial extends CI_Controller
 			'customers' => $this->M_Customer->list_customer(''),
 		];
 
+		// echo '<pre>';
+		// print_r($data);
+		// echo '</pre>';
+		// exit;
+
 		// Ambil data COA pertama
 		$coa_410_arr = $this->m_coa->getCoaByCode('410');
 
@@ -324,6 +329,15 @@ class Financial extends CI_Controller
 		$res2 = $query2->result_array();
 		$result2 = $res2[0]['COUNT(id)'];
 
+		$jenis = $this->uri->segment(3);
+
+
+		if ($jenis === 'pendapatan') {
+			$url_action = 'financial/store_invoice/pendapatan';
+		} else {
+			$url_action = 'financial/store_invoice/khusus';
+		}
+
 		$data = [
 			'title' => 'Create Invoice',
 			// 'no_invoice' => $no_inv,
@@ -332,6 +346,8 @@ class Financial extends CI_Controller
 			// 'persediaan' => $this->m_coa->getCoaByCode('4'),
 			'count_inbox' => $result,
 			'count_inbox2' => $result2,
+			'jenis' => $jenis,
+			'url_action' => $url_action
 		];
 
 		// Ambil data COA pertama
@@ -446,10 +462,12 @@ class Financial extends CI_Controller
 
 		$keterangan = trim($this->input->post('keterangan'));
 
-		if ($jenis == 'reguler') {
-			$jenis_invoice = 'reguler';
-		} else {
+		if ($jenis == 'pendapatan') {
+			$jenis_invoice = 'pendapatan';
+		} else if ($jenis == 'khusus') {
 			$jenis_invoice = 'khusus';
+		} else {
+			$jenis_invoice = 'reguler';
 		}
 
 		// Insert ke tabel invoice
@@ -1102,37 +1120,44 @@ class Financial extends CI_Controller
 		$status_bayar = $this->input->post('status_bayar');
 		$tanggal_bayar = $this->input->post('tanggal_bayar');
 
-		// J1
-		$j1_coa_debit = $inv['coa_kredit'];
-		$j1_coa_kredit = $coa_kredit;
-		$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['nominal_pendapatan'], $tanggal_bayar);
-
-		// J3
-		$j1_coa_debit = $coa_debit;
-		$j1_coa_kredit = $inv['coa_debit'];
-		$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
-
-		$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
-		// print_r($coa_utility);
-
-		// J2
-		if ($inv['besaran_ppn'] !== '0.00') {
-			$j1_coa_debit = $inv['coa_debit'];
-			// $j1_coa_kredit = "23011"; // cek ini
-			$j1_coa_kredit = $coa_utility['nomor_coa_ppn_keluaran']; // cek ini
-			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
-
-			$j2_coa_debit = $inv['coa_kredit'];
-			$j2_coa_kredit = $inv['coa_debit'];
-			$this->posting($j2_coa_debit, $j2_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
-		}
-
-		// J4 (PPH23)
-		if ($inv['opsi_pph23'] == '1') {
+		if ($inv['jenis_invoice'] == 'pendapatan') {
 			$j1_coa_debit = $coa_debit;
-			// $j1_coa_kredit = "23014";
-			$j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
-			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
+			$j1_coa_kredit = $coa_kredit;
+			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
+		} else {
+
+			// J1
+			$j1_coa_debit = $inv['coa_kredit'];
+			$j1_coa_kredit = $coa_kredit;
+			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['nominal_pendapatan'], $tanggal_bayar);
+
+			// J3
+			$j1_coa_debit = $coa_debit;
+			$j1_coa_kredit = $inv['coa_debit'];
+			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
+
+			$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
+			// print_r($coa_utility);
+
+			// J2
+			if ($inv['besaran_ppn'] !== '0.00') {
+				$j1_coa_debit = $inv['coa_debit'];
+				// $j1_coa_kredit = "23011"; // cek ini
+				$j1_coa_kredit = $coa_utility['nomor_coa_ppn_keluaran']; // cek ini
+				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
+
+				$j2_coa_debit = $inv['coa_kredit'];
+				$j2_coa_kredit = $inv['coa_debit'];
+				$this->posting($j2_coa_debit, $j2_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
+			}
+
+			// J4 (PPH23)
+			if ($inv['opsi_pph23'] == '1') {
+				$j1_coa_debit = $coa_debit;
+				// $j1_coa_kredit = "23014";
+				$j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
+				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
+			}
 		}
 
 		$this->log_pembayaran("invoice", $inv['Id'], $nominal_bayar, $keterangan);

@@ -232,7 +232,22 @@
 							<div class="x_title">
 								<h2>Invoices</h2>
 								<ul class="nav navbar-right panel_toolbox">
-									<a href="<?= base_url('financial/create_invoice') ?>" class="btn btn-primary">Create Inv.</a>
+									<!-- <a href="<?= base_url('financial/create_invoice') ?>" class="btn btn-primary">Create Inv.</a> -->
+									<li class="dropdown">
+										<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="color: white;">
+											Create Inv.
+										</button>
+										<ul class="dropdown-menu" role="menu">
+											<li>
+												<a href="<?= base_url('financial/create_invoice/reguler') ?>">Reguler
+												</a>
+											</li>
+											<li>
+												<a href="<?= base_url('financial/create_invoice/pendapatan') ?>">Pendapatan
+												</a>
+											</li>
+										</ul>
+									</li>
 
 									<!-- <li>
                                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Create Inv. <span class="caret"></span>

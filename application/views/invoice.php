@@ -239,11 +239,11 @@
 										</button>
 										<ul class="dropdown-menu" role="menu">
 											<li>
-												<a href="<?= base_url('financial/create_invoice/reguler') ?>">Reguler
+												<a href="<?= base_url('financial/create_invoice/reguler') ?>">Invoice versi J3
 												</a>
 											</li>
 											<li>
-												<a href="<?= base_url('financial/create_invoice/pendapatan') ?>">Pendapatan
+												<a href="<?= base_url('financial/create_invoice/pendapatan') ?>">Invoice versi J2
 												</a>
 											</li>
 										</ul>

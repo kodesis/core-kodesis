@@ -362,7 +362,7 @@
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
                             <h4 class="modal-title" id="myModalLabel2">Lacak arus kas</h4>
                         </div>
-                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>" target="_blank">
+                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/coa_report') ?>">
                             <div class="modal-body">
                                 <div class="row">
                                     <input type="hidden" class="form-control" name="no_coa">

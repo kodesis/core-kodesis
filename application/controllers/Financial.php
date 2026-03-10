@@ -288,11 +288,6 @@ class Financial extends CI_Controller
 			'customers' => $this->M_Customer->list_customer(''),
 		];
 
-		// echo '<pre>';
-		// print_r($data);
-		// echo '</pre>';
-		// exit;
-
 		// Ambil data COA pertama
 		$coa_410_arr = $this->m_coa->getCoaByCode('410');
 
@@ -329,15 +324,6 @@ class Financial extends CI_Controller
 		$res2 = $query2->result_array();
 		$result2 = $res2[0]['COUNT(id)'];
 
-		$jenis = $this->uri->segment(3);
-
-
-		if ($jenis === 'pendapatan') {
-			$url_action = 'financial/store_invoice/pendapatan';
-		} else {
-			$url_action = 'financial/store_invoice/khusus';
-		}
-
 		$data = [
 			'title' => 'Create Invoice',
 			// 'no_invoice' => $no_inv,
@@ -346,8 +332,6 @@ class Financial extends CI_Controller
 			// 'persediaan' => $this->m_coa->getCoaByCode('4'),
 			'count_inbox' => $result,
 			'count_inbox2' => $result2,
-			'jenis' => $jenis,
-			'url_action' => $url_action
 		];
 
 		// Ambil data COA pertama
@@ -462,12 +446,10 @@ class Financial extends CI_Controller
 
 		$keterangan = trim($this->input->post('keterangan'));
 
-		if ($jenis == 'pendapatan') {
-			$jenis_invoice = 'pendapatan';
-		} else if ($jenis == 'khusus') {
-			$jenis_invoice = 'khusus';
-		} else {
+		if ($jenis == 'reguler') {
 			$jenis_invoice = 'reguler';
+		} else {
+			$jenis_invoice = 'khusus';
 		}
 
 		// Insert ke tabel invoice
@@ -1120,44 +1102,37 @@ class Financial extends CI_Controller
 		$status_bayar = $this->input->post('status_bayar');
 		$tanggal_bayar = $this->input->post('tanggal_bayar');
 
-		if ($inv['jenis_invoice'] == 'pendapatan') {
+		// J1
+		$j1_coa_debit = $inv['coa_kredit'];
+		$j1_coa_kredit = $coa_kredit;
+		$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['nominal_pendapatan'], $tanggal_bayar);
+
+		// J3
+		$j1_coa_debit = $coa_debit;
+		$j1_coa_kredit = $inv['coa_debit'];
+		$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
+
+		$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
+		// print_r($coa_utility);
+
+		// J2
+		if ($inv['besaran_ppn'] !== '0.00') {
+			$j1_coa_debit = $inv['coa_debit'];
+			// $j1_coa_kredit = "23011"; // cek ini
+			$j1_coa_kredit = $coa_utility['nomor_coa_ppn_keluaran']; // cek ini
+			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
+
+			$j2_coa_debit = $inv['coa_kredit'];
+			$j2_coa_kredit = $inv['coa_debit'];
+			$this->posting($j2_coa_debit, $j2_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
+		}
+
+		// J4 (PPH23)
+		if ($inv['opsi_pph23'] == '1') {
 			$j1_coa_debit = $coa_debit;
-			$j1_coa_kredit = $coa_kredit;
-			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
-		} else {
-
-			// J1
-			$j1_coa_debit = $inv['coa_kredit'];
-			$j1_coa_kredit = $coa_kredit;
-			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['nominal_pendapatan'], $tanggal_bayar);
-
-			// J3
-			$j1_coa_debit = $coa_debit;
-			$j1_coa_kredit = $inv['coa_debit'];
-			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $nominal_bayar, $tanggal_bayar);
-
-			$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
-			// print_r($coa_utility);
-
-			// J2
-			if ($inv['besaran_ppn'] !== '0.00') {
-				$j1_coa_debit = $inv['coa_debit'];
-				// $j1_coa_kredit = "23011"; // cek ini
-				$j1_coa_kredit = $coa_utility['nomor_coa_ppn_keluaran']; // cek ini
-				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
-
-				$j2_coa_debit = $inv['coa_kredit'];
-				$j2_coa_kredit = $inv['coa_debit'];
-				$this->posting($j2_coa_debit, $j2_coa_kredit, $keterangan, $inv['besaran_ppn'], $tanggal_bayar);
-			}
-
-			// J4 (PPH23)
-			if ($inv['opsi_pph23'] == '1') {
-				$j1_coa_debit = $coa_debit;
-				// $j1_coa_kredit = "23014";
-				$j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
-				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
-			}
+			// $j1_coa_kredit = "23014";
+			$j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
+			$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
 		}
 
 		$this->log_pembayaran("invoice", $inv['Id'], $nominal_bayar, $keterangan);
@@ -1403,6 +1378,99 @@ class Financial extends CI_Controller
 		$this->load->view('report_per_coa', $data);
 	}
 
+	public function ajax_edit_report_coa($id)
+	{
+		$this->cb->select('*');
+		$this->cb->from('jurnal_neraca');
+		$this->cb->where('id', $id);
+		$get_coa = $this->cb->get()->row();
+		$response = [
+			'data' => $get_coa, // This will contain the COA object/array
+		];
+		echo json_encode($response);
+	}
+
+	public function update_report_per_coa()
+	{
+
+		$akun_debit = $this->input->post('neraca_debit');
+		$akun_kredit = $this->input->post('neraca_kredit');
+		$input_keterangan = $this->input->post('input_keterangan');
+		$tanggal = $this->input->post('tanggal');
+		$file = $this->input->post('file');
+		$input_nominal = $this->input->post('input_nominal');
+
+
+		// JS sudah konversi, tapi fallback kalau JS gagal
+		if (strpos($input_nominal, ',') !== false) {
+			// Format Indonesia masuk (JS gagal jalan)
+			$input_nominal = str_replace('.', '', $input_nominal);
+			$input_nominal = str_replace(',', '.', $input_nominal);
+		}
+		$input_nominal = (float)$input_nominal;
+
+		$data_update = [
+			'tanggal'           => $tanggal,
+			'akun_debit'           => $akun_debit,
+			'jumlah_debit'           => $input_nominal,
+			'akun_kredit'           => $akun_kredit,
+			'jumlah_kredit'           => $input_nominal,
+			'keterangan'           => $input_keterangan,
+		];
+
+		// echo '<pre>';
+		// print_r($data_update);
+		// echo '</pre>';
+		// exit;
+
+		$this->cb->update('jurnal_neraca', $data_update, array('id' => $this->input->post('id')));
+		$this->session->set_flashdata('message_name', "Berhasil Update Arus Kas");
+
+		redirect('financial/coa_report');
+	}
+
+	public function hapus_arus_kas()
+	{
+		$id = $this->input->post('id');
+
+		// 1. Basic validation for ID
+		if (empty($id)) { // Using empty() is often better for checking if a variable is considered "empty"
+			echo json_encode(['status' => 'error', 'message' => 'ID Arus Kas tidak ditemukan atau tidak valid.']);
+			return;
+		}
+
+		// 2. Optional: Check if the record exists before attempting deletion
+		// This provides a more specific error message if the ID doesn't exist
+		$this->cb->where('id', $id);
+		$query = $this->cb->get('jurnal_neraca');
+
+		if ($query->num_rows() == 0) {
+			echo json_encode(['status' => 'info', 'message' => 'Arus Kas tidak ditemukan atau sudah dihapus.']);
+			return;
+		}
+
+		// 3. Attempt the deletion
+		$this->cb->where('id', $id);
+		$delete_result = $this->cb->delete('jurnal_neraca');
+
+		// 4. Check the direct result of the delete operation and affected rows
+		if ($delete_result) { // $delete_result will be TRUE on successful query execution
+			if ($this->cb->affected_rows() > 0) {
+				echo json_encode(['status' => 'success', 'message' => 'Arus Kas berhasil dihapus.']);
+			} else {
+				// This 'else' block means the query ran without error but affected 0 rows.
+				// Given the num_rows() check above, this is now less likely unless
+				// something very unusual happened between check and delete.
+				// Could also happen if a row was deleted by another process milliseconds before.
+				echo json_encode(['status' => 'info', 'message' => 'Arus Kas tidak ditemukan atau sudah dihapus. (Affected rows 0)']);
+			}
+		} else {
+			// This 'else' block means the DELETE query itself failed (e.g., database error, syntax error).
+			// You might want to log this error.
+			error_log("Database delete error for ID: " . $id . " - " . $this->db->error()['message']);
+			echo json_encode(['status' => 'error', 'message' => 'Terjadi kesalahan saat menghapus Arus Kas. Silakan coba lagi.']);
+		}
+	}
 
 	public function simpanNeraca()
 	{

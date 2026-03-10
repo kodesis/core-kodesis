@@ -271,6 +271,7 @@
                                                         <th class="text-center">Kredit</th>
                                                         <!-- <th class="text-center">Saldo Akhir</th> -->
                                                         <th class="text-center">Keterangan</th>
+                                                        <th class="text-center">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -290,6 +291,8 @@
                                                                 <!-- <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) : '0') : '0' ?></td> -->
                                                                 <!-- <td class="text-right"><?= ($a->akun_kredit == $detail_coa['no_sbb']) ? (($a->saldo_kredit) ? number_format($a->saldo_kredit) :  '0') : (($a->saldo_debit) ? number_format($a->saldo_debit) : '0') ?></td> -->
                                                                 <td><?= $a->keterangan ?></td>
+                                                                <td> <button class="btn btn-sm btn-warning text-white" onclick="onEdit_report_per_coa(<?= $a->id ?>)" type="button">Update</button>
+                                                                </td>
                                                             </tr>
                                                         <?php
                                                         endforeach;
@@ -393,6 +396,70 @@
                     </div>
                 </div>
             </div>
+            <!-- Update COA Modal -->
+            <div class="modal fade" id="updateCoaModal" tabindex="-1" aria-labelledby="updateCoaModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateCoaModalLabel">Update COA Entry</h5>
+                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+                        </div>
+                        <form id="updateCoaForm" action="<?= site_url('financial/update_report_per_coa') ?>" method="POST" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <input type="hidden" name="id" id="update_id">
+                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                        <label class="form-label">Debit</label>
+                                        <select name="neraca_debit" id="update_neraca_debit" class="form-control" style="width: 100%;" required>
+                                            <option value="">-- Pilih pos neraca debit</option>
+                                            <?php foreach ($coas as $c) : ?>
+                                                <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>" data-posisi="<?= $c->posisi ?>">
+                                                    <?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                        <label class="form-label">Kredit</label>
+                                        <select name="neraca_kredit" id="update_neraca_kredit" class="form-control" style="width: 100%;" required>
+                                            <option value="">-- Pilih pos neraca kredit</option>
+                                            <?php foreach ($coas as $c) : ?>
+                                                <option value="<?= $c->no_sbb ?>" data-nama="<?= $c->nama_perkiraan ?>" data-posisi="<?= $c->posisi ?>">
+                                                    <?= $c->no_sbb . ' - ' . $c->nama_perkiraan ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12 col-xs-12 form-group has-feedback">
+                                        <div id="warningMessage" class="validation-error-alert"></div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                        <label class="form-label">Nominal</label>
+                                        <input type="text" class="form-control format_angka" name="input_nominal" id="update_input_nominal" placeholder="Nominal" required>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                        <label class="form-label">Keterangan</label>
+                                        <input type="text" class="form-control" name="input_keterangan" id="update_input_keterangan" placeholder="Keterangan" oninput="this.value = this.value.toUpperCase()" required>
+                                    </div>
+                                    <div class="col-md-12 col-xs-12 form-group has-feedback">
+                                        <label class="form-label">Tanggal</label>
+                                        <input type="date" name="tanggal" id="update_tanggal" value="<?= date('Y-m-d') ?>" class="form-control" required>
+                                    </div>
+                                    <!-- <div class="col-md-6 col-xs-12 form-group has-feedback">
+                                        <label class="form-label">Attachment (Image/Excel/Word)</label>
+                                        <input type="file" class="form-control-file" name="file" id="file">
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" onclick="onDeleteArusKas()">Delete</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <link rel="stylesheet" href="<?= base_url(); ?>assets/select2/css/select2.min.css">
             <script type="text/javascript" src="<?= base_url(); ?>assets/select2/js/select2.min.js"></script>
             <script>
@@ -475,20 +542,86 @@
 
     <script>
         $(document).ready(function() {
+
             $('.js-example-basic-multiple').select2();
+
             $('.select2').select2();
 
+
+
             $("form").on("submit", function() {
+
                 Swal.fire({
+
                     title: "Loading...",
+
                     timerProgressBar: true,
+
                     allowOutsideClick: false,
+
                     didOpen: () => {
+
                         Swal.showLoading()
+
                     },
-                    timer: 1500
+
                 });
+
             });
+
+            $(document).ready(function() {
+
+
+                function formatState(state, colorAktiva, colorPasiva, signAktiva, signPasiva) {
+                    if (!state.id) {
+                        return state.text;
+                    }
+
+                    var color = state.element.dataset.posisi == "AKTIVA" ? colorAktiva : colorPasiva;
+                    var sign = state.element.dataset.posisi == "AKTIVA" ? signAktiva : signPasiva;
+
+                    var $state = $('<span style="background-color: ' + color + ';"><strong>' + state.text + ' ' + sign + '</strong></span>');
+
+                    return $state;
+                };
+
+                function formatStateDebit(state) {
+                    return formatState(state, '#2ecc71', '#ff7675', '(+)', '(-)');
+                }
+
+                function formatStateKredit(state) {
+                    return formatState(state, '#ff7675', '#2ecc71', '(-)', '(+)');
+                }
+
+                $('#update_neraca_debit').select2({
+                    // templateResult: formatStateDebit,
+                    templateSelection: formatStateDebit
+                });
+
+                $('#update_neraca_kredit').select2({
+                    // templateResult: formatStateKredit,
+                    templateSelection: formatStateKredit
+                });
+
+                $('#update_neraca_debit, #update_neraca_kredit').change(function() {
+                    var debit = $('#update_neraca_debit').find(":selected").val();
+                    var kredit = $('#update_neraca_kredit').find(":selected").val();
+                    disabledSubmit(debit, kredit);
+                });
+
+                function disabledSubmit(debit, kredit) {
+                    if (debit && kredit) {
+                        if (debit == kredit) {
+                            console.log('sama');
+                            $('.btn-success').prop('disabled', true);
+                        } else {
+                            console.log('tidak sama');
+                            $('.btn-success').prop('disabled', false);
+                        }
+                    }
+                }
+            });
+
         });
 
 
@@ -553,7 +686,144 @@
             });
         });
     </script>
+    <script>
+        function onEdit_report_per_coa(id) {
+            $('#updateCoaForm')[0].reset(); // reset form on modals
+            // $('.form-group').removeClass('has-error'); // clear error class
+            // $('.help-block').empty(); // clear error string
+            // $('.modal-title').text('Edit Poster');
 
+            $.ajax({
+                url: "<?php echo site_url('financial/ajax_edit_report_coa') ?>/" + id,
+                type: "POST",
+                dataType: "JSON",
+                success: function(response) {
+                    var data = response.data;
+
+                    console.log(response);
+
+                    JSON.stringify(data.id);
+                    // alert(JSON.stringify(data));
+
+                    $('#update_id').val(data.id);
+                    $('#update_neraca_debit').val(data.akun_debit).trigger('change');
+                    $('#update_neraca_kredit').val(data.akun_kredit).trigger('change');
+                    // var formattedNominal = new Intl.NumberFormat('id-ID', {
+                    // 	style: 'currency',
+                    // 	currency: 'IDR',
+                    // 	minimumFractionDigits: 0
+                    // }).format(data.jumlah_debit);
+
+                    // // Ganti simbol Rp yang ada spasinya (bawaan Intl) jika perlu
+                    // formattedNominal = formattedNominal.replace(/(\D+)/, 'Rp ');
+
+                    // BARU - pakai formatAngka supaya konsisten, support desimal
+                    var rawNominal = parseFloat(data.jumlah_debit) || 0;
+                    var formattedNominal = rawNominal.toLocaleString('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                    });
+
+                    $('#update_input_nominal').val(formattedNominal);
+                    $('#update_input_keterangan').val(data.keterangan);
+                    $('#update_tanggal').val(data.tanggal);
+                    // if (coaEntry.table_source == "t_coa_sbb") {
+                    //   $('#update_no_bb').val(data.no_bb);
+                    //   $('#update_no_sbb').val(data.no_sbb);
+                    // } else {
+
+                    //   $('#update_no_bb').val(data.no_lr_bb);
+                    //   $('#update_no_sbb').val(data.no_lr_sbb);
+                    // }
+                    // $('#update_nama_perkiraan').val(data.nama_perkiraan);
+                    // $('#update_nominal').val(data.nominal);
+
+
+                    $('#updateCoaModal').modal('show'); // show bootstrap modal when complete loaded
+
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Error get data from ajax');
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            // Event listener untuk input dengan class format_angka
+            $('.format_angka').on('input', function() {
+                // 1. Ambil nilai asli, hapus semua karakter selain angka
+                let value = $(this).val().replace(/[^0-9]/g, '');
+
+                // 2. Format menjadi ribuan dengan titik
+                if (value !== "") {
+                    let formattedValue = new Intl.NumberFormat('id-ID').format(value);
+                    $(this).val(formattedValue);
+                } else {
+                    $(this).val("");
+                }
+            });
+
+            // 3. Pastikan saat form di-submit, titik dihapus agar masuk ke DB sebagai angka
+            $('form').on('submit', function() {
+                $('.format_angka').each(function() {
+                    let plainValue = $(this).val().replace(/\./g, '');
+                    $(this).val(plainValue);
+                });
+            });
+        });
+
+        function onDeleteArusKas() {
+            let id = $('#update_id').val();
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "<?= base_url('financial/hapus_arus_kas/') ?>", // Use POST for ID, don't append to URL unless it's a RESTful DELETE
+                        type: 'POST', // Keep as POST
+                        data: {
+                            id: id
+                        },
+                        dataType: 'json', // Expect JSON response
+                        success: function(response) {
+                            let iconType = 'error'; // Default to error
+                            if (response.status == 'success') {
+                                iconType = 'success';
+                            } else if (response.status == 'info') {
+                                iconType = 'info'; // Use info icon for "not found" cases
+                            }
+
+                            Swal.fire(
+                                response.status === 'success' ? 'Berhasil!' : 'Perhatian!', // Dynamic title
+                                response.message, // Display the message from the backend
+                                iconType
+                            ).then(() => {
+                                // Only reload the table if it was a success or a clear 'info' (already deleted) case
+                                if (response.status === 'success' || response.status === 'info') {
+                                    location.reload();
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', status, error, xhr.responseText); // Log full error for debugging
+                            Swal.fire(
+                                'Kesalahan Jaringan!', // More specific error message
+                                'Terjadi kesalahan komunikasi dengan server. Silakan coba lagi.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 
 </body>
 

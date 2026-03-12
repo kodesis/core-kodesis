@@ -85,8 +85,8 @@ class Memo extends MY_Controller
 			$no_memo = ($memo->nomor_memo ?? 0) + 1;
 		}
 
-		$attach = null;
-		$attach_name = null;
+		$attach = "";
+		$attach_name = "";
 
 		if (!empty($_FILES['lampiran']['name'][0])) {
 			$filesCount = count($_FILES['lampiran']['name']);
@@ -124,13 +124,13 @@ class Memo extends MY_Controller
 					], 400);
 				}
 			}
-			$attach_baru = implode(';', $uploadedNames);
-			$attach_name_baru = implode(';', $originalNames);
+			$attach = implode(';', $uploadedNames);
+			$attach_name = implode(';', $originalNames);
 		}
 
 		if (!empty($this->input->post('attach_exist'))) {
-			$attach_name = $this->input->post('attach_exist') . ($attach_name_baru ? $attach_name_baru . ';' : '');
-			$attach = $this->input->post('attach_exist_encrypt') . ($attach_baru ? $attach_baru . ';' : '');
+			$attach_name = $this->input->post('attach_exist') . ($attach_name ? $attach_name . ';' : '');
+			$attach = $this->input->post('attach_exist_encrypt') . ($attach ? $attach . ';' : '');
 		}
 
 		// 6. Simpan ke Database

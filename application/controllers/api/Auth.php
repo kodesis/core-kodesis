@@ -17,46 +17,52 @@ class Auth extends MY_Controller
 		// 1. Ambil Secret/Key yang dikirim oleh Aplikasi Client
 		$client_id     = $this->input->post('client_id');
 		$client_secret = $this->input->post('client_secret');
-		$nip = $this->input->post('nip');
 
-		// 2. Validasi kredensial aplikasi (Bisa simpan di config atau database)
-		$valid_id     = "KODESIS_APP_01";
-		$valid_secret = "SECRET_KODESIS_2026";
 
-		if ($client_id === $valid_id && $client_secret === $valid_secret) {
+		$client = $this->db->get_where('api_clients', [
+			'client_id' => $client_id,
+			'is_active' => 1
+		])->row();
 
-			$user = $this->db->select('a.*, b.kode_nama')->from('users a')->join('bagian b', 'b.kode = a.bagian')->where('a.nip', $nip)->get()->row();
-
-			if (!$user) {
-				return $this->response(['status' => false, 'message' => 'User tidak ditemukan'], 404);
-			}
-
-			// 3. Siapkan Payload (data identitas aplikasi)
-			$payload = [
-				'app_id'   => $client_id,
-				'role'     => 'internal_app',
-				'nip'      => $user->nip,
-				'nama'          => $user->nama,
-				'level_jabatan' => $user->level_jabatan,
-				'kode_nama'     => $user->kode_nama, // Bagian/Dept
-				'iat'      => time(),
-				'exp'      => time() + (60 * 60 * 24) // Token berlaku 24 jam
-			];
-
-			// 4. Generate Token menggunakan Jwt_lib
-			$token = $this->jwt_lib->encode($payload);
-
-			$this->response([
-				'status'  => true,
-				'message' => 'Token generated successfully',
-				'token'   => $token,
-			], 200);
-		} else {
-			// Jika kredensial salah
-			$this->response([
-				'status'  => false,
-				'message' => 'Invalid Client ID or Secret'
+		if (!$client || !password_verify($client_secret, $client->client_secret)) {
+			return $this->response([
+				'status' => false,
+				'message' => 'Invalid Client Credentials'
 			], 401);
 		}
+
+		$existing = $this->db->get_where('api_tokens', [
+			'client_id' => $client_id
+		])->row();
+
+		$now = date('Y-m-d H:i:s');
+
+		if ($existing && $existing->expired_at > $now) {
+			return $this->response(['status' => true, 'token' => $existing->token], 200);
+		}
+
+		$expired_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
+		$payload = [
+			'client_id' => $client_id,
+			'iat'      => time(),
+			'exp'      => strtotime($expired_at) // Token berlaku 24 jam
+		];
+
+		$token = $this->jwt_lib->encode($payload);
+
+		$data_save = [
+			'token'      => $token,
+			'expired_at' => $expired_at,
+			'created_at' => $now
+		];
+
+		if ($existing) {
+			$this->db->where('Id', $existing->id)->update('api_tokens', $data_save);
+		} else {
+			$data_save['client_id'] = $client_id;
+			$this->db->insert('api_tokens', $data_save);
+		}
+
+		$this->response(['status' => true, 'message' => 'Token generated successfully', 'token' => $token], 200);
 	}
 }

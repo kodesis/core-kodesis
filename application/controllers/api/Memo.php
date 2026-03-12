@@ -25,20 +25,23 @@ class Memo extends MY_Controller
 
 	public function sendmemo()
 	{
-		$user_data = $this->auth_check();
+		$this->auth_check();
 
-		$tujuan = $this->input->post('tujuan_memo[]');
-		$cc = $this->input->post('cc_memo[]');
+		$this->db->select('a.*, b.kode_nama')->from('users a')->join('bagian b', 'b.kode = a.bagian', 'left')->where('nip', $this->input->post('nip'));
+		$user_data = $this->db->get()->row_array();
+
+		$tujuan = $this->input->post('tujuan_memo');
+		$cc = $this->input->post('cc_memo');
 		$judul = $this->input->post('subject_memo');
-		$isi = $this->input->post('ckeditor');
+		$isi = $this->input->post('isi');
 
-		$this->form_validation->set_rules('tujuan_memo[]', 'Tujuan', 'required|trim', [
+		$this->form_validation->set_rules('tujuan_memo', 'Tujuan', 'required|trim', [
 			'required' => '%s harus diisi!'
 		]);
 		$this->form_validation->set_rules('subject_memo', 'Judul atau subject', 'required|trim', [
 			'required' => '%s harus diisi!'
 		]);
-		$this->form_validation->set_rules('ckeditor', 'Isi memo', 'required|trim', [
+		$this->form_validation->set_rules('isi', 'Isi memo', 'required|trim', [
 			'required' => '%s harus diisi!'
 		]);
 
@@ -49,16 +52,32 @@ class Memo extends MY_Controller
 			], 422);
 		}
 
-		$nip_kpd = is_array($tujuan) ? implode(';', $tujuan) . ';' : $tujuan . ';';
-		$nip_cc = !empty($cc) ? (is_array($cc) ? implode(';', $cc) . ';' : $cc . ';') : '';
+		// $nip_kpd = is_array($tujuan) ? implode(';', $tujuan) . ';' : $tujuan;
+		// $nip_cc = !empty($cc) ? (is_array($cc) ? implode(';', $cc) . ';' : $cc) : '';
+		$nip_kpd = rtrim($tujuan, ';') . ';';
+		$nip_cc  = rtrim($cc, ';') . ';';
 
-		$all_user = array_merge((array)$tujuan, (array)($cc ?? []));
-		$this->db->where_in('nip', $all_user);
-		$users = $this->db->select('phone')->get('users')->result_array();
-		$phone_user = array_filter(array_column($users, 'phone'));
+		// 1. Pastikan input jadi array (pecah string jika perlu)
+		$array_tujuan = is_array($tujuan) ? $tujuan : explode(';', rtrim($tujuan, ';'));
+		$array_cc = is_array($cc) ? $cc : explode(';', rtrim($cc, ';'));
+
+		// 2. Gabungkan dan bersihkan dari elemen kosong atau duplikat
+		$all_user = array_unique(array_filter(array_merge($array_tujuan, $array_cc)));
+
+		// 3. Ambil nomor HP dari database
+		$phone_user = [];
+		if (!empty($all_user)) {
+			$this->db->select('phone');
+			$this->db->from('users');
+			$this->db->where_in('nip', $all_user);
+			$users = $this->db->get()->result_array();
+
+			// Ambil kolom phone dan buang yang kosong
+			$phone_user = array_filter(array_column($users, 'phone'));
+		}
 
 		$no_memo = '';
-		if ($user_data['level_jabatan'] >= 1) {
+		if ($user_data['level_jabatan'] >= 2) {
 			$bagian = $user_data['kode_nama'];
 			$this->db->select_max('nomor_memo');
 			$this->db->where(['bagian' => $bagian, 'YEAR(tanggal)' => date('Y')]);
@@ -69,8 +88,8 @@ class Memo extends MY_Controller
 		$attach = null;
 		$attach_name = null;
 
-		if (!empty($_FILES['attach']['name'][0])) {
-			$filesCount = count($_FILES['attach']['name']);
+		if (!empty($_FILES['lampiran']['name'][0])) {
+			$filesCount = count($_FILES['lampiran']['name']);
 
 			$config = [
 				'upload_path' => './upload/att_memo',
@@ -84,11 +103,11 @@ class Memo extends MY_Controller
 			$originalNames = [];
 
 			for ($i = 0; $i < $filesCount; $i++) {
-				$_FILES['file']['name']     = $_FILES['attach']['name'][$i];
-				$_FILES['file']['type']     = $_FILES['attach']['type'][$i];
-				$_FILES['file']['tmp_name'] = $_FILES['attach']['tmp_name'][$i];
-				$_FILES['file']['error']    = $_FILES['attach']['error'][$i];
-				$_FILES['file']['size']     = $_FILES['attach']['size'][$i];
+				$_FILES['file']['name']     = $_FILES['lampiran']['name'][$i];
+				$_FILES['file']['type']     = $_FILES['lampiran']['type'][$i];
+				$_FILES['file']['tmp_name'] = $_FILES['lampiran']['tmp_name'][$i];
+				$_FILES['file']['error']    = $_FILES['lampiran']['error'][$i];
+				$_FILES['file']['size']     = $_FILES['lampiran']['size'][$i];
 
 				if ($this->upload->do_upload('file')) {
 					$uploadData = $this->upload->data();
@@ -105,8 +124,13 @@ class Memo extends MY_Controller
 					], 400);
 				}
 			}
-			$attach = implode(';', $uploadedNames);
-			$attach_name = implode(';', $originalNames);
+			$attach_baru = implode(';', $uploadedNames);
+			$attach_name_baru = implode(';', $originalNames);
+		}
+
+		if (!empty($this->input->post('attach_exist'))) {
+			$attach_name = $this->input->post('attach_exist') . ($attach_name_baru ? $attach_name_baru . ';' : '');
+			$attach = $this->input->post('attach_exist_encrypt') . ($attach_baru ? $attach_baru . ';' : '');
 		}
 
 		// 6. Simpan ke Database
@@ -116,22 +140,21 @@ class Memo extends MY_Controller
 			'nip_cc'      => $nip_cc,
 			'judul'       => $judul,
 			'isi_memo'    => $isi,
-			'nip_dari'    => $user_data['nip'], // Dari JWT
+			'nip_dari'    => $user_data['nip'],
 			'tanggal'     => date('Y-m-d H:i:s'),
 			'read'        => 0,
 			'persetujuan' => 0,
-			'bagian'      => $user_data['kode_nama'], // Dari JWT
+			'bagian'      => $user_data['kode_nama'],
 			'attach'      => $attach,
 			'attach_name' => $attach_name,
 		];
 
 		if ($this->db->insert('memo', $insert)) {
-			// 7. Notifikasi WA (Async / Background lebih baik, tapi ini versi simple)
 			$is_notif = $this->db->get('utility')->row();
 			$this->load->library('Api_Whatsapp');
 			if ($is_notif->notif_wa == 1 && !empty($phone_user)) {
 				$nama_sender = $user_data['nama'];
-				$msg = "There's a new Memo\nFrom : *$nama_sender*\nSubject : *$judul*";
+				$msg = "There's a new Memo\nFrom : *$nama_sender*\nSubject : *$judul*\n\n" . base_url();
 				foreach ($phone_user as $pu) {
 					$this->api_whatsapp->wa_notif($msg, $pu);
 				}

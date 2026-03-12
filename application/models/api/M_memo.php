@@ -51,6 +51,18 @@ class M_memo extends CI_Model
 
     public function get_memo_detail($id, $nip)
     {
+        $result = $this->db->select('read')->from('memo')->not_like('read', $nip)->where('Id', $id)->get()->row();
+
+        if ($result) {
+            $kalimat = $result->read;
+            $kalimat1 = $kalimat . ' ' . $nip;
+            $data_update1 = array(
+                'read' => $kalimat1
+            );
+            $this->db->where('Id', $id);
+            $this->db->update('memo', $data_update1);
+        }
+
         $data = $this->db->select('a.*, b.nama_jabatan, b.nama, b.supervisi, c.kode_nama, b.level_jabatan')->from('memo a')->join('users b', 'a.nip_dari = b.nip')->join('bagian c', 'b.bagian = c.kode')->where('a.id', $id)->group_start()->like('a.nip_dari', $nip, 'both')->or_like('a.nip_kpd', $nip, 'both')->or_like('a.nip_cc', $nip, 'both')->group_end()->get();
 
         return $data->row();

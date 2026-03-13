@@ -12,6 +12,8 @@ class Memo extends MY_Controller
 		$this->load->model('api/M_memo');
 		$this->load->model('m_app'); // Model existing lu
 
+		date_default_timezone_set('Asia/Jakarta');
+
 		// CORS
 		header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');

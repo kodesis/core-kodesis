@@ -54,11 +54,15 @@ class M_pengajuan extends CI_Model
   {
     $this->cb->select('a.Id, a.status, a.no_pengajuan, a.created_at, a.no_rekening, b.nama, a.total, a.status_keuangan, a.posisi');
     $this->cb->from('t_pengajuan as a');
-    $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
+    $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip')->join('t_pengajuan_detail pd', 'pd.no_pengajuan = a.Id');
     if ($search) {
+      $this->cb->group_start();
       $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
+      $this->cb->or_like('a.catatan', $search, 'both');
+      $this->cb->or_like('pd.item', $search, 'both');
+      $this->cb->group_end();
     }
 
     if ($filter == 1) {
@@ -76,7 +80,7 @@ class M_pengajuan extends CI_Model
     if ($filter == 4) {
       $this->cb->where('status_keuangan', 0);
     }
-
+    $this->cb->group_by('pd.no_pengajuan');
     $this->cb->where(['status_spv' => 1]);
     return $this->cb->get()->num_rows();
   }
@@ -136,12 +140,16 @@ class M_pengajuan extends CI_Model
   {
     $this->cb->select('a.Id, a.status, a.status_spv,a.status_direksi, a.kode, a.tanggal, a.no_rekening, a.catatan, b.nama, a.total, a.status_keuangan, a.posisi');
     $this->cb->from('t_pengajuan as a');
-    $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
+    $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip')->join('t_pengajuan_detail pd', 'pd.no_pengajuan = a.Id');;
 
     if ($search) {
+      $this->cb->group_start();
       $this->cb->like('a.kode', $search, 'both');
       $this->cb->or_like('b.nama', $search, 'both');
       $this->cb->or_like('a.no_rekening', $search, 'both');
+      $this->cb->or_like('a.catatan', $search, 'both');
+      $this->cb->or_like('pd.item', $search, 'both');
+      $this->cb->group_end();
     }
 
     if ($filter == 1) {
@@ -160,6 +168,7 @@ class M_pengajuan extends CI_Model
       $this->cb->where('status_keuangan', 0);
     }
 
+    $this->cb->group_by('pd.no_pengajuan');
     $this->cb->where(['status_spv' => 1]);
     return $this->cb->order_by('a.no_pengajuan', 'DESC')->limit($limit, $start)->get();
   }

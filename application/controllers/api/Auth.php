@@ -10,6 +10,7 @@ class Auth extends MY_Controller
 		parent::__construct();
 		// Load library JWT manual yang kita buat sebelumnya
 		$this->load->library('jwt_lib');
+		date_default_timezone_set('Asia/Jakarta');
 	}
 
 	public function generate_token()
@@ -57,7 +58,7 @@ class Auth extends MY_Controller
 		];
 
 		if ($existing) {
-			$this->db->where('Id', $existing->id)->update('api_tokens', $data_save);
+			$this->db->where('Id', $existing->Id)->update('api_tokens', $data_save);
 		} else {
 			$data_save['client_id'] = $client_id;
 			$this->db->insert('api_tokens', $data_save);

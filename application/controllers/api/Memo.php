@@ -14,6 +14,7 @@ class Memo extends MY_Controller
 
 		date_default_timezone_set('Asia/Jakarta');
 
+
 		// CORS
 		header('Access-Control-Allow-Origin: *');
 		header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');

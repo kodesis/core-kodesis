@@ -333,6 +333,7 @@ class Financial extends CI_Controller
 			'count_inbox' => $result,
 			'count_inbox2' => $result2,
 		];
+		// echo '<pre>';
 
 		// Ambil data COA pertama
 		$coa_pendaatan_1_arr = $this->m_coa->getCoaByCode('1');

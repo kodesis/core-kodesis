@@ -275,10 +275,6 @@
 							<div class="x_content">
 								<form class="form-horizontal form-label-left" method="POST" action="<?= base_url($url_action) ?>">
 									<div class="form-group row">
-										<!-- <div class="col-md-2 col-xs-12">
-                                            <label for="no_invoice" class="form-label">Number</label>
-                                            <input type="text" class="form-control" name="no_invoice" value="<?= $no_invoice ?>" readonly>
-                                        </div> -->
 										<div class="col-md-2 col-xs-12">
 											<label for="tgl_invoice" class="form-label">Date</label>
 											<input type="date" class="form-control" name="tgl_invoice" value="<?= date('Y-m-d') ?>">

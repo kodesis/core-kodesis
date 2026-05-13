@@ -338,6 +338,10 @@
 											<input type="text" class="form-control" name="besaran_pph" id="besaran_pph" value="0" readonly>
 										</div>
 										<div class="col-md-2 col-xs-12">
+											<label for="besaran_pph_ps4" class="form-label">PPh Ps 4</label>
+											<input type="text" class="form-control" name="besaran_pph_ps4" id="besaran_pph_ps4" value="0" readonly>
+										</div>
+										<div class="col-md-2 col-xs-12">
 											<label for="total_nonpph" class="form-label">Total (non PPh)</label>
 											<input type="text" class="form-control" name="total_nonpph" id="total_nonpph" value="0" readonly>
 										</div>
@@ -380,18 +384,6 @@
 												endforeach; ?>
 											</select>
 										</div>
-										<div class="col-md-3 col-xs-12">
-											<label for="opsi_pph" class="form-label">PPh</label>
-											<!-- <div class="checkbox text-end"> -->
-											<select name="opsi_pph" id="opsi_pph" class="form-control">
-												<option value="0">Tanpa PPH</option>
-												<option value="0.020">PPh 23</option>
-												<option value="0.1">PPh Pasal 4 Ayat 2</option>
-											</select>
-											<!-- <input type="checkbox" class="icheckbox_flat-green" style="margin-left: 0px;" name="opsi_pph" id="opsi_pph" value="1"> -->
-											<!-- <input id="toggleSwitch" type="checkbox" data-toggle="toggle" class="flat"> -->
-											<!-- </div> -->
-										</div>
 										<div class="col-md-1 col-xs-12">
 											<label for="termin" class="form-label">Termin</label>
 											<div class="checkbox text-end">
@@ -402,7 +394,12 @@
 											<label for="opsi_pph" class="form-label">PPh 23</label>
 											<div class="checkbox text-end">
 												<input type="checkbox" class="icheckbox_flat-green" style="margin-left: 0px;" name="opsi_pph" id="opsi_pph" value="1">
-												<!-- <input id="toggleSwitch" type="checkbox" data-toggle="toggle" class="flat"> -->
+											</div>
+										</div>
+										<div class="col-md-1 col-xs-12">
+											<label for="opsi_pph_ps4" class="form-label">PPh PS 4</label>
+											<div class="checkbox text-end">
+												<input type="checkbox" class="icheckbox_flat-green" style="margin-left: 0px;" name="opsi_pph_ps4" id="opsi_pph_ps4" value="1">
 											</div>
 										</div>
 										<div class="col-md-2 col-xs-12 text-right">
@@ -712,8 +709,9 @@
 				updateTotal();
 			});
 			$('#opsi_pph').on('change', function() {
-				// console.log("tes")
-				// updatePPH();
+				updateTotal();
+			});
+			$('#opsi_pph_ps4').on('change', function() {
 				updateTotal();
 			});
 
@@ -721,9 +719,11 @@
 			function updateTotal() {
 				var diskon = parseFloat($('#diskon').val());
 				var ppn = parseFloat($('#ppn').val());
-				var pph = parseFloat($('#opsi_pph').val());
+				var pph = 0.02;
+				var pph_ps4 = 0.1;
 				// var opsi_pph = document.getElementById("opsi_pph").value;
 				var besaranpph = parseFloat($('#besaran_pph').val());
+				var besaranpph_ps4 = parseFloat($('#besaran_pph_ps4').val());
 
 				var subtotal = 0;
 				// Hitung subtotal dari total setiap baris
@@ -738,23 +738,24 @@
 				var total = subtotal;
 
 				// Jika opsi_pph dicentang
-				// if ($('#opsi_pph').is(':checked')) {
-				// 	besaranpph = total * pph;
-				// } else {
-				// 	besaranpph = 0;
-				// }
-
+				if ($('#opsi_pph').is(':checked')) {
 					besaranpph = total * pph;
 				} else {
 					besaranpph = 0;
 				}
 
+				if ($('#opsi_pph_ps4').is(':checked')) {
+					besaranpph_ps4 = total * pph_ps4;
+				} else {
+					besaranpph_ps4 = 0;
+				}
+
 				// console.log(besaranpph)
 				var besaranppn = total * ppn;
 				var total_nonpph = total + besaranppn;
-				var total_denganpph = total + besaranppn - besaranpph;
-				var pendapatan = total - besaranpph;
-				var nominal_bayar = total + besaranppn - besaranpph;
+				var total_denganpph = total + besaranppn - besaranpph - besaranpph_ps4;
+				var pendapatan = total - besaranpph - besaranpph_ps4;
+				var nominal_bayar = total + besaranppn - besaranpph - besaranpph_ps4;
 
 				// console.log(subtotal);
 				// console.log((ppn));
@@ -762,6 +763,7 @@
 				// Atur nilai input besaran_diskon dan total dengan format angka yang sesuai
 				$('#besaran_ppn').val(formatNumber(besaranppn.toFixed(0)));
 				$('#besaran_pph').val(formatNumber(besaranpph.toFixed(0)));
+				$('#besaran_pph_ps4').val(formatNumber(besaranpph_ps4.toFixed(0)));
 				$('#besaran_diskon').val(formatNumber(besaranDiskon));
 				$('#total_nonpph').val(formatNumber(total_nonpph.toFixed(0)));
 				$('#total_denganpph').val(formatNumber(total_denganpph.toFixed(0)));

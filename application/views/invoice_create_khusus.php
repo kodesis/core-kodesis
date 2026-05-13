@@ -380,6 +380,18 @@
 												endforeach; ?>
 											</select>
 										</div>
+										<div class="col-md-3 col-xs-12">
+											<label for="opsi_pph" class="form-label">PPh</label>
+											<!-- <div class="checkbox text-end"> -->
+											<select name="opsi_pph" id="opsi_pph" class="form-control">
+												<option value="0">Tanpa PPH</option>
+												<option value="0.020">PPh 23</option>
+												<option value="0.1">PPh Pasal 4 Ayat 2</option>
+											</select>
+											<!-- <input type="checkbox" class="icheckbox_flat-green" style="margin-left: 0px;" name="opsi_pph" id="opsi_pph" value="1"> -->
+											<!-- <input id="toggleSwitch" type="checkbox" data-toggle="toggle" class="flat"> -->
+											<!-- </div> -->
+										</div>
 										<div class="col-md-1 col-xs-12">
 											<label for="termin" class="form-label">Termin</label>
 											<div class="checkbox text-end">
@@ -709,7 +721,7 @@
 			function updateTotal() {
 				var diskon = parseFloat($('#diskon').val());
 				var ppn = parseFloat($('#ppn').val());
-				var pph = 0.02;
+				var pph = parseFloat($('#opsi_pph').val());
 				// var opsi_pph = document.getElementById("opsi_pph").value;
 				var besaranpph = parseFloat($('#besaran_pph').val());
 
@@ -726,7 +738,12 @@
 				var total = subtotal;
 
 				// Jika opsi_pph dicentang
-				if ($('#opsi_pph').is(':checked')) {
+				// if ($('#opsi_pph').is(':checked')) {
+				// 	besaranpph = total * pph;
+				// } else {
+				// 	besaranpph = 0;
+				// }
+
 					besaranpph = total * pph;
 				} else {
 					besaranpph = 0;

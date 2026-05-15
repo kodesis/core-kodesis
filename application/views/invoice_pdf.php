@@ -174,6 +174,12 @@
 								<p>PPh 23</p>
 							<?php
 							} ?>
+							<?php
+							if ($invoice['besaran_pph_ps4'] != '0.00') {
+							?>
+								<p>PPh Ps 4</p>
+							<?php
+							} ?>
 							<p>Total</p>
 						</strong>
 					</td>
@@ -189,6 +195,7 @@
 						if ($invoice['besaran_pph'] != '0.00') {
 						?>
 							<p>(<?= number_format($invoice['besaran_pph']) ?>)</p>
+							<p>(<?= number_format($invoice['besaran_pph_ps4']) ?>)</p>
 							<p><?= number_format($invoice['total_denganpph']) ?></p>
 						<?php
 						} else { ?>

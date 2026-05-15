@@ -416,6 +416,7 @@ class Financial extends CI_Controller
 		$besaran_diskon = $this->convertToNumberWithComma(($this->input->post('besaran_diskon')) ? $this->input->post('besaran_diskon') : '0');
 		$besaran_ppn = $this->convertToNumberWithComma($this->input->post('besaran_ppn'));
 		$besaran_pph = $this->convertToNumberWithComma($this->input->post('besaran_pph'));
+		$besaran_pph_ps4 = $this->convertToNumberWithComma($this->input->post('besaran_pph_ps4'));
 		$nominal_bayar = $this->convertToNumberWithComma($this->input->post('nominal_bayar'));
 		// $total_chargeable = $this->convertToNumberWithComma($this->input->post('total_chargeable'));
 		$total_nonpph = $this->convertToNumberWithComma($this->input->post('total_nonpph'));
@@ -436,6 +437,7 @@ class Financial extends CI_Controller
 
 
 		$pph = isset($opsi_pph) ? '0.02' : 0;
+		$pph_ps4 = isset($opsi_pph_ps4) ? '0.10' : 0;
 
 		$tgl_invoice = $this->input->post('tgl_invoice');
 		$tahun = substr($tgl_invoice, 0, 4);
@@ -487,6 +489,9 @@ class Financial extends CI_Controller
 			'opsi_ppn' => isset($opsi_ppn) ? $opsi_ppn : '0',
 			'pph' => $pph,
 			'besaran_pph' => $besaran_pph,
+			'opsi_pph_ps4' => isset($opsi_pph_ps4) ? $opsi_pph_ps4 : '0',
+			'pph_ps4' => $pph_ps4,
+			'besaran_pph_ps4' => $besaran_pph_ps4,
 			'total_nonpph' => $total_nonpph,
 			'total_denganpph' => $total_denganpph,
 			'coa_debit' => $coa_debit,
@@ -1158,6 +1163,13 @@ class Financial extends CI_Controller
 				// $j1_coa_kredit = "23014";
 				$j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
 				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph'], $tanggal_bayar);
+			}
+
+			if ($inv['opsi_pph_ps4'] == '1') {
+				$j1_coa_debit = $coa_debit;
+				// $j1_coa_kredit = "23014";
+				$j1_coa_kredit = $coa_utility['nomor_coa_utang_pph_ps4'];
+				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $inv['besaran_pph_ps4'], $tanggal_bayar);
 			}
 		}
 

@@ -486,6 +486,61 @@
 																</a>
 															<?php
 															} ?>
+
+															<?php
+															$invoice = $this->cb->get('invoice', ['Id' => $i['Id']])->row_array();
+															$jurnals = $this->cb->select('*')->from('jurnal_neraca')->where('id_invoice', $i['Id'])->or_like('keterangan', 'nomor ' . $i['no_invoice'], 'both')->get()->result();
+															?>
+															<a class="badge" href="#" data-toggle="modal" data-target="#modalJurnal<?= $i['Id'] ?>">Lihat Jurnal</a>
+
+															<div class="modal fade" id="modalJurnal<?= $i['Id'] ?>" role="dialog" style="z-index: 999999 !important;">
+																<div class="modal-dialog modal-lg">
+																	<!-- Modal content-->
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<button type="button" class="close" data-dismiss="modal">&times;</button>
+																			<h2 class="modal-title">Invoice <?= $i['no_invoice'] ?></h2>
+																		</div>
+																		<div class="modal-body">
+																			<div class="table-responsive">
+																				<table class="table">
+																					<thead>
+																						<tr>
+																							<th>Tanggal</th>
+																							<th>Debit</th>
+																							<th>Kredit</th>
+																							<th>Jumlah</th>
+																							<th>Keterangan</th>
+																						</tr>
+																					</thead>
+																					<tbody>
+																						<?php
+																						if ($jurnals) {
+																							foreach ($jurnals as $j) :
+																						?>
+																								<tr>
+																									<td><?= format_indo(date('Y-m-d', strtotime($j->tanggal))) ?></td>
+																									<td><?= $j->akun_debit ?></td>
+																									<td><?= $j->akun_kredit ?></td>
+																									<td><?= number_format($j->jumlah_debit, 0) ?></td>
+																									<td><?= $j->keterangan ?></td>
+																								</tr>
+																							<?php
+																							endforeach;
+																						} else {
+																							?>
+																							<tr>
+																								<td colspan="5">Tidak ada data yang ditampilkan</td>
+																							</tr>
+																						<?php
+																						} ?>
+																					</tbody>
+																				</table>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
 														</td>
 													</tr>
 

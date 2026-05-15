@@ -516,9 +516,21 @@
 																					<tbody>
 																						<?php
 																						if ($jurnals) {
+																							$total_bayar = 0;
+																							$total_invoice = 0;
 																							foreach ($jurnals as $j) :
+																								$color = str_contains(strtolower($j->keterangan), 'pembayaran') ? 'green' : 'orange';
+
+																								if (str_contains(strtolower($j->keterangan), 'pembayaran')) {
+																									$total_bayar += $j->jumlah_debit;
+																								}
+
+																								if (!(str_contains(strtolower($j->keterangan), 'pembayaran'))) {
+																									$total_invoice += $j->jumlah_debit;
+																								}
 																						?>
-																								<tr>
+
+																								<tr style="background-color: <?= $color ?>; color: white">
 																									<td><?= format_indo(date('Y-m-d', strtotime($j->tanggal))) ?></td>
 																									<td><?= $j->akun_debit ?></td>
 																									<td><?= $j->akun_kredit ?></td>
@@ -526,9 +538,17 @@
 																									<td><?= $j->keterangan ?></td>
 																								</tr>
 																							<?php
-																							endforeach;
-																						} else {
-																							?>
+																							endforeach; ?>
+																							<tr>
+																								<td colspan="3">TOTAL BAYAR</td>
+																								<td><?= number_format($total_bayar) ?></td>
+																							</tr>
+																							<tr>
+																								<td colspan="3">SELISIH</td>
+																								<td><?= number_format($total_bayar - $total_invoice) ?></td>
+																							</tr>
+																						<?php } else {
+																						?>
 																							<tr>
 																								<td colspan="5">Tidak ada data yang ditampilkan</td>
 																							</tr>

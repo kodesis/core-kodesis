@@ -1544,6 +1544,7 @@ class Pengajuan extends CI_Controller
       ->where('peng.tanggal >=', $mulai)
       ->where('peng.tanggal <=', $sampai)
       ->get()->result_array();
+
     // $this->cb->where("tanggal >= '$mulai' AND tanggal <= '$sampai'");
     // $item = $this->cb->get('t_pengajuan_detail')->result_array();
 
@@ -1561,7 +1562,7 @@ class Pengajuan extends CI_Controller
       $excel->setActiveSheetIndex(0)->setCellValue('A' . $numrow, $no);
       $excel->setActiveSheetIndex(0)->setCellValue('B' . $numrow, $data['kode']);
       $excel->setActiveSheetIndex(0)->setCellValue('C' . $numrow, $data['tanggal'] ? date('d-m-Y', strtotime($data['tanggal'])) : "");
-      $excel->setActiveSheetIndex(0)->setCellValue('D' . $numrow, $user['nama']);
+      $excel->setActiveSheetIndex(0)->setCellValue('D' . $numrow, $user ? $user['nama'] : '-');
       $excel->setActiveSheetIndex(0)->setCellValue('E' . $numrow, $data['beban']);
       $excel->setActiveSheetIndex(0)->setCellValue('F' . $numrow, $data['beban'] ? $coa['nama_perkiraan'] : "");
       $excel->setActiveSheetIndex(0)->setCellValue('G' . $numrow, $data['item']);
@@ -1572,10 +1573,10 @@ class Pengajuan extends CI_Controller
       $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrow, $data['date_bayar'] ? date('d-m-Y', strtotime($data['date_bayar'])) : "");
       $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrow, $data['user_bayar'] ? $payment['nama'] : '');
       $excel->setActiveSheetIndex(0)->setCellValue('N' . $numrow, $data['realisasi']);
-      $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrow, $data['total'] - $data['realisasi']);
-      $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrow, $kadiv['nama']);
+      $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrow, $data['total'] - ($data['realisasi'] ?? 0));
+      $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrow, $kadiv ? $kadiv['nama'] : "-");
       $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrow, $data['date_spv'] ? date('d-m-Y', strtotime($data['date_spv'])) : "");
-      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrow, $data['keuangan'] ? $keuangan['nama'] : '');
+      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrow, $data['keuangan'] ? $keuangan['nama'] : '-');
       $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrow, $data['date_keuangan'] ? date('d-m-Y', strtotime($data['date_keuangan'])) : '');
       $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrow, $data['posisi']);
 

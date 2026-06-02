@@ -1462,7 +1462,7 @@ class Pengajuan extends CI_Controller
     echo '<table><tbody>';
     $no = 1;
 
-    // include APPPATH . 'third_party/PHPExcel-8/PHPExcel.php';
+    include APPPATH . 'third_party/phpoffice/phpexcel/Classes/PHPExcel.php';
 
     $excel = new PHPExcel();
 
@@ -1538,24 +1538,29 @@ class Pengajuan extends CI_Controller
     $excel->getActiveSheet()->getStyle('S3')->applyFromArray($style_col);
     $excel->getActiveSheet()->getStyle('T3')->applyFromArray($style_col);
 
-
-    $this->cb->where("created_at >= '$mulai' AND created_at <= '$sampai'");
-    $item = $this->cb->get('t_pengajuan_detail')->result_array();
+    $item = $this->cb->select('det.*,peng.kode,peng.total,peng.date_bayar,peng.user_bayar,peng.date_spv,peng.keuangan,peng.date_keuangan,peng.posisi,peng.user,peng.spv,peng.tanggal')
+      ->from('t_pengajuan_detail det')
+      ->join('t_pengajuan peng', 'peng.Id = det.no_pengajuan')
+      ->where('peng.tanggal >=', $mulai)
+      ->where('peng.tanggal <=', $sampai)
+      ->get()->result_array();
+    // $this->cb->where("tanggal >= '$mulai' AND tanggal <= '$sampai'");
+    // $item = $this->cb->get('t_pengajuan_detail')->result_array();
 
     $no = 1; // Untuk penomoran tabel, di awal set dengan 1
     $i = 0;
     $numrow = 4; // Set baris pertama untuk isi tabel adalah baris ke 4
     foreach ($item as $data) { // Lakukan looping pada variabel siswa
-      $pengajuan = $this->cb->get_where('t_pengajuan', ['no_pengajuan' => $data['no_pengajuan']])->row_array();
-      $user = $this->db->get_where('users', ['nip' => $pengajuan['user']])->row_array();
+      // $pengajuan = $this->cb->get_where('t_pengajuan', ['no_pengajuan' => $data['no_pengajuan']])->row_array();
+      $user = $this->db->get_where('users', ['nip' => $data['user']])->row_array();
       $coa = $this->cb->get_where('v_coa_all', ['no_sbb' => $data['beban']])->row_array();
-      $payment = $this->db->get_where('users', ['nip' => $pengajuan['user_bayar']])->row_array();
-      $kadiv = $this->db->get_where('users', ['nip' => $pengajuan['spv']])->row_array();
-      $keuangan = $this->db->get_where('users', ['nip' => $pengajuan['keuangan']])->row_array();
+      $payment = $this->db->get_where('users', ['nip' => $data['user_bayar']])->row_array();
+      $kadiv = $this->db->get_where('users', ['nip' => $data['spv']])->row_array();
+      $keuangan = $this->db->get_where('users', ['nip' => $data['keuangan']])->row_array();
 
       $excel->setActiveSheetIndex(0)->setCellValue('A' . $numrow, $no);
-      $excel->setActiveSheetIndex(0)->setCellValue('B' . $numrow, $data['no_pengajuan']);
-      $excel->setActiveSheetIndex(0)->setCellValue('C' . $numrow, $data['created_at'] ? date('d-m-Y', strtotime($data['created_at'])) : "");
+      $excel->setActiveSheetIndex(0)->setCellValue('B' . $numrow, $data['kode']);
+      $excel->setActiveSheetIndex(0)->setCellValue('C' . $numrow, $data['tanggal'] ? date('d-m-Y', strtotime($data['tanggal'])) : "");
       $excel->setActiveSheetIndex(0)->setCellValue('D' . $numrow, $user['nama']);
       $excel->setActiveSheetIndex(0)->setCellValue('E' . $numrow, $data['beban']);
       $excel->setActiveSheetIndex(0)->setCellValue('F' . $numrow, $data['beban'] ? $coa['nama_perkiraan'] : "");
@@ -1563,16 +1568,16 @@ class Pengajuan extends CI_Controller
       $excel->setActiveSheetIndex(0)->setCellValue('H' . $numrow, $data['qty']);
       $excel->setActiveSheetIndex(0)->setCellValue('I' . $numrow, $data['price']);
       $excel->setActiveSheetIndex(0)->setCellValue('J' . $numrow, $data['total']);
-      $excel->setActiveSheetIndex(0)->setCellValue('K' . $numrow, $pengajuan['total']);
-      $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrow, $pengajuan['date_bayar'] ? date('d-m-Y', strtotime($pengajuan['date_bayar'])) : "");
-      $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrow, $pengajuan['user_bayar'] ? $payment['nama'] : '');
+      $excel->setActiveSheetIndex(0)->setCellValue('K' . $numrow, $data['total']);
+      $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrow, $data['date_bayar'] ? date('d-m-Y', strtotime($data['date_bayar'])) : "");
+      $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrow, $data['user_bayar'] ? $payment['nama'] : '');
       $excel->setActiveSheetIndex(0)->setCellValue('N' . $numrow, $data['realisasi']);
       $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrow, $data['total'] - $data['realisasi']);
       $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrow, $kadiv['nama']);
-      $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrow, $pengajuan['date_spv'] ? date('d-m-Y', strtotime($pengajuan['date_spv'])) : "");
-      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrow, $pengajuan['keuangan'] ? $keuangan['nama'] : '');
-      $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrow, $pengajuan['date_keuangan'] ? date('d-m-Y', strtotime($pengajuan['date_keuangan'])) : '');
-      $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrow, $pengajuan['posisi']);
+      $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrow, $data['date_spv'] ? date('d-m-Y', strtotime($data['date_spv'])) : "");
+      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrow, $data['keuangan'] ? $keuangan['nama'] : '');
+      $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrow, $data['date_keuangan'] ? date('d-m-Y', strtotime($data['date_keuangan'])) : '');
+      $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrow, $data['posisi']);
 
       // Apply style row yang telah kita buat tadi ke masing-masing baris (isi tabel)
       $excel->getActiveSheet()->getStyle('A' . $numrow)->applyFromArray($style_row);
@@ -1634,7 +1639,7 @@ class Pengajuan extends CI_Controller
 
     $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
     header("Content-type: application/vnd.ms-excel");
-    header('Content-Disposition: attachment; filename="Data-pengajuan-' . date('ymd', strtotime($mulai)) . '-' . date('ymd', strtotime($sampai)) . '.xlsx"');
+    header('Content-Disposition: attachment; filename="Data-pengajuan-' . tgl_indo(date('Y-m-d', strtotime($mulai))) . '-' . tgl_indo(date('Y-m-d', strtotime($sampai))) . '.xlsx"');
     header("Pragma: no-cache");
     header("Expires: 0");
     ob_end_clean();

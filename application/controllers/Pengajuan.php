@@ -1505,16 +1505,16 @@ class Pengajuan extends CI_Controller
     $excel->setActiveSheetIndex(0)->setCellValue('H3', "Pieces");
     $excel->setActiveSheetIndex(0)->setCellValue('I3', "Harga Satuan");
     $excel->setActiveSheetIndex(0)->setCellValue('J3', "Jumlah");
-    $excel->setActiveSheetIndex(0)->setCellValue('K3', "Total Pengajuan");
-    $excel->setActiveSheetIndex(0)->setCellValue('L3', "Tanggal Bayar");
-    $excel->setActiveSheetIndex(0)->setCellValue('M3', "User Payment");
-    $excel->setActiveSheetIndex(0)->setCellValue('N3', "Realisasi Bayar");
-    $excel->setActiveSheetIndex(0)->setCellValue('O3', "Selisih");
-    $excel->setActiveSheetIndex(0)->setCellValue('P3', "Kepala Divisi");
-    $excel->setActiveSheetIndex(0)->setCellValue('Q3', "Tanggal Approve");
-    $excel->setActiveSheetIndex(0)->setCellValue('R3', "Keuangan");
-    $excel->setActiveSheetIndex(0)->setCellValue('S3', "Tanggal Approve");
-    $excel->setActiveSheetIndex(0)->setCellValue('T3', "Posisi");
+    $excel->setActiveSheetIndex(0)->setCellValue('K3', "Tanggal Bayar");
+    $excel->setActiveSheetIndex(0)->setCellValue('L3', "User Payment");
+    $excel->setActiveSheetIndex(0)->setCellValue('M3', "Realisasi Bayar");
+    $excel->setActiveSheetIndex(0)->setCellValue('N3', "Selisih");
+    $excel->setActiveSheetIndex(0)->setCellValue('O3', "Kepala Divisi");
+    $excel->setActiveSheetIndex(0)->setCellValue('P3', "Tanggal Approve");
+    $excel->setActiveSheetIndex(0)->setCellValue('Q3', "Keuangan");
+    $excel->setActiveSheetIndex(0)->setCellValue('R3', "Tanggal Approve");
+    $excel->setActiveSheetIndex(0)->setCellValue('S3', "Posisi");
+    $excel->setActiveSheetIndex(0)->setCellValue('T3', "Jenis Kas");
 
     // Apply style header yang telah kita buat tadi ke masing-masing kolom header
     $excel->getActiveSheet()->getStyle('A3')->applyFromArray($style_col);
@@ -1538,7 +1538,7 @@ class Pengajuan extends CI_Controller
     $excel->getActiveSheet()->getStyle('S3')->applyFromArray($style_col);
     $excel->getActiveSheet()->getStyle('T3')->applyFromArray($style_col);
 
-    $item = $this->cb->select('det.*,peng.kode,peng.total,peng.date_bayar,peng.user_bayar,peng.date_spv,peng.keuangan,peng.date_keuangan,peng.posisi,peng.user,peng.spv,peng.tanggal')
+    $item = $this->cb->select('det.*,peng.kode,peng.date_bayar,peng.user_bayar,peng.date_spv,peng.keuangan,peng.date_keuangan,peng.posisi,peng.user,peng.spv,peng.tanggal')
       ->from('t_pengajuan_detail det')
       ->join('t_pengajuan peng', 'peng.Id = det.no_pengajuan')
       ->where('peng.tanggal >=', $mulai)
@@ -1569,16 +1569,16 @@ class Pengajuan extends CI_Controller
       $excel->setActiveSheetIndex(0)->setCellValue('H' . $numrow, $data['qty']);
       $excel->setActiveSheetIndex(0)->setCellValue('I' . $numrow, $data['price']);
       $excel->setActiveSheetIndex(0)->setCellValue('J' . $numrow, $data['total']);
-      $excel->setActiveSheetIndex(0)->setCellValue('K' . $numrow, $data['total']);
-      $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrow, $data['date_bayar'] ? date('d-m-Y', strtotime($data['date_bayar'])) : "");
-      $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrow, $data['user_bayar'] ? $payment['nama'] : '');
-      $excel->setActiveSheetIndex(0)->setCellValue('N' . $numrow, $data['realisasi']);
-      $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrow, $data['total'] - ($data['realisasi'] ?? 0));
-      $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrow, $kadiv ? $kadiv['nama'] : "-");
-      $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrow, $data['date_spv'] ? date('d-m-Y', strtotime($data['date_spv'])) : "");
-      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrow, $data['keuangan'] ? $keuangan['nama'] : '-');
-      $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrow, $data['date_keuangan'] ? date('d-m-Y', strtotime($data['date_keuangan'])) : '');
-      $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrow, $data['posisi']);
+      $excel->setActiveSheetIndex(0)->setCellValue('K' . $numrow, $data['date_bayar'] ? date('d-m-Y', strtotime($data['date_bayar'])) : "");
+      $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrow, $data['user_bayar'] ? $payment['nama'] : '');
+      $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrow, $data['realisasi']);
+      $excel->setActiveSheetIndex(0)->setCellValue('N' . $numrow, $data['total'] - ($data['realisasi'] ?? 0));
+      $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrow, $kadiv ? $kadiv['nama'] : "-");
+      $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrow, $data['date_spv'] ? date('d-m-Y', strtotime($data['date_spv'])) : "");
+      $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrow, $data['keuangan'] ? $keuangan['nama'] : '-');
+      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrow, $data['date_keuangan'] ? date('d-m-Y', strtotime($data['date_keuangan'])) : '');
+      $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrow, $data['posisi']);
+      $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrow, $data['total'] >= 1000000 ? 'Besar' : 'Kecil');
 
       // Apply style row yang telah kita buat tadi ke masing-masing baris (isi tabel)
       $excel->getActiveSheet()->getStyle('A' . $numrow)->applyFromArray($style_row);

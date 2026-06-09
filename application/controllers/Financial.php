@@ -1464,13 +1464,58 @@ class Financial extends CI_Controller
 		$this->cb->update('jurnal_neraca', $data_update, array('id' => $this->input->post('id')));
 		$this->session->set_flashdata('message_name', "Berhasil Update Arus Kas");
 
-		redirect('financial/coa_report');
+		if ($this->input->post('type')) {
+			redirect('financial/invoice');
+		} else {
+			redirect('financial/coa_report');
+		}
 	}
 
 	public function hapus_arus_kas()
 	{
 		$id = $this->input->post('id');
 
+		// 1. Basic validation for ID
+		if (empty($id)) { // Using empty() is often better for checking if a variable is considered "empty"
+			echo json_encode(['status' => 'error', 'message' => 'ID Arus Kas tidak ditemukan atau tidak valid.']);
+			return;
+		}
+
+		// 2. Optional: Check if the record exists before attempting deletion
+		// This provides a more specific error message if the ID doesn't exist
+		$this->cb->where('id', $id);
+		$query = $this->cb->get('jurnal_neraca');
+
+		if ($query->num_rows() == 0) {
+			echo json_encode(['status' => 'info', 'message' => 'Arus Kas tidak ditemukan atau sudah dihapus.']);
+			return;
+		}
+
+		// 3. Attempt the deletion
+		$this->cb->where('id', $id);
+		$delete_result = $this->cb->delete('jurnal_neraca');
+
+		// 4. Check the direct result of the delete operation and affected rows
+		if ($delete_result) { // $delete_result will be TRUE on successful query execution
+			if ($this->cb->affected_rows() > 0) {
+				echo json_encode(['status' => 'success', 'message' => 'Arus Kas berhasil dihapus.']);
+			} else {
+				// This 'else' block means the query ran without error but affected 0 rows.
+				// Given the num_rows() check above, this is now less likely unless
+				// something very unusual happened between check and delete.
+				// Could also happen if a row was deleted by another process milliseconds before.
+				echo json_encode(['status' => 'info', 'message' => 'Arus Kas tidak ditemukan atau sudah dihapus. (Affected rows 0)']);
+			}
+		} else {
+			// This 'else' block means the DELETE query itself failed (e.g., database error, syntax error).
+			// You might want to log this error.
+			error_log("Database delete error for ID: " . $id . " - " . $this->db->error()['message']);
+			echo json_encode(['status' => 'error', 'message' => 'Terjadi kesalahan saat menghapus Arus Kas. Silakan coba lagi.']);
+		}
+	}
+
+	public function hapus_jurnal($id)
+	{
 		// 1. Basic validation for ID
 		if (empty($id)) { // Using empty() is often better for checking if a variable is considered "empty"
 			echo json_encode(['status' => 'error', 'message' => 'ID Arus Kas tidak ditemukan atau tidak valid.']);

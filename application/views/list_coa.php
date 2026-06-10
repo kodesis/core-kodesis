@@ -258,8 +258,8 @@
                                                 <th>BB</th>
                                                 <th>Sub BB</th>
                                                 <th>Nama Perkiraan</th>
-                                                <th class="text-center">Nominal</th>
-                                                <!-- <th class="text-center">Aksi</th> -->
+                                                <!-- <th class="text-center">Nominal</th> -->
+                                                <th class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -273,7 +273,48 @@
                                                         <td><?= $i['no_bb'] ?></td>
                                                         <td><?= $i['no_sbb'] ?></td>
                                                         <td><?= ($i['nama_perkiraan']) ?></td>
-                                                        <td class="text-right"><?= number_format($i['nominal']) ?></td>
+                                                        <!-- <td class="text-right"><?= number_format($i['nominal']) ?></td> -->
+                                                        <td>
+                                                            <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCoa<?= $i['no_sbb'] ?>">Edit</button>
+                                                            <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="editCoa<?= $i['no_sbb'] ?>">
+                                                                <div class="modal-dialog modal-sm">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title" id="myModalLabel">
+                                                                                Edit CoA
+                                                                            </h4>
+                                                                        </div>
+                                                                        <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('financial/editCoa') ?>">
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="old_coa" value="<?= $i['no_sbb'] ?>">
+                                                                                <input type="hidden" name="old_nama_coa" value="<?= $i['nama_perkiraan'] ?>">
+                                                                                <input type="hidden" name="table_source" value="<?= $i['table_source'] ?>">
+                                                                                <div class="form-group row">
+                                                                                    <div class="col-12">
+                                                                                        <label for="no_bb" class="form-label">No. BB</label>
+                                                                                        <input type="text" name="no_bb" id="no_bb" class="form-control" value="<?= $i['no_bb'] ?>" disabled>
+                                                                                    </div>
+                                                                                    <div class="col-12 mt-3">
+                                                                                        <label for="no_sbb" class="form-label">No. SBB</label>
+                                                                                        <input type="text" name="no_sbb" id="no_sbb" class="form-control" value="<?= $i['no_sbb'] ?>" readonly>
+                                                                                    </div>
+                                                                                    <div class="col-12 mt-3">
+                                                                                        <label for="nama_coa" class="form-label">Nama CoA</label>
+                                                                                        <input type="text" name="nama_coa" id="nama_coa" class="form-control uppercase" value="<?= $i['nama_perkiraan'] ?>" oninput="this.value = this.value.toUpperCase()">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                                <button type="submit" class="btn btn-primary">
+                                                                                    Simpan Perubahan
+                                                                                </button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                     </tr>
 
                                                 <?php

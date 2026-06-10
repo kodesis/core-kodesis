@@ -119,7 +119,7 @@ class M_pengajuan extends CI_Model
 
   public function approval_spv($limit, $start, $search, $nip)
   {
-    $this->cb->select('a.Id, a.status, a.kode, a.no_pengajuan, a.tanggal, a.no_rekening, b.nama, a.total, a.status_spv, a.posisi, a.total_realisasi, a.catatan, a.bukti_pengajuan, a.bukti_bayar');
+    $this->cb->select('a.Id, a.status, a.kode, a.no_pengajuan, a.tanggal, a.no_rekening, b.nama, a.total, a.status_spv, a.posisi, a.total_realisasi, a.catatan,a.catatan_spv,a.catatan_keuangan, a.bukti_pengajuan, a.bukti_bayar');
     $this->cb->from('t_pengajuan as a');
     $this->cb->join($this->db->database . '.users as b', 'a.user = b.nip');
 

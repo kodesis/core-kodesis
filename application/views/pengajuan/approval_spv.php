@@ -394,12 +394,42 @@
                                             <table style="margin-top: 20px;" class="table table-bordered">
                                               <thead>
                                                 <tr>
-                                                  <th>Catatan</th>
+                                                  <th>Catatan User</th>
                                                 </tr>
                                               </thead>
                                               <tbody>
                                                 <tr>
                                                   <td><?= $value['catatan'] ?></td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                          </div>
+
+                                          <div class="table-responsive">
+                                            <table style="margin-top: 20px;" class="table table-bordered">
+                                              <thead>
+                                                <tr>
+                                                  <th>Catatan Supervisi</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <tr>
+                                                  <td><?= $value['catatan_spv'] ?></td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                          </div>
+
+                                          <div class="table-responsive">
+                                            <table style="margin-top: 20px;" class="table table-bordered">
+                                              <thead>
+                                                <tr>
+                                                  <th>Catatan Keuangan</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <tr>
+                                                  <td><?= $value['catatan_keuangan'] ?></td>
                                                 </tr>
                                               </tbody>
                                             </table>

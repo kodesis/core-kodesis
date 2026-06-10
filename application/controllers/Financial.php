@@ -1987,6 +1987,51 @@ class Financial extends CI_Controller
 		}
 	}
 
+	public function editCoa()
+	{
+		$table = $this->input->post('table_source');
+		$no_sbb = $this->input->post('no_sbb');
+		$nama_coa = $this->input->post('nama_coa');
+
+		$cek_no_sbb = $this->m_coa->isAvailable('no_sbb', $no_sbb);
+		$cek_nama_coa = $this->m_coa->isAvailable('nama_perkiraan', $nama_coa);
+
+		if ($cek_no_sbb and $no_sbb != $this->input->post('old_coa')) {
+			$this->session->set_flashdata('message_error', 'No. ' . $no_sbb . ' sudah ada');
+			redirect($_SERVER['HTTP_REFERER']);
+		} else if ($cek_nama_coa and $nama_coa != $this->input->post('old_nama_coa')) {
+			$this->session->set_flashdata('message_error', 'CoA ' . $nama_coa . ' sudah ada');
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			$data = [
+				'nama_perkiraan' => $nama_coa,
+			];
+
+			$this->cb->trans_begin();
+
+			if ($table == 't_coa_sbb') {
+				$this->cb->where('no_sbb', $no_sbb);
+			} else if ($table == 't_coalr_sbb') {
+				$this->cb->where('no_lr_sbb', $no_sbb);
+			} else {
+				$this->session->set_flashdata('message_error', 'Sumber tabel tidak valid.');
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+
+			$query = $this->cb->update($table, $data);
+
+			if ($query) {
+				$this->cb->trans_commit();
+				$this->session->set_flashdata('message_name', 'CoA ' . $no_sbb . ' berhasil diubah.');
+				redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$this->cb->trans_rollback();
+				$this->session->set_flashdata('message_error', 'CoA ' . $no_sbb . ' gagal disimpan. Ket:' . $this->cb->error());
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+		}
+	}
+
 	public function outstanding()
 	{
 		$nip = $this->session->userdata('nip');

@@ -1976,7 +1976,8 @@ class App extends CI_Controller
 		$a = $this->session->userdata('level');
 		if (strpos($a, '301') !== false) {
 			// Load plugin PHPExcel nya
-			include APPPATH . 'third_party/PHPExcel-8/PHPExcel.php';
+			// include APPPATH . 'third_party/PHPExcel-8/PHPExcel.php';
+			include APPPATH . 'third_party/phpoffice/phpexcel/Classes/PHPExcel.php';
 
 			$config['upload_path'] = realpath('excel');
 			$config['allowed_types'] = 'xlsx|xls|csv';
@@ -2059,7 +2060,8 @@ class App extends CI_Controller
 		$a = $this->session->userdata('level');
 		if (strpos($a, '301') !== false) {
 			// Load plugin PHPExcel nya
-			include APPPATH . 'third_party/PHPExcel-8/PHPExcel.php';
+			// include APPPATH . 'third_party/PHPExcel-8/PHPExcel.php';
+			include APPPATH . 'third_party/phpoffice/phpexcel/Classes/PHPExcel.php';
 
 			$config['upload_path'] = realpath('excel');
 			$config['allowed_types'] = 'xlsx|xls|csv';

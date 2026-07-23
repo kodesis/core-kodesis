@@ -102,7 +102,7 @@
 					<table>
 						<tr>
 							<td class="title">
-								<img src="<?php echo base_url(); ?>src/images/logo_CORP_03_1.jpg" alt="..." width="200" height="100">
+								<img src="<?= $this->session->userdata('icon') ?>" alt="..." width="100" height="100">
 							</td>
 							<td>
 								Tanda Terima Gaji<br>

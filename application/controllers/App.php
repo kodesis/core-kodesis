@@ -1928,27 +1928,29 @@ class App extends CI_Controller
 		$a = $this->session->userdata('level');
 		if (strpos($a, '302') !== false) {
 			//script disini
+			$this->load->library('pdfgenerator');
 
 			$id = $this->uri->segment(3);
 			//$data['slip'] = $this->m_app->slip_gaji($this->session->userdata('nip'));
 			$data['slip'] = $this->m_app->slip_gaji($id);
 
-			$this->load->library('pdf');
-			$options = $this->pdf->getOptions();
-			$options->set(array('isRemoteEnabled' => true));
-			$this->pdf->setOptions($options);
+			$file_pdf = 'slip_gaji';
+			$paper = 'A4';
+			$orientation = "portrait";
+
+			// $options = $this->pdf->getOptions();
+			// $options->set(array('isRemoteEnabled' => true));
+			// $this->pdf->setOptions($options);
 
 			if (empty($data['slip'])) {
 				echo "<script>alert('Data tidak ditemukan!');window.location.href = '" . base_url() . "app/cetak_gaji';</script>";
 			} else {
 				if ($data['slip']->pembayaran == 1) {
-					$this->pdf->setPaper('A4', 'potrait');
-					$this->pdf->filename = "slip_gaji.pdf";
-					$this->pdf->load_view('slip_gaji_pdf', $data);
+					$html = $this->load->view('slip_gaji_pdf', $data, true);
+					$this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 				} elseif ($data['slip']->pembayaran == 2) {
-					$this->pdf->setPaper('A4', 'potrait');
-					$this->pdf->filename = "slip_gaji.pdf";
-					$this->pdf->load_view('slip_gaji_pdf2', $data);
+					$html = $this->load->view('slip_gaji_pdf2', $data, true);
+					$this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 				}
 			}
 		}

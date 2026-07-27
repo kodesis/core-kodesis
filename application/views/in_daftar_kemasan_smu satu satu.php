@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+    <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
+    <!-- Bootstrap -->
+    <link href="<?= base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="<?= base_url(); ?>src/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="<?= base_url(); ?>src/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="<?= base_url(); ?>src/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+    <!-- bootstrap-progressbar -->
+    <link href="<?= base_url(); ?>src/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <!-- JQVMap -->
+    <link href="<?= base_url(); ?>src/vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet" />
+    <!-- bootstrap-daterangepicker -->
+    <link href="<?= base_url(); ?>src/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+    <link href="<?= base_url(); ?>src/build/css/custom.min.css" rel="stylesheet">
+    <!-- footer menu -->
+    <link rel="stylesheet" href="<?= base_url(); ?>src/css/mobile_menu/header.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>src/css/mobile_menu/icons.css">
+
+    <link href="<?= base_url(); ?>src/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>src/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>src/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>src/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="<?= base_url(); ?>src/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+    <!-- CKEditor -->
+    <script type="text/javascript" src="<?= base_url(); ?>src/ckeditor/ckeditor.js"></script>
+
+    <style>
+        .col-xs-3 {
+            width: 25%;
+            background-color: #004e81;
+        }
+
+        .row {
+            margin-left: 0px;
+        }
+
+        .container-fluid {
+            padding-right: 0px;
+            padding-left: 0px
+        }
+
+        .btn_footer_panel .tag_ {
+            padding-top: 37px;
+        }
+    </style>
+    <style>
+        .modal {
+            text-align: center;
+            padding: 0 !important;
+        }
+
+        .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+            margin-right: -4px;
+        }
+
+        .modal-dialog {
+            display: inline-block;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .select2-container .select2-dropdown .select2-results__option {
+            text-align: left;
+            /* Pastikan opsi dropdown rata kiri */
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 34px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 34px;
+            color: #555;
+            padding-left: 10px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 34px;
+        }
+
+        .select2-container {
+            width: 100% !important;
+            z-index: 99999;
+        }
+
+        .modal .select2-dropdown {
+            z-index: 99999 !important;
+        }
+
+        .modal .select2-container--open {
+            z-index: 99999 !important;
+        }
+    </style>
+</head>
+
+<header class="header_area sticky-header">
+    <div class="flash-data" data-flashdata="<?= $this->session->flashdata('message_name') ?>"></div>
+    <div class="flash-data-error" data-flashdata="<?= $this->session->flashdata('message_error') ?>"></div>
+    <!-- footer menu -->
+    <div class="footer_panel">
+        <div class="container-fluid text-center">
+            <div class="row">
+
+                <div class="col-xs-3 btn_footer_panel">
+                    <a href="<?= base_url(); ?>app/create_memo">
+                        <i class="la-i la-i-m la-i-home"></i>
+                        <div class="tag_">
+                            <font color="white">Create</font>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-3 btn_footer_panel">
+                    <a href="<?= base_url(); ?>app/inbox">
+                        <i class="la-i la-i-m la-i-order"></i>
+                        <div class="tag_">
+                            <font color="white">Inbox</font>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-3 btn_footer_panel">
+                    <a href="<?= base_url(); ?>app/send_memo">
+                        <i class="la-i la-i-m la-i-notif"></i>
+                        <div class="tag_">
+                            <font color="white">Outbox</font>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-3 btn_footer_panel">
+                    <a href="<?= base_url(); ?>login/logout">
+                        <i class="la-i la-i-m la-i-akun"></i>
+                        <div class="tag_">
+                            <font color="white">Logout</font>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- footer menu -->
+</header>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="<?php echo base_url(); ?>" class="site_title">
+                            <img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
+                            <span><?= $this->session->userdata('nama_singkat') ?></span>
+                        </a>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <!-- menu profile quick info -->
+                    <div class="profile clearfix">
+                        <div class="profile_pic">
+                            <img src="<?= base_url(); ?>src/images/img.jpg" alt="..." class="img-circle profile_img">
+                        </div>
+                        <div class="profile_info">
+                            <span>Welcome,</span>
+                            <h2><?= $this->session->userdata('nama'); ?></h2>
+                        </div>
+                    </div>
+                    <!-- /menu profile quick info -->
+
+                    <br />
+
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <?php $this->load->view('side_menu.php'); ?>
+                    </div>
+                    <!-- /sidebar menu -->
+
+                </div>
+            </div>
+
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="<?= base_url(); ?>src/images/img.jpg" alt=""><?= $this->session->userdata('nama'); ?>
+                                    <span class=" fa fa-angle-down"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li><a href="javascript:;"> Profile</a></li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <span class="badge bg-red pull-right">50%</span>
+                                            <span>Settings</span>
+                                        </a>
+                                    </li>
+                                    <li><a href="javascript:;">Help</a></li>
+                                    <li><a href="<?= base_url(); ?>login/logout"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                                </ul>
+                            </li>
+
+                            <li role="presentation" class="dropdown">
+                                <a href="<?= base_url() . "app/inbox"; ?>" class="dropdown-toggle info-number">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <?php if ($count_inbox == 0) { ?>
+                                        <span class="badge bg-green"><?= $count_inbox; ?></span>
+                                    <?php } else { ?>
+                                        <span class="badge bg-red"><?= $count_inbox; ?></span>
+                                    <?php } ?>
+                                </a>
+                            </li>
+                            <?php include 'notif_tello.php' ?>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- /top navigation -->
+
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <div class="clearfix"></div>
+
+                <!-- Start content-->
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="x_panel card">
+                            <div class="x_title">
+                                <h2>Daftar Kemasan SMU</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalTambahSMU">
+                                            Tambah
+                                        </button>
+
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalRekap">
+                                            Rekap Kemasan
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="x_content">
+                                <div class="table-responsive">
+                                    <table id="kemasan_table" class="table table-striped table-bordered" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>uid</th>
+                                                <th>SMU</th>
+                                                <th>Nama Penerima</th>
+                                                <th>Asal</th>
+                                                <th>Pieces</th>
+                                                <th>Berat</th>
+                                                <th>User</th>
+                                                <th>Post Date</th>
+                                                <th>#</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <h6>* klik nama customer untuk edit</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finish content-->
+
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalTambahSMU">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Tambah SMU</h4>
+                    </div>
+                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('incominghlp/store_smu') ?>">
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Jenis Barang</label>
+                                        <select class="form-control" name="jns_barang">
+                                            <option value="1">Langsung (Direct)</option>
+                                            <option value="2">Sebagian (Partial)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">SMU</label>
+                                        <input type="text" class="form-control" name="smu" placeholder="Masukkan nomor SMU...">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal SMU</label>
+                                        <input type="date" class="form-control" name="tanggal_smu">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tujuan</label>
+                                        <select name="tujuan" id="t_tujuan" class="form-control select2-tujuan-tambah">
+                                            <option value="">:: Pilih Tujuan</option>
+                                        </select>
+                                        <input type="hidden" name="tujuan_uid" id="t_tujuan_uid">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No. Pesawat</label>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <select name="no_pesawat_kode" id="t_no_pesawat_kode" class="form-control select2-pesawat-tambah">
+                                                    <option value="">:: Kode</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-1 text-center" style="padding-top: 7px;">
+                                                <span>-</span>
+                                            </div>
+                                            <div class="col-xs-7">
+                                                <input type="text" class="form-control" name="no_pesawat_number" id="t_no_pesawat_number" placeholder="0001" maxlength="4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Pesawat</label>
+                                        <select class="form-control" name="pesawat" id="t_pesawat">
+                                            <option value="BATIK AIR">BATIK AIR</option>
+                                            <option value="PELITA AIR">PELITA AIR</option>
+                                            <option value="CARDIG AIR">CARDIG AIR</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal Terbang</label>
+                                        <input type="date" class="form-control" name="tanggal_terbang">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Waktu Terbang</label>
+                                        <input type="time" class="form-control" name="time_terbang" placeholder="Contoh: 13:59">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <h5><b>Pengirim</b></h5>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Pengirim</label>
+                                        <input type="hidden" name="pengirim_uid" id="t_pengirim_uid">
+                                        <select name="nama_pengirim" id="t_nama_pengirim" class="form-control select2-pengirim-tambah">
+                                            <option value="">:: Pilih Pengirim</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Telepon Pengirim</label>
+                                        <input type="text" class="form-control" name="telepon_pengirim" id="t_telepon_pengirim">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Alamat Pengirim</label>
+                                        <textarea class="form-control" name="alamat_pengirim" id="t_alamat_pengirim" rows="2"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <h5><b>Penerima</b></h5>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Penerima</label>
+                                        <input type="hidden" name="penerima_uid" id="t_penerima_uid">
+                                        <input type="text" class="form-control" name="nama_penerima" id="t_nama_penerima">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Telepon Penerima</label>
+                                        <input type="text" class="form-control" name="telepon_penerima" id="t_telepon_penerima">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Alamat Penerima</label>
+                                        <textarea class="form-control" name="alamat_penerima" id="t_alamat_penerima" rows="2"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <h5><b>Informasi Lain</b></h5>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Agent</label>
+                                        <input type="hidden" name="agent_uid" id="t_agent_uid">
+                                        <select name="nama_agent" id="t_nama_agent" class="form-control select2-agent-tambah">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Jaster</label>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="jaster" id="t_jaster" value="1"> Jaster
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalDetail">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit SMU <span id="detail_smu"></span></h4>
+                    </div>
+                    <form method="POST" action="<?= base_url('incominghlp/update_kemasan_smu') ?>">
+                        <input type="hidden" name="uid" id="detail_uid">
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Jenis Barang</label>
+                                        <select class="form-control" name="jns_barang" id="d_jns_barang">
+                                            <option value="1">Langsung (Direct)</option>
+                                            <option value="2">Sebagian (Partial)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Kategori SMU</label>
+                                        <select class="form-control" name="catg_smu" id="d_catg_smu">
+                                            <option value="1">Langsung (Direct)</option>
+                                            <option value="2">Angkut Lanjut (Transhipment)</option>
+                                            <option value="3">Terminal Change (w/o Invoice)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">SMU</label>
+                                        <input type="text" class="form-control" name="smu" id="d_smu_val">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal SMU</label>
+                                        <input type="date" class="form-control" name="tanggal_smu" id="d_tanggal_smu">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tujuan</label>
+                                        <input type="hidden" name="tujuan_uid" id="d_tujuan_uid">
+                                        <select name="tujuan" id="d_tujuan" class="form-control select2-tujuan-edit">
+                                            <option value="">:: Pilih Tujuan</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No. Pesawat</label>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <select name="no_pesawat_kode" id="d_no_pesawat_kode" class="form-control select2-pesawat-edit">
+                                                    <option value="">:: Kode</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-1 text-center" style="padding-top: 7px;">
+                                                <span>-</span>
+                                            </div>
+                                            <div class="col-xs-7">
+                                                <input type="text" class="form-control" name="no_pesawat_number" id="d_no_pesawat_number" placeholder="0001" maxlength="4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Pesawat</label>
+                                        <select class="form-control" name="pesawat" id="d_pesawat">
+                                            <option value="BATIK AIR">BATIK AIR</option>
+                                            <option value="PELITA AIR">PELITA AIR</option>
+                                            <option value="CARDIG AIR">CARDIG AIR</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal Terbang</label>
+                                        <input type="date" class="form-control" name="tanggal_terbang" id="d_tanggal_terbang">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Waktu Terbang</label>
+                                        <input type="time" class="form-control" name="time_terbang" id="d_time_terbang" placeholder="Contoh: 13:59">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <h5><b>Pengirim</b></h5>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Pengirim</label>
+                                        <input type="hidden" name="pengirim_uid" id="d_pengirim_uid">
+                                        <select name="nama_pengirim" id="d_nama_pengirim" class="form-control select2-pengirim-edit">
+                                            <option value="">:: Pilih Pengirim</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Telepon Pengirim</label>
+                                        <input type="text" class="form-control" name="telepon_pengirim" id="d_telepon_pengirim">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Alamat Pengirim</label>
+                                        <textarea class="form-control" name="alamat_pengirim" id="d_alamat_pengirim" rows="2"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <h5><b>Penerima</b></h5>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Penerima</label>
+                                        <input type="text" class="form-control" name="nama_penerima" id="d_nama_penerima">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Telepon Penerima</label>
+                                        <input type="text" class="form-control" name="telepon_penerima" id="d_telepon_penerima">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Alamat Penerima</label>
+                                        <textarea class="form-control" name="alamat_penerima" id="d_alamat_penerima" rows="2"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <h5><b>Informasi Lain</b></h5>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Agent</label>
+                                        <input type="hidden" name="agent_uid" id="d_agent_uid">
+                                        <select name="nama_agent" id="d_nama_agent" class="form-control select2-agent-edit">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Jaster</label>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="jaster" id="d_jaster" value="1"> Jaster
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-xs-12">
+                                    <hr>
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                        <h5><b>Dimensi</b></h5>
+                                        <button type="button" class="btn btn-sm btn-success" id="btnTambahDimensi">
+                                            <i class="fa fa-plus"></i> Tambah
+                                        </button>
+                                    </div>
+                                    <table class="table table-bordered table-condensed" id="tabelDimensi">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Panjang</th>
+                                                <th>Lebar</th>
+                                                <th>Tinggi</th>
+                                                <th>Pieces</th>
+                                                <th>Dimensi</th>
+                                                <th>Volume</th>
+                                                <th>Total Volume</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bodyDimensi">
+                                            <tr>
+                                                <td colspan="9" class="text-center">Tidak ada data</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" class="text-right"><b>Total Volume</b></td>
+                                                <td id="d_total_volume_sum"></td>
+                                                <td id="d_total_volume_all"></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Jumlah (Koli)</label>
+                                        <input type="number" class="form-control" name="jumlah" id="d_jumlah">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Berat Gross</label>
+                                        <input type="number" step="0.01" class="form-control" name="gross" id="d_gross">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Komoditi</label>
+                                        <input type="text" class="form-control" name="komoditi" id="d_komoditi">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Berat Volume</label>
+                                        <input type="number" step="0.01" class="form-control" name="volume" id="d_volume">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Chargeable</label>
+                                        <input type="number" step="0.01" class="form-control" name="chargeable" id="d_chargeable">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal Masuk</label>
+                                        <input type="date" class="form-control" name="tanggal_masuk" id="d_tanggal_masuk">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-warning">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Konfirmasi BTB -->
+        <div class="modal fade" id="confirmBtbModal" tabindex="-1" role="dialog" aria-labelledby="confirmBtbModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmBtbModalLabel">Konfirmasi Kirim ke BTB</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah Anda yakin ingin memproses data dengan SMU <strong id="modal-smu-text"></strong> ke BTB?</p>
+
+                        <!-- Tampilan Nomor BTB Otomatis -->
+                        <div class="alert alert-info">
+                            <strong>Estimasi Nomor BTB Baru:</strong>
+                            <span id="modal-btb-no-preview" class="badge badge-primary" style="font-size: 14px;">Memuat...</span>
+                        </div>
+                        <!-- Input Tanggal BTB -->
+                        <div class="form-group">
+                            <label for="modal-btb-date"><strong>Tanggal BTB:</strong></label>
+                            <input type="date" id="modal-btb-date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                            <small class="text-danger" id="date-error" style="display:none;">Tanggal BTB wajib diisi!</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="button" id="btn-proses-btb-confirm" class="btn btn-primary">Ya, Proses</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalRekap">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Rekap Kemasan SMU</h4>
+                    </div>
+                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('incominghlp/rekap_kemasan_smu') ?>">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Dari</label>
+                                        <input type="date" class="form-control" name="dari" id="dari_r">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Sampai</label>
+                                        <input type="date" class="form-control" name="sampai" id="sampai_r">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Catg Via</label>
+                                        <select class="form-control" required="" name="catg">
+                                            <option value="all">ALL</option>
+                                            <option value="gudang_langsung">Langsung Gudang</option>
+                                            <option value="ra_apk">RA APK</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="<?= base_url(); ?>src/vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="<?= base_url(); ?>src/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="<?= base_url(); ?>src/vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="<?= base_url(); ?>src/vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="<?= base_url(); ?>src/vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="<?= base_url(); ?>src/vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="<?= base_url(); ?>src/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="<?= base_url(); ?>src/vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="<?= base_url(); ?>src/vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="<?= base_url(); ?>src/vendors/Flot/jquery.flot.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/Flot/jquery.flot.time.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="<?= base_url(); ?>src/vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="<?= base_url(); ?>src/vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="<?= base_url(); ?>src/vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="<?= base_url(); ?>src/vendors/moment/min/moment.min.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <!-- Sweetalert -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Select2 -->
+    <link rel="stylesheet" href="<?= base_url(); ?>src/select2/css/select2.min.css">
+    <script type="text/javascript" src="<?= base_url(); ?>src/select2/js/select2.min.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="<?= base_url(); ?>src/build/js/custom.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="<?= base_url(); ?>src/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="<?= base_url(); ?>src/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        <?php
+        if ($this->session->flashdata('message_name')) {
+        ?> Swal.fire({
+                title: "Success!! ",
+                text: '<?= $this->session->flashdata('message_name') ?>',
+                type: "success",
+                icon: "success",
+            });
+        <?php
+            // $this->session->sess_destroy('message_name');
+            unset($_SESSION['message_name']);
+        } ?>
+
+        <?php
+        if ($this->session->flashdata('message_error')) {
+        ?>
+            Swal.fire({
+                title: "Error!! ",
+                text: '<?= $this->session->flashdata('message_error') ?>',
+                type: "error",
+                icon: "error",
+            });
+        <?php
+            // $this->session->sess_destroy('message_error');
+            unset($_SESSION['message_error']);
+        } ?>
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            // =============================================
+            // DATATABLE
+            // =============================================
+            $('#kemasan_table').DataTable({
+                processing: true,
+                serverSide: true,
+                scrollX: true,
+                order: [
+                    [0, 'desc']
+                ], // tambahkan ini
+                ajax: {
+                    url: '<?= base_url("incominghlp/getData_kemasan_smu") ?>',
+                    type: 'POST'
+                },
+                columnDefs: [{
+                        orderable: false,
+                        targets: [-1, -2]
+                    },
+                    {
+                        visible: false,
+                        targets: 0
+                    } // sembunyikan kolom uid
+                ],
+                rowCallback: function(row, data) {
+                    $(row).attr('data-uid', data[0]); // set data-uid dari index 0
+                    $(row).css('cursor', 'pointer');
+                },
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data",
+                    zeroRecords: "Data tidak ditemukan",
+                    processing: "Memuat data...",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Selanjutnya"
+                    }
+                }
+            });
+
+            var currentListUid = null;
+
+            // Click row - buka modal detail
+            $('#kemasan_table tbody').on('click', 'tr', function(e) {
+                if ($(e.target).closest('button, a').length) return;
+
+                var uid = $(this).data('uid');
+                if (!uid) return;
+
+                $.ajax({
+                    url: '<?= base_url('incominghlp/get_detail_smu') ?>/' + uid,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        var r = data.row;
+                        currentListUid = r.uid;
+
+                        // Fill field biasa
+                        $('#detail_smu').text(r.smu);
+                        $('#detail_uid').val(r.uid);
+                        $('#d_jns_barang').val(r.jns_barang);
+                        $('#d_catg_smu').val(r.catg_smu);
+                        $('#d_smu_val').val(r.smu);
+                        $('#d_tanggal_smu').val(r.tanggal_smu);
+                        $('#d_pesawat').val(r.pesawat);
+                        $('#d_tanggal_terbang').val(r.tanggal_terbang);
+                        $('#d_time_terbang').val(r.time_terbang);
+                        $('#d_telepon_pengirim').val(r.telepon_pengirim);
+                        $('#d_alamat_pengirim').val(r.alamat_pengirim);
+                        $('#d_nama_penerima').val(r.nama_penerima); // Tetap aman sebagai input teks biasa
+                        $('#d_telepon_penerima').val(r.telepon_penerima);
+                        $('#d_alamat_penerima').val(r.alamat_penerima);
+                        $('#d_jaster').prop('checked', r.jaster == '1');
+                        $('#d_jumlah').val(r.jumlah);
+                        $('#d_gross').val(r.gross);
+                        $('#d_komoditi').val(r.komoditi);
+                        $('#d_volume').val(r.volume);
+                        $('#d_chargeable').val(r.chargeable);
+                        console.log('tanggal masuk : ' + r.in_date_formatted);
+                        $('#d_tanggal_masuk').val(r.in_date_formatted);
+
+                        // Show modal dulu
+                        $('#modalDetail').modal('show');
+
+                        // Fill Select2 setelah modal terbuka pakai .one
+                        $('#modalDetail').one('shown.bs.modal', function() {
+                            var pesawat_parts = (r.no_pesawat ?? '').split('-');
+                            $('#d_no_pesawat_kode').append(
+                                new Option(pesawat_parts[0], pesawat_parts[0], true, true)
+                            ).trigger('change');
+                            $('#d_no_pesawat_number').val(pesawat_parts[1] ?? '');
+
+                            $('#d_tujuan').append(
+                                new Option(r.tujuan, r.tujuan_uid, true, true)
+                            ).trigger('change');
+
+                            $('#d_nama_pengirim').append(
+                                new Option(r.nama_pengirim, r.pengirim_uid, true, true)
+                            ).trigger('change');
+                            $('#d_pengirim_uid').val(r.pengirim_uid);
+
+                            $('#d_nama_agent').append(
+                                new Option(r.nama_agent, r.agent_uid, true, true)
+                            ).trigger('change');
+                            $('#d_agent_uid').val(r.agent_uid);
+
+                            renderDimensi(data.dimensi);
+                        });
+                    }
+                });
+            });
+
+            // Init Select2 setiap modal edit terbuka
+            $('#modalDetail').on('shown.bs.modal', function() {
+                // Destroy dulu kalau sudah pernah di-init
+                ['select2-pesawat-edit', 'select2-tujuan-edit', 'select2-pengirim-edit',
+                    'select2-penerima-edit', 'select2-agent-edit'
+                ].forEach(function(cls) {
+                    var el = $('.' + cls);
+                    if (el.data('select2')) el.select2('destroy');
+                });
+
+                $('.select2-pesawat-edit').select2({
+                    placeholder: ':: Kode',
+                    allowClear: true,
+                    dropdownParent: $('#modalDetail .modal-content'),
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_pesawat') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.kode,
+                                        text: item.kode + ' - ' + item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                $('.select2-tujuan-edit').select2({
+                    placeholder: ':: Pilih Tujuan',
+                    allowClear: true,
+                    dropdownParent: $('#modalDetail .modal-content'),
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_tujuan') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.kode_kota + ' - ' + item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                $('.select2-pengirim-edit').select2({
+                    placeholder: ':: Pilih Pengirim',
+                    allowClear: true,
+                    dropdownParent: $('#modalDetail .modal-content'),
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_pengirim') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                $('.select2-agent-edit').select2({
+                    placeholder: ':: Pilih Agent',
+                    allowClear: true,
+                    dropdownParent: $('#modalDetail .modal-content'),
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_agent') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+            });
+
+
+            // Render dimensi
+            function renderDimensi(dimensi) {
+                var html = '';
+                var total_vol = 0;
+                var total_vol_all = 0;
+
+                if (dimensi.length === 0) {
+                    html = '<tr><td colspan="9" class="text-center">Tidak ada data dimensi</td></tr>';
+                } else {
+                    $.each(dimensi, function(i, d) {
+                        total_vol += parseFloat(d.volume) || 0;
+                        total_vol_all += parseFloat(d.total_volume) || 0;
+
+                        html += '<tr id="dim_row_' + d.uid + '">';
+                        html += '<td>' + (i + 1) + '</td>';
+                        html += '<td><input type="number" class="form-control input-xs dim-panjang" value="' + d.panjang + '" data-uid="' + d.uid + '"></td>';
+                        html += '<td><input type="number" class="form-control input-xs dim-lebar"  value="' + d.lebar + '" data-uid="' + d.uid + '"></td>';
+                        html += '<td><input type="number" class="form-control input-xs dim-tinggi" value="' + d.tinggi + '" data-uid="' + d.uid + '"></td>';
+                        html += '<td><input type="number" class="form-control input-xs dim-pieces" value="' + d.pieces + '" data-uid="' + d.uid + '"></td>';
+                        html += '<td><input type="text"   class="form-control input-xs dim-dimensi" value="' + d.dimensi + '" readonly data-uid="' + d.uid + '"></td>';
+                        html += '<td><input type="text"   class="form-control input-xs dim-volume"  value="' + parseFloat(d.volume).toFixed(2) + '" readonly data-uid="' + d.uid + '"></td>';
+                        html += '<td><input type="text"   class="form-control input-xs dim-total"   value="' + parseFloat(d.total_volume).toFixed(2) + '" readonly data-uid="' + d.uid + '"></td>';
+                        html += '<td>';
+                        html += '<button type="button" class="btn btn-xs btn-primary btn-upd-dim" data-uid="' + d.uid + '"><i class="fa fa-save"></i></button> ';
+                        html += '<button type="button" class="btn btn-xs btn-danger btn-del-dim"  data-uid="' + d.uid + '"><i class="fa fa-trash"></i></button>';
+                        html += '</td>';
+                        html += '</tr>';
+                    });
+                }
+
+                $('#bodyDimensi').html(html);
+
+                $('#d_total_volume_sum').text(total_vol.toFixed(2));
+                $('#d_total_volume_all').text(total_vol_all.toFixed(2));
+                $('#d_volume').val(Math.ceil(total_vol_all));
+
+                // Hitung chargeable (ambil mana yang lebih besar antara gross dan volume)
+                var gross = parseFloat($('#d_gross').val()) || 0;
+                if (total_vol_all > gross) {
+                    // $('#d_chargeable').val(total_vol_all.toFixed(2));
+                    $('#d_chargeable').val(Math.ceil(total_vol_all));
+                } else {
+                    // $('#d_chargeable').val(gross.toFixed(2));
+                    $('#d_chargeable').val(Math.ceil(gross));
+
+                }
+            }
+
+            // Hitung dimensi otomatis saat input berubah
+            function hitungDimensi(uid) {
+                var pesawat = $('#d_pesawat').val();
+                var panjang = parseFloat($('.dim-panjang[data-uid="' + uid + '"]').val()) || 0;
+                var lebar = parseFloat($('.dim-lebar[data-uid="' + uid + '"]').val()) || 0;
+                var tinggi = parseFloat($('.dim-tinggi[data-uid="' + uid + '"]').val()) || 0;
+                var pieces = parseFloat($('.dim-pieces[data-uid="' + uid + '"]').val()) || 1;
+                var pembagi = pesawat == 'BATIK AIR' ? 5000 : 6000;
+
+                if (panjang > 0 && lebar > 0 && tinggi > 0) {
+                    var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
+                    var volume = (panjang * lebar * tinggi) / pembagi;
+                    var total_volume = volume * pieces;
+                    var total_all = 0;
+
+                    $('.dim-dimensi[data-uid="' + uid + '"]').val(dimensi);
+                    $('.dim-volume[data-uid="' + uid + '"]').val(volume.toFixed(2));
+                    $('.dim-total[data-uid="' + uid + '"]').val(total_volume.toFixed(2));
+
+                    $('.dim-total').each(function() {
+                        total_all += parseFloat($(this).val()) || 0;
+                    });
+                    $('#d_total_volume_all').text(total_all.toFixed(2));
+
+                    // Auto fill ke berat volume
+                    $('#d_volume').val(Math.ceil(total_all));
+
+                    // Hitung chargeable
+                    var gross = parseFloat($('#d_gross').val()) || 0;
+                    $('#d_chargeable').val(total_all > gross ? total_all.toFixed(2) : gross.toFixed(2));
+
+                }
+            }
+
+            $(document).on('change', '.dim-panjang, .dim-lebar, .dim-tinggi, .dim-pieces', function() {
+                var uid = $(this).data('uid');
+                hitungDimensi(uid);
+            });
+
+            $(document).on('keyup change', '#d_gross', function() {
+                var gross = parseFloat($(this).val()) || 0;
+                var total_vol = parseFloat($('#d_total_volume_all').text()) || 0;
+                $('#d_chargeable').val(total_vol > gross ? total_vol.toFixed(2) : gross.toFixed(2));
+            });
+
+            // Tambah dimensi baru
+            $('#btnTambahDimensi').on('click', function() {
+                if (!currentListUid) return;
+                $.ajax({
+                    url: '<?= base_url('incominghlp/tambah_dimensi') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        uid_list: currentListUid
+                    },
+                    success: function(res) {
+                        if (res.status === 'success') {
+                            reloadDimensi(currentListUid);
+                        }
+                    }
+                });
+            });
+
+            // Update dimensi
+            $(document).on('click', '.btn-upd-dim', function() {
+                var uid = $(this).data('uid');
+
+                // JIKA NEW ROW (TANPA UID / DI MODAL TAMBAH)
+                if (!uid) {
+                    var row = $(this).closest('tr');
+                    // Jika itu adalah row modal tambah, hitung ulang row tsb secara lokal
+                    if (row.find('.t-dim-panjang').length > 0) {
+                        hitungRowDimensiTambah(row);
+                    }
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Kalkulasi Berhasil',
+                        text: 'Data dimensi baru ini akan tersimpan permanen saat Anda menekan tombol "Simpan" di bawah.',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                var pesawat = $('#d_pesawat').val();
+                var panjang = $('.dim-panjang[data-uid="' + uid + '"]').val();
+                var lebar = $('.dim-lebar[data-uid="' + uid + '"]').val();
+                var tinggi = $('.dim-tinggi[data-uid="' + uid + '"]').val();
+                var pieces = $('.dim-pieces[data-uid="' + uid + '"]').val();
+                var pembagi = pesawat == 'BATIK AIR' ? 5000 : 6000;
+                var volume = (panjang * lebar * tinggi) / pembagi;
+                var total_volume = volume * pieces;
+                var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
+
+                $.ajax({
+                    url: '<?= base_url('incominghlp/update_dimensi') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        uid: uid,
+                        panjang: panjang,
+                        lebar: lebar,
+                        tinggi: tinggi,
+                        pieces: pieces,
+                        dimensi: dimensi,
+                        volume: volume,
+                        total_volume: total_volume
+                    },
+                    success: function(res) {
+                        if (res.status === 'success') reloadDimensi(currentListUid);
+                    }
+                });
+            });
+
+            // Hapus dimensi
+            $(document).on('click', '.btn-del-dim', function() {
+                var uid = $(this).data('uid');
+                if (!confirm('Yakin hapus dimensi ini?')) return;
+                $.ajax({
+                    url: '<?= base_url('incominghlp/hapus_dimensi') ?>/' + uid,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.status === 'success') reloadDimensi(currentListUid);
+                    }
+                });
+            });
+
+            // Reload dimensi
+            function reloadDimensi(uid_list) {
+                $.get('<?= base_url('incominghlp/get_dimensi') ?>/' + uid_list, function(data) {
+                    renderDimensi(data);
+                }, 'json');
+            }
+
+            // Menutup select2 saat modal edit di-scroll
+            $('#modalDetail').on('scroll', function() {
+                $('.select2-pesawat-edit, .select2-tujuan-edit, .select2-pengirim-edit, .select2-penerima-edit, .select2-agent-edit').select2('close');
+            });
+
+            // Reset saat modal edit tutup
+            $('#modalDetail').on('hidden.bs.modal', function() {
+                $('.select2-pesawat-edit, .select2-tujuan-edit, .select2-pengirim-edit, .select2-penerima-edit, .select2-agent-edit')
+                    .val(null).trigger('change');
+            });
+
+            // =============================================
+            // INITIALIZATION SELECT2 TAMBAH (modalTambahSMU)
+            // =============================================
+            $('#modalTambahSMU').on('shown.bs.modal', function() {
+                // Destroy dulu jika sudah pernah di-init sebelumnya
+                ['select2-pesawat-tambah', 'select2-tujuan-tambah', 'select2-pengirim-tambah',
+                    'select2-penerima-tambah', 'select2-agent-tambah'
+                ].forEach(function(cls) {
+                    var el = $('.' + cls);
+                    if (el.data('select2')) el.select2('destroy');
+                });
+
+                $('.select2-pesawat-tambah').select2({
+                    placeholder: ':: Kode',
+                    allowClear: true,
+                    dropdownParent: $('#modalTambahSMU .modal-content'), // Diarahkan ke .modal-content agar presisi
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_pesawat') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.kode,
+                                        text: item.kode + ' - ' + item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                $('.select2-tujuan-tambah').select2({
+                    placeholder: ':: Pilih Tujuan',
+                    allowClear: true,
+                    dropdownParent: $('#modalTambahSMU .modal-content'), // Diarahkan ke .modal-content agar presisi
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_tujuan') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.kode_kota + ' - ' + item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                $('.select2-pengirim-tambah').select2({
+                    placeholder: ':: Pilih Pengirim',
+                    allowClear: true,
+                    dropdownParent: $('#modalTambahSMU .modal-content'), // Diarahkan ke .modal-content agar presisi
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_pengirim') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                // Saat pengirim dipilih, auto fill telepon & alamat
+                $('#t_nama_pengirim').on('select2:select', function(e) {
+                    var uid = e.params.data.id;
+                    $.ajax({
+                        url: '<?= base_url('incominghlp/get_pengirim_detail') ?>/' + uid,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#t_pengirim_uid').val(data.uid);
+                            $('#t_telepon_pengirim').val(data.telepon);
+                            $('#t_alamat_pengirim').val(data.alamat);
+                        }
+                    });
+                });
+
+                $('.select2-penerima-tambah').select2({
+                    placeholder: ':: Pilih Penerima',
+                    allowClear: true,
+                    dropdownParent: $('#modalTambahSMU .modal-content'), // Diarahkan ke .modal-content agar presisi
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_penerima') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                // Saat penerima dipilih, auto fill telepon & alamat
+                $('#t_nama_penerima').on('select2:select', function(e) {
+                    var uid = e.params.data.id;
+                    $.ajax({
+                        url: '<?= base_url('incominghlp/get_penerima_detail') ?>/' + uid,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#t_penerima_uid').val(data.uid);
+                            $('#t_telepon_penerima').val(data.telepon);
+                            $('#t_alamat_penerima').val(data.alamat);
+                        }
+                    });
+                });
+
+                $('.select2-agent-tambah').select2({
+                    placeholder: ':: Pilih Agent',
+                    allowClear: true,
+                    dropdownParent: $('#modalTambahSMU .modal-content'), // Diarahkan ke .modal-content agar presisi
+                    ajax: {
+                        url: '<?= base_url('incominghlp/get_agent') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.uid,
+                                        text: item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                // Saat agent dipilih, simpan uid
+                $('#t_nama_agent').on('select2:select', function(e) {
+                    $('#t_agent_uid').val(e.params.data.id);
+                });
+
+            });
+
+            // =============================================
+            // DIMENSI TAMBAH (CLIENT-SIDE)
+            // =============================================
+            var tambahDimensiCounter = 0;
+
+            function renderDimensiTambahNo() {
+                var rows = $('#bodyDimensiTambah tr:not(.no-data-row)');
+                if (rows.length === 0) {
+                    $('#bodyDimensiTambah').html('<tr class="no-data-row"><td colspan="9" class="text-center">Tidak ada data</td></tr>');
+                    $('#t_total_volume_sum').text('0.00');
+                    $('#t_total_volume_all').text('0.00');
+                    $('#t_volume').val(0);
+
+                    var gross = parseFloat($('#t_gross').val()) || 0;
+                    $('#t_chargeable').val(gross.toFixed(2));
+                } else {
+                    rows.each(function(index) {
+                        $(this).find('td:first').text(index + 1);
+                    });
+                    hitungTotalDimensiTambah();
+                }
+            }
+
+            function hitungTotalDimensiTambah() {
+                var total_vol = 0;
+                var total_vol_all = 0;
+
+                $('#bodyDimensiTambah tr:not(.no-data-row)').each(function() {
+                    var vol = parseFloat($(this).find('.t-dim-volume').val()) || 0;
+                    var tot = parseFloat($(this).find('.t-dim-total').val()) || 0;
+                    total_vol += vol;
+                    total_vol_all += tot;
+                });
+
+                $('#t_total_volume_sum').text(total_vol.toFixed(2));
+                $('#t_total_volume_all').text(total_vol_all.toFixed(2));
+                $('#t_volume').val(Math.ceil(total_vol_all));
+
+                // Hitung chargeable (Gross vs Volume terbesar)
+                var gross = parseFloat($('#t_gross').val()) || 0;
+                var chargeableVal = total_vol_all > gross ? total_vol_all : gross;
+                $('#t_chargeable').val(chargeableVal.toFixed(2));
+            }
+
+            function hitungRowDimensiTambah(row) {
+                var pesawat = $('#t_pesawat').val();
+                var panjang = parseFloat(row.find('.t-dim-panjang').val()) || 0;
+                var lebar = parseFloat(row.find('.t-dim-lebar').val()) || 0;
+                var tinggi = parseFloat(row.find('.t-dim-tinggi').val()) || 0;
+                var pieces = parseFloat(row.find('.t-dim-pieces').val()) || 1;
+                var pembagi = pesawat == 'BATIK AIR' ? 5000 : 6000;
+
+                if (panjang > 0 && lebar > 0 && tinggi > 0) {
+                    var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
+                    var volume = (panjang * lebar * tinggi) / pembagi;
+                    var total_volume = volume * pieces;
+
+                    row.find('.t-dim-dimensi').val(dimensi);
+                    row.find('.t-dim-volume').val(volume.toFixed(2));
+                    row.find('.t-dim-total').val(total_volume.toFixed(2));
+                } else {
+                    row.find('.t-dim-dimensi').val('');
+                    row.find('.t-dim-volume').val('0.00');
+                    row.find('.t-dim-total').val('0.00');
+                }
+                hitungTotalDimensiTambah();
+            }
+
+            $('#btnTambahDimensiTambah').on('click', function() {
+                $('#bodyDimensiTambah tr.no-data-row').remove();
+                tambahDimensiCounter++;
+
+                var html = '<tr id="t_dim_row_' + tambahDimensiCounter + '">';
+                html += '<td></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-panjang" name="dim_panjang[]" value="0"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-lebar" name="dim_lebar[]" value="0"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-tinggi" name="dim_tinggi[]" value="0"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-pieces" name="dim_pieces[]" value="1"></td>';
+                html += '<td><input type="text" class="form-control input-xs t-dim-dimensi" name="dim_dimensi[]" readonly value=""></td>';
+                html += '<td><input type="text" class="form-control input-xs t-dim-volume" name="dim_volume[]" readonly value="0.00"></td>';
+                html += '<td><input type="text" class="form-control input-xs t-dim-total" name="dim_total_volume[]" readonly value="0.00"></td>';
+                html += '<td>';
+                html += '<button type="button" class="btn btn-xs btn-primary btn-upd-dim"><i class="fa fa-save"></i></button> ';
+                html += '<button type="button" class="btn btn-xs btn-danger btn-del-dim-tambah"><i class="fa fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
+
+                $('#bodyDimensiTambah').append(html);
+                renderDimensiTambahNo();
+            });
+
+            $(document).on('change keyup', '.t-dim-panjang, .t-dim-lebar, .t-dim-tinggi, .t-dim-pieces', function() {
+                var row = $(this).closest('tr');
+                hitungRowDimensiTambah(row);
+            });
+
+            $(document).on('click', '.btn-del-dim-tambah', function() {
+                $(this).closest('tr').remove();
+                renderDimensiTambahNo();
+            });
+
+            // Re-kalkulasi seluruh baris jika maskapai diubah (dikarenakan perubahan pembagi)
+            $('#t_pesawat').on('change', function() {
+                $('#bodyDimensiTambah tr:not(.no-data-row)').each(function() {
+                    hitungRowDimensiTambah($(this));
+                });
+            });
+
+            // Auto hitung chargeable pada form tambah berdasarkan perubahan berat gross manual
+            $(document).on('keyup change', '#t_gross', function() {
+                var gross = parseFloat($(this).val()) || 0;
+                var total_vol = parseFloat($('#t_total_volume_all').text()) || 0;
+                $('#t_chargeable').val(total_vol > gross ? total_vol.toFixed(2) : gross.toFixed(2));
+            });
+
+            // Auto hitung chargeable pada form tambah (apabila volume diubah manual)
+            $(document).on('keyup change', '#t_volume', function() {
+                var gross = parseFloat($('#t_gross').val()) || 0;
+                var volume = parseFloat($(this).val()) || 0;
+                $('#t_chargeable').val(volume > gross ? volume : gross);
+            });
+
+            // Menutup select2 saat modal tambah di-scroll
+            $('#modalTambahSMU').on('scroll', function() {
+                $('.select2-pesawat-tambah, .select2-tujuan-tambah, .select2-pengirim-tambah, .select2-penerima-tambah, .select2-agent-tambah').select2('close');
+            });
+
+            // Reset saat modal tambah tutup
+            $('#modalTambahSMU').on('hidden.bs.modal', function() {
+                $(this).find('form')[0].reset();
+                $('#bodyDimensiTambah').html('<tr class="no-data-row"><td colspan="9" class="text-center">Tidak ada data</td></tr>');
+                $('#t_total_volume_sum').text('0.00');
+                $('#t_total_volume_all').text('0.00');
+                $('.select2-pesawat-tambah, .select2-tujuan-tambah, .select2-pengirim-tambah, .select2-penerima-tambah, .select2-agent-tambah').val(null).trigger('change');
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            let selectedUid = null;
+
+            // 1. Ketika tombol "ke BTB" diklik
+            $(document).on('click', '.btn-btb', function(e) {
+                e.preventDefault();
+
+                // Ambil UID dari attribute data-uid pada tombol
+                selectedUid = $(this).data('uid');
+                selectedSMU = $(this).data('smu');
+
+                // Tampilkan UID di dalam teks modal konfirmasi
+                $('#modal-smu-text').text(selectedSMU);
+                $('#modal-btb-no-preview').text('Mengambil nomor...');
+
+                // Atur kembali tanggal default ke hari ini setiap kali modal dibuka
+                const today = new Date().toISOString().split('T')[0];
+                $('#modal-btb-date').val(today);
+
+                // Tampilkan Modal Konfirmasi terlebih dahulu
+                $('#confirmBtbModal').modal('show');
+
+                // Lakukan AJAX untuk mendapatkan simulasi nomor BTB berikutnya (MAX + 1)
+                $.ajax({
+                    url: '<?php echo site_url("incominghlp/get_next_no"); ?>',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('#modal-btb-no-preview').text(response.next_no);
+                        } else {
+                            $('#modal-btb-no-preview').text('Gagal memuat nomor');
+                        }
+                    },
+                    error: function() {
+                        $('#modal-btb-no-preview').text('Error sistem');
+                    }
+                });
+            });
+
+            // 2. Ketika tombol "Ya, Proses" di dalam modal diklik
+            $('#btn-proses-btb-confirm').on('click', function() {
+                if (!selectedUid) return;
+                const btbDate = $('#modal-btb-date').val();
+
+                // Validasi tanggal tidak boleh kosong
+                if (!btbDate) {
+                    $('#date-error').show();
+                    return;
+                } else {
+                    $('#date-error').hide();
+                }
+
+                // Nonaktifkan tombol agar tidak terjadi double-click/double-submit
+                const btnConfirm = $(this);
+                btnConfirm.prop('disabled', true).text('Memproses...');
+
+                // Jalankan request ke Controller CI3 menggunakan AJAX
+                $.ajax({
+                    url: '<?php echo site_url("incominghlp/proses_single_btb"); ?>', // Mengarah ke Controller 'Btb' method 'proses_single'
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        uid: selectedUid,
+                        btb_date: btbDate // Kirimkan input tanggal BTB ke server    
+                    },
+                    success: function(response) {
+                        $('#confirmBtbModal').modal('hide');
+
+                        if (response.status === 'success') {
+                            // Notifikasi sukses
+                            alert(response.message);
+                            // Reload halaman untuk memperbarui data di tabel
+                            location.reload();
+                        } else {
+                            alert('Gagal memproses data: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#confirmBtbModal').modal('hide');
+                        alert('Terjadi kesalahan koneksi atau sistem.');
+                        console.error(error);
+                    },
+                    complete: function() {
+                        // Kembalikan kondisi tombol modal
+                        btnConfirm.prop('disabled', false).text('Ya, Proses');
+                        selectedUid = null;
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

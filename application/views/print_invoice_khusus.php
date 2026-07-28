@@ -73,8 +73,8 @@
                 <td align="center"><?= $s->tujuan ?></td>
                 <td align="center"><?= $s->komoditi ?></td>
                 <td align="center"><?= $s->jumlah ?></td>
-                <td align="right"><?= $s->chargeable ?></td>
-                <td align="right"><?= number_format($s->sewa_gudang, 2) ?></td>
+                <td align="right"><?= (float)$s->chargeable ?></td>
+                <td align="right"><?= number_format($s->sewa_gudang) ?></td>
             </tr>
         <?php endforeach; ?>
         <tr>
@@ -171,8 +171,8 @@
                     <td align="center"><?= $s->tujuan ?></td>
                     <td><?= $s->no_pesawat ?>/<?= date('d-m-Y', strtotime($s->tanggal_terbang)) ?></td>
                     <td align="center"><?= $s->jumlah ?></td>
-                    <td align="right"><?= number_format($s->gross, 2) ?></td>
-                    <td align="right"><?= number_format($s->volume, 2) ?></td>
+                    <td align="right"><?= number_format($s->gross) ?></td>
+                    <td align="right"><?= number_format($s->volume) ?></td>
                     <td>
                         <?php foreach ($s->dimensi as $d): ?>
                             <?= $d->dimensi ?>/<?= $d->pieces ?>&nbsp;
@@ -183,8 +183,8 @@
             <tr>
                 <td colspan="4" height="30" align="center">Total</td>
                 <td align="center"><?= number_format($btb->total_pieces) ?></td>
-                <td align="right"><?= number_format($btb->total_gross, 2) ?></td>
-                <td align="right"><?= number_format($btb->total_volume, 2) ?></td>
+                <td align="right"><?= number_format($btb->total_gross) ?></td>
+                <td align="right"><?= number_format($btb->total_volume) ?></td>
                 <td>&nbsp;</td>
             </tr>
         </table>

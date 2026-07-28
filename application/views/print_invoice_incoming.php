@@ -80,7 +80,7 @@
                 <?php if ($billing->hari > 0): ?>
                     <td align="center"><b><?= number_format($s->hari) ?></b></td>
                 <?php endif; ?>
-                <td align="right"><?= number_format($s->sewa_gudang, 2) ?></td>
+                <td align="right"><?= number_format((float)$s->sewa_gudang) ?></td>
             </tr>
         <?php endforeach; ?>
         <tr>
@@ -106,7 +106,7 @@
             <?php if ($billing->opsi_dg == '1'): ?>
                 <tr>
                     <td>SURCHARGE DG 100%</td>
-                    <td align="right"><b><?= number_format($billing->nominal_surcharge_dg, 2) ?></b></td>
+                    <td align="right"><b><?= number_format($billing->nominal_surcharge_dg) ?></b></td>
                 </tr>
             <?php endif; ?>
             <tr>
@@ -263,14 +263,14 @@
                 <td><?= $s->smu ?></td>
                 <td align="center"><?= $s->asal ?>-HLP</td>
                 <td align="center"><?= number_format((float)$s->jumlah) ?></td>
-                <td align="right"><?= number_format((float)$s->gross, 2) ?></td>
-                <td align="right"><?= number_format((float)$s->chargeable, 2) ?></td>
+                <td align="right"><?= number_format((float)$s->gross) ?></td>
+                <td align="right"><?= number_format((float)$s->chargeable) ?></td>
             </tr>
         <?php endforeach; ?>
         <tr>
             <td colspan="3" height="30" align="center">Total</td>
             <td align="center"><?= $total_pieces_k ?></td>
-            <td align="right"><?= number_format(array_sum(array_column((array)$list_billing, 'gross')), 2) ?></td>
+            <td align="right"><?= number_format(array_sum(array_column((array)$list_billing, 'gross'))) ?></td>
             <td align="right"><?= $total_chargeable_k ?></td>
         </tr>
     </table>

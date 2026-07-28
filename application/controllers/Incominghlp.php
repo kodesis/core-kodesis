@@ -1662,20 +1662,20 @@ class Incominghlp extends CI_Controller
 			: '';
 
 		// Angka format
-		$total_sewa_gudang_k  = number_format((float)$billing->total_cargo, 2);
-		$upd_total_cdc        = $billing->total_cdc > 0 ? number_format((float)$billing->total_cdc, 2) : '';
-		$bg_ppn_k             = number_format((float)$billing->bg_ppn, 2);
-		$administrasi_k       = number_format((float)$billing->administrasi, 2);
-		$materai_k            = $billing->materai > 0 ? number_format((float)$billing->materai, 2) : '';
-		$bg_total_k           = number_format((float)$billing->bg_total, 2);
-		$total_kade_k         = number_format((float)$billing->total_kade, 2);
-		$total_csc_k          = number_format((float)$billing->total_csc, 2);
-		$kc_sub_total_k       = number_format((float)$billing->kc_sub_total, 2);
-		$kc_ppn_k             = number_format((float)$billing->kc_ppn, 2);
-		$kc_total_k           = number_format((float)$billing->kc_total, 2);
-		$grand_total_k        = number_format((float)$billing->grand_total, 2);
+		$total_sewa_gudang_k  = number_format((float)$billing->total_cargo);
+		$upd_total_cdc        = $billing->total_cdc > 0 ? number_format((float)$billing->total_cdc) : '';
+		$bg_ppn_k             = number_format((float)$billing->bg_ppn);
+		$administrasi_k       = number_format((float)$billing->administrasi);
+		$materai_k            = $billing->materai > 0 ? number_format((float)$billing->materai) : '';
+		$bg_total_k           = number_format((float)$billing->bg_total);
+		$total_kade_k         = number_format((float)$billing->total_kade);
+		$total_csc_k          = number_format((float)$billing->total_csc);
+		$kc_sub_total_k       = number_format((float)$billing->kc_sub_total);
+		$kc_ppn_k             = number_format((float)$billing->kc_ppn);
+		$kc_total_k           = number_format((float)$billing->kc_total);
+		$grand_total_k        = number_format((float)$billing->grand_total);
 		$total_pieces_k       = number_format((float)$billing->total_pieces);
-		$total_chargeable_k   = number_format((float)$billing->total_chargeable, 2);
+		$total_chargeable_k   = number_format((float)$billing->total_chargeable);
 		$kade_k               = number_format((float)$billing->kade);
 		$csc_k                = number_format((float)$billing->csc);
 		$days_k               = number_format((float)$billing->hari);

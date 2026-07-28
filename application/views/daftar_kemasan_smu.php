@@ -689,14 +689,14 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Telepon Pengirim</label>
-                                        <input type="text" class="form-control" name="telepon_pengirim" id="d_telepon_pengirim" required>
+                                        <input type="text" class="form-control" name="telepon_pengirim" id="d_telepon_pengirim">
                                     </div>
                                 </div>
 
                                 <div class="col-md-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Alamat Pengirim</label>
-                                        <textarea class="form-control" name="alamat_pengirim" id="d_alamat_pengirim" rows="2" required></textarea>
+                                        <textarea class="form-control" name="alamat_pengirim" id="d_alamat_pengirim" rows="2"></textarea>
                                     </div>
                                 </div>
 

@@ -1203,8 +1203,11 @@ class Outgoinghlp extends CI_Controller
 			'jam'              => $this->input->post('jam'),
 			'smu'              => strtoupper($this->input->post('smu')),
 			'no_flight'        => $this->input->post('no_flight'),
-			'tujuan'       => $this->input->post('tujuan_uid'),
-			'uid_pengirim'     => $this->input->post('pengirim_uid'),
+			// 'tujuan'       => $this->input->post('tujuan_uid'),
+			// 'uid_pengirim'     => $this->input->post('pengirim_uid'),
+
+			'tujuan'       => $this->input->post('tujuan'),
+			'uid_pengirim'     => $this->input->post('pengirim'),
 			// 'telepon_pengirim' => $this->input->post('telepon_pengirim'),
 			// 'alamat_pengirim'  => $this->input->post('alamat_pengirim'),
 			'isi_pti'          => $this->input->post('isi_pti'),
@@ -3126,19 +3129,19 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		// Ambil kategori billing
-		$catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra')
-			->where('hold !=', '1')
-			->get('out_bill_catg')->row();
+		// $catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra')
+		// 	->where('hold !=', '1')
+		// 	->get('out_bill_catg')->row();
 
-		if (!$catg) {
-			$this->session->set_flashdata('message_error', 'Kategori billing tidak ditemukan.');
-			redirect('outgoinghlp/daftar_btb');
-			return;
-		}
+		// if (!$catg) {
+		// 	$this->session->set_flashdata('message_error', 'Kategori billing tidak ditemukan.');
+		// 	redirect('outgoinghlp/daftar_btb');
+		// 	return;
+		// }
 
-		$sub_charge  = $smu->chargeable;
-		$sewa_gudang = $sub_charge * $catg->sewa_gudang;
-		$jasa_ra     = $smu->jaster == '1' ? $catg->jasa_ra : 0;
+		// $sub_charge  = $smu->chargeable;
+		// $sewa_gudang = $sub_charge * $catg->sewa_gudang;
+		// $jasa_ra     = $smu->jaster == '1' ? $catg->jasa_ra : 0;
 
 		// Insert ke out_billing
 		$this->cb->insert('out_billing', [
@@ -3166,8 +3169,8 @@ class Outgoinghlp extends CI_Controller
 			'out_p'      => '1',
 			'bill_uid'   => $bill_uid,
 			'user_out'   => $this->session->userdata('nip'),
-			'sewa_gudang' => $sewa_gudang,
-			'catg_bill'  => $catg->uid,
+			// 'sewa_gudang' => $sewa_gudang,
+			// 'catg_bill'  => $catg->uid,
 		]);
 
 		$this->session->set_flashdata('message_name', 'Invoice Number ' . $no . ' berhasil dibuat.');

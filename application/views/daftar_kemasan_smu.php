@@ -1217,7 +1217,7 @@
 
                     // Tambahkan detail pembagi pesawat
                     var pesawatVal = $(this).val();
-                    var pembagi = pesawatVal == 'Batik' ? 5000 : 6000;
+                    var pembagi = pesawatVal == 'BATIK' ? 5000 : 6000;
                     $('#d_pembagi_label').text('(Pembagi ' + pembagi + ')');
 
                     // Hitung ulang semua baris dimensi yang ada di edit modal
@@ -1342,7 +1342,7 @@
 
                 // Detail pembagi label
                 var pesawatVal = $('#d_pesawat').val();
-                var pembagi = pesawatVal == 'Batik' ? 5000 : 6000;
+                var pembagi = pesawatVal == 'BATIK' ? 5000 : 6000;
                 if (pesawatVal) {
                     $('#d_pembagi_label').text('(Pembagi ' + pembagi + ')');
                 }
@@ -1396,7 +1396,7 @@
                 var lebar = parseFloat($('.dim-lebar[data-uid="' + uid + '"]').val()) || 0;
                 var tinggi = parseFloat($('.dim-tinggi[data-uid="' + uid + '"]').val()) || 0;
                 var pieces = parseFloat($('.dim-pieces[data-uid="' + uid + '"]').val()) || 1;
-                var pembagi = pesawat == 'Batik' ? 5000 : 6000;
+                var pembagi = pesawat == 'BATIK' ? 5000 : 6000;
 
                 if (panjang > 0 && lebar > 0 && tinggi > 0) {
                     var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
@@ -1497,7 +1497,7 @@
                 var lebar = $('.dim-lebar[data-uid="' + uid + '"]').val();
                 var tinggi = $('.dim-tinggi[data-uid="' + uid + '"]').val();
                 var pieces = $('.dim-pieces[data-uid="' + uid + '"]').val();
-                var pembagi = pesawat == 'Batik' ? 5000 : 6000;
+                var pembagi = pesawat == 'BATIK' ? 5000 : 6000;
                 var volume = (panjang * lebar * tinggi) / pembagi;
                 var total_volume = volume * pieces;
                 var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
@@ -1633,7 +1633,7 @@
 
                     // Tampilkan pembagi dinamis
                     var pesawatVal = $(this).val();
-                    var pembagi = pesawatVal == 'Batik' ? 5000 : 6000;
+                    var pembagi = pesawatVal == 'BATIK' ? 5000 : 6000;
                     $('#t_pembagi_label').text('(Pembagi ' + pembagi + ')');
 
                     // Recalculate local rows
@@ -1826,7 +1826,7 @@
                 var lebar = parseFloat(row.find('.t-dim-lebar').val()) || 0;
                 var tinggi = parseFloat(row.find('.t-dim-tinggi').val()) || 0;
                 var pieces = parseFloat(row.find('.t-dim-pieces').val()) || 1;
-                var pembagi = pesawat == 'Batik' ? 5000 : 6000;
+                var pembagi = pesawat == 'BATIK' ? 5000 : 6000;
 
                 console.log('Calculating Row Dimension...');
 

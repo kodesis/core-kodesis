@@ -1852,13 +1852,13 @@
 
                 var html = '<tr id="t_dim_row_' + tambahDimensiCounter + '">';
                 html += '<td></td>';
-                html += '<td><input type="number" class="form-control input-xs t-dim-panjang" name="panjang[]" value="0"></td>';
-                html += '<td><input type="number" class="form-control input-xs t-dim-lebar" name="lebar[]" value="0"></td>';
-                html += '<td><input type="number" class="form-control input-xs t-dim-tinggi" name="tinggi[]" value="0"></td>';
-                html += '<td><input type="number" class="form-control input-xs t-dim-pieces" name="pieces[]" value="1"></td>';
-                html += '<td><input type="text" class="form-control input-xs t-dim-dimensi" name="dimensi[]" readonly value=""></td>';
-                html += '<td><input type="text" class="form-control input-xs t-dim-volume" name="volume[]" readonly value="0.00"></td>';
-                html += '<td><input type="text" class="form-control input-xs t-dim-total" name="total_volume[]" readonly value="0.00"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-panjang" name="dim_panjang[]" value="0"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-lebar" name="dim_lebar[]" value="0"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-tinggi" name="dim_tinggi[]" value="0"></td>';
+                html += '<td><input type="number" class="form-control input-xs t-dim-pieces" name="dim_pieces[]" value="1"></td>';
+                html += '<td><input type="text" class="form-control input-xs t-dim-dimensi" name="dim_dimensi[]" readonly value=""></td>';
+                html += '<td><input type="text" class="form-control input-xs t-dim-volume" name="dim_volume[]" readonly value="0.00"></td>';
+                html += '<td><input type="text" class="form-control input-xs t-dim-total" name="dim_total_volume[]" readonly value="0.00"></td>';
                 html += '<td>';
                 html += '<button type="button" class="btn btn-xs btn-primary btn-upd-dim"><i class="fa fa-save"></i></button> ';
                 html += '<button type="button" class="btn btn-xs btn-danger btn-del-dim-tambah"><i class="fa fa-trash"></i></button>';

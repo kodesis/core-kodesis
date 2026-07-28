@@ -454,6 +454,7 @@ class M_outgoing extends CI_Model
 
 		// Terapkan sorting kustom terlebih dahulu (escape di-set ke FALSE agar query raw SQL CASE WHEN tidak rusak)
 		$this->cb->order_by($custom_priority_order, 'ASC', FALSE);
+		$this->cb->order_by('o.uid', 'DESC');
 
 		// =========================================================================
 		// URUTAN KEDUA (Sub-sorting berdasarkan pilihan kolom DataTables ATAU default post_date/uid)
@@ -465,8 +466,8 @@ class M_outgoing extends CI_Model
 			$this->cb->order_by($col, $dir);
 		} else {
 			// Default sub-sorting menggunakan post_date terbaru dan uid terbaru
-			$this->cb->order_by('o.post_date', 'DESC');
-			$this->cb->order_by('o.uid', 'DESC');
+			// $this->cb->order_by('o.post_date', 'DESC');
+			$this->cb->order_by('o.uid', 'ASC');
 		}
 	}
 

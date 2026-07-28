@@ -396,13 +396,37 @@
                                     <h5><b>Pengirim</b></h5>
                                 </div>
 
-                                <div class="col-md-6 col-xs-12">
+                                <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Pengirim</label>
                                         <input type="hidden" name="pengirim_uid" id="t_pengirim_uid" required>
                                         <select name="nama_pengirim" id="t_nama_pengirim" class="form-control select2-pengirim-tambah" required>
                                             <option value="">:: Pilih Pengirim</option>
                                         </select>
+                                    </div>
+                                </div> -->
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Pengirim</label>
+                                        <!-- <input type="hidden" name="penerima_uid" id="t_penerima_uid"> -->
+                                        <input type="text" class="form-control" name="nama_pengirim" id="t_nama_pengirim" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <!-- Telepon Penerima tidak required (opsional) -->
+                                        <label class="form-label">Telepon Pengirim</label>
+                                        <input type="text" class="form-control" name="telepon_pengirim" id="t_telepon_pengirim">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <!-- Alamat Penerima tidak required (opsional) -->
+                                        <label class="form-label">Alamat Pengirim</label>
+                                        <textarea class="form-control" name="alamat_pengirim" id="t_alamat_pengirim" rows="2"></textarea>
                                     </div>
                                 </div>
 
@@ -524,7 +548,7 @@
                                 <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Berat Volume</label>
-                                        <input type="number" step="0.01" class="form-control" name="volume" id="t_volume" required>
+                                        <input type="number" class="form-control" name="volume" id="t_volume" required>
                                     </div>
                                 </div>
 
@@ -654,10 +678,11 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Pengirim</label>
-                                        <input type="hidden" name="pengirim_uid" id="d_pengirim_uid" required>
+                                        <!-- <input type="hidden" name="pengirim_uid" id="d_pengirim_uid" required>
                                         <select name="nama_pengirim" id="d_nama_pengirim" class="form-control select2-pengirim-edit" required>
                                             <option value="">:: Pilih Pengirim</option>
-                                        </select>
+                                        </select> -->
+                                        <input type="text" class="form-control" name="nama_pengirim" id="d_nama_pengirim" required>
                                     </div>
                                 </div>
 
@@ -1092,6 +1117,7 @@
                         $('#d_no_pesawat').val(r.no_pesawat);
                         $('#d_tanggal_terbang').val(r.tanggal_terbang);
                         $('#d_time_terbang').val(r.time_terbang);
+                        $('#d_nama_pengirim').val(r.nama_pengirim);
                         $('#d_telepon_pengirim').val(r.telepon_pengirim);
                         $('#d_alamat_pengirim').val(r.alamat_pengirim);
                         $('#d_nama_penerima').val(r.nama_penerima);
@@ -1124,10 +1150,10 @@
                                 new Option(r.tujuan, r.tujuan_uid, true, true)
                             ).trigger('change');
 
-                            $('#d_nama_pengirim').append(
-                                new Option(r.nama_pengirim, r.pengirim_uid, true, true)
-                            ).trigger('change');
-                            $('#d_pengirim_uid').val(r.pengirim_uid);
+                            // $('#d_nama_pengirim').append(
+                            //     new Option(r.nama_pengirim, r.pengirim_uid, true, true)
+                            // ).trigger('change');
+                            // $('#d_pengirim_uid').val(r.pengirim_uid);
 
                             $('#d_nama_agent').append(
                                 new Option(r.nama_agent, r.agent_uid, true, true)
@@ -1354,7 +1380,8 @@
                 $('#d_total_volume_sum').text(total_vol.toFixed(2));
                 $('#d_total_volume_all').text(total_vol_all.toFixed(2));
                 // Total volume jangan dibulatkan di input
-                $('#d_volume').val(total_vol_all.toFixed(2));
+                // $('#d_volume').val(total_vol_all.toFixed(2));
+                $('#d_volume').val(Math.round(total_vol_all));
 
                 // Hitung chargeable (Gross vs Volume terbesar dibulatkan)
                 var gross = parseFloat($('#d_gross').val()) || 0;
@@ -1394,7 +1421,8 @@
                     $('#d_jumlah').val(total_koli);
 
                     // Volume di input jangan dibulatkan
-                    $('#d_volume').val(total_all.toFixed(2));
+                    // $('#d_volume').val(total_all.toFixed(2));
+                    $('#d_volume').val(Math.round(total_all));
 
                     // Hitung chargeable ( Gross vs Volume terbesar dibulatkan )
                     var gross = parseFloat($('#d_gross').val()) || 0;
@@ -1780,7 +1808,8 @@
                 $('#t_total_volume_sum').text(total_vol.toFixed(2));
                 $('#t_total_volume_all').text(total_vol_all.toFixed(2));
                 // Volume jangan dibulatkan di input
-                $('#t_volume').val(total_vol_all.toFixed(2));
+                // $('#t_volume').val(total_vol_all.toFixed(2));
+                $('#t_volume').val(Math.round(total_vol_all));
 
                 // Auto-sum pieces dimensi ke input Jumlah (Koli)
                 $('#t_jumlah').val(total_koli);

@@ -352,12 +352,19 @@
                                 </div>
 
                                 <!-- Select Tujuan -->
-                                <div class="col-md-6 col-xs-12">
+                                <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Tujuan</label>
                                         <select name="tujuan" id="tujuan" class="form-control select2-tujuan" required>
                                             <option value="">:: Pilih Tujuan</option>
                                         </select>
+                                    </div>
+                                </div> -->
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Tujuan</label>
+                                        <input type="text" class="form-control" name="tujuan" id="t_tujuan">
                                     </div>
                                 </div>
 
@@ -741,7 +748,8 @@
 
                 $('#t_no_pesawat').val(data.no_pesawat);
 
-                $('#tujuan').append(new Option(data.kode_kota + ' - ' + data.tujuan_nama, data.tujuan_uid, true, true)).trigger('change');
+                $('#t_tujuan').val(data.tujuan);
+                // $('#tujuan').append(new Option(data.kode_kota + ' - ' + data.tujuan_nama, data.tujuan_uid, true, true)).trigger('change');
                 $('#avsec').append(new Option(data.avsec_nama, data.avsec_uid, true, true)).trigger('change');
                 $('#agent').append(new Option(data.agent_nama, data.agent_uid, true, true)).trigger('change');
 

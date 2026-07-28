@@ -223,22 +223,22 @@
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_pengirim">- Pengirim</a></li>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_tujuan">- Tujuan</a></li>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_avsec">- Avsec</a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '905') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga">- Kategori Harga</a></li>
 					<?php } ?>
 				</ul>
 			</li>
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
-		if (strpos($a, '90') !== false) { ?>
+		if (strpos($a, '905') !== false) { ?>
 			<li>
 				<a><i class="fa fa-edit"></i>Outgoing Khusus WH<span class="fa fa-chevron-down"></span></a>
 				<ul class="nav child_menu">
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '905') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '909') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga_khusus">- Kategori Harga Khusus</a></li>
 					<?php } ?>
 				</ul>
@@ -265,6 +265,9 @@
 					if (strpos($a, '919') !== false) { ?>
 						<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
 						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_asal">- Asal</a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '915') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>incominghlp/kategori_harga">- Kategori Harga</a></li>
 					<?php } ?>
 				</ul>

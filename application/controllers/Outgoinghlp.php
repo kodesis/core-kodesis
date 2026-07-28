@@ -936,9 +936,12 @@ class Outgoinghlp extends CI_Controller
 		$no_pesawat  = $this->input->post('no_pesawat');
 
 		// Ambil data tujuan
-		$tujuan_uid  = $this->input->post('tujuan');
-		$tujuan_row  = $this->cb->where('uid', $tujuan_uid)->get('out_tujuan')->row();
-		$tujuan_kode = $tujuan_row ? $tujuan_row->kode_kota : '';
+		// $tujuan_uid  = $this->input->post('tujuan');
+		// $tujuan_row  = $this->cb->where('uid', $tujuan_uid)->get('out_tujuan')->row();
+		// $tujuan_kode = $tujuan_row ? $tujuan_row->kode_kota : '';
+
+		$tujuan_kode  = $this->input->post('tujuan');
+
 
 		// Ambil data avsec
 		$avsec_uid  = $this->input->post('avsec');
@@ -2201,11 +2204,15 @@ class Outgoinghlp extends CI_Controller
 		$tujuan_row = $this->cb->where('uid', $this->input->post('tujuan'))->get('out_tujuan')->row();
 		$tujuan = $tujuan_row->kode_kota ?? '';
 
-		$pengirim = $this->cb->where('uid', $this->input->post('nama_pengirim'))->get('out_pengirim')->row();
-		$pengirim_uid = $pengirim->uid ?? null;
-		$pengirim_nama = $pengirim->nama ?? '';
-		$pengirim_alamat = $pengirim->alamat ?? '';
-		$pengirim_telepon = $pengirim->telepon ?? '';
+		// $pengirim = $this->cb->where('uid', $this->input->post('nama_pengirim'))->get('out_pengirim')->row();
+		// $pengirim_uid = $pengirim->uid ?? null;
+		// $pengirim_nama = $pengirim->nama ?? '';
+		// $pengirim_alamat = $pengirim->alamat ?? '';
+		// $pengirim_telepon = $pengirim->telepon ?? '';
+
+		$pengirim_nama = $this->input->post('nama_pengirim');
+		$pengirim_alamat = $this->input->post('telepon_pengirim');
+		$pengirim_telepon = $this->input->post('alamat_pengirim');
 
 		$agent = $this->cb->where('uid', $this->input->post('nama_agent'))->get('out_agent')->row();
 		$agent_uid = $agent->uid ?? null;
@@ -2225,7 +2232,7 @@ class Outgoinghlp extends CI_Controller
 			'pesawat'          => $this->input->post('pesawat'),
 			'tanggal_terbang'  => $this->input->post('tanggal_terbang'),
 			'time_terbang'     => $this->input->post('time_terbang'),
-			'pengirim_uid'     => $pengirim_uid,
+			// 'pengirim_uid'     => $pengirim_uid,
 			'nama_pengirim'    => $pengirim_nama,
 			'telepon_pengirim' => $pengirim_alamat,
 			'alamat_pengirim'  => $pengirim_telepon,
@@ -2338,12 +2345,15 @@ class Outgoinghlp extends CI_Controller
 		$tujuan = $tujuan->kode_kota;
 		$uid  = $this->input->post('uid');
 
-		$pengirim = $this->cb->where('uid', $this->input->post('nama_pengirim'))->get('out_pengirim')->row();
-		$pengirim_uid = $pengirim->uid;
-		$pengirim_nama = $pengirim->nama;
-		$pengirim_alamat = $pengirim->alamat;
-		$pengirim_telepon = $pengirim->telepon;
+		// $pengirim = $this->cb->where('uid', $this->input->post('nama_pengirim'))->get('out_pengirim')->row();
+		// $pengirim_uid = $pengirim->uid;
+		// $pengirim_nama = $pengirim->nama;
+		// $pengirim_alamat = $pengirim->alamat;
+		// $pengirim_telepon = $pengirim->telepon;
 
+		$pengirim_nama = $this->input->post('nama_pengirim');
+		$pengirim_alamat = $this->input->post('telepon_pengirim');
+		$pengirim_telepon = $this->input->post('alamat_pengirim');
 
 		$agent = $this->cb->where('uid', $this->input->post('nama_agent'))->get('out_agent')->row();
 		$agent_uid = $agent->uid;
@@ -2374,7 +2384,7 @@ class Outgoinghlp extends CI_Controller
 			'pesawat'          => $this->input->post('pesawat'),
 			'tanggal_terbang'  => $this->input->post('tanggal_terbang'),
 			'time_terbang'     => $this->input->post('time_terbang'),
-			'pengirim_uid'     => $pengirim_uid,
+			// 'pengirim_uid'     => $pengirim_uid,
 			'nama_pengirim'    => $pengirim_nama,
 			'telepon_pengirim' => $pengirim_alamat,
 			'alamat_pengirim'  => $pengirim_telepon,
@@ -7011,7 +7021,7 @@ class Outgoinghlp extends CI_Controller
 				$no = "00001"; // Tetap 5 digit
 			}
 
-			$data['user_code']  = $this->session->userdata('nip');
+			$data['user']  = $this->session->userdata('nip');
 			$data['post_date'] = $post_dates;
 			$data['kode'] = $no;
 

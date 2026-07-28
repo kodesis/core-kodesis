@@ -1271,11 +1271,18 @@
                                 results: $.map(data, function(item) {
                                     return {
                                         id: item.uid,
-                                        text: item.kode_kota + ' - ' + item.nama
+                                        text: item.kode_kota + ' - ' + item.nama,
+                                        nama: item.nama // <-- tambahkan ini
                                     };
                                 })
                             };
                         }
+                    }
+                });
+
+                $(document).on('select2:select', '#d_tujuan', function(e) {
+                    if (!$('#d_alamat_penerima').val().trim()) {
+                        $('#d_alamat_penerima').val(e.params.data.nama || '');
                     }
                 });
 
@@ -1684,12 +1691,21 @@
                                 results: $.map(data, function(item) {
                                     return {
                                         id: item.uid,
-                                        text: item.kode_kota + ' - ' + item.nama
+                                        text: item.kode_kota + ' - ' + item.nama,
+                                        nama: item.nama // <-- tambahkan ini
                                     };
                                 })
                             };
                         }
                     }
+                });
+
+                $(document).on('select2:select', '#t_tujuan', function(e) {
+                    $('#t_alamat_penerima').val(e.params.data.nama || '');
+                });
+
+                $(document).on('select2:clear', '#t_tujuan', function() {
+                    $('#t_alamat_penerima').val('');
                 });
 
                 $('.select2-pengirim-tambah').select2({

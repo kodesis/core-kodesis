@@ -86,7 +86,7 @@
         <tr>
             <td colspan="4" height="30" align="center">Total</td>
             <td align="center"><?= $total_pieces_k ?></td>
-            <td align="right"><?= $total_chargeable_k ?></td>
+            <td align="right"><?= (float)$total_chargeable_k ?></td>
             <?php if ($billing->hari > 0): ?>
                 <td align="center"><b><?= $days_k ?></b></td>
             <?php endif; ?>
@@ -153,13 +153,13 @@
             <tr>
                 <td>Jasa Terminal Handling</td>
                 <td align="right"><?= $kade_k ?></td>
-                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= (float)$total_chargeable_k ?></td>
                 <td align="right"><?= $total_kade_k ?></td>
             </tr>
             <tr>
                 <td>BIAYA CSC</td>
                 <td align="right"><?= $csc_k ?></td>
-                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= (float)$total_chargeable_k ?></td>
                 <td align="right"><?= $total_csc_k ?></td>
             </tr>
             <tr>

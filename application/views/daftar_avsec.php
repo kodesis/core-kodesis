@@ -298,7 +298,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="myModalLabel">
-                            Tambah Tujuan
+                            Tambah Avsec
                         </h4>
                     </div>
                     <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('outgoinghlp/store_avsec') ?>">

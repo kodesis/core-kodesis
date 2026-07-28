@@ -468,10 +468,15 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Cargo Development Charge</label>
-                                        <select class="form-control" name="cdc" id="inv_cdc">
-                                            <option value="0">No Cargo Development Charge</option>
+                                        <!-- <select class="form-control" name="cdc" id="inv_cdc" readonly>
+                                            <option value="0" selected>No Cargo Development Charge</option>
+                                            <option value="1">Cargo Development Charge</option>
+                                        </select> -->
+                                        <select class="form-control" id="inv_cdc" disabled>
+                                            <option value="0" selected>No Cargo Development Charge</option>
                                             <option value="1">Cargo Development Charge</option>
                                         </select>
+                                        <input type="hidden" name="cdc" id="inv_cdc_val" value="0">
                                     </div>
                                 </div>
 
@@ -701,7 +706,7 @@
                         }
                         $('#inv_pay_methode').val(r.pay_methode);
                         $('#inv_adm').val(r.adm);
-                        $('#inv_cdc').val(r.cdc);
+                        // $('#inv_cdc').val(r.cdc);
                         $('#inv_jaster').val(r.is_jaster);
                         $('#inv_opsi_dg').val(r.opsi_dg);
                         $('#inv_new_status').val(r.status);

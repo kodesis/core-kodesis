@@ -1109,9 +1109,13 @@ class Incominghlp extends CI_Controller
 			$date_to         = strtotime($t_checkout_date);
 			$days            = (float)0;
 
+			$days = 1;
 			if ($date_from && $date_to) {
-				$days = ceil(($date_to - $date_from) / 86400) + 1;
+				$from = (new DateTime())->setTimestamp($date_from)->setTime(0, 0);
+				$to   = (new DateTime())->setTimestamp($date_to)->setTime(0, 0);
+				$days = $from->diff($to)->days + 1;
 			}
+
 			if ($days < 1) $days = 1;
 
 			$smu->hari_hitung = $days;
@@ -1305,11 +1309,15 @@ class Incominghlp extends CI_Controller
 			$date_to         = strtotime($t_checkout_date);
 			$days            = 0;
 
+
 			if ($date_from && $date_to) {
 				$days = ceil(($date_to - $date_from) / 86400) + 1;
 			}
 			if ($days < 1) $days = 1;
-
+			// echo ('/nOut Date :' . $t_checkout_date);
+			// echo ('/nIn Date :' . $t_checkin_date);
+			// echo $days;
+			// exit();
 			$smu_sewa = (float)$smu->chargeable * $rate_sewa * $days;
 			if ($smu_sewa < 25000) $smu_sewa = 25000;
 
@@ -1380,6 +1388,7 @@ class Incominghlp extends CI_Controller
 			'opsi_dg'          => $opsi_dg,
 			'nominal_surcharge_dg' => $nominal_surcharge_dg,
 			'terbilang'        => ucwords(trim($this->terbilang($grand_total))) . ' Rupiah',
+			'hari'        => $days
 		];
 
 		// =============================================

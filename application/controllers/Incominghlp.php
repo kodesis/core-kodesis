@@ -1052,7 +1052,7 @@ class Incominghlp extends CI_Controller
 				number_format($r->total_pieces),
 				number_format($r->total_gross, 2),
 				number_format($r->total_chargeable, 2),
-				'Rp. ' . number_format(floatval($r->total), 2, ',', '.'),
+				'Rp. ' . number_format((float)$r->total),
 				$Itanggal_txt,
 				$tanggal_txt,
 				$r->hari,

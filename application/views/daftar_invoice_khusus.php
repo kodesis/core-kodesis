@@ -462,10 +462,11 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-xs-12">
+                                <div class="col-md-6 col-xs-12" style="display:none;">
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Invoice</label>
-                                        <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice">
+                                        <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice"
+                                            value="<?= date('Y-m-d') ?>">
                                     </div>
                                 </div>
 
@@ -499,12 +500,27 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Cargo Development Charge</label>
+                                        <!-- <select class="form-control" name="cdc" id="inv_cdc" readonly>
+                                            <option value="0" selected>No Cargo Development Charge</option>
+                                            <option value="1">Cargo Development Charge</option>
+                                        </select> -->
+                                        <select class="form-control" id="inv_cdc" disabled>
+                                            <option value="0" selected>No Cargo Development Charge</option>
+                                            <option value="1">Cargo Development Charge</option>
+                                        </select>
+                                        <input type="hidden" name="cdc" id="inv_cdc_val" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Cargo Development Charge</label>
                                         <select class="form-control" name="cdc" id="inv_cdc">
                                             <option value="0">No Cargo Development Charge</option>
                                             <option value="1">Cargo Development Charge</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">

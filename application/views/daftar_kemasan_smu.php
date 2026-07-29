@@ -406,17 +406,25 @@
                                     </div>
                                 </div> -->
 
+                                <!-- <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Pengirim</label>
+                                        <input type="text" class="form-control" name="nama_pengirim" id="t_nama_pengirim" required>
+                                    </div>
+                                </div> -->
+
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Pengirim</label>
-                                        <!-- <input type="hidden" name="penerima_uid" id="t_penerima_uid"> -->
-                                        <input type="text" class="form-control" name="nama_pengirim" id="t_nama_pengirim" required>
+                                        <input type="hidden" name="pengirim_uid" id="t_pengirim_uid">
+                                        <input type="hidden" name="nama_pengirim" id="t_nama_pengirim_val">
+                                        <select id="t_nama_pengirim" class="form-control select2-pengirim-tambah"></select>
+                                        <small class="text-muted" id="t_pengirim_hint"></small>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
-                                        <!-- Telepon Penerima tidak required (opsional) -->
                                         <label class="form-label">Telepon Pengirim</label>
                                         <input type="text" class="form-control" name="telepon_pengirim" id="t_telepon_pengirim">
                                     </div>
@@ -424,7 +432,6 @@
 
                                 <div class="col-md-12 col-xs-12">
                                     <div class="form-group">
-                                        <!-- Alamat Penerima tidak required (opsional) -->
                                         <label class="form-label">Alamat Pengirim</label>
                                         <textarea class="form-control" name="alamat_pengirim" id="t_alamat_pengirim" rows="2"></textarea>
                                     </div>
@@ -1709,9 +1716,26 @@
                 });
 
                 $('.select2-pengirim-tambah').select2({
-                    placeholder: ':: Pilih Pengirim',
+                    placeholder: ':: Pilih pengirim atau ketik nama baru',
                     allowClear: true,
+                    tags: true,
                     dropdownParent: $('#modalTambahSMU .modal-content'),
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+                        if (term === '') return null;
+                        return {
+                            id: 'new:' + term,
+                            text: term,
+                            isNew: true
+                        };
+                    },
+                    templateResult: function(data) {
+                        if (data.isNew) {
+                            return $('<span><i class="fa fa-plus"></i> Pengirim baru: </span>')
+                                .append($('<b></b>').text(data.text));
+                        }
+                        return data.text;
+                    },
                     ajax: {
                         url: '<?= base_url('outgoinghlp/get_pengirim') ?>',
                         type: 'POST',
@@ -1735,19 +1759,42 @@
                     }
                 });
 
-                // Saat pengirim dipilih, auto fill telepon & alamat
                 $('#t_nama_pengirim').on('select2:select', function(e) {
-                    var uid = e.params.data.id;
-                    $.ajax({
-                        url: '<?= base_url('outgoinghlp/get_pengirim_detail') ?>/' + uid,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#t_pengirim_uid').val(data.uid);
-                            $('#t_telepon_pengirim').val(data.telepon);
-                            $('#t_alamat_pengirim').val(data.alamat);
+                    var data = e.params.data;
+                    var isNew = data.isNew === true || String(data.id).indexOf('new:') === 0;
+
+                    // Bersihkan sisa option tag lama supaya tidak menumpuk
+                    $(this).find('option').each(function() {
+                        if (this.value.indexOf('new:') === 0 && this.value !== String(data.id)) {
+                            $(this).remove();
                         }
                     });
+
+                    $('#t_nama_pengirim_val').val(data.text);
+
+                    if (isNew) {
+                        $('#t_pengirim_uid').val('');
+                        $('#t_telepon_pengirim, #t_alamat_pengirim').val('').prop('readonly', false);
+                        $('#t_pengirim_hint').text('Pengirim baru — isi telepon & alamat, data akan disimpan otomatis.');
+                    } else {
+                        $('#t_pengirim_uid').val(data.id);
+                        $('#t_pengirim_hint').text('');
+                        $.ajax({
+                            url: '<?= base_url('outgoinghlp/get_pengirim_detail') ?>/' + data.id,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(d) {
+                                $('#t_telepon_pengirim').val(d.telepon || '');
+                                $('#t_alamat_pengirim').val(d.alamat || '');
+                            }
+                        });
+                    }
+                });
+
+                $('#t_nama_pengirim').on('select2:clear', function() {
+                    $('#t_pengirim_uid, #t_nama_pengirim_val').val('');
+                    $('#t_telepon_pengirim, #t_alamat_pengirim').val('').prop('readonly', false);
+                    $('#t_pengirim_hint').text('');
                 });
 
                 $('.select2-agent-tambah').select2({
@@ -1925,8 +1972,17 @@
                 $('.select2-pesawat-tambah, .select2-tujuan-tambah, .select2-pengirim-tambah, .select2-penerima-tambah, .select2-agent-tambah').select2('close');
             });
 
+            $('#modalTambahSMU form').on('submit', function(e) {
+                if (!$.trim($('#t_nama_pengirim_val').val())) {
+                    e.preventDefault();
+                    Swal.fire('Perhatian', 'Nama pengirim wajib diisi.', 'warning');
+                    $('#t_nama_pengirim').select2('open');
+                }
+            });
+
             // Reset saat modal tambah tutup
             $('#modalTambahSMU').on('hidden.bs.modal', function() {
+                $('#t_nama_pengirim').empty().trigger('change');
                 $(this).find('form')[0].reset();
                 $('#t_pembagi_label').text('');
                 $('#bodyDimensiTambah').html('<tr class="no-data-row"><td colspan="9" class="text-center">Tidak ada data</td></tr>');

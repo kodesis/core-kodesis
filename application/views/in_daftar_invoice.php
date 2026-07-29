@@ -408,6 +408,18 @@
                             </div>
 
                             <div class="row">
+
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Penerima</label>
+                                        <input type="text" class="form-control" name="nama_penerima" id="inv_nama_penerima">
+                                        <!-- <input type="hidden" name="agent_uid" id="inv_agent_uid">
+                                        <select name="nama_agent" id="inv_nama_agent" class="form-control select2-agent-inv">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select> -->
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Metode Pembayaran</label>
@@ -415,7 +427,7 @@
                                             <option value="">Pilih Cara Pembayaran</option>
                                             <option value="1">Deposit</option>
                                             <option value="2">Cash</option>
-                                            <option value="3">Transfer</option>
+                                            <option selected value="3">Transfer</option>
                                             <option value="4">Tagihan</option>
                                             <option value="5">FOC</option>
                                         </select>
@@ -439,10 +451,12 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-xs-12">
+                                <div class="col-md-6 col-xs-12" style="display:none;">
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Invoice</label>
-                                        <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice">
+                                        <!-- <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice"> -->
+                                        <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice"
+                                            value="<?= date('Y-m-d') ?>">
                                     </div>
                                 </div>
 
@@ -704,7 +718,9 @@
                             $('#inv_no_invoice').val(no_invoice);
 
                         }
-                        $('#inv_pay_methode').val(r.pay_methode);
+                        $('#inv_nama_penerima').val(r.nama);
+                        var payMethode = r.pay_methode ? String(r.pay_methode) : '3';
+                        $('#inv_pay_methode').val(payMethode);
                         $('#inv_adm').val(r.adm);
                         // $('#inv_cdc').val(r.cdc);
                         $('#inv_jaster').val(r.is_jaster);
@@ -719,14 +735,13 @@
                         }
 
                         // Menampilkan form deposit agent jika memilih pembayaran Deposit
-                        if (r.pay_methode == '1') {
+                        if (payMethode == '1') {
                             $('#inv_row_agent').show();
                         } else {
                             $('#inv_row_agent').hide();
                         }
 
-
-                        if (r.pay_methode == '1' || r.pay_methode == '3') {
+                        if (payMethode == '1' || payMethode == '3') {
                             $('#inv_row_coa').show();
                         } else {
                             $('#inv_row_coa').hide();
@@ -737,14 +752,16 @@
                         var coa3 = <?= json_encode($coa_3); ?>;
                         var coa4 = <?= json_encode($coa_4); ?>;
 
-                        if (r.pay_methode == '1') {
-
-                            renderDropdown('#coa_kredit', coa2); // Kembali ke coa_1
-                            renderDropdown('#coa_debit', coa1); // Kembali ke coa_2
+                        if (payMethode == '1') {
+                            renderDropdown('#coa_kredit', coa2);
+                            renderDropdown('#coa_debit', coa1);
                         } else {
+                            renderDropdown('#coa_kredit', coa4);
+                            renderDropdown('#coa_debit', coa3);
 
-                            renderDropdown('#coa_kredit', coa4); // Ganti ke coa_3
-                            renderDropdown('#coa_debit', coa3); // Ganti ke coa_4
+                            if (payMethode == '3') {
+                                setCoaDefault('#coa_debit', '12001');
+                            }
                         }
 
                         if (r.pay_status == '1') {
@@ -813,9 +830,33 @@
                         $('#modalDetailInvoice').modal('show');
 
                         $('#modalDetailInvoice').one('shown.bs.modal', function() {
-                            $('#inv_bill_catg').append(
-                                new Option('[' + res.billing.jenis_billing + '] ' + res.billing.nama_catg, res.billing.bill_catg_uid, true, true)
-                            ).trigger('change');
+
+                            if (res.billing.bill_catg_uid) {
+                                // Sudah ada kategori — pakai yang tersimpan
+                                $('#inv_bill_catg').append(
+                                    new Option('[' + res.billing.jenis_billing + '] ' + res.billing.nama_catg,
+                                        res.billing.bill_catg_uid, true, true)
+                                ).trigger('change');
+                            } else {
+                                // Belum ada — auto pilih yang paling atas
+                                $.ajax({
+                                    url: '<?= base_url('incominghlp/get_bill_catg') ?>',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: {
+                                        search: ''
+                                    },
+                                    success: function(list) {
+                                        if (list && list.length) {
+                                            var first = list[0];
+                                            $('#inv_bill_catg').append(
+                                                new Option('[' + first.jenis + '] ' + first.nama_billing,
+                                                    first.uid, true, true)
+                                            ).trigger('change');
+                                        }
+                                    }
+                                });
+                            }
 
                             if (res.billing.pay_methode == '1') {
                                 $('#inv_nama_agent').append(
@@ -860,21 +901,21 @@
             $('#inv_pay_methode').on('change', function() {
                 var metode = $(this).val();
 
-                // Asumsi: Anda memiliki variabel global JS berisi data COA
-                // Anda bisa mengambilnya dari PHP:
                 var coa1 = <?= json_encode($coa_1); ?>;
                 var coa2 = <?= json_encode($coa_2); ?>;
                 var coa3 = <?= json_encode($coa_3); ?>;
                 var coa4 = <?= json_encode($coa_4); ?>;
 
                 if (metode == '1') {
-
-                    renderDropdown('#coa_kredit', coa2); // Kembali ke coa_1
-                    renderDropdown('#coa_debit', coa1); // Kembali ke coa_2
+                    renderDropdown('#coa_kredit', coa2);
+                    renderDropdown('#coa_debit', coa1);
                 } else {
+                    renderDropdown('#coa_kredit', coa4);
+                    renderDropdown('#coa_debit', coa3);
 
-                    renderDropdown('#coa_kredit', coa4); // Ganti ke coa_3
-                    renderDropdown('#coa_debit', coa3); // Ganti ke coa_4
+                    if (metode == '3') {
+                        setCoaDefault('#coa_debit', '12001');
+                    }
                 }
             });
 
@@ -885,6 +926,15 @@
                     $el.append('<option value="' + value.no_sbb + '">' + value.no_sbb + ' - ' + value.nama_perkiraan + '</option>');
                 });
                 $el.trigger('change');
+            }
+
+            function setCoaDefault(selector, value) {
+                var $el = $(selector);
+                if ($el.find('option[value="' + value + '"]').length) {
+                    $el.val(value).trigger('change');
+                } else {
+                    console.warn('CoA ' + value + ' tidak ditemukan di ' + selector);
+                }
             }
 
             // Action Batal/Void SMU dari Invoice
@@ -1018,7 +1068,9 @@
             $('#modalDetailInvoice').on('hidden.bs.modal', function() {
                 $(this).find('form')[0].reset();
                 $('#bodyListSMU').html('<tr><td colspan="7" class="text-center">Memuat data...</td></tr>');
+                $('#inv_bill_catg, #inv_nama_agent').empty().trigger('change');
                 $('.select2-agent-inv, .select2-catg-inv').val(null).trigger('change');
+                $('#inv_pay_methode').val('3');
                 $('#inv_row_agent').hide();
                 $('#inv_row_jaster').hide();
                 $('#inv_row_remarks').hide();

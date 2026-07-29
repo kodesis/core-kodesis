@@ -807,6 +807,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_pesawat');
+		$this->cb->where('hold != 1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -825,6 +826,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_tujuan');
+		$this->cb->where('hold != 1');
 
 		if ($search) {
 			$this->cb->like('kode', $search);
@@ -844,6 +846,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_avsec');
+		$this->cb->where('hold != 1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -879,7 +882,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_agent');
-
+		$this->cb->where('hold != 1');
 		if ($search) {
 			$this->cb->like('nama', $search);
 			$this->cb->or_like('kode', $search);
@@ -897,6 +900,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('all_agent_deposit');
+		$this->cb->where('hold != 1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -915,6 +919,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_pengirim');
+		$this->cb->where('hold != 1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -1020,7 +1025,7 @@ class Outgoinghlp extends CI_Controller
         a.nama as avsec_nama,
         ag.nama as agent_nama');
 		$this->cb->from('out_csd o');
-		$this->cb->join('pesawat p', "p.kode = SUBSTRING_INDEX(o.no_pesawat, '-', 1)", 'left');
+		// $this->cb->join('pesawat p', "p.kode = SUBSTRING_INDEX(o.no_pesawat, '-', 1)", 'left');
 		$this->cb->join('out_tujuan t',  't.kode_kota = o.tujuan', 'left');
 		$this->cb->join('out_avsec a',   'a.uid = o.avsec_uid',  'left');
 		$this->cb->join('out_agent ag',  'ag.uid = o.agent_uid', 'left');
@@ -3129,19 +3134,19 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		// Ambil kategori billing
-		// $catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra')
-		// 	->where('hold !=', '1')
-		// 	->get('out_bill_catg')->row();
+		$catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra')
+			->where('hold !=', '1')
+			->get('out_bill_catg')->row();
 
-		// if (!$catg) {
-		// 	$this->session->set_flashdata('message_error', 'Kategori billing tidak ditemukan.');
-		// 	redirect('outgoinghlp/daftar_btb');
-		// 	return;
-		// }
+		if (!$catg) {
+			$this->session->set_flashdata('message_error', 'Kategori billing tidak ditemukan.');
+			redirect('outgoinghlp/daftar_btb');
+			return;
+		}
 
-		// $sub_charge  = $smu->chargeable;
-		// $sewa_gudang = $sub_charge * $catg->sewa_gudang;
-		// $jasa_ra     = $smu->jaster == '1' ? $catg->jasa_ra : 0;
+		$sub_charge  = $smu->chargeable;
+		$sewa_gudang = $sub_charge * $catg->sewa_gudang;
+		$jasa_ra     = $smu->jaster == '1' ? $catg->jasa_ra : 0;
 
 		// Insert ke out_billing
 		$this->cb->insert('out_billing', [
@@ -3721,7 +3726,7 @@ class Outgoinghlp extends CI_Controller
 		// =============================================
 
 		// Update jaster di out_list
-		$this->cb->where('bill_uid', $bil_uid)->update('out_list', ['jaster' => $jaster]);
+		// $this->cb->where('bill_uid', $bil_uid)->update('out_list', ['jaster' => $jaster]);
 
 		// Ambil jaster dari out_list
 		$jaster_row = $this->cb->select('jaster')->where('bill_uid', $bil_uid)->get('out_list')->row();
@@ -4935,7 +4940,7 @@ class Outgoinghlp extends CI_Controller
 		// =============================================
 
 		// Update jaster di out_list
-		$this->cb->where('bill_khusus_uid', $bil_uid)->update('out_list', ['jaster' => $jaster]);
+		// $this->cb->where('bill_khusus_uid', $bil_uid)->update('out_list', ['jaster' => $jaster]);
 
 		// Ambil jaster dari out_list
 		$jaster_row = $this->cb->select('jaster')->where('bill_khusus_uid', $bil_uid)->get('out_list')->row();

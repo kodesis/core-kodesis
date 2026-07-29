@@ -335,7 +335,7 @@ class Incominghlp extends CI_Controller
 			$data[] = [
 				$r->uid,
 				$r->smu,
-				$r->nama_penerima,
+				$r->nama_pengirim,
 				$r->asal ?? '-',
 				$r->jumlah ?? '0',
 				$r->gross ?? '0.00',
@@ -419,7 +419,7 @@ class Incominghlp extends CI_Controller
 		$arr_jns_barang  = $this->input->post('jns_barang');
 		$arr_smu         = $this->input->post('smu');
 		$arr_nama_agent  = $this->input->post('nama_agent');
-		$arr_nama_penerima = $this->input->post('nama_penerima');
+		$arr_nama_pengirim = $this->input->post('nama_pengirim');
 		$arr_jumlah      = $this->input->post('jumlah');
 		$arr_gross       = $this->input->post('gross');
 		$arr_chargeable  = $this->input->post('chargeable');
@@ -457,7 +457,7 @@ class Incominghlp extends CI_Controller
 					'pesawat'         => $pesawat,
 					'tanggal_terbang' => $tanggal_terbang,
 					'time_datang'     => $time_datang,
-					'nama_penerima'   => $this->input->post('nama_penerima1'),
+					'nama_pengirim'   => $this->input->post('nama_pengirim1'),
 					'nama_agent'      => $this->input->post('nama_agent1'),
 					'jumlah'          => $this->input->post('jumlah1'),
 					'gross'           => $this->input->post('gross1'),
@@ -474,7 +474,7 @@ class Incominghlp extends CI_Controller
 				$insert_data['smu']           = $smu_val;
 				$insert_data['jns_barang']    = $arr_jns_barang[$i];
 				$insert_data['nama_agent']    = $arr_nama_agent[$i] ?? '';
-				$insert_data['nama_penerima'] = $arr_nama_penerima[$i] ?? '';
+				$insert_data['nama_pengirim'] = $arr_nama_pengirim[$i] ?? '';
 				$insert_data['jumlah']        = $arr_jumlah[$i] ?? 0;
 				$insert_data['gross']         = $arr_gross[$i] ?? 0;
 				$insert_data['chargeable']    = $arr_chargeable[$i] ?? 0;
@@ -550,7 +550,7 @@ class Incominghlp extends CI_Controller
 
 		$data_update = [
 			'jns_barang'      => $this->input->post('jns_barang'),
-			'nama_penerima'   => $this->input->post('penerima'),
+			'nama_pengirim'   => $this->input->post('pengirim'),
 			'smu'             => $this->input->post('smu'),
 			'tanggal_smu'     => $this->input->post('tanggal_smu'),
 			'asal'            => strtoupper($this->input->post('asal')),
@@ -935,9 +935,9 @@ class Incominghlp extends CI_Controller
 			'total_pieces'     => $totals->total_qty        ?? 0,
 			'total_gross'      => $totals->total_gross      ?? 0,
 			'total_chargeable' => $totals->total_chargeable ?? 0,
-			'nama' => $list->nama_penerima ?? 0,
-			'alamat' => $list->alamat_penerima ?? 0,
-			'telepon' => $list->telepon_penerima ?? 0,
+			// 'nama' => $list->nama_penerima ?? 0,
+			// 'alamat' => $list->alamat_penerima ?? 0,
+			// 'telepon' => $list->telepon_penerima ?? 0,
 			// 'penerima' => $list->nama_penerima ?? 0,
 		]);
 
@@ -1048,7 +1048,7 @@ class Incominghlp extends CI_Controller
 				$r->no_invoice,
 				$r->smu ?? '-',
 				$Stanggal_txt ?? '-',
-				$r->nama ?? '-',
+				$r->nama_penerima ?? '-',
 				number_format($r->total_pieces),
 				number_format($r->total_gross, 2),
 				number_format($r->total_chargeable, 2),
@@ -1225,6 +1225,7 @@ class Incominghlp extends CI_Controller
 		$bil_uid    = $this->input->post('bil_uid');
 		$new_status = $this->input->post('new_status');
 		$bill_catg  = $this->input->post('bill_catg');
+		$nama_penerima = $this->input->post('nama_penerima');
 		$pay_methode = $this->input->post('pay_methode');
 		$agent_uid  = $this->input->post('nama_agent');
 		$no_invoice = $this->input->post('no_invoice');
@@ -1357,6 +1358,7 @@ class Incominghlp extends CI_Controller
 		$grand_total = round($bg_total + $kc_total);
 
 		$update_data = [
+			'nama'     => $nama_penerima,
 			'total_pieces'     => $total_pieces,
 			'total_gross'      => $total_gross,
 			'total_volume'     => $total_volume,

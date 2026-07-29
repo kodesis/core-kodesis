@@ -457,10 +457,12 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-xs-12">
+                                <div class="col-md-6 col-xs-12" style="display:none;">
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Invoice</label>
-                                        <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice">
+                                        <!-- <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice"> -->
+                                        <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice"
+                                            value="<?= date('Y-m-d') ?>">
                                     </div>
                                 </div>
 
@@ -471,6 +473,13 @@
                                             <option value="1">Rp. 20.000</option>
                                             <option value="2">Rp. 3.000</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Agent</label>
+                                        <input type="text" class="form-control" disabled id="inv_agent">
                                     </div>
                                 </div>
 
@@ -493,12 +502,27 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Cargo Development Charge</label>
+                                        <!-- <select class="form-control" name="cdc" id="inv_cdc" readonly>
+                                            <option value="0" selected>No Cargo Development Charge</option>
+                                            <option value="1">Cargo Development Charge</option>
+                                        </select> -->
+                                        <select class="form-control" id="inv_cdc" disabled>
+                                            <option value="0" selected>No Cargo Development Charge</option>
+                                            <option value="1">Cargo Development Charge</option>
+                                        </select>
+                                        <input type="hidden" name="cdc" id="inv_cdc_val" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Cargo Development Charge</label>
                                         <select class="form-control" name="cdc" id="inv_cdc">
                                             <option value="0">No Cargo Development Charge</option>
                                             <option value="1">Cargo Development Charge</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
@@ -774,6 +798,7 @@
                         $('#inv_adm').val(r.adm);
                         $('#inv_materai_input').val(r.materai);
                         $('#inv_telepon').val(r.telepon);
+                        $('#inv_agent').val(r.nama_agent);
                         $('#inv_cdc').val(r.cdc);
                         $('#inv_jaster').val(r.is_jaster);
                         $('#inv_new_status').val(r.status);
@@ -794,7 +819,7 @@
                             $('#inv_row_agent').hide();
                         }
 
-                        if (r.pay_methode == '1' || r.pay_methode == '3') {
+                        if (r.pay_methode == '1' || r.pay_methode == '3' || r.pay_methode == '4') {
                             $('#inv_row_coa').show();
                         } else {
                             $('#inv_row_coa').hide();
@@ -908,9 +933,12 @@
                                 });
                             }
                         } else {
+                            renderDropdown('#coa_kredit', coa4);
+                            renderDropdown('#coa_debit', coa3);
 
-                            renderDropdown('#coa_kredit', coa4); // Ganti ke coa_3
-                            renderDropdown('#coa_debit', coa3); // Ganti ke coa_4
+                            if (r.pay_methode == '4') {
+                                setCoaDefault('#coa_kredit', '13010');
+                            }
                         }
 
                         if (r.pay_status == '1') {
@@ -963,7 +991,7 @@
                     $('#coa_debit').attr('required', true);
                     $('#coa_kredit').attr('required', true);
 
-                } else if ($(this).val() == '3') {
+                } else if ($(this).val() == '3' || $(this).val() == '4') {
                     $('#inv_row_agent').hide();
                     $('#inv_nama_agent').attr('required', false);
 
@@ -1192,13 +1220,15 @@
                 var coa4 = <?= json_encode($coa_4); ?>;
 
                 if (metode == '1') {
-
-                    renderDropdown('#coa_kredit', coa2); // Kembali ke coa_1
-                    renderDropdown('#coa_debit', coa1); // Kembali ke coa_2
+                    renderDropdown('#coa_kredit', coa2);
+                    renderDropdown('#coa_debit', coa1);
                 } else {
+                    renderDropdown('#coa_kredit', coa4);
+                    renderDropdown('#coa_debit', coa3);
 
-                    renderDropdown('#coa_kredit', coa4); // Ganti ke coa_3
-                    renderDropdown('#coa_debit', coa3); // Ganti ke coa_4
+                    if (metode == '4') {
+                        setCoaDefault('#coa_kredit', '13010');
+                    }
                 }
             });
 
@@ -1209,6 +1239,15 @@
                     $el.append('<option value="' + value.no_sbb + '">' + value.no_sbb + ' - ' + value.nama_perkiraan + '</option>');
                 });
                 $el.trigger('change');
+            }
+
+            function setCoaDefault(selector, value) {
+                var $el = $(selector);
+                if ($el.find('option[value="' + value + '"]').length) {
+                    $el.val(value).trigger('change');
+                } else {
+                    console.warn('CoA ' + value + ' tidak ditemukan di ' + selector);
+                }
             }
 
             $('.select2-agent-inv').on('select2:select', function(e) {

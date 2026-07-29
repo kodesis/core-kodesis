@@ -741,9 +741,7 @@
                 processing: true,
                 serverSide: true,
                 scrollX: true,
-                order: [
-                    [0, 'desc']
-                ],
+                order: [],
                 ajax: {
                     url: '<?= base_url("outgoinghlp/getData_invoice_khusus") ?>',
                     type: 'POST'

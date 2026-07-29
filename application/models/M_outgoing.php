@@ -548,7 +548,7 @@ class M_outgoing extends CI_Model
 			$this->cb->order_by($col, $dir);
 		} else {
 			// $this->cb->order_by('o.tgl_masuk', 'DESC');
-			$this->cb->order_by('o.out_p', 'DESC');
+			$this->cb->order_by('o.out_p', 'ASC');
 			$this->cb->order_by('b.uid', 'DESC');
 		}
 	}
@@ -750,7 +750,7 @@ class M_outgoing extends CI_Model
 
 		// Prioritas paling atas: warning (pay_methode=1 tapi belum ada topup)
 		$this->cb->order_by('is_warning', 'DESC');
-		$this->cb->order_by('has_topup', 'DESC');
+		// $this->cb->order_by('has_topup', 'DESC');
 
 		// Order
 		$orderCol = $_POST['order'][0]['column'] ?? null;

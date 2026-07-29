@@ -416,9 +416,8 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Pengirim</label>
-                                        <input type="hidden" name="pengirim_uid" id="t_pengirim_uid">
-                                        <input type="hidden" name="nama_pengirim" id="t_nama_pengirim_val">
-                                        <select id="t_nama_pengirim" class="form-control select2-pengirim-tambah"></select>
+                                        <select name="nama_pengirim" id="t_nama_pengirim"
+                                            class="form-control select2-pengirim-tambah" required></select>
                                         <small class="text-muted" id="t_pengirim_hint"></small>
                                     </div>
                                 </div>
@@ -685,11 +684,9 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Pengirim</label>
-                                        <!-- <input type="hidden" name="pengirim_uid" id="d_pengirim_uid" required>
-                                        <select name="nama_pengirim" id="d_nama_pengirim" class="form-control select2-pengirim-edit" required>
-                                            <option value="">:: Pilih Pengirim</option>
-                                        </select> -->
-                                        <input type="text" class="form-control" name="nama_pengirim" id="d_nama_pengirim" required>
+                                        <select name="nama_pengirim" id="d_nama_pengirim"
+                                            class="form-control select2-pengirim-edit" required></select>
+                                        <small class="text-muted" id="d_pengirim_hint"></small>
                                     </div>
                                 </div>
 
@@ -1124,7 +1121,7 @@
                         $('#d_no_pesawat').val(r.no_pesawat);
                         $('#d_tanggal_terbang').val(r.tanggal_terbang);
                         $('#d_time_terbang').val(r.time_terbang);
-                        $('#d_nama_pengirim').val(r.nama_pengirim);
+                        // $('#d_nama_pengirim').val(r.nama_pengirim);
                         $('#d_telepon_pengirim').val(r.telepon_pengirim);
                         $('#d_alamat_pengirim').val(r.alamat_pengirim);
                         $('#d_nama_penerima').val(r.nama_penerima);
@@ -1157,10 +1154,12 @@
                                 new Option(r.tujuan, r.tujuan_uid, true, true)
                             ).trigger('change');
 
-                            // $('#d_nama_pengirim').append(
-                            //     new Option(r.nama_pengirim, r.pengirim_uid, true, true)
-                            // ).trigger('change');
-                            // $('#d_pengirim_uid').val(r.pengirim_uid);
+                            $('#d_nama_pengirim').empty();
+                            if (r.nama_pengirim) {
+                                $('#d_nama_pengirim').append(
+                                    new Option(r.nama_pengirim, r.nama_pengirim, true, true)
+                                ).trigger('change');
+                            }
 
                             $('#d_nama_agent').append(
                                 new Option(r.nama_agent, r.agent_uid, true, true)
@@ -1294,9 +1293,26 @@
                 });
 
                 $('.select2-pengirim-edit').select2({
-                    placeholder: ':: Pilih Pengirim',
+                    placeholder: ':: Pilih pengirim atau ketik nama baru',
                     allowClear: true,
+                    tags: true,
                     dropdownParent: $('#modalDetail .modal-content'),
+                    createTag: function(params) {
+                        var term = $.trim(params.term);
+                        if (term === '') return null;
+                        return {
+                            id: term,
+                            text: term,
+                            isNew: true
+                        };
+                    },
+                    templateResult: function(data) {
+                        if (data.isNew) {
+                            return $('<span><i class="fa fa-plus"></i> Pengirim baru: </span>')
+                                .append($('<b></b>').text(data.text));
+                        }
+                        return data.text;
+                    },
                     ajax: {
                         url: '<?= base_url('outgoinghlp/get_pengirim') ?>',
                         type: 'POST',
@@ -1311,8 +1327,10 @@
                             return {
                                 results: $.map(data, function(item) {
                                     return {
-                                        id: item.uid,
-                                        text: item.nama
+                                        id: item.nama,
+                                        text: item.nama,
+                                        telepon: item.telepon,
+                                        alamat: item.alamat
                                     };
                                 })
                             };
@@ -1346,6 +1364,23 @@
                         }
                     }
                 });
+            });
+
+            $(document).on('select2:select', '#d_nama_pengirim', function(e) {
+                var data = e.params.data;
+                if (data.isNew) {
+                    $('#d_telepon_pengirim, #d_alamat_pengirim').val('');
+                    $('#d_pengirim_hint').text('Pengirim baru — isi telepon & alamat, akan disimpan otomatis.');
+                } else {
+                    $('#d_telepon_pengirim').val(data.telepon || '');
+                    $('#d_alamat_pengirim').val(data.alamat || '');
+                    $('#d_pengirim_hint').text('');
+                }
+            });
+
+            $(document).on('select2:clear', '#d_nama_pengirim', function() {
+                $('#d_telepon_pengirim, #d_alamat_pengirim').val('');
+                $('#d_pengirim_hint').text('');
             });
 
             // Render dimensi
@@ -1591,6 +1626,8 @@
                 $('#d_pembagi_label').text('');
                 $('.select2-pesawat-edit, .select2-tujuan-edit, .select2-pengirim-edit, .select2-penerima-edit, .select2-agent-edit')
                     .val(null).trigger('change');
+                $('#d_nama_pengirim').empty().trigger('change');
+                $('#d_pengirim_hint').text('');
             });
 
             // =============================================
@@ -1724,7 +1761,7 @@
                         var term = $.trim(params.term);
                         if (term === '') return null;
                         return {
-                            id: 'new:' + term,
+                            id: term,
                             text: term,
                             isNew: true
                         };
@@ -1750,8 +1787,10 @@
                             return {
                                 results: $.map(data, function(item) {
                                     return {
-                                        id: item.uid,
-                                        text: item.nama
+                                        id: item.nama,
+                                        text: item.nama,
+                                        telepon: item.telepon,
+                                        alamat: item.alamat
                                     };
                                 })
                             };
@@ -1761,39 +1800,18 @@
 
                 $('#t_nama_pengirim').on('select2:select', function(e) {
                     var data = e.params.data;
-                    var isNew = data.isNew === true || String(data.id).indexOf('new:') === 0;
-
-                    // Bersihkan sisa option tag lama supaya tidak menumpuk
-                    $(this).find('option').each(function() {
-                        if (this.value.indexOf('new:') === 0 && this.value !== String(data.id)) {
-                            $(this).remove();
-                        }
-                    });
-
-                    $('#t_nama_pengirim_val').val(data.text);
-
-                    if (isNew) {
-                        $('#t_pengirim_uid').val('');
-                        $('#t_telepon_pengirim, #t_alamat_pengirim').val('').prop('readonly', false);
-                        $('#t_pengirim_hint').text('Pengirim baru — isi telepon & alamat, data akan disimpan otomatis.');
+                    if (data.isNew) {
+                        $('#t_telepon_pengirim, #t_alamat_pengirim').val('');
+                        $('#t_pengirim_hint').text('Pengirim baru — isi telepon & alamat, akan disimpan otomatis.');
                     } else {
-                        $('#t_pengirim_uid').val(data.id);
+                        $('#t_telepon_pengirim').val(data.telepon || '');
+                        $('#t_alamat_pengirim').val(data.alamat || '');
                         $('#t_pengirim_hint').text('');
-                        $.ajax({
-                            url: '<?= base_url('outgoinghlp/get_pengirim_detail') ?>/' + data.id,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(d) {
-                                $('#t_telepon_pengirim').val(d.telepon || '');
-                                $('#t_alamat_pengirim').val(d.alamat || '');
-                            }
-                        });
                     }
                 });
 
                 $('#t_nama_pengirim').on('select2:clear', function() {
-                    $('#t_pengirim_uid, #t_nama_pengirim_val').val('');
-                    $('#t_telepon_pengirim, #t_alamat_pengirim').val('').prop('readonly', false);
+                    $('#t_telepon_pengirim, #t_alamat_pengirim').val('');
                     $('#t_pengirim_hint').text('');
                 });
 
@@ -1972,13 +1990,13 @@
                 $('.select2-pesawat-tambah, .select2-tujuan-tambah, .select2-pengirim-tambah, .select2-penerima-tambah, .select2-agent-tambah').select2('close');
             });
 
-            $('#modalTambahSMU form').on('submit', function(e) {
-                if (!$.trim($('#t_nama_pengirim_val').val())) {
-                    e.preventDefault();
-                    Swal.fire('Perhatian', 'Nama pengirim wajib diisi.', 'warning');
-                    $('#t_nama_pengirim').select2('open');
-                }
-            });
+            // $('#modalTambahSMU form').on('submit', function(e) {
+            //     if (!$.trim($('#t_nama_pengirim_val').val())) {
+            //         e.preventDefault();
+            //         Swal.fire('Perhatian', 'Nama pengirim wajib diisi.', 'warning');
+            //         $('#t_nama_pengirim').select2('open');
+            //     }
+            // });
 
             // Reset saat modal tambah tutup
             $('#modalTambahSMU').on('hidden.bs.modal', function() {

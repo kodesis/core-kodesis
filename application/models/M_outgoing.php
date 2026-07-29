@@ -549,7 +549,7 @@ class M_outgoing extends CI_Model
 		} else {
 			// $this->cb->order_by('o.tgl_masuk', 'DESC');
 			$this->cb->order_by('o.out_p', 'DESC');
-			$this->cb->order_by('b.uid', 'asc');
+			$this->cb->order_by('b.uid', 'DESC');
 		}
 	}
 

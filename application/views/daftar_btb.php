@@ -584,9 +584,7 @@
                 processing: true,
                 serverSide: true,
                 scrollX: true,
-                order: [
-                    [9, 'asc']
-                ], // tambahkan ini
+                order: [], // ← tambahkan ini
                 ajax: {
                     url: '<?= base_url("outgoinghlp/getData_btb") ?>',
                     type: 'POST'

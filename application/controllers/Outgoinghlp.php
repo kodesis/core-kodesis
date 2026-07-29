@@ -807,7 +807,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_pesawat');
-		$this->cb->where('hold != 1');
+		$this->cb->where('hold !=', '1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -826,7 +826,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_tujuan');
-		$this->cb->where('hold != 1');
+		// $this->cb->where('hold !=', '1');
 
 		if ($search) {
 			$this->cb->like('kode', $search);
@@ -846,7 +846,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_avsec');
-		$this->cb->where('hold != 1');
+		$this->cb->where('hold !=', '1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -882,7 +882,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_agent');
-		$this->cb->where('hold != 1');
+		$this->cb->where('hold !=', '1');
 		if ($search) {
 			$this->cb->like('nama', $search);
 			$this->cb->or_like('kode', $search);
@@ -900,7 +900,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('all_agent_deposit');
-		$this->cb->where('hold != 1');
+		$this->cb->where('hold !=', '1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -919,7 +919,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('out_pengirim');
-		$this->cb->where('hold != 1');
+		$this->cb->where('status', '1');
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -1019,8 +1019,7 @@ class Outgoinghlp extends CI_Controller
 
 	public function edit_csd($uid)
 	{
-		$this->cb->select('o.*, 
-        p.kode as no_pesawat_kode, p.nama as no_pesawat_nama,
+		$this->cb->select('o.*,
         t.kode_kota, t.nama as tujuan_nama,
         a.nama as avsec_nama,
         ag.nama as agent_nama');
@@ -2218,9 +2217,29 @@ class Outgoinghlp extends CI_Controller
 		// $pengirim_alamat = $pengirim->alamat ?? '';
 		// $pengirim_telepon = $pengirim->telepon ?? '';
 
-		$pengirim_nama = $this->input->post('nama_pengirim');
-		$pengirim_alamat = $this->input->post('telepon_pengirim');
-		$pengirim_telepon = $this->input->post('alamat_pengirim');
+		$nama_pengirim    = preg_replace('/\s+/', ' ', trim($this->input->post('nama_pengirim', TRUE)));
+		$telepon_pengirim = trim($this->input->post('telepon_pengirim', TRUE));
+		$alamat_pengirim  = trim($this->input->post('alamat_pengirim', TRUE));
+
+		$pengirim = $this->cb->where('nama', $nama_pengirim)->get('out_pengirim')->row();
+
+		if ($pengirim) {
+			$pengirim_uid     = $pengirim->uid;
+			$pengirim_nama    = $pengirim->nama;
+			$pengirim_alamat  = $pengirim->alamat;
+			$pengirim_telepon = $pengirim->telepon;
+		} else {
+			$this->cb->insert('out_pengirim', [
+				'nama'    => $nama_pengirim,
+				'alamat'  => $alamat_pengirim,
+				'telepon' => $telepon_pengirim,
+			]);
+
+			$pengirim_uid     = $this->cb->insert_id();   // ← ambil di sini
+			$pengirim_nama    = $nama_pengirim;
+			$pengirim_alamat  = $alamat_pengirim;
+			$pengirim_telepon = $telepon_pengirim;
+		}
 
 		$agent = $this->cb->where('uid', $this->input->post('nama_agent'))->get('out_agent')->row();
 		$agent_uid = $agent->uid ?? null;
@@ -2240,7 +2259,7 @@ class Outgoinghlp extends CI_Controller
 			'pesawat'          => $this->input->post('pesawat'),
 			'tanggal_terbang'  => $this->input->post('tanggal_terbang'),
 			'time_terbang'     => $this->input->post('time_terbang'),
-			// 'pengirim_uid'     => $pengirim_uid,
+			'pengirim_uid'     => $pengirim_uid,
 			'nama_pengirim'    => $pengirim_nama,
 			'telepon_pengirim' => $pengirim_alamat,
 			'alamat_pengirim'  => $pengirim_telepon,
@@ -2359,9 +2378,33 @@ class Outgoinghlp extends CI_Controller
 		// $pengirim_alamat = $pengirim->alamat;
 		// $pengirim_telepon = $pengirim->telepon;
 
-		$pengirim_nama = $this->input->post('nama_pengirim');
-		$pengirim_alamat = $this->input->post('telepon_pengirim');
-		$pengirim_telepon = $this->input->post('alamat_pengirim');
+		// $pengirim_nama = $this->input->post('nama_pengirim');
+		// $pengirim_alamat = $this->input->post('telepon_pengirim');
+		// $pengirim_telepon = $this->input->post('alamat_pengirim');
+
+		$nama_pengirim    = preg_replace('/\s+/', ' ', trim($this->input->post('nama_pengirim', TRUE)));
+		$telepon_pengirim = trim($this->input->post('telepon_pengirim', TRUE));
+		$alamat_pengirim  = trim($this->input->post('alamat_pengirim', TRUE));
+
+		$pengirim = $this->cb->where('nama', $nama_pengirim)->get('out_pengirim')->row();
+
+		if ($pengirim) {
+			$pengirim_uid     = $pengirim->uid;
+			$pengirim_nama    = $pengirim->nama;
+			$pengirim_alamat  = $pengirim->alamat;
+			$pengirim_telepon = $pengirim->telepon;
+		} else {
+			$this->cb->insert('out_pengirim', [
+				'nama'    => $nama_pengirim,
+				'alamat'  => $alamat_pengirim,
+				'telepon' => $telepon_pengirim,
+			]);
+
+			$pengirim_uid     = $this->cb->insert_id();
+			$pengirim_nama    = $nama_pengirim;
+			$pengirim_alamat  = $alamat_pengirim;
+			$pengirim_telepon = $telepon_pengirim;
+		}
 
 		$agent = $this->cb->where('uid', $this->input->post('nama_agent'))->get('out_agent')->row();
 		$agent_uid = $agent->uid;

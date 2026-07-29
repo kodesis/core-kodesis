@@ -714,6 +714,32 @@
                 }
             });
 
+            // 1. Tab masuk ke select2 → dropdown langsung terbuka
+            $(document).on('focus', '.select2-selection', function() {
+                var $sel = $(this).closest('.select2-container').siblings('select:enabled');
+                if ($sel.data('s2-just-closed')) {
+                    $sel.data('s2-just-closed', false);
+                    return;
+                }
+                $sel.select2('open');
+            });
+
+            // 2. Fokuskan kolom pencarian begitu dropdown terbuka
+            $(document).on('select2:open', function() {
+                var el = document.querySelector('.select2-container--open .select2-search__field');
+                if (el) el.focus();
+            });
+
+            // 3. Kembalikan fokus ke field-nya setelah tertutup, supaya Tab lanjut ke field berikutnya
+            $(document).on('select2:close', function(e) {
+                var $sel = $(e.target);
+                $sel.data('s2-just-closed', true);
+                setTimeout(function() {
+                    var s2 = $sel.data('select2');
+                    if (s2) s2.$selection.focus();
+                }, 0);
+            });
+
         });
     </script>
     <script>

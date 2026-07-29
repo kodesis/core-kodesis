@@ -1448,6 +1448,7 @@ class Incominghlp extends CI_Controller
 			$this->session->set_flashdata('message_name', 'Invoice Incoming Berhasil Diperbarui.');
 		}
 
+
 		// if ($pay_methode == '1' || $pay_methode == '3') {
 		// 	$id_user = $this->session->userdata('nip');
 

@@ -3962,6 +3962,15 @@ class Outgoinghlp extends CI_Controller
 				$this->session->set_flashdata('message_name', 'Invoice berhasil dicetak.');
 			}
 
+			$cek_topup = $this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'out_billing'])->count_all_results('all_topup');
+			if ($cek_topup == 0) {
+				$this->session->set_flashdata('message_name', 'Gagal Membuat Invoice, Topup Belum Masuk. Silahkan Coba Cetak ulang');
+				$update_data = [
+					'pay_status'       => '1',
+				];
+				$this->cb->where('uid', $bil_uid)->update('out_billing_inv_khusus', $update_data);
+				redirect("outgoinghlp/daftar_invoice_khusus");
+			}
 			if ($pay_methode == '1' || $pay_methode == '3') {
 				$id_user = $this->session->userdata('nip');
 
@@ -4092,7 +4101,15 @@ class Outgoinghlp extends CI_Controller
 					$this->posting($coa_debit, $coa_kredit, $keterangan, $total_nonpph, $tgl_invoice, $id_invoice);
 
 					$this->cb->trans_commit();
-					$this->session->set_flashdata('message_name', 'The invoice has been successfully created. ' . $no_inv);
+					if ($pay_methode == '1') {
+						$msg = $cek_saldo > 5000000
+							? 'Invoice berhasil dicetak. Sisa saldo ' . $nama_agent . ' adalah Rp' . number_format($cek_saldo)
+							: 'Peringatan: Sisa saldo ' . $nama_agent . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
+						$this->session->set_flashdata('message_name', 'The invoice has been successfully created: ' . $no_inv . '. ' . $msg);
+					} else {
+						$this->session->set_flashdata('message_name', 'The invoice has been successfully created. ' . $no_inv);
+					}
+					// $this->session->set_flashdata('message_name', 'The invoice has been successfully created. ' . $no_inv);
 					redirect("outgoinghlp/daftar_invoice");
 				} else {
 					$this->cb->trans_rollback();
@@ -5232,6 +5249,15 @@ class Outgoinghlp extends CI_Controller
 				$this->session->set_flashdata('message_name', 'Invoice berhasil dicetak.');
 			}
 
+			$cek_topup = $this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'out_billing_inv_khusus'])->count_all_results('all_topup');
+			if ($cek_topup == 0) {
+				$this->session->set_flashdata('message_name', 'Gagal Membuat Invoice, Topup Belum Masuk. Silahkan Coba Cetak ulang');
+				$update_data = [
+					'pay_status'       => '1',
+				];
+				$this->cb->where('uid', $bil_uid)->update('out_billing_inv_khusus', $update_data);
+				redirect("outgoinghlp/daftar_invoice_khusus");
+			}
 			if ($pay_methode == '1' || $pay_methode == '3') {
 				$id_user = $this->session->userdata('nip');
 
@@ -5353,7 +5379,14 @@ class Outgoinghlp extends CI_Controller
 					$this->posting($coa_debit, $coa_kredit, $keterangan, $grand_total_gdg, $tgl_invoice, $id_invoice);
 
 					$this->cb->trans_commit();
-					$this->session->set_flashdata('message_name', 'The invoice has been successfully created. ' . $no_inv);
+					if ($pay_methode == '1') {
+						$msg = $cek_saldo > 5000000
+							? 'Invoice berhasil dicetak. Sisa saldo ' . $nama_agent . ' adalah Rp' . number_format($cek_saldo)
+							: 'Peringatan: Sisa saldo ' . $nama_agent . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
+						$this->session->set_flashdata('message_name', 'The invoice has been successfully created: ' . $no_inv . '. ' . $msg);
+					} else {
+						$this->session->set_flashdata('message_name', 'The invoice has been successfully created. ' . $no_inv);
+					}
 					redirect("outgoinghlp/daftar_invoice_khusus");
 				} else {
 					$this->cb->trans_rollback();

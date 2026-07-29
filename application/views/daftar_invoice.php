@@ -945,13 +945,13 @@
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBatalInvoice').prop('disabled', true);
-                            $('#inv_row_coa').hide();
+                            // $('#inv_row_coa').hide();
 
                         } else {
                             $('#btnUbahInvoice').prop('disabled', false);
                             $('#btnCetakInvoice').prop('disabled', false);
                             $('#btnBatalInvoice').prop('disabled', false);
-                            $('#inv_row_coa').show()
+                            // $('#inv_row_coa').hide()
                         }
 
                         $('#modalDetailInvoice').modal('show');

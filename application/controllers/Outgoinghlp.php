@@ -913,6 +913,25 @@ class Outgoinghlp extends CI_Controller
 		echo json_encode($data);
 	}
 
+	public function get_agent_deposit_inv_khusus()
+	{
+		$search = $this->input->post('search');
+
+		$this->cb->select('*');
+		$this->cb->from('all_agent_deposit');
+		$this->cb->where('uid', '4');
+
+		if ($search) {
+			$this->cb->like('nama', $search);
+			$this->cb->or_like('kode', $search);
+		}
+
+		$query = $this->cb->get();
+		$data  = $query->result();
+
+		echo json_encode($data);
+	}
+
 	public function get_pengirim()
 	{
 		$search = $this->input->post('search');

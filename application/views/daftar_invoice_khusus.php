@@ -792,7 +792,9 @@
                         $('#inv_no_invoice').val(r.no_invoice);
                         $('#inv_invoice_num').val(r.invoice_num);
 
-                        $('#inv_pay_methode').val(r.pay_methode);
+                        // $('#inv_pay_methode').val(r.pay_methode);
+                        var payMethode = r.pay_methode ? String(r.pay_methode) : '1';
+                        $('#inv_pay_methode').val(payMethode);
                         $('#inv_adm').val(r.adm);
                         $('#inv_materai_input').val(r.materai);
                         $('#inv_telepon').val(r.telepon);
@@ -810,13 +812,16 @@
                         }
 
                         // Show/hide deposit agent
-                        if (r.pay_methode == '1') {
+                        // Show/hide deposit agent
+                        if (payMethode == '1') {
                             $('#inv_row_agent').show();
+                            $('#inv_nama_agent').attr('required', true);
                         } else {
                             $('#inv_row_agent').hide();
+                            $('#inv_nama_agent').attr('required', false);
                         }
 
-                        if (r.pay_methode == '1' || r.pay_methode == '3') {
+                        if (payMethode == '1' || payMethode == '3') {
                             $('#inv_row_coa').show();
                         } else {
                             $('#inv_row_coa').hide();
@@ -913,12 +918,21 @@
                             if (res.billing.pay_methode == '1') {
 
                                 // kode_agent_deposit
-                                $('#inv_nama_agent').append(
-                                    new Option(res.billing.nama_agent_deposit, res.billing.agent_deposit_uid, true, true)
-                                ).trigger('change');
+                                if (payMethode == '1') {
+                                    if (res.billing.agent_deposit_uid) {
+                                        $('#inv_nama_agent').append(
+                                            new Option(res.billing.nama_agent_deposit, res.billing.agent_deposit_uid, true, true)
+                                        ).trigger('change');
+                                        $('#inv_agent_uid').val(res.billing.agent_deposit_uid);
+                                    } else {
+                                        setAgentDefault('4');
+                                    }
+                                }
                                 // $('#inv_nama_agent').append(
                                 //     new Option(res.billing.nama_agent, res.billing.agent_uid, true, true)
                                 // ).trigger('change');
+                            } else {
+                                setAgentDefault('4');
                             }
 
                             $('#inv_nama').append(
@@ -994,7 +1008,7 @@
                     dropdownParent: $('#modalDetailInvoice .modal-content'),
                     ajax: {
                         // url: '<?= base_url('outgoinghlp/get_agent') ?>',
-                        url: '<?= base_url('outgoinghlp/get_agent_deposit') ?>',
+                        url: '<?= base_url('outgoinghlp/get_agent_deposit_inv_khusus') ?>',
                         type: 'POST',
                         dataType: 'json',
                         delay: 250,
@@ -1156,6 +1170,37 @@
                     }
                 }
             });
+
+            function setAgentDefault(uid) {
+                $.ajax({
+                    url: '<?= base_url('outgoinghlp/get_agent_deposit_inv_khusus') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        search: ''
+                    },
+                    success: function(list) {
+                        var found = null;
+                        $.each(list, function(i, item) {
+                            if (String(item.uid) === String(uid)) {
+                                found = item;
+                                return false;
+                            }
+                        });
+
+                        if (found) {
+                            $('#inv_nama_agent')
+                                .append(new Option(found.nama, found.uid, true, true))
+                                .trigger('change');
+                            $('#inv_agent_uid').val(found.uid);
+                            console.log('Agent deposit uid ' + uid + ' ada daftar. nama :' + found.nama);
+
+                        } else {
+                            console.warn('Agent deposit uid ' + uid + ' tidak ada di daftar');
+                        }
+                    }
+                });
+            }
         });
     </script>
 </body>

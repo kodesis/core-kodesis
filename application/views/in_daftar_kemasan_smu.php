@@ -281,7 +281,7 @@
                                             <tr>
                                                 <th>uid</th>
                                                 <th>SMU</th>
-                                                <th>Nama Pengirim</th>
+                                                <th>Nama Penerima</th>
                                                 <th>Asal</th>
                                                 <th>Pieces</th>
                                                 <th>Berat</th>
@@ -374,7 +374,7 @@
                                                             <th width="12%">Jns Barang</th>
                                                             <th width="20%">SMU</th>
                                                             <th width="13%">Nama Agent</th>
-                                                            <th width="13%">Pengirim</th>
+                                                            <th width="13%">Penerima</th>
                                                             <th width="8%">Koli/Pieces</th>
                                                             <th width="8%">Berat Gross</th>
                                                             <th width="8%">Chargeable</th>
@@ -404,7 +404,7 @@
                                                                 <input type="text" class="form-control input-agent-val" name="nama_agent[]" placeholder="Agent...">
                                                             </td>
                                                             <td>
-                                                                <input type="text" class="form-control input-pengirim-val" name="nama_pengirim[]" placeholder="Pengirim...">
+                                                                <input type="text" class="form-control input-penerima-val" name="nama_penerima[]" placeholder="Penerima...">
                                                             </td>
                                                             <td>
                                                                 <input type="number" step="any" class="form-control input-jumlah" name="jumlah[]" required placeholder="0">
@@ -471,8 +471,8 @@
 
                                         <div class="col-md-6 col-xs-12">
                                             <div class="form-group">
-                                                <label class="form-label">Pengirim</label>
-                                                <input type="text" class="form-control" name="pengirim" id="d_pengirim">
+                                                <label class="form-label">Penerima</label>
+                                                <input type="text" class="form-control" name="penerima" id="d_penerima">
                                             </div>
                                         </div>
 
@@ -839,7 +839,7 @@
                         $('#detail_smu').text(r.smu);
                         $('#detail_uid').val(r.uid);
                         $('#d_jns_barang').val(r.jns_barang);
-                        $('#d_pengirim').val(r.nama_pengirim);
+                        $('#d_penerima').val(r.nama_penerima);
 
                         // Isi split input SMU
                         $('#d_smu_prefix_input').val(smu_prefix);
@@ -947,7 +947,7 @@
                             <input type="text" class="form-control input-agent-val" name="nama_agent[]" placeholder="Agent...">
                         </td>
                         <td>
-                            <input type="text" class="form-control input-pengirim-val" name="nama_pengirim[]" placeholder="Pengirim...">
+                            <input type="text" class="form-control input-penerima-val" name="nama_penerima[]" placeholder="Penerima...">
                         </td>
                         <td>
                             <input type="number" step="any" class="form-control input-jumlah" name="jumlah[]" required placeholder="0">
@@ -1135,12 +1135,12 @@
             // =============================================
             // LIMIT TANGGAL HARI INI
             // =============================================
-            var today = new Date().toISOString().split('T')[0];
-            $('#t_tanggal_smu').attr('max', today);
-            $('#t_tanggal_terbang').attr('max', today);
-            $('#d_tanggal_smu').attr('max', today);
-            $('#d_tanggal_terbang').attr('max', today);
-            $('#d_tanggal_masuk').attr('max', today);
+            // var today = new Date().toISOString().split('T')[0];
+            // $('#t_tanggal_smu').attr('max', today);
+            // $('#t_tanggal_terbang').attr('max', today);
+            // $('#d_tanggal_smu').attr('max', today);
+            // $('#d_tanggal_terbang').attr('max', today);
+            // $('#d_tanggal_masuk').attr('max', today);
 
             // Ganti Status Proses Simpan / Update
             $(document).on('click', '.btn-status-inv', function() {

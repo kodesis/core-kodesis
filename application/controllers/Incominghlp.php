@@ -335,7 +335,8 @@ class Incominghlp extends CI_Controller
 			$data[] = [
 				$r->uid,
 				$r->smu,
-				$r->nama_pengirim,
+				// $r->nama_pengirim,
+				$r->nama_penerima,
 				$r->asal ?? '-',
 				$r->jumlah ?? '0',
 				$r->gross ?? '0.00',
@@ -419,7 +420,7 @@ class Incominghlp extends CI_Controller
 		$arr_jns_barang  = $this->input->post('jns_barang');
 		$arr_smu         = $this->input->post('smu');
 		$arr_nama_agent  = $this->input->post('nama_agent');
-		$arr_nama_pengirim = $this->input->post('nama_pengirim');
+		$arr_nama_penerima = $this->input->post('nama_penerima');
 		$arr_jumlah      = $this->input->post('jumlah');
 		$arr_gross       = $this->input->post('gross');
 		$arr_chargeable  = $this->input->post('chargeable');
@@ -457,7 +458,7 @@ class Incominghlp extends CI_Controller
 					'pesawat'         => $pesawat,
 					'tanggal_terbang' => $tanggal_terbang,
 					'time_datang'     => $time_datang,
-					'nama_pengirim'   => $this->input->post('nama_pengirim1'),
+					'nama_penerima'   => $this->input->post('nama_penerima1'),
 					'nama_agent'      => $this->input->post('nama_agent1'),
 					'jumlah'          => $this->input->post('jumlah1'),
 					'gross'           => $this->input->post('gross1'),
@@ -474,7 +475,7 @@ class Incominghlp extends CI_Controller
 				$insert_data['smu']           = $smu_val;
 				$insert_data['jns_barang']    = $arr_jns_barang[$i];
 				$insert_data['nama_agent']    = $arr_nama_agent[$i] ?? '';
-				$insert_data['nama_pengirim'] = $arr_nama_pengirim[$i] ?? '';
+				$insert_data['nama_penerima'] = $arr_nama_penerima[$i] ?? '';
 				$insert_data['jumlah']        = $arr_jumlah[$i] ?? 0;
 				$insert_data['gross']         = $arr_gross[$i] ?? 0;
 				$insert_data['chargeable']    = $arr_chargeable[$i] ?? 0;
@@ -550,7 +551,7 @@ class Incominghlp extends CI_Controller
 
 		$data_update = [
 			'jns_barang'      => $this->input->post('jns_barang'),
-			'nama_pengirim'   => $this->input->post('pengirim'),
+			'nama_penerima'   => $this->input->post('penerima'),
 			'smu'             => $this->input->post('smu'),
 			'tanggal_smu'     => $this->input->post('tanggal_smu'),
 			'asal'            => strtoupper($this->input->post('asal')),

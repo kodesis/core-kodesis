@@ -1778,23 +1778,23 @@ class Incominghlp extends CI_Controller
 			'I'  => 'Koli',
 			'J'  => 'Berat',
 			'K'  => 'Biaya Gudang',
-			'L' => 'Total Ch.W',
-			'M'  => 'SubTotal Sewa Gudang',
-			'N' => 'Surcharge DG 100%',
-			'O'  => 'Cargo Development Charge',
-			'P' => 'PPN BG',
-			'Q'  => 'Administrasi',
-			'R' => 'Materai',
-			'S' => 'Total Sewa Gudang',
-			'T'  => 'Jasa Terminal Handling',
-			'U' => 'Biaya CSC',
-			'V'  => 'SubTotal KC',
-			'W' => 'PPN KC',
-			'X' => 'Total KC',
-			'Y'  => 'Total',
-			'Z' => 'Pembayaran',
-			'AA' => 'Kasir',
-			'AB' => 'Hari',
+			'L' => 'Hari',
+			'M' => 'Total Ch.W',
+			'N'  => 'SubTotal Sewa Gudang',
+			'O' => 'Surcharge DG 100%',
+			'P'  => 'Cargo Development Charge',
+			'Q' => 'PPN BG',
+			'R'  => 'Administrasi',
+			'S' => 'Materai',
+			'T' => 'Total Sewa Gudang',
+			'U'  => 'Jasa Terminal Handling',
+			'V' => 'Biaya CSC',
+			'W'  => 'SubTotal KC',
+			'X' => 'PPN KC',
+			'Y' => 'Total KC',
+			'Z'  => 'Total',
+			'AA' => 'Pembayaran',
+			'AB' => 'Kasir',
 		];
 
 		foreach ($headers as $col => $label) {
@@ -1839,7 +1839,7 @@ class Incominghlp extends CI_Controller
 			$startRow = $rowNum;
 			$no_smu   = 1;
 
-			$nama_agent = $r['nama'];
+			$nama_penerima_kasir = $r['nama'];
 			$nama_penerima = '';
 
 			foreach ($list_smu as $s) {
@@ -1873,24 +1873,24 @@ class Incominghlp extends CI_Controller
 			$sheet->setCellValue('B' . $startRow, $r['no_invoice']);
 			$sheet->setCellValue('C' . $startRow, $tgl_txt);
 			$sheet->setCellValue('D' . $startRow, $nama_agent);
-			$sheet->setCellValue('E' . $startRow, $nama_penerima);
-			$sheet->setCellValue('L' . $startRow, $r['total_chargeable']);
-			$sheet->setCellValue('M' . $startRow, $r['total_cargo']);
-			$sheet->setCellValue('N' . $startRow, $r['nominal_surcharge_dg']);
-			$sheet->setCellValue('O' . $startRow, $r['total_cdc']);
-			$sheet->setCellValue('P' . $startRow, $r['bg_ppn']);
-			$sheet->setCellValue('Q' . $startRow, $r['administrasi']);
-			$sheet->setCellValue('R' . $startRow, $r['materai']);
-			$sheet->setCellValue('S' . $startRow, $r['bg_total']);
-			$sheet->setCellValue('T' . $startRow, $r['total_kade']);
-			$sheet->setCellValue('U' . $startRow, $r['total_csc']);
-			$sheet->setCellValue('V' . $startRow, $r['kc_sub_total']);
-			$sheet->setCellValue('W' . $startRow, $r['kc_ppn']);
-			$sheet->setCellValue('X' . $startRow, $r['kc_total']);
-			$sheet->setCellValue('Y' . $startRow, $r['grand_total']);
-			$sheet->setCellValue('Z' . $startRow, $pay);
-			$sheet->setCellValue('AA' . $startRow, $user_name);
-			$sheet->setCellValue('AB' . $startRow, $r['hari']);
+			$sheet->setCellValue('E' . $startRow, $nama_penerima_kasir);
+			$sheet->setCellValue('L' . $startRow, $r['hari']);
+			$sheet->setCellValue('M' . $startRow, $r['total_chargeable']);
+			$sheet->setCellValue('N' . $startRow, $r['total_cargo']);
+			$sheet->setCellValue('O' . $startRow, $r['nominal_surcharge_dg']);
+			$sheet->setCellValue('P' . $startRow, $r['total_cdc']);
+			$sheet->setCellValue('Q' . $startRow, $r['bg_ppn']);
+			$sheet->setCellValue('R' . $startRow, $r['administrasi']);
+			$sheet->setCellValue('S' . $startRow, $r['materai']);
+			$sheet->setCellValue('T' . $startRow, $r['bg_total']);
+			$sheet->setCellValue('U' . $startRow, $r['total_kade']);
+			$sheet->setCellValue('V' . $startRow, $r['total_csc']);
+			$sheet->setCellValue('W' . $startRow, $r['kc_sub_total']);
+			$sheet->setCellValue('X' . $startRow, $r['kc_ppn']);
+			$sheet->setCellValue('Y' . $startRow, $r['kc_total']);
+			$sheet->setCellValue('Z' . $startRow, $r['grand_total']);
+			$sheet->setCellValue('AA' . $startRow, $pay);
+			$sheet->setCellValue('AB' . $startRow, $user_name);
 
 			$nomor++;
 		}

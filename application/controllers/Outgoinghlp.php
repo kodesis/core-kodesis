@@ -3891,7 +3891,7 @@ class Outgoinghlp extends CI_Controller
 				'grand_total'      => $total,
 				'grand_total_paid' => $total,
 				'status'           => '1',
-				'pay_status'       => '0',
+				'pay_status'       => '1',
 				'tanggal_invoice'  => $tanggal_billing,
 				'no_invoice'       => $no_invoice,
 				'pay_methode'      => $pay_methode,
@@ -3904,21 +3904,17 @@ class Outgoinghlp extends CI_Controller
 
 			];
 
+			$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
 
-			$sub_total = $total_cargo;
-			$total_ppn = $bg_ppn + $kc_ppn;
-			$total_nonpph = $sub_total + $total_ppn;
-			$total = $total_nonpph;
 
-			$total = $total_nonpph;
-			$total_amount = $total_nonpph;
+
 			$nominal = $this->convertToNumberWithComma($total);
 
 			$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
 
 			// Pastikan fungsi posting tidak mengganggu transaksi
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
-			$this->posting('11505', '41002', $keterangan, $nominal, '', '');
+			$this->posting('11505', '41002', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');
 			redirect('outgoinghlp/daftar_invoice');
@@ -4053,15 +4049,15 @@ class Outgoinghlp extends CI_Controller
 				$coa_debit = '12001';
 			}
 
-			$coa_kredit = 11505;
+			$coa_kredit = '11505';
 
-			if ($billing->pay_methode == '1') {
+			if ($pay_methode == '1') {
 				$metode_agent = "DEPOSIT";
-			} else if ($billing->pay_methode == '3') {
+			} else if ($pay_methode == '3') {
 				$metode_agent = "TRANSFER";
-			} else if ($billing->pay_methode == '4') {
+			} else if ($pay_methode == '4') {
 				$metode_agent = "TAGIHAN";
-			} else if ($billing->pay_methode == '6') {
+			} else if ($pay_methode == '6') {
 				$metode_agent = "QRIS";
 			}
 
@@ -5072,9 +5068,9 @@ class Outgoinghlp extends CI_Controller
 			// echo $keterangan;
 			// exit();
 			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');
-
+			// exit();
 			redirect('outgoinghlp/daftar_invoice_khusus');
-			return;
+			// return;
 		}
 
 		// =============================================

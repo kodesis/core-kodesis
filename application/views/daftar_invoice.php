@@ -457,7 +457,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-xs-12" style="display:none;">
+                                <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Invoice</label>
                                         <!-- <input type="date" class="form-control" name="tanggal_invoice" id="inv_tanggal_invoice"> -->

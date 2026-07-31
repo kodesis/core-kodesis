@@ -190,7 +190,7 @@
                                                 <th>Metode Pemeriksaan</th>
                                                 <th>Status</th>
                                                 <th>Tanggal</th>
-                                                <th>Jaster</th>
+                                                <th>Avsec</th>
                                                 <th>Cetak</th>
                                                 <th>#</th>
                                             </tr>

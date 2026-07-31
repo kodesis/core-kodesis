@@ -6,14 +6,14 @@
     <style>
         td {
             font-family: "Verdana", "Arial";
-            font-size: 9pt;
+            font-size: 12pt;
             color: #000000;
             text-decoration: none;
         }
 
         th {
             font-family: "Verdana", "Arial";
-            font-size: 10pt;
+            font-size: 13pt;
             color: #000000;
             text-decoration: none;
         }
@@ -28,7 +28,7 @@
         }
 
         table.tbl-smu td {
-            border: 2px solid #000;
+            border: 1px solid #000;
         }
     </style>
 </head>

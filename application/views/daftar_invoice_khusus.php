@@ -903,26 +903,6 @@
                             $('#inv_row_jaster').hide();
                         }
 
-                        if (r.pay_status == '1' && r.jurnal_status == '1') {
-                            console.log('Jurnal Status 1 Masuk');
-                            $('#btnUbahInvoice').prop('disabled', true);
-                            $('#btnCetakInvoice').prop('disabled', true);
-                            $('#btnBayarInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', true);
-                        } else if (r.pay_status == '1' && r.jurnal_status == '0') {
-                            console.log('Jurnal Status 0 Masuk');
-                            $('#btnUbahInvoice').prop('disabled', true);
-                            $('#btnCetakInvoice').prop('disabled', true);
-                            $('#btnBayarInvoice').prop('disabled', false);
-                            $('#btnBatalInvoice').prop('disabled', true);
-                        } else {
-                            console.log('Pay Status 0 Masuk');
-                            $('#btnUbahInvoice').prop('disabled', false);
-                            $('#btnCetakInvoice').prop('disabled', false);
-                            $('#btnBayarInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', false);
-                        }
-
                         // Billing totals
                         $('#inv_sub_total').text(r.total_cargo_k);
                         $('#inv_total_cdc').text(r.total_cdc_k);
@@ -985,13 +965,23 @@
                             $('#inv_agent_uid').val(r.agent_deposit_uid);
                         }
 
-                        if (r.jurnal_status == '1') {
+                        if (r.pay_status == '1' && r.jurnal_status == '1') {
+                            console.log('Jurnal Status 1 Masuk');
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
+                            $('#btnBayarInvoice').prop('disabled', true);
+                            $('#btnBatalInvoice').prop('disabled', true);
+                        } else if (r.pay_status == '1' && r.jurnal_status == '0') {
+                            console.log('Jurnal Status 0 Masuk');
+                            $('#btnUbahInvoice').prop('disabled', true);
+                            $('#btnCetakInvoice').prop('disabled', true);
+                            $('#btnBayarInvoice').prop('disabled', false);
                             $('#btnBatalInvoice').prop('disabled', true);
                         } else {
+                            console.log('Pay Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', false);
                             $('#btnCetakInvoice').prop('disabled', false);
+                            $('#btnBayarInvoice').prop('disabled', true);
                             $('#btnBatalInvoice').prop('disabled', false);
                         }
 

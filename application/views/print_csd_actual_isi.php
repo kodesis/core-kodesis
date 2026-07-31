@@ -360,7 +360,7 @@
                                         </tr>
                                         <tr align=center>
                                             <td><b style="margin-bottom: -30px;">
-                                                    <br><br><br><br><?= $row->avsec_nama ?></b></td>
+                                                    <br><br><?= $row->avsec_nama ?></b></td>
                                         </tr>
                                     </table>
                                 </td>

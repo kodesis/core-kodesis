@@ -22,6 +22,14 @@
             size: A4;
             margin: 10mm;
         }
+
+        table.tbl-smu {
+            border-collapse: collapse;
+        }
+
+        table.tbl-smu td {
+            border: 2px solid #000;
+        }
     </style>
 </head>
 
@@ -56,7 +64,7 @@
     </table>
 
     <!-- LIST SMU -->
-    <table width="100%" cellspacing="0" border="1" cellpadding="3">
+    <table width="100%" cellspacing="0" border="1" cellpadding="3" class="tbl-smu">
         <tr>
             <td height="40" align="center"><b>No</b></td>
             <td align="center"><b>SMU</b></td>
@@ -86,7 +94,7 @@
     </table>
 
     <!-- BIAYA GUDANG -->
-    <table width="100%" border="1" cellspacing="0" cellpadding="1">
+    <table width="100%" border="1" cellspacing="0" cellpadding="1" class="tbl-smu">
 
         <tr>
             <td align="center">Nama</td>
@@ -153,7 +161,7 @@
         </table>
 
         <!-- LIST SMU BTB -->
-        <table width="100%" cellspacing="0" border="1" cellpadding="3">
+        <table width="100%" cellspacing="0" border="1" cellpadding="3" class="tbl-smu">
             <tr>
                 <td height="40" align="center"><b>No</b></td>
                 <td align="center"><b>SMU</b></td>

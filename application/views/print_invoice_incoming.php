@@ -22,6 +22,14 @@
             size: A4;
             margin: 10mm;
         }
+
+        table.tbl-smu {
+            border-collapse: collapse;
+        }
+
+        table.tbl-smu td {
+            border: 2px solid #000;
+        }
     </style>
 </head>
 
@@ -56,7 +64,7 @@
     </table>
 
     <!-- LIST SMU -->
-    <table width="100%" cellspacing="0" border="1" cellpadding="0">
+    <table width="100%" cellspacing="0" border="1" cellpadding="0" class="tbl-smu">
         <tr>
             <td height="40" align="center"><b>No</b></td>
             <td align="center"><b>SMU</b></td>
@@ -95,7 +103,7 @@
     </table>
 
     <!-- BIAYA GUDANG -->
-    <table width="100%" border="1" cellspacing="0" cellpadding="0">
+    <table width="100%" border="1" cellspacing="0" cellpadding="0" class="tbl-smu">
         <thead>
             <tr>
                 <th>Nama</th>
@@ -140,7 +148,7 @@
     <br>
 
     <!-- BIAYA KC -->
-    <table width="100%" border="1" cellspacing="0" cellpadding="0">
+    <table width="100%" border="1" cellspacing="0" cellpadding="0" class="tbl-smu">
         <thead>
             <tr>
                 <th>Nama</th>
@@ -248,7 +256,7 @@
     </table>
 
     <!-- LIST SMU SURAT JALAN -->
-    <table width="100%" cellspacing="0" border="1" cellpadding="5">
+    <table width="100%" cellspacing="0" border="1" cellpadding="5" class="tbl-smu">
         <tr>
             <td height="40" align="center"><b>No</b></td>
             <td align="center"><b>SMU</b></td>

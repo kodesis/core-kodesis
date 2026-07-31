@@ -115,7 +115,7 @@
                                         <td>
                                             <!-- 1 -->&nbsp;
                                         </td>
-                                        <td align="center" width="70%"><b><?= $row->komoditi ?></b></td>
+                                        <td align="center" width="65%"><b><?= $row->komoditi ?></b></td>
                                         <td align="center">Koli :<b><?= $row->koli_smu ?></b></td>
                                         <td align="right"><b><?= $row->berat_smu ?></b></td>
                                     </tr>
@@ -186,7 +186,7 @@
                                     <table cellspacing=3 cellpadding=3 width=100%>
                                         <tr>
                                             <td>
-                                                <?= $check_spx ?>
+                                                <p style="margin-bottom: -20px;"><?= $check_spx ?></p>
                                             </td>
                                             <td>
                                                 <!-- <i>Passenger Aircraft (SPX) </i> -->&nbsp;
@@ -194,7 +194,8 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <?= $check_sco ?>
+                                                <p style="margin-bottom: -20px;">
+                                                    <?= $check_sco ?></p>
                                             </td>
                                             <td>
                                                 <!-- <i>Cargo Aircraft Only (SCO)</i> -->&nbsp;
@@ -270,7 +271,8 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td align="center">
-                                                                        <b font=16><?= $xray ?></b>
+
+                                                                        <b font=16 style="margin-bottom: -20px;"><?= $xray ?></b>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -357,7 +359,8 @@
                                             <td>&nbsp;<br></td>
                                         </tr>
                                         <tr align=center>
-                                            <td><b><?= $row->avsec_nama ?></b></td>
+                                            <td><b style="margin-bottom: -30px;">
+                                                    <br><br><br><br><?= $row->avsec_nama ?></b></td>
                                         </tr>
                                     </table>
                                 </td>
@@ -378,7 +381,7 @@
                                         <tr>
                                             <td align=right>
                                                 <!-- Date :  -->
-                                                <b><?= $tgl_cetak ?> &nbsp;&nbsp;<?= $time2 ?></b>
+                                                <b><?= $tgl_cetak ?> &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<?= $time2 ?></b>
                                             </td>
                                         </tr>
                                     </table>

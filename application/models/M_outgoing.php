@@ -143,12 +143,11 @@ class M_outgoing extends CI_Model
             o.komoditi,
             o.jaster,
 			a.nama as nama_avsec
-			
         ", FALSE)
 			->from('out_list o')
 			->join('ra_csd c', 'c.smu_uid = o.uid', 'left')
-			->join('out_avsec a', 'a.uid = o.avsec_uid', 'left')
-			->join($this->db->database . '.users u',      'u.nip = c.user',    'left')
+			->join('out_avsec a', 'a.uid = c.avsec_uid', 'left')
+			// ->join($this->db->database . '.users u',      'u.nip = c.user',    'left')
 			->where('o.btb_p', '1');
 
 		// Logic Filter Pencarian Dinamis lintas kedua tabel

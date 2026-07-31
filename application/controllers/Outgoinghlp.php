@@ -325,7 +325,7 @@ class Outgoinghlp extends CI_Controller
 				$methode_pemeriksaan ?? '-',
 				$alasan_text,
 				$r->tgl_csd ?? '-',
-				$jaster,
+				$r->nama_user,
 				$print,
 				$aksi
 			];
@@ -453,7 +453,8 @@ class Outgoinghlp extends CI_Controller
 			'truck_uid'                    => $this->input->post('truck_uid') ?: null,
 			'tgl_csd'                      => date('Y-m-d'),
 			'post_date'               	   => date('YmdHis'),
-			'user'                         => $this->session->userdata('nama')
+			'user'                         => $this->session->userdata('nip'),
+			// 'usercode'                     => $this->session->userdata('nip')
 		];
 
 		// Membagi Aksi INSERT Baru atau UPDATE
@@ -486,8 +487,21 @@ class Outgoinghlp extends CI_Controller
 		}
 		if ($process) {
 			$this->session->set_flashdata('message_name', 'Data CSD Actual Berhasil Diproses!');
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode([
+					'success' => true,
+					'msg'     => $csd_uid ? 'CSD berhasil diperbarui.' : 'CSD berhasil dibuat.'
+				]));
 		} else {
-			$this->session->set_flashdata('message_error', 'Gagal Memproses Data CSD Actual.');
+			// $this->session->set_flashdata('message_error', 'Gagal Memproses Data CSD Actual.');
+
+			return $this->output
+				->set_content_type('application/json')
+				->set_output(json_encode([
+					'success' => false,
+					'msg'     => 'Gagal Memproses Data CSD Actual.'
+				]));
 		}
 		// Sinkronisasi Data ke out_list (flight info & cargo)
 		// $data_list = [
@@ -587,7 +601,7 @@ class Outgoinghlp extends CI_Controller
 		$wday6 = substr($row->post_date, 12, 2);
 		$time2 = "$wday4" . ":" . "$wday5";
 		if ($row->post_date != "") {
-			$tgl_cetak = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+			$tgl_cetak = "$wday3" . "-" . "$wday2" . "-" . "$wday1";
 		} else {
 			$tgl_cetak = $row->tgl_csd ?: date('Y-m-d');
 		}
@@ -677,9 +691,19 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		// Penanganan penanggalan
-		$tgl_csd_raw = $row->tgl_csd ?: date('Y-m-d');
-		$tgl_cetak = date('d/m/Y', strtotime($tgl_csd_raw));
-		$time2     = date('H:i:s', strtotime($tgl_csd_raw));
+		// Penanganan penanggalan
+		$wday1 = substr($row->post_date, 0, 4);
+		$wday2 = substr($row->post_date, 4, 2);
+		$wday3 = substr($row->post_date, 6, 2);
+		$wday4 = substr($row->post_date, 8, 2);
+		$wday5 = substr($row->post_date, 10, 2);
+		$wday6 = substr($row->post_date, 12, 2);
+		$time2 = "$wday4" . ":" . "$wday5";
+		if ($row->post_date != "") {
+			$tgl_cetak = "$wday3" . "-" . "$wday2" . "-" . "$wday1";
+		} else {
+			$tgl_cetak = $row->tgl_csd ?: date('Y-m-d');
+		}
 
 		// Checklist Status Keamanan SPX atau SCO
 		$checklist = '<img src="' . base_url() . 'src/images/checklisticon.png" width="20">';
@@ -770,20 +794,18 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		// Penanganan penanggalan
-		$tgl_csd_raw = $row->tgl_csd ?: date('Y-m-d');
-		$tgl_cetak = date('d/m/Y', strtotime($tgl_csd_raw));
-		$time2     = date('H:i:s', strtotime($tgl_csd_raw));
-
-		$wday1ctk = substr($tgl_cetak, 0, 2);
-		$wday2ctk = substr($tgl_cetak, 3, 2);
-		$wday3ctk = substr($tgl_cetak, 6, 4);
-
-
-		$jam = date("H:i:s");
-
-		$hour = substr($jam, 0, 2);
-		$minute = substr($jam, 3, 2);
-		$second = substr($jam, 6, 2);
+		$wday1 = substr($row->post_date, 0, 4);
+		$wday2 = substr($row->post_date, 4, 2);
+		$wday3 = substr($row->post_date, 6, 2);
+		$wday4 = substr($row->post_date, 8, 2);
+		$wday5 = substr($row->post_date, 10, 2);
+		$wday6 = substr($row->post_date, 12, 2);
+		$time2 = "$wday4" . ":" . "$wday5";
+		if ($row->post_date != "") {
+			$tgl_cetak = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+		} else {
+			$tgl_cetak = $row->tgl_csd ?: date('Y-m-d');
+		}
 
 		// Checklist Status Keamanan SPX atau SCO
 		$checklist = '<img src="' . base_url() . 'src/images/checklisticon.png" width="20">';
@@ -801,12 +823,12 @@ class Outgoinghlp extends CI_Controller
 			'check_spx' => $check_spx,
 			'check_sco' => $check_sco,
 			'checklist' => $checklist,
-			'wday1ctk'  => $wday1ctk,
-			'wday2ctk'  => $wday2ctk,
-			'wday3ctk'  => $wday3ctk,
-			'hour'      => $hour,
-			'minute'    => $minute,
-			'second'    => $second,
+			'wday1ctk'  => $wday3,
+			'wday2ctk'  => $wday2,
+			'wday3ctk'  => $wday1,
+			'hour'      => $wday4,
+			'minute'    => $wday5,
+			'second'    => $wday6,
 		];
 
 		// Memuat view cetak CSD Actual

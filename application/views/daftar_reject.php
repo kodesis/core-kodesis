@@ -754,7 +754,7 @@
             $('.select2-pengirim').select2({
                 placeholder: ':: Pilih Pengirim',
                 allowClear: true,
-                dropdownParent: $('#tambahCustomer'),
+                dropdownParent: $('#tambahCustomer .modal-content'),
                 ajax: {
                     url: '<?= base_url('outgoinghlp/get_pengirim') ?>',
                     type: 'POST',

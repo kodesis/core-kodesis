@@ -199,10 +199,11 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '903') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_kemasan_smu">Daftar Kemasan SMU</a></li>
+						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_btb">Daftar BTB</a></li>
+
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '904') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_btb">Daftar BTB</a></li>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_csd_actual">Daftar CSD (Actual)</a></li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');

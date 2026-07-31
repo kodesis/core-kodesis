@@ -190,7 +190,7 @@
                                                 <th>Metode Pemeriksaan</th>
                                                 <th>Status</th>
                                                 <th>Tanggal</th>
-                                                <th>Avsec</th>
+                                                <th>Jaster</th>
                                                 <th>Cetak</th>
                                                 <th>#</th>
                                             </tr>
@@ -212,7 +212,8 @@
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
                         <h4 class="modal-title" id="myModalLabel">Proses CSD Actual</h4>
                     </div>
-                    <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('outgoinghlp/update_csd_actual') ?>">
+                    <form id="formCsdActual" class="form-horizontal form-label-left" method="POST"
+                        action="<?= base_url('outgoinghlp/update_csd_actual') ?>">
                         <div class="modal-body">
                             <div class="row">
                                 <!-- Input Hidden UIDs -->
@@ -576,6 +577,49 @@
                         };
                     }
                 }
+            });
+
+            $('#formCsdActual').on('submit', function(e) {
+                e.preventDefault();
+
+                var $form = $(this);
+                var $btn = $form.find('button[type="submit"]');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    beforeSend: function() {
+                        $btn.prop('disabled', true);
+                        Swal.fire({
+                            title: 'Menyimpan...',
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading()
+                        });
+                    },
+                    success: function(res) {
+                        if (res.success) {
+                            $('#tambahCustomer').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: res.msg || 'CSD berhasil disimpan.',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            table.ajax.reload(null, false);
+                        } else {
+                            Swal.fire('Gagal', res.msg || 'CSD gagal disimpan.', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.status, xhr.responseText);
+                        Swal.fire('Error', 'Terjadi kesalahan pada server.', 'error');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false);
+                    }
+                });
             });
         });
     </script>

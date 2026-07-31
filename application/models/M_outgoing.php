@@ -126,8 +126,8 @@ class M_outgoing extends CI_Model
 		5  => 'c.metode_pemeriksaan',
 		6  => 'c.status',
 		7  => 'c.tgl_csd',
-		8  => 'c.avsec_nama',
-		9  => 'o.jaster',
+		8  => 'nama_user',
+		// 8  => 'o.jaster',
 	];
 
 	// =========================================================================
@@ -141,10 +141,12 @@ class M_outgoing extends CI_Model
 			o.uid as smu_uid_val,
             o.smu, 
             o.komoditi,
-            o.jaster
+            o.jaster,
+			u.nama as nama_user
         ", FALSE)
 			->from('out_list o')
 			->join('ra_csd c', 'c.smu_uid = o.uid', 'left')
+			->join($this->db->database . '.users u',      'u.nip = c.user',    'left')
 			->where('o.btb_p', '1');
 
 		// Logic Filter Pencarian Dinamis lintas kedua tabel

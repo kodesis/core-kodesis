@@ -426,16 +426,13 @@
 
                             <div class="row">
 
-                                <div class="col-md-6 col-xs-12">
+                                <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Metode Pembayaran</label>
                                         <select class="form-control" name="pay_methode" id="inv_pay_methode">
                                             <option value="">Pilih Cara Pembayaran</option>
                                             <option value="1">Deposit</option>
-                                            <!-- <option value="2">Cash</option>
-                                            <option value="3">Transfer</option>
-                                            <option value="4">Tagihan</option>
-                                            <option value="5">FOC</option> -->
+
                                         </select>
                                     </div>
                                 </div>
@@ -448,7 +445,7 @@
                                             <option value="">:: Pilih Agent</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Invoice Number</label>
@@ -534,11 +531,10 @@
 
                             </div>
                             <hr>
-                            <div class="row" id="inv_row_coa" style="display:none;">
+                            <!-- <div class="row" id="inv_row_coa" style="display:none;">
                                 <div class="col-md-6 col-xs-12">
                                     <label for="coa_debit" class="form-label">CoA Debit</label>
                                     <select name="coa_debit" id="coa_debit" class="form-control select2" style="width: 100%" required>
-                                        <!-- <option>:: Pilih CoA Debit</option> -->
                                         <?php
                                         foreach ($coa_1 as $pd) :
                                         ?>
@@ -550,7 +546,6 @@
                                 <div class="col-md-6 col-xs-12">
                                     <label for="coa_kredit" class="form-label">CoA Kredit</label>
                                     <select name="coa_kredit" id="coa_kredit" class="form-control select2" style="width: 100%" required>
-                                        <!-- <option>:: Pilih CoA Kredit</option> -->
                                         <?php
                                         foreach ($coa_2 as $ps) :
                                         ?>
@@ -563,7 +558,7 @@
                                     <label for="keterangan" class="form-label">Notes</label>
                                     <input name="keterangan" id="keterangan" class="form-control uppercase" value="Jurnal Invoice Outgoing" required>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="modal-footer">
                             <input type="hidden" name="new_status" id="inv_new_status" value="0">
@@ -572,6 +567,9 @@
                             </button>
                             <button type="button" class="btn btn-primary btn-status-inv" data-val="1" id="btnCetakInvoice">
                                 <i class="fa fa-print"></i> Cetak
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnBayarInvoice">
+                                <i class="fa fa-money"></i> Bayar
                             </button>
                             <button type="button" class="btn btn-danger btn-status-inv" data-val="3" id="btnBatalInvoice">
                                 <i class="fa fa-times"></i> Batal
@@ -642,6 +640,76 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modalBayar">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">Bayar Invoice Outgoing Khusus</h4>
+                    </div>
+                    <form class="form-horizontal form-label-left" method="POST"
+                        action="<?= base_url('outgoinghlp/bayar_invoice_khusus') ?>">
+                        <div class="modal-body">
+                            <div class="row">
+                                <input type="hidden" name="bill_uid" id="b_bill_uid">
+                                <input type="hidden" name="nominal" id="b_nominal_val">
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Invoice</label>
+                                        <input type="text" class="form-control" name="no_invoice" id="b_invoice" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Nominal</label>
+                                        <input type="text" class="form-control" id="b_nominal" readonly>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Metode Pembayaran</label>
+                                        <select class="form-control" name="pay_methode" id="b_pay_methode">
+                                            <option value="">Pilih Cara Pembayaran</option>
+                                            <option value="1">Deposit</option>
+                                            <option value="2">Cash</option>
+                                            <option selected value="3">Transfer</option>
+                                            <option value="4">Tagihan</option>
+                                            <option value="6">QRIS</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12" id="b_row_bank" style="display:none;">
+                                    <div class="form-group">
+                                        <label class="form-label">Bank</label>
+                                        <select name="coa_bank" id="b_bank" class="form-control" required>
+                                            <option value="12001" selected>BANK EKS</option>
+                                            <option value="12002">BANK BDT</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xs-12" id="b_row_agent" style="display:none;">
+                                    <div class="form-group">
+                                        <label class="form-label">Nama Agent (Deposit)</label>
+                                        <input type="hidden" name="agent_uid" id="b_agent_uid">
+                                        <select name="nama_agent" id="b_nama_agent" class="form-control select2-agent-b">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Bayar</button>
                         </div>
                     </form>
                 </div>
@@ -835,6 +903,26 @@
                             $('#inv_row_jaster').hide();
                         }
 
+                        if (r.pay_status == '1' && r.jurnal_status == '1') {
+                            console.log('Pay Status 1 Masuk');
+                            $('#btnUbahInvoice').prop('disabled', true);
+                            $('#btnCetakInvoice').prop('disabled', true);
+                            $('#btnBayarInvoice').prop('disabled', true);
+                            $('#btnBatalInvoice').prop('disabled', true);
+                        } else if (r.pay_status == '1' && r.jurnal_status == '0') {
+                            console.log('Pay Status 0 Masuk');
+                            $('#btnUbahInvoice').prop('disabled', false);
+                            $('#btnCetakInvoice').prop('disabled', false);
+                            $('#btnBayarInvoice').prop('disabled', false);
+                            $('#btnBatalInvoice').prop('disabled', false);
+                        } else {
+                            console.log('Pay Status 0 Masuk');
+                            $('#btnUbahInvoice').prop('disabled', false);
+                            $('#btnCetakInvoice').prop('disabled', false);
+                            $('#btnBayarInvoice').prop('disabled', true);
+                            $('#btnBatalInvoice').prop('disabled', false);
+                        }
+
                         // Billing totals
                         $('#inv_sub_total').text(r.total_cargo_k);
                         $('#inv_total_cdc').text(r.total_cdc_k);
@@ -869,7 +957,7 @@
                                 html += '<td class="text-center">' + s.jumlah + '</td>';
                                 html += '<td class="text-right">' + s.chargeable + '</td>';
                                 html += '<td class="text-right">' + s.sewa_gudang + '</td>';
-                                if (r.pay_status != '1') {
+                                if (r.jurnal_status != '1') {
                                     html += '<td><button type="button" class="btn btn-xs btn-danger btn-batal-smu" data-uid="' + s.uid + '" data-bil="' + r.uid + '">Batal</button></td>';
                                 } else {
                                     html += '<td></td>';
@@ -897,7 +985,7 @@
                             $('#inv_agent_uid').val(r.agent_deposit_uid);
                         }
 
-                        if (r.pay_status == '1') {
+                        if (r.jurnal_status == '1') {
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBatalInvoice').prop('disabled', true);
@@ -1201,6 +1289,111 @@
                     }
                 });
             }
+
+            $('#modalDetailInvoice').on('hidden.bs.modal', function() {
+                $(this).find('form')[0].reset();
+                $('#bodyListSMU').html('<tr><td colspan="7" class="text-center">Memuat data...</td></tr>');
+                $('#inv_bill_catg, #inv_nama_agent').empty().trigger('change');
+                $('.select2-agent-inv, .select2-catg-inv').val(null).trigger('change');
+                $('#inv_pay_methode').val('3');
+                $('#inv_row_agent').hide();
+                $('#inv_row_jaster').hide();
+                $('#inv_row_remarks').hide();
+            });
+
+            $('#btnBayarInvoice').on('click', function() {
+                var uid = $('#inv_bil_uid').val();
+                var noInvoice = $('#inv_no_invoice').val();
+                var nominalTeks = $('#inv_grand_total').text();
+                var nominalRaw = $('#inv_grand_total').data('raw');
+
+                if (!uid) {
+                    Swal.fire('Perhatian', 'Data invoice belum termuat.', 'warning');
+                    return;
+                }
+
+                if (nominalRaw === undefined || nominalRaw === null || nominalRaw === '') {
+                    nominalRaw = nominalTeks.replace(/[^\d]/g, '');
+                }
+
+                $('#b_bill_uid').val(uid);
+                $('#b_invoice').val(noInvoice);
+                $('#b_nominal').val(nominalTeks);
+                $('#b_nominal_val').val(nominalRaw);
+
+                // Tutup modal detail dulu, baru buka modal bayar
+                $('#modalDetailInvoice').one('hidden.bs.modal', function() {
+                    $('#modalBayar').modal('show');
+                }).modal('hide');
+            });
+
+            function toggleBayarField() {
+                var m = $('#b_pay_methode').val();
+
+                var showAgent = (m === '1'); // Deposit
+                var showBank = (m === '3' || m === '4'); // Transfer / Tagihan
+
+                $('#b_row_agent').toggle(showAgent);
+                $('#b_nama_agent').prop('required', showAgent);
+
+                $('#b_row_bank').toggle(showBank);
+                $('#b_bank').prop('required', showBank);
+
+                // Bersihkan field yang sedang disembunyikan
+                if (!showAgent) {
+                    $('#b_nama_agent').val(null).trigger('change');
+                    $('#b_agent_uid').val('');
+                }
+                if (!showBank) {
+                    $('#b_bank').val('12001');
+                }
+            }
+
+            $(document).on('change', '#b_pay_methode', toggleBayarField);
+            $('#modalBayar').on('shown.bs.modal', toggleBayarField);
+
+            $('#modalBayar').on('hidden.bs.modal', function() {
+                $('#b_nama_agent').val(null).trigger('change');
+                $('#b_agent_uid').val('');
+                $('#b_bank').val('12001');
+                $('#b_row_agent, #b_row_bank').hide();
+                $('#b_nama_agent, #b_bank').prop('required', false);
+            });
+
+            $('.select2-agent-b').select2({
+                placeholder: ':: Pilih Agent',
+                allowClear: true,
+                dropdownParent: $('#modalBayar .modal-content'),
+                ajax: {
+                    url: '<?= base_url('outgoinghlp/get_agent_deposit') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.uid,
+                                    text: item.nama
+                                };
+                            })
+                        };
+                    }
+                }
+            });
+
+            $(document).on('select2:select', '#b_nama_agent', function(e) {
+                $('#b_agent_uid').val(e.params.data.id);
+            });
+
+            $(document).on('select2:clear', '#b_nama_agent', function() {
+                $('#b_agent_uid').val('');
+            });
         });
     </script>
 </body>

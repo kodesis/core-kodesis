@@ -146,6 +146,7 @@ class M_incoming extends CI_Model
         b.post_date,
         b.status,
         b.pay_status,
+        b.jurnal_status,
         b.total_gross,
         l.smu,
         l.tanggal_smu,
@@ -180,8 +181,8 @@ class M_incoming extends CI_Model
 			$dir = ($_POST['order'][0]['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
 			$this->cb->order_by($col, $dir);
 		} else {
-
 			$this->cb->order_by('b.pay_status', 'ASC');
+			$this->cb->order_by('b.jurnal_status', 'ASC');
 			$this->cb->order_by('b.uid', 'DESC');
 		}
 	}

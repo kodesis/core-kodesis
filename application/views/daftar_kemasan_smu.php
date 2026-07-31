@@ -1435,6 +1435,9 @@
                 // Hitung chargeable (Gross vs Volume terbesar dibulatkan)
                 var gross = parseFloat($('#d_gross').val()) || 0;
                 var max_val = total_vol_all > gross ? total_vol_all : gross;
+                if (max_val < 10) {
+                    max_val = 10;
+                }
                 $('#d_chargeable').val(Math.ceil(max_val));
             }
 
@@ -1476,6 +1479,9 @@
                     // Hitung chargeable ( Gross vs Volume terbesar dibulatkan )
                     var gross = parseFloat($('#d_gross').val()) || 0;
                     var max_val = total_all > gross ? total_all : gross;
+                    if (max_val < 10) {
+                        max_val = 10;
+                    }
                     $('#d_chargeable').val(Math.ceil(max_val));
                 }
             }
@@ -1497,6 +1503,9 @@
                 var gross = parseFloat($(this).val()) || 0;
                 var total_vol = parseFloat($('#d_total_volume_all').text()) || 0;
                 var max_val = total_vol > gross ? total_vol : gross;
+                if (max_val < 10) {
+                    max_val = 10;
+                }
                 $('#d_chargeable').val(Math.ceil(max_val));
             });
 
@@ -1898,6 +1907,9 @@
                 // Hitung chargeable (Gross vs Volume terbesar dibulatkan)
                 var gross = parseFloat($('#t_gross').val()) || 0;
                 var chargeableVal = total_vol_all > gross ? total_vol_all : gross;
+                if (chargeableVal < 10) {
+                    chargeableVal = 10;
+                }
                 $('#t_chargeable').val(Math.ceil(chargeableVal));
             }
 
@@ -1974,6 +1986,9 @@
                 var gross = parseFloat($(this).val()) || 0;
                 var total_vol = parseFloat($('#t_total_volume_all').text()) || 0;
                 var max_val = total_vol > gross ? total_vol : gross;
+                if (max_val < 10) {
+                    max_val = 10;
+                }
                 $('#t_chargeable').val(Math.ceil(max_val));
             });
 
@@ -1982,6 +1997,9 @@
                 var gross = parseFloat($('#t_gross').val()) || 0;
                 var volume = parseFloat($(this).val()) || 0;
                 var max_val = volume > gross ? volume : gross;
+                if (max_val < 10) {
+                    max_val = 10;
+                }
                 $('#t_chargeable').val(Math.ceil(max_val));
             });
 

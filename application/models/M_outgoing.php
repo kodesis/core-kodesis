@@ -515,7 +515,7 @@ class M_outgoing extends CI_Model
 	private function _base_query_btb()
 	{
 		$this->cb->select("
-        o.smu, o.nama_agent, o.out_p, o.out_date, b.*, u.nama
+        o.smu, o.nama_agent, o.out_p, o.out_date, o.pesawat, b.*, u.nama
     ", FALSE)
 			->from('out_list_btb b')
 			->join('out_list o',  'o.btb_uid = b.uid',  'left')
@@ -655,6 +655,7 @@ class M_outgoing extends CI_Model
 			// $this->cb->order_by('b.post_date', 'DESC');
 			$this->cb->order_by('is_warning', 'DESC');
 			$this->cb->order_by('b.pay_status', 'ASC');
+			$this->cb->order_by('b.jurnal_status', 'ASC');
 			// $this->cb->order_by('has_topup', 'DESC');
 			$this->cb->order_by('b.uid', 'DESC');
 		}
@@ -761,7 +762,9 @@ class M_outgoing extends CI_Model
 			$this->cb->order_by($col, $dir);
 		} else {
 			// $this->cb->order_by('o.tgl_masuk', 'DESC');
+			$this->cb->order_by('is_warning', 'DESC');
 			$this->cb->order_by('b.pay_status', 'ASC');
+			$this->cb->order_by('b.jurnal_status', 'ASC');
 			$this->cb->order_by('b.uid', 'DESC');
 		}
 	}

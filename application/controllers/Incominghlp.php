@@ -8,7 +8,7 @@ class Incominghlp extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->library(['session', 'pagination']);
-		$this->load->helper(['string', 'url', 'date']);
+		$this->load->helper(['string', 'url', 'date', 'number']);
 		$this->load->model(['M_incoming', 'm_coa', 'm_invoice',]);
 
 		$this->cb = $this->load->database('corebank', TRUE);
@@ -1041,6 +1041,14 @@ class Incominghlp extends CI_Controller
 				$Itanggal_txt = "";
 			}
 
+			$nominal = 'Rp. ' . number_format((float)$r->total);
+			if ($r->pay_status == 0) {
+				$nominal = "<span>$nominal</span>";
+			} else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
+				$nominal = "<span class='btn btn-sm' style='color:white; background-color:red;'>$nominal</span><span style='color:red;'>Belum Terbayar &#128544;<span>";
+			} else if ($r->pay_status == 1 && $r->jurnal_status == 1) {
+				$nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
+			}
 
 
 			$data[] = [
@@ -1053,7 +1061,8 @@ class Incominghlp extends CI_Controller
 				number_format($r->total_pieces),
 				number_format($r->total_gross, 2),
 				number_format($r->total_chargeable, 2),
-				'Rp. ' . number_format((float)$r->total),
+				// 'Rp. ' . number_format((float)$r->total),
+				$nominal,
 				$Itanggal_txt,
 				$tanggal_txt,
 				$r->hari,
@@ -1151,19 +1160,19 @@ class Incominghlp extends CI_Controller
 
 		// Format data response untuk Javascript view
 		$billing->total_pieces_k     = number_format($total_pieces);
-		$billing->total_chargeable_k = number_format($total_chargeable, 2);
-		$billing->total_cargo_k      = number_format($total_sewa, 2);
-		$billing->total_cdc_k        = number_format($total_cdc, 2);
-		$billing->bg_ppn_k           = number_format($bg_ppn, 2);
-		$billing->administrasi_k     = number_format($administrasi, 2);
-		$billing->materai_k          = number_format($materai, 2);
-		$billing->bg_total_k         = number_format($bg_total, 2);
-		$billing->total_kade_k       = number_format($total_kade, 2);
-		$billing->total_csc_k        = number_format($total_csc, 2);
-		$billing->kc_sub_total_k     = number_format($kc_sub_total, 2);
-		$billing->kc_ppn_k           = number_format($kc_ppn, 2);
-		$billing->kc_total_k         = number_format($kc_total, 2);
-		$billing->grand_total_k      = number_format($grand_total, 2);
+		$billing->total_chargeable_k = number_format($total_chargeable);
+		$billing->total_cargo_k      = number_format($total_sewa);
+		$billing->total_cdc_k        = number_format($total_cdc);
+		$billing->bg_ppn_k           = number_format($bg_ppn);
+		$billing->administrasi_k     = number_format($administrasi);
+		$billing->materai_k          = number_format($materai);
+		$billing->bg_total_k         = number_format($bg_total);
+		$billing->total_kade_k       = number_format($total_kade);
+		$billing->total_csc_k        = number_format($total_csc);
+		$billing->kc_sub_total_k     = number_format($kc_sub_total);
+		$billing->kc_ppn_k           = number_format($kc_ppn);
+		$billing->kc_total_k         = number_format($kc_total);
+		$billing->grand_total_k      = number_format($grand_total);
 
 		// Pembayaran via Deposit Agen
 		if ($billing->pay_methode == '1') {
@@ -1228,7 +1237,20 @@ class Incominghlp extends CI_Controller
 		$bill_catg  = $this->input->post('bill_catg');
 		$nama_penerima = $this->input->post('nama_penerima');
 		$pay_methode = $this->input->post('pay_methode');
-		$agent_uid  = $this->input->post('nama_agent');
+		if ($pay_methode == '1') {
+			$agent_deposit = $this->cb->where('uid', $this->input->post('nama_agent'))->get('all_agent_deposit')->row();
+
+			$agent_deposit_uid = $agent_deposit->uid;
+			$nama_agent_deposit = $agent_deposit->nama;
+			$agent_deposit_alamat = $agent_deposit->alamat;
+			$agent_deposit_telepon = $agent_deposit->telepon;
+		} else {
+
+			$agent_deposit_uid = '';
+			$nama_agent_deposit = '';
+			$agent_deposit_alamat = '';
+			$agent_deposit_telepon = '';
+		}
 		$no_invoice = $this->input->post('no_invoice');
 		$adm        = $this->input->post('adm');
 		$cdc        = $this->input->post('cdc');
@@ -1358,229 +1380,231 @@ class Incominghlp extends CI_Controller
 
 		$grand_total = round($bg_total + $kc_total);
 
-		$update_data = [
-			'nama'     => $nama_penerima,
-			'total_pieces'     => $total_pieces,
-			'total_gross'      => $total_gross,
-			'total_volume'     => $total_volume,
-			'total_chargeable' => $total_chargeable,
-			'total_cargo'      => $total_sewa,
-			'bg_ppn'           => $bg_ppn,
-			'administrasi'     => $administrasi,
-			'materai'          => $materai,
-			'bg_total'         => $bg_total,
-			'cdc'              => $cdc,
-			'total_cdc'        => $total_cdc,
-			'kade'             => $rate_kade,
-			'csc'              => $rate_csc,
-			'total_kade'       => $total_kade,
-			'total_csc'        => $total_csc,
-			'kc_sub_total'     => $kc_sub_total,
-			'kc_ppn'           => $kc_ppn,
-			'kc_total'         => $kc_total,
-			'grand_total'      => $grand_total,
-			'grand_total_paid' => $grand_total,
-			'status'           => ($new_status == '1') ? '1' : '0',
-			'pay_status'       => ($new_status == '1') ? '1' : '0',
-			'tanggal_invoice'  => $tanggal_billing,
-			'no_invoice'       => $no_invoice,
-			'pay_methode'      => $pay_methode,
-			'user_kasir'       => $this->session->userdata('nip'),
-			'total'            => $grand_total,
-			'bill_catg_uid'    => $bill_catg,
-			'opsi_dg'          => $opsi_dg,
-			'nominal_surcharge_dg' => $nominal_surcharge_dg,
-			'terbilang'        => ucwords(trim($this->terbilang($grand_total))) . ' Rupiah',
-			'hari'        => $days
-		];
-
 		// =============================================
-		// LOGIKA VALIDASI SALDO AGENT (DEPOSIT)
+		// STATUS 1 - CETAK
 		// =============================================
-		if ($pay_methode == '1') {
-			$agent = $this->cb->where('uid', $agent_uid)->get('all_agent_deposit')->row();
-			if (!$agent) {
-				$this->session->set_flashdata('message_error', 'Silakan pilih Agent Deposit.');
-				echo ('Silakan pilih Agent Deposit.');
-				// redirect('incominghlp/daftar_invoice');
-				return;
-			}
-
-			// Cek kalkulasi saldo agen dari all_topup
-			$saldo_row = $this->cb->select('SUM(topup_saldo) - SUM(usage_saldo) as saldo')
-				->where('agent_uid', $agent_uid)
-				->where('asal_table', 'in_billing')
-				->get('all_topup')
-				->row();
-			$cek_saldo = (float)($saldo_row->saldo ?? 0);
-
-			$status_saldo = ($cek_saldo > 5000000) ? '1' : '0';
-
-			$this->cb->where('uid', $bil_uid)->update('in_billing', $update_data);
-
-			// Sinkronisasi tabel all_topup
-			$cek_topup = $this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'in_billing'])->count_all_results('all_topup');
-			$data_topup = [
-				'agent_uid'    => $agent_uid,
-				'billing_uid'  => $bil_uid,
-				'asal_table'   => 'in_billing',
-				'usage_saldo'  => $grand_total,
-				'user_kasir'   => $this->session->userdata('nip'),
-				'status_saldo' => $status_saldo,
-				'post_date'    => $post_dates
+		if ($new_status == '1') {
+			$update_data = [
+				'nama'     => $nama_penerima,
+				'total_pieces'     => $total_pieces,
+				'total_gross'      => $total_gross,
+				'total_volume'     => $total_volume,
+				'total_chargeable' => $total_chargeable,
+				'total_cargo'      => $total_sewa,
+				'bg_ppn'           => $bg_ppn,
+				'administrasi'     => $administrasi,
+				'materai'          => $materai,
+				'bg_total'         => $bg_total,
+				'cdc'              => $cdc,
+				'total_cdc'        => $total_cdc,
+				'kade'             => $rate_kade,
+				'csc'              => $rate_csc,
+				'total_kade'       => $total_kade,
+				'total_csc'        => $total_csc,
+				'kc_sub_total'     => $kc_sub_total,
+				'kc_ppn'           => $kc_ppn,
+				'kc_total'         => $kc_total,
+				'grand_total'      => $grand_total,
+				'grand_total_paid' => $grand_total,
+				'status'           => '1',
+				'pay_status'       => '1',
+				'tanggal_invoice'  => $tanggal_billing,
+				'no_invoice'       => $no_invoice,
+				// 'pay_methode'      => $pay_methode,
+				'user_kasir'       => $this->session->userdata('nip'),
+				'total'            => $grand_total,
+				'bill_catg_uid'    => $bill_catg,
+				'opsi_dg'          => $opsi_dg,
+				'nominal_surcharge_dg' => $nominal_surcharge_dg,
+				'terbilang'        => ucwords(trim($this->terbilang($grand_total))) . ' Rupiah',
+				'hari'        => $days
 			];
 
-			if ($cek_topup > 0) {
-				$this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'in_billing'])->update('all_topup', $data_topup);
-			} else {
-				$this->cb->insert('all_topup', $data_topup);
-			}
-
-			$msg = ($cek_saldo > 5000000)
-				? 'Invoice berhasil disimpan. Sisa saldo Agen ' . $agent->nama . ' adalah Rp' . number_format($cek_saldo)
-				: 'Peringatan: Sisa saldo Agen ' . $agent->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
-
-			$this->session->set_flashdata('message_name', $msg);
-		} else {
 			$this->cb->where('uid', $bil_uid)->update('in_billing', $update_data);
 
-			// Hapus record all_topup jika metode pembayaran berganti selain Deposit
-			$this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'in_billing'])->delete('all_topup');
-			$this->session->set_flashdata('message_name', 'Invoice Incoming Berhasil Diperbarui.');
+			$nominal = $this->convertToNumberWithComma($grand_total);
+
+			$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE INCOMING NO INVOICE :" . $no_invoice;
+
+			// Pastikan fungsi posting tidak mengganggu transaksi
+			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
+			$this->posting('11505', '41003', $keterangan, $nominal, $tanggal_invoice, '');
+
+			$this->cb->trans_commit();
+			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');
+			redirect('incominghlp/daftar_invoice');
+			return;
 		}
 
+		// =============================================
+		// STATUS 0 - UBAH
+		// =============================================
+		if ($new_status == '0') {
+			$update_data = [
+				'nama'     => $nama_penerima,
+				'total_pieces'     => $total_pieces,
+				'total_gross'      => $total_gross,
+				'total_volume'     => $total_volume,
+				'total_chargeable' => $total_chargeable,
+				'total_cargo'      => $total_sewa,
+				'bg_ppn'           => $bg_ppn,
+				'administrasi'     => $administrasi,
+				'materai'          => $materai,
+				'bg_total'         => $bg_total,
+				'cdc'              => $cdc,
+				'total_cdc'        => $total_cdc,
+				'kade'             => $rate_kade,
+				'csc'              => $rate_csc,
+				'total_kade'       => $total_kade,
+				'total_csc'        => $total_csc,
+				'kc_sub_total'     => $kc_sub_total,
+				'kc_ppn'           => $kc_ppn,
+				'kc_total'         => $kc_total,
+				'grand_total'      => $grand_total,
+				'grand_total_paid' => $grand_total,
+				'status'           => '1',
+				'pay_status'       => '0',
+				'tanggal_invoice'  => $tanggal_billing,
+				'no_invoice'       => $no_invoice,
+				// 'pay_methode'      => $pay_methode,
+				'user_kasir'       => $this->session->userdata('nip'),
+				'total'            => $grand_total,
+				'bill_catg_uid'    => $bill_catg,
+				'opsi_dg'          => $opsi_dg,
+				'nominal_surcharge_dg' => $nominal_surcharge_dg,
+				'terbilang'        => ucwords(trim($this->terbilang($grand_total))) . ' Rupiah',
+				'hari'        => $days
+			];
+			$this->cb->where('uid', $bil_uid)->update('in_billing', $update_data);
+			$this->session->set_flashdata('message_name', 'Invoice berhasil diupdate.');
+			redirect('incominghlp/daftar_invoice');
+			return;
+		}
+	}
 
-		// if ($pay_methode == '1' || $pay_methode == '3') {
-		// 	$id_user = $this->session->userdata('nip');
+	public function bayar_invoice()
+	{
+		$no_invoice = trim($this->input->post('no_invoice', TRUE));
+		$pay_methode   = trim($this->input->post('pay_methode', TRUE));
+		$coa_bank   = trim($this->input->post('coa_bank', TRUE));
+		$agent_deposit_uid   = trim($this->input->post('nama_agent', TRUE));
 
-		// 	$tgl_invoice = $tanggal_billing;
-		// 	$tahun = substr($tgl_invoice, 0, 4);
+		$signdate   = time();
+		$post_date1 = date('Ymd', $signdate);
+		$post_date2 = date('His', $signdate);
+		$post_dates = $post_date1 . $post_date2;
 
-		// 	// $max_num = $this->m_invoice->select_max($tahun);
-		// 	$max_num = $this->m_invoice->select_max();
+		// 1. Validasi input
+		if ($no_invoice === '' || $pay_methode === '') {
+			echo $no_invoice;
+			echo $pay_methode;
+			exit();
+			$this->session->set_flashdata('message_error', 'Nomor invoice dan Metode Pembayaran diisi.');
+			// redirect('incominghlp/daftar_invoice');
+			// return;
+		}
 
-		// 	if (!$max_num['max']) {
-		// 		$bilangan = 1; // Nilai Proses
-		// 	} else {
-		// 		$bilangan = $max_num['max'] + 1;
-		// 	}
+		// 2. Cari invoice
+		$billing = $this->cb->where('no_invoice', $no_invoice)
+			->limit(1)
+			->get('in_billing')
+			->row();
 
-		// 	$month = substr($tgl_invoice, 5, 2);
-		// 	$year = substr($tgl_invoice, 2, 2);
+		if (!$billing) {
+			$this->session->set_flashdata('message_error', 'Billing ' . $no_invoice . ' tidak ditemukan.');
+			redirect('incominghlp/daftar_invoice');
+			return;
+		}
 
-		// 	$no_inv = sprintf("%04d", $bilangan);
-		// 	$kode_cabang = sprintf("%02d", $this->session->userdata('kode_cabang'));
-
-		// 	$kop_invoice = $this->session->userdata('nama_akronim') . "-" . $kode_cabang;
-
-		// 	$slug = $no_inv . '/' . strtoupper($kop_invoice) . '/' . intToRoman($month) . '/' . $year;
-
-		// 	// $keterangan = trim($this->input->post('keterangan'));
-		// 	// $keterangan = 'Invoice ' . $no_inv . ' - ' . $nama_agent;
-		// 	$keterangan = "PEMBAYARAN INVOICE " . $no_inv . ". METODE DEPOSIT, AGENT " . strtoupper($nama_agent);
-
-		// 	// if ($jenis == 'pendapatan') {
-		// 	$jenis_invoice = 'pendapatan';
-		// 	// } else if ($jenis == 'khusus') {
-		// 	// 	$jenis_invoice = 'khusus';
-		// 	// } else {
-		// 	// 	$jenis_invoice = 'reguler';
-		// 	// }
-
-		// 	$sub_total = $total_cargo + $total_cargo;
-		// 	$total_ppn = $bg_ppn + $kc_ppn;
-		// 	$total_nonpph = $sub_total + $total_ppn;
-		// 	$coa_debit = $this->input->post('coa_debit');
-		// 	$coa_kredit = $this->input->post('coa_kredit');
-
-		// 	// Insert ke tabel invoice
-		// 	$invoice_data = [
-		// 		'no_invoice' => $no_inv,
-		// 		'tanggal_invoice' => $tgl_invoice,
-		// 		'created_by' => $id_user,
-		// 		'keterangan' => $keterangan,
-		// 		// 'id_customer' => $this->input->post('customer'),
-		// 		'subtotal' => $sub_total,
-		// 		'diskon' => isset($diskon) ? $diskon : '0',
-		// 		// 'besaran_diskon' => $besaran_diskon,
-		// 		'ppn' => 0.11,
-		// 		'besaran_ppn' => $total_ppn,
-		// 		'opsi_pph23' => isset($opsi_pph) ? $opsi_pph : '0',
-		// 		'opsi_ppn' => isset($opsi_ppn) ? $opsi_ppn : '0',
-		// 		'pph' => 0,
-		// 		'besaran_pph' => 0,
-		// 		'opsi_pph_ps4' => isset($opsi_pph_ps4) ? $opsi_pph_ps4 : '0',
-		// 		'pph_ps4' => 0,
-		// 		'besaran_pph_ps4' => 0,
-		// 		'total_nonpph' => $total_nonpph,
-		// 		'total_denganpph' => $total_nonpph,
-		// 		'coa_debit' => $coa_debit,
-		// 		'coa_kredit' => $coa_kredit,
-		// 		'nominal_bayar' => $total_nonpph,
-		// 		'nominal_pendapatan' => $sub_total,
-		// 		'jenis_invoice' => $jenis_invoice,
-		// 		// 'status_pendapatan' => isset($status_pendapatan) ? $status_pendapatan : '0'
-		// 		'opsi_termin' => isset($opsi_termin) ? $opsi_termin : '0',
-		// 		'status_pendapatan' => '1',
-		// 		'slug' => $slug,
-		// 		'id_cabang' => $this->session->userdata('kode_cabang'),
-		// 	];
-
-		// 	$this->cb->trans_begin();
-		// 	$id_invoice = $this->m_invoice->insert($invoice_data);
-
-		// 	if (!$id_invoice) {
-		// 		$this->cb->trans_rollback();
-		// 		$this->session->set_flashdata('message_name', 'Failed to create invoice.');
-		// 		redirect("financial/invoice");
-		// 	}
-
-		// 	$item = $keterangan;
-		// 	$jumlah = 1;
-		// 	$total = $total_nonpph;
-		// 	$total_amount = $total_nonpph;
-
-		// 	$detail_data[] = [
-		// 		'id_invoice' => $id_invoice,
-		// 		'item' => strtoupper($item),
-		// 		'total' => $total,
-		// 		'qty' => $jumlah,
-		// 		'total_amount' => $total_amount,
-		// 		'created_by' => $id_user,
-		// 		'id_cabang' => $this->session->userdata('kode_cabang'),
-		// 	];
+		// 3. Cegah pembayaran ganda & invoice yang sudah dibatalkan
+		if ($billing->pay_status == '1' && $billing->jurnal_status == '0') {
 
 
-		// 	if (!empty($detail_data)) {
-		// 		$insert = $this->m_invoice->insert_batch($detail_data);
+			if ($pay_methode == '1') {
+				$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
+					->limit(1)
+					->get('all_agent_deposit')
+					->row();
 
-		// 		if ($insert === FALSE) {
-		// 			$this->cb->trans_rollback();
-		// 			$this->session->set_flashdata('message_name', 'Failed to insert invoice details.');
-		// 			redirect("financial/invoice");
-		// 		}
+				$coa_debit = $agent_deposit->coa_sbb;
 
-		// 		// Pastikan fungsi posting tidak mengganggu transaksi
-		// 		$this->posting($coa_debit, $coa_kredit, $keterangan, $total_nonpph, $tgl_invoice, $id_invoice);
+				$saldo_row = $this->cb->select('SUM(topup_saldo) - SUM(usage_saldo) as saldo')
+					->where('agent_uid', $agent_deposit_uid)
+					->where('asal_table', 'in_billing')
+					->get('all_topup')
+					->row();
+				$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
-		// 		$this->cb->trans_commit();
-		// 		$this->session->set_flashdata('message_name', 'The invoice has been successfully created. ' . $no_inv);
-		// 		redirect("financial/invoice");
-		// 	} else {
-		// 		$this->cb->trans_rollback();
-		// 		$this->session->set_flashdata('message_name', 'Invoice detail data is empty.');
-		// 		redirect("financial/invoice");
-		// 	}
+				$status_saldo = ($cek_saldo > 5000000) ? '1' : '0';
 
+				// Sinkronisasi tabel all_topup
+				$cek_topup = $this->cb->where(['billing_uid' => $billing->uid, 'asal_table' => 'in_billing'])->count_all_results('all_topup');
+				$data_topup = [
+					'agent_uid'    => $agent_deposit_uid,
+					'billing_uid'  => $billing->uid,
+					'asal_table'   => 'in_billing',
+					'usage_saldo'  => $billing->grand_total,
+					'user_kasir'   => $this->session->userdata('nip'),
+					'status_saldo' => $status_saldo,
+					'post_date'    => $post_dates
+				];
 
-		// 	// $keterangan = $this->input->post('keterangan');
-		// 	$nominal = $this->convertToNumberWithComma($total);
-		// 	// $coa_debit = $this->input->post('coa_debit');
-		// 	// $coa_kredit = $this->input->post('coa_kredit');
+				if ($cek_topup > 0) {
+					$this->cb->where(['billing_uid' => $billing->uid, 'asal_table' => 'in_billing'])->update('all_topup', $data_topup);
+				} else {
+					$this->cb->insert('all_topup', $data_topup);
+				}
+			} else if ($pay_methode == '3' || $pay_methode == '4') {
+				$coa_debit = $coa_bank;
+			} else if ($pay_methode == '6') {
+				$coa_debit = '12001';
+			}
+			$coa_kredit = '11505';
 
-		// 	// Pastikan fungsi posting tidak mengganggu transaksi
-		// 	$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
-		// }
+			$nominal = $this->convertToNumberWithComma($billing->grand_total);
+
+			if ($billing->pay_methode == '1') {
+				$metode_agent = "DEPOSIT";
+			} else if ($billing->pay_methode == '3') {
+				$metode_agent = "TRANSFER";
+			} else if ($billing->pay_methode == '4') {
+				$metode_agent = "TAGIHAN";
+			} else if ($billing->pay_methode == '6') {
+				$metode_agent = "QRIS";
+			}
+
+			$list = $this->cb->where('bill_uid', $billing->uid)
+				->limit(1)
+				->get('in_list')
+				->row();
+
+			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice . ". METODE : " . $metode_agent;
+
+			// $sub_total = $billing->total_cargo;
+			// $total_ppn = $billing->bg_ppn + $billing->kc_ppn;
+			// $total_nonpph = $sub_total + $total_ppn;
+			// $total = $total_nonpph;
+
+			// $total = $total_nonpph;
+			$total = $billing->grand_total;
+			$nominal = $this->convertToNumberWithComma($total);
+
+			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $billing->tanggal_invoice, '');
+
+			$update_data = [
+				'jurnal_status'       => '1',
+				'pay_methode'       => $pay_methode,
+			];
+			$this->cb->where('uid', $billing->uid)->update('in_billing', $update_data);
+			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar.');
+			redirect('incominghlp/daftar_invoice');
+			return;
+		} else {
+			$this->cb->trans_rollback();
+			$this->session->set_flashdata('message_name', 'Invoice detail data is empty.');
+			redirect("outgoinghlp/daftar_invoice");
+		}
+
 
 		redirect('incominghlp/daftar_invoice');
 	}

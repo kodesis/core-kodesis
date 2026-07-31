@@ -191,6 +191,7 @@
                                                 <th>Status</th>
                                                 <th>Tanggal</th>
                                                 <th>Avsec</th>
+                                                <th>Jaster</th>
                                                 <th>Cetak</th>
                                                 <th>#</th>
                                             </tr>

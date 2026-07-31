@@ -127,7 +127,7 @@ class M_outgoing extends CI_Model
 		6  => 'c.status',
 		7  => 'c.tgl_csd',
 		8  => 'nama_user',
-		// 8  => 'o.jaster',
+		9  => 'o.jaster',
 	];
 
 	// =========================================================================

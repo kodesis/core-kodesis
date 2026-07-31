@@ -326,6 +326,7 @@ class Outgoinghlp extends CI_Controller
 				$alasan_text,
 				$r->tgl_csd ?? '-',
 				$r->nama_user,
+				$jaster,
 				$print,
 				$aksi
 			];

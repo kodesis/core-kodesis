@@ -224,7 +224,7 @@ class M_outgoing extends CI_Model
 		3  => 'o.no_flight',
 		4  => 'nama_pengirim',
 		5  => 'nama_agen',
-		6  => 'o.avsec_nama',
+		6  => 'nama_avsec',
 		7  => 'nama_tujuan',
 		8  => 'o.smu',
 		9  => 'o.isi_pti',
@@ -238,12 +238,13 @@ class M_outgoing extends CI_Model
 	private function _base_query_reject()
 	{
 		$this->cb->select("
-        o.*, p.nama as nama_pengirim, a.nama as nama_agen, t.nama as nama_tujuan
+        o.*, p.nama as nama_pengirim, a.nama as nama_agen, t.nama as nama_tujuan, av.nama as nama_avsec
     ", FALSE)
 			->from('out_reject_item_list o')
 			->join('out_pengirim p',  'p.uid = o.uid_pengirim',  'left')
 			->join('out_agent a',  'a.uid = o.uid_agen',  'left')
-			->join('out_tujuan t',  't.kode_kota = o.tujuan',  'left');
+			->join('out_tujuan t',  't.kode_kota = o.tujuan',  'left')
+			->join('out_avsec av',  'av.nama = o.avsec_uid',  'left');
 
 		// ->where('(is_do != 1 OR is_do IS NULL)');
 

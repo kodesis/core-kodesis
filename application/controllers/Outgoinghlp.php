@@ -1230,7 +1230,7 @@ class Outgoinghlp extends CI_Controller
 				$r->no_flight,
 				$r->nama_pengirim ?? '-',
 				$r->nama_agen ?? '-',
-				$r->avsec_nama ?? '-',
+				$r->nama_avsec ?? '-',
 				$r->nama_tujuan ?? '-',
 				$r->smu ?? '-',
 				$r->isi_pti ?? '-',

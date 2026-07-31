@@ -123,7 +123,7 @@ class M_outgoing extends CI_Model
 		2  => 'o.smu',
 		3  => 'o.komoditi',
 		4  => 'c.status_keamanan',
-		5  => 'c.metode_pemeriksaan',
+		5  => 'c.methode_pemeriksaan',
 		6  => 'c.status',
 		7  => 'c.tgl_csd',
 		8  => 'nama_avsec',

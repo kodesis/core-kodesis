@@ -904,13 +904,13 @@
                         }
 
                         if (r.pay_status == '1' && r.jurnal_status == '1') {
-                            console.log('Pay Status 1 Masuk');
+                            console.log('Jurnal Status 1 Masuk');
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', true);
                             $('#btnBatalInvoice').prop('disabled', true);
                         } else if (r.pay_status == '1' && r.jurnal_status == '0') {
-                            console.log('Pay Status 0 Masuk');
+                            console.log('Jurnal Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', false);

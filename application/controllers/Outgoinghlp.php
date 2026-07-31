@@ -452,7 +452,7 @@ class Outgoinghlp extends CI_Controller
 			'driver_uid'                   => $this->input->post('driver_uid') ?: null,
 			'truck_uid'                    => $this->input->post('truck_uid') ?: null,
 			'tgl_csd'                      => date('Y-m-d'),
-			'post_date'                    => date('YmdHis'),
+			'post_date'               	   => date('YmdHis'),
 			'user'                         => $this->session->userdata('nama')
 		];
 
@@ -576,9 +576,21 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		// Penanganan penanggalan
-		$tgl_csd_raw = $row->tgl_csd ?: date('Y-m-d');
-		$tgl_cetak = date('d/m/Y', strtotime($tgl_csd_raw));
-		$time2     = date('H:i:s', strtotime($tgl_csd_raw));
+		// $tgl_csd_raw = $row->tgl_csd ?: date('Y-m-d');
+		// $tgl_cetak = date('d/m/Y', strtotime($tgl_csd_raw));
+		// $time2     = date('H:i:s', strtotime($tgl_csd_raw));
+		$wday1 = substr($row->post_date, 0, 4);
+		$wday2 = substr($row->post_date, 4, 2);
+		$wday3 = substr($row->post_date, 6, 2);
+		$wday4 = substr($row->post_date, 8, 2);
+		$wday5 = substr($row->post_date, 10, 2);
+		$wday6 = substr($row->post_date, 12, 2);
+		$time2 = "$wday4" . ":" . "$wday5";
+		if ($row->post_date != "") {
+			$tgl_cetak = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+		} else {
+			$tgl_cetak = $row->tgl_csd ?: date('Y-m-d');
+		}
 
 		// Checklist Status Keamanan SPX atau SCO
 		$checklist = '<img src="' . base_url() . 'src/images/checklisticon.png" width="20">';
@@ -1027,6 +1039,7 @@ class Outgoinghlp extends CI_Controller
 
 			$data['no_csd']  = $new_no_csd;
 			$data['tgl_csd'] = $tgl_csd;
+			$data['post_date'] = $post_dates;
 			$data['csd_num'] = $no;
 
 			$this->M_outgoing->insert_csd($data);
@@ -1102,8 +1115,8 @@ class Outgoinghlp extends CI_Controller
 		else $alasan = 'CLEAR';
 
 		// Tanggal
-		$tgl_cetak = date('d/m/Y', strtotime($row->tgl_csd));
-		$time2     = date('H:i:s', strtotime($row->tgl_csd));
+		$tgl_cetak = date('d/m/Y', strtotime($row->post_date));
+		$time2     = date('H:i:s', strtotime($row->post_date));
 
 		// Checklist status keamanan
 		$checklist = '<img src="' . base_url() . 'src/images/checklisticon.png" width="20">';
@@ -1922,6 +1935,10 @@ class Outgoinghlp extends CI_Controller
 
 	public function delete_do($uid_ch)
 	{
+
+		$signdate  = time();
+		$post_date = date('YmdHis', $signdate);
+
 		// Ambil list SMU
 		$list     = $this->cb->select('uid_csd')->from('out_list_do')
 			->where('uid_ch', $uid_ch)->get()->result();
@@ -1932,7 +1949,7 @@ class Outgoinghlp extends CI_Controller
 			$this->cb->where('uid', $uid_csd)->update('out_csd', [
 				'is_do' => 0,
 				'no_do' => null,
-				'post_date_upd' => $postdate,
+				'post_date_upd' => $post_date,
 			]);
 		}
 

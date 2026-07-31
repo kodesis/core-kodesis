@@ -1266,13 +1266,13 @@ class Outgoinghlp extends CI_Controller
 			// 'uid_pengirim'     => $this->input->post('pengirim_uid'),
 
 			'tujuan'       => $this->input->post('tujuan'),
-			'uid_pengirim'     => $this->input->post('pengirim'),
+			'uid_pengirim'     => $this->input->post('nama_pengirim'),
 			// 'telepon_pengirim' => $this->input->post('telepon_pengirim'),
 			// 'alamat_pengirim'  => $this->input->post('alamat_pengirim'),
 			'isi_pti'          => $this->input->post('isi_pti'),
 			'uid_agen'         => $this->input->post('id_agent'),
-			'avsec_uid'        => $this->input->post('avsec_uid'),
-			'avsec_nama'       => $this->input->post('avsec_nama'),
+			'avsec_uid'        => $this->input->post('avsec_nama'),
+			// 'avsec_nama'       => $this->input->post('avsec_nama'),
 		];
 
 		if ($uid) {

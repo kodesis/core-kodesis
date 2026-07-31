@@ -244,7 +244,7 @@ class M_outgoing extends CI_Model
 			->join('out_pengirim p',  'p.uid = o.uid_pengirim',  'left')
 			->join('out_agent a',  'a.uid = o.uid_agen',  'left')
 			->join('out_tujuan t',  't.kode_kota = o.tujuan',  'left')
-			->join('out_avsec av',  'av.nama = o.avsec_uid',  'left');
+			->join('out_avsec av',  'av.uid = o.avsec_uid',  'left');
 
 		// ->where('(is_do != 1 OR is_do IS NULL)');
 

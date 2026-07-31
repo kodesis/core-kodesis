@@ -5275,7 +5275,7 @@ class Outgoinghlp extends CI_Controller
 		$bg_total_k          = number_format((float)$billing->bg_total);
 		$total_kade_k        = number_format((float)$billing->total_kade);
 		$total_csc_k         = number_format((float)$billing->total_csc);
-		$total_jaster_k      = $jaster_opt != '0' ? number_format($billing->total_jaster) : '';
+		$total_jaster_k      = $jaster_opt != '0' ? number_format((float)$billing->total_jaster) : '';
 		$kc_sub_total_k      = number_format((float)$billing->kc_sub_total);
 		$kc_ppn_k            = number_format((float)$billing->kc_ppn);
 		$kc_total_k          = number_format((float)$billing->kc_total);

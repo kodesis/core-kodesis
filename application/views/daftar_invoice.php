@@ -940,16 +940,6 @@
                             $('#inv_agent_uid').val(r.agent_deposit_uid);
                         }
 
-                        if (r.jurnal_status == '1') {
-                            $('#btnUbahInvoice').prop('disabled', true);
-                            $('#btnCetakInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', true);
-                        } else {
-                            $('#btnUbahInvoice').prop('disabled', false);
-                            $('#btnCetakInvoice').prop('disabled', false);
-                            $('#btnBatalInvoice').prop('disabled', false);
-                        }
-
 
                         if (r.pay_status == '1' && r.jurnal_status == '1') {
                             console.log('Pay Status 1 Masuk');
@@ -959,10 +949,10 @@
                             $('#btnBatalInvoice').prop('disabled', true);
                         } else if (r.pay_status == '1' && r.jurnal_status == '0') {
                             console.log('Pay Status 0 Masuk');
-                            $('#btnUbahInvoice').prop('disabled', false);
-                            $('#btnCetakInvoice').prop('disabled', false);
+                            $('#btnUbahInvoice').prop('disabled', true);
+                            $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', false);
-                            $('#btnBatalInvoice').prop('disabled', false);
+                            $('#btnBatalInvoice').prop('disabled', true);
                         } else {
                             console.log('Pay Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', false);

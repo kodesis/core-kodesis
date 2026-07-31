@@ -126,7 +126,7 @@ class M_outgoing extends CI_Model
 		5  => 'c.metode_pemeriksaan',
 		6  => 'c.status',
 		7  => 'c.tgl_csd',
-		8  => 'nama_user',
+		8  => 'nama_avsec',
 		9  => 'o.jaster',
 	];
 
@@ -142,10 +142,12 @@ class M_outgoing extends CI_Model
             o.smu, 
             o.komoditi,
             o.jaster,
-			u.nama as nama_user
+			a.nama as nama_avsec
+			
         ", FALSE)
 			->from('out_list o')
 			->join('ra_csd c', 'c.smu_uid = o.uid', 'left')
+			->join('out_avsec a', 'a.uid = o.avsec_uid', 'left')
 			->join($this->db->database . '.users u',      'u.nip = c.user',    'left')
 			->where('o.btb_p', '1');
 

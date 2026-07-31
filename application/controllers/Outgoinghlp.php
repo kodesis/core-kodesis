@@ -325,7 +325,7 @@ class Outgoinghlp extends CI_Controller
 				$methode_pemeriksaan ?? '-',
 				$alasan_text,
 				$r->tgl_csd ?? '-',
-				$r->nama_user,
+				$r->nama_avsec,
 				$jaster,
 				$print,
 				$aksi

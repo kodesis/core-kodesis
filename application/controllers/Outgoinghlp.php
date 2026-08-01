@@ -4059,11 +4059,13 @@ class Outgoinghlp extends CI_Controller
 
 				$coa_debit = $agent_deposit->coa_sbb;
 
-				$saldo_row = $this->cb->select('SUM(topup_saldo) - SUM(usage_saldo) as saldo')
+				$saldo_row = $this->cb
+					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 					->where('agent_uid', $agent_deposit_uid)
 					->where('asal_table', 'out_billing')
 					->get('all_topup')
 					->row();
+
 				$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
 				$status_saldo = ($cek_saldo > 5000000) ? '1' : '0';
@@ -4085,6 +4087,15 @@ class Outgoinghlp extends CI_Controller
 				} else {
 					$this->cb->insert('all_topup', $data_topup);
 				}
+
+
+				$saldo_row = $this->cb
+					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
+					->where('agent_uid', $agent_deposit_uid)
+					->where('asal_table', 'out_billing')
+					->get('all_topup')
+					->row();
+				$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
 				$msg = $cek_saldo > 5000000
 					? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
@@ -5223,11 +5234,12 @@ class Outgoinghlp extends CI_Controller
 				->get('all_agent_deposit')
 				->row();
 
-			$saldo_row = $this->cb->select('SUM(topup_saldo) - SUM(usage_saldo) as saldo')
+			$saldo_row = $this->cb
+				->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 				->where('agent_uid', $agent_deposit_uid)
-				->where('asal_table', 'out_billing_inv_khusus')
 				->get('all_topup')
 				->row();
+
 			$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
 			$status_saldo = ($cek_saldo > 5000000) ? '1' : '0';
@@ -5274,6 +5286,14 @@ class Outgoinghlp extends CI_Controller
 				'pay_methode'       => '1',
 			];
 			$this->cb->where('uid', $billing->uid)->update('out_billing_inv_khusus', $update_data);
+
+			$saldo_row = $this->cb
+				->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
+				->where('agent_uid', $agent_deposit_uid)
+				->get('all_topup')
+				->row();
+
+			$cek_saldo = (float)($saldo_row->saldo ?? 0);
 			$msg = $cek_saldo > 5000000
 				? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
 				: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';

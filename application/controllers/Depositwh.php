@@ -410,6 +410,8 @@ class Depositwh extends CI_Controller
 		$start_date = str_replace('-', '', $dari)   . '000000';
 		$end_date   = str_replace('-', '', $sampai) . '235959';
 
+		// echo ($start_date . ' - ' . $end_date);
+		// exit();
 		// Query topup dengan subquery untuk sisa saldo
 		$sql = "SELECT 
     t.uid, t.kode, t.topup_date, t.topup_saldo,
@@ -424,42 +426,49 @@ class Depositwh extends CI_Controller
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.no_invoice       FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.no_invoice       FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.no_invoice       FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as no_invoice,
     IFNULL(
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.tanggal_invoice  FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.tanggal_invoice  FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.tanggal_invoice  FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as tanggal_invoice,
     IFNULL(
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.nama             FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.nama             FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.nama             FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as nama_pengirim,
     IFNULL(
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.total_chargeable FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.total_chargeable FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.total_chargeable FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as total_chargeable,
     IFNULL(
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.total            FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.total            FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.total            FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as grand_total,
     IFNULL(
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.pay_methode      FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.pay_methode      FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.pay_methode      FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as pay_methode,
     IFNULL(
         CASE t.asal_table
             WHEN 'out_billing' THEN (SELECT b.user_kasir       FROM out_billing b WHERE b.uid = t.billing_uid)
             WHEN 'in_billing'  THEN (SELECT b.user_kasir       FROM in_billing  b WHERE b.uid = t.billing_uid)
+            WHEN 'out_billing_inv_khusus'  THEN (SELECT b.user_kasir       FROM out_billing_inv_khusus  b WHERE b.uid = t.billing_uid)
         END,
     '') as user_kasir
     FROM all_topup t
@@ -561,7 +570,7 @@ class Depositwh extends CI_Controller
 
 			// Ambil data billing
 			$billing = $this->cb->select('uid, no_invoice, tanggal_invoice, nama, grand_total, pay_methode, user_kasir')
-				->where('status', '1')
+				// ->where('status', '1')
 				->where('uid', $t_billing_uid)
 				// ->get('out_billing')->row();
 				->get($asal_table)->row();
@@ -604,6 +613,12 @@ class Depositwh extends CI_Controller
 			if ($asal_table === 'out_billing') {
 				$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, gross, chargeable')
 					->where('bill_uid', $billing->uid)
+					->where('out_p', '1')
+					->order_by('uid', 'ASC')
+					->get('out_list')->result_array();
+			} else if ($asal_table === 'out_billing_inv_khusus') {
+				$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, gross, chargeable')
+					->where('bill_khusus_uid', $billing->uid)
 					->where('out_p', '1')
 					->order_by('uid', 'ASC')
 					->get('out_list')->result_array();

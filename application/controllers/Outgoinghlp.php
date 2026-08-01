@@ -4421,10 +4421,9 @@ class Outgoinghlp extends CI_Controller
 
 			// Nama pengirim
 			$pengirim_row = $this->cb->select('nama')->where('uid', $uid_pengirim)->get('out_pengirim')->row();
-			if ($nama_pengirim = $pengirim_row->nama ?? '') {
-				$nama_pengirim = $nama_pengirim;
-			} else {
-				$nama_pengirim = $nama;
+			$nama_pengirim = $r['nama'] ?? '';
+			if (!$nama_pengirim) {
+				$nama_pengirim = $pengirim_row->nama ?? '';
 			}
 			// $nama_pengirim_billing = $pengirim_row->nama ?? $nama;
 

@@ -4421,7 +4421,12 @@ class Outgoinghlp extends CI_Controller
 
 			// Nama pengirim
 			$pengirim_row = $this->cb->select('nama')->where('uid', $uid_pengirim)->get('out_pengirim')->row();
-			$nama_pengirim_billing = $pengirim_row->nama ?? $nama;
+			if($nama_pengirim = $pengirim_row->nama ?? '') {
+				$nama_pengirim = $nama_pengirim;
+			} else {
+				$nama_pengirim = $nama;
+			}
+			// $nama_pengirim_billing = $pengirim_row->nama ?? $nama;
 			
 
 			// Kasir
@@ -4451,7 +4456,7 @@ class Outgoinghlp extends CI_Controller
 				$sheet->setCellValue('K' . $rowNum, $s['sewa_gudang']);
 				$sheet->setCellValue('L' . $rowNum, $s['volume']);
 
-				$nama_pengirim = $s['nama_pengirim'] ?: $nama_pengirim_billing;
+				// $nama_pengirim = $s['nama_pengirim'] ?: $nama_pengirim_billing;
 
 				$rowNum++;
 				$no_smu++;

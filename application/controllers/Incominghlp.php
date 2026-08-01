@@ -1838,7 +1838,7 @@ class Incominghlp extends CI_Controller
 			$status       = $r['status'];
 			$remarks_void = $r['remarks_void'];
 
-			$pay_map = ['1' => 'Deposit', '2' => 'Cash', '3' => 'Transfer', '4' => 'Tagihan', '5' => 'FOC'];
+			$pay_map = ['1' => 'Deposit', '2' => 'Cash', '3' => 'Transfer', '4' => 'Tagihan', '5' => 'FOC', '6' => 'QRIS'];
 			$pay = $pay_map[$pay_methode] ?? '';
 
 			if ($status == '1') {

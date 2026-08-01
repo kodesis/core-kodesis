@@ -409,7 +409,7 @@
 
                             <div class="row">
 
-                                <div class="col-md-12 col-xs-12">
+                                <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Penerima</label>
                                         <input type="text" class="form-control" name="nama_penerima" id="inv_nama_penerima">
@@ -419,7 +419,26 @@
                                         </select> -->
                                     </div>
                                 </div>
-
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Telepon Penerima</label>
+                                        <input type="text" class="form-control" name="telepon_penerima" id="inv_telepon_penerima">
+                                        <!-- <input type="hidden" name="agent_uid" id="inv_agent_uid">
+                                        <select name="nama_agent" id="inv_nama_agent" class="form-control select2-agent-inv">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Alamat Penerima</label>
+                                        <input type="text" class="form-control" name="alamat_penerima" id="inv_alamat_penerima">
+                                        <!-- <input type="hidden" name="agent_uid" id="inv_agent_uid">
+                                        <select name="nama_agent" id="inv_nama_agent" class="form-control select2-agent-inv">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select> -->
+                                    </div>
+                                </div>
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Metode Pembayaran</label>
@@ -794,6 +813,8 @@
 
                         }
                         $('#inv_nama_penerima').val(r.nama);
+                        $('#inv_alamat_penerima').val(r.alamat);
+                        $('#inv_telepon_penerima').val(r.telepon);
                         var payMethode = r.pay_methode ? String(r.pay_methode) : '3';
                         $('#inv_pay_methode').val(payMethode);
                         $('#inv_adm').val(r.adm);

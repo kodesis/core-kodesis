@@ -88,7 +88,7 @@ class M_depositwh extends CI_Model
 	// 1. Ambil data mentah secara ASC untuk dihitung Running Total di Controller
 	public function get_riwayat_topup_raw($agent_uid, $termasuk_usage, $search = '')
 	{
-		$this->cb->select('billing_uid, kode, topup_saldo, usage_saldo, saldo as saldo_db, post_date, asal_table');
+		$this->cb->select('billing_uid, kode, topup_saldo, usage_saldo, saldo as saldo_db, post_date, asal_table, user_topup, user_kasir');
 		$this->cb->from('all_topup');
 		$this->cb->where('agent_uid', $agent_uid);
 

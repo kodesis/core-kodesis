@@ -312,6 +312,7 @@
                                                 <th class="text-right">Topup Saldo</th>
                                                 <th class="text-right">Usage Saldo</th>
                                                 <th class="text-right">Sisa Saldo</th>
+                                                <th>Nama Kasir</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -623,7 +624,7 @@
                         }, // Rata kanan untuk uang
                         {
                             "orderable": false,
-                            "targets": [1, 2, 3, 4, 5]
+                            "targets": [1, 2, 3, 4, 5, 6]
                         } // Hanya kolom tanggal yang bisa di-sort jika mau
                     ],
                     "language": {

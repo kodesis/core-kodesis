@@ -312,6 +312,7 @@
                                                 <th class="text-right">Topup Saldo</th>
                                                 <th class="text-right">Usage Saldo</th>
                                                 <th class="text-right">Sisa Saldo</th>
+                                                <th class="text-right">Nama Kasir</th>
                                             </tr>
                                         </thead>
                                         <tbody>

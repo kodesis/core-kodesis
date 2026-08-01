@@ -254,10 +254,14 @@ class Depositwh extends CI_Controller
 			if (!empty($r->kode)) {
 				$display_kode = '<b>' . $r->kode . '</b>';
 				$no_invoice = '';
+				$users = $this->db->where('nip', $r->user_topup)->get('users')->row();
+				$nama_kasir = $users ? $users->nama : '';
 			} else {
 				$display_kode = '<span class="text-danger"><i class="fa fa-arrow-circle-down"></i> Penggunaan Saldo</span>';
 				$invoice_detail = $this->cb->where('uid', $r->billing_uid)->get($r->asal_table)->row();
 				$no_invoice = $invoice_detail->no_invoice;
+				$users = $this->db->where('nip', $r->user_kasir)->get('users')->row();
+				$nama_kasir = $users ? $users->nama : '';
 			}
 
 
@@ -268,7 +272,8 @@ class Depositwh extends CI_Controller
 				$no_invoice,
 				$r->topup_saldo > 0 ? 'Rp ' . number_format($r->topup_saldo, 0, ',', '.') : '-',
 				$r->usage_saldo > 0 ? 'Rp ' . number_format($r->usage_saldo, 0, ',', '.') : '-',
-				'<b>Rp ' . number_format($running_saldo, 0, ',', '.') . '</b>' // Menggunakan running_saldo dinamis
+				'<b>Rp ' . number_format($running_saldo, 0, ',', '.') . '</b>', // Menggunakan running_saldo dinamis
+				$nama_kasir
 			);
 		}
 
@@ -311,7 +316,7 @@ class Depositwh extends CI_Controller
 
 		// Ambil data session yang dibutuhkan
 		$login_branch    = $this->session->userdata('branch_code'); // Sesuaikan nama session Anda
-		$now_uid         = $this->session->userdata('uid');         // Sesuaikan nama session Anda
+		$now_uid         = $this->session->userdata('nip');         // Sesuaikan nama session Anda
 
 		// 2. Format waktu untuk post_date (YmdHis)
 		$post_dates      = date("YmdHis");

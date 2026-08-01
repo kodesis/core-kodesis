@@ -42,7 +42,7 @@
         </tr>
         <tr>
             <td width="30%">
-                <?= $corp_logo ?><br>
+                <?= $corp_logo_mbz ?><br>
                 PT. BANGUN DESA TEKNOLOGI<br>
                 BANDARA LANUD HALIM PERDANA KUSUMA<br>
                 Tel: (021) 22080 2395

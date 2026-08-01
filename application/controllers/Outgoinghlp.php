@@ -5364,6 +5364,7 @@ class Outgoinghlp extends CI_Controller
 		// 	->get('client_branch')->row();
 
 		$corp_logo = "<img src='" . base_url('src/images/logo_bdt.jpg') . "' border='0' width='150'>";
+		$corp_logo_mbz = "<img src='" . base_url('src/images/mbz.png') . "' border='0' width='150'>";
 
 		$data = [
 			'billing'              => $billing,
@@ -5392,6 +5393,7 @@ class Outgoinghlp extends CI_Controller
 			'list_billing'         => $list_billing,
 			// 'corp'                 => $corp,
 			'corp_logo'            => $corp_logo,
+			'corp_logo_mbz'        => $corp_logo_mbz,
 		];
 
 		// =============================================

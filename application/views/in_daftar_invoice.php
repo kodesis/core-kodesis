@@ -585,6 +585,9 @@
                             <button type="button" class="btn btn-danger btn-status-inv" data-val="3" id="btnBatalInvoice">
                                 <i class="fa fa-times"></i> Batal / Void
                             </button>
+                            <button type="button" class="btn btn-warning" onclick='gantiKasirInvoice()'>
+                                <i class="fa fa-times"></i> Ganti Kasir
+                            </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                         </div>
                     </form>
@@ -742,6 +745,60 @@
         } ?>
     </script>
     <script>
+        function gantiKasirInvoice() {
+            var bilUid = $('#inv_bil_uid').val();
+
+            if (!bilUid) {
+                Swal.fire('Perhatian', 'Data invoice belum termuat.', 'warning');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Ganti Kasir?',
+                text: 'Kasir invoice ini akan diubah menjadi Anda.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, ganti',
+                cancelButtonText: 'Batal'
+            }).then(function(result) {
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: '<?= base_url('incominghlp/update_kasir_invoice') ?>',
+                    type: 'POST',
+                    data: {
+                        bil_uid: bilUid
+                    },
+                    dataType: 'json',
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: 'Memproses...',
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading()
+                        });
+                    },
+                    success: function(res) {
+                        if (res.success) {
+                            $('#modalDetailInvoice').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: res.msg,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            $('#kemasan_table').DataTable().ajax.reload(null, false);
+                        } else {
+                            Swal.fire('Gagal', res.msg, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.status, xhr.responseText);
+                        Swal.fire('Error', 'Terjadi kesalahan pada server.', 'error');
+                    }
+                });
+            });
+        }
+
         $(document).ready(function() {
 
             $('.js-example-basic-multiple').select2();

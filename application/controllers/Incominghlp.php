@@ -1247,7 +1247,38 @@ class Incominghlp extends CI_Controller
 		if ($search) $this->cb->like('nama_billing', $search);
 		echo json_encode($this->cb->get()->result());
 	}
+	public function update_kasir_invoice()
+	{
+		$bil_uid = $this->input->post('bil_uid', TRUE);
 
+		if (empty($bil_uid)) {
+			return $this->output->set_content_type('application/json')
+				->set_output(json_encode([
+					'success' => false,
+					'msg'     => 'UID invoice tidak dikirim.'
+				]));
+		}
+
+		$billing = $this->cb->where('uid', $bil_uid)->limit(1)->get('in_billing')->row();
+
+		if (!$billing) {
+			return $this->output->set_content_type('application/json')
+				->set_output(json_encode([
+					'success' => false,
+					'msg'     => 'Invoice tidak ditemukan.'
+				]));
+		}
+
+		$this->cb->where('uid', $bil_uid)->update('in_billing', [
+			'user_kasir' => $this->session->userdata('nip'),
+		]);
+
+		return $this->output->set_content_type('application/json')
+			->set_output(json_encode([
+				'success' => true,
+				'msg'     => 'Kasir invoice berhasil diubah.'
+			]));
+	}
 	public function update_invoice()
 	{
 		$bil_uid    = $this->input->post('bil_uid');

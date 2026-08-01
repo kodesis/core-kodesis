@@ -4049,6 +4049,8 @@ class Outgoinghlp extends CI_Controller
 
 		// 3. Cegah pembayaran ganda & invoice yang sudah dibatalkan
 		if ($billing->pay_status == '1' && $billing->jurnal_status == '0') {
+			$msg = '';
+
 			if ($pay_methode == '1') {
 				$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
 					->limit(1)
@@ -4083,6 +4085,10 @@ class Outgoinghlp extends CI_Controller
 				} else {
 					$this->cb->insert('all_topup', $data_topup);
 				}
+
+				$msg = $cek_saldo > 5000000
+					? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
+					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
 			} else if ($pay_methode == '3' || $pay_methode == '4') {
 				$coa_debit = $coa_bank;
 			} else if ($pay_methode == '6') {
@@ -4124,7 +4130,7 @@ class Outgoinghlp extends CI_Controller
 				'pay_methode'       => $pay_methode,
 			];
 			$this->cb->where('uid', $billing->uid)->update('out_billing', $update_data);
-			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar.');
+			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar. ' . $msg);
 			redirect('outgoinghlp/daftar_invoice');
 			return;
 		}
@@ -5211,6 +5217,12 @@ class Outgoinghlp extends CI_Controller
 			// $coa_debit = $agent_deposit->coa_sbb;
 			$coa_debit = 21040;
 			$agent_deposit_uid = 4;
+
+			$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
+				->limit(1)
+				->get('all_agent_deposit')
+				->row();
+
 			$saldo_row = $this->cb->select('SUM(topup_saldo) - SUM(usage_saldo) as saldo')
 				->where('agent_uid', $agent_deposit_uid)
 				->where('asal_table', 'out_billing_inv_khusus')
@@ -5262,7 +5274,11 @@ class Outgoinghlp extends CI_Controller
 				'pay_methode'       => '1',
 			];
 			$this->cb->where('uid', $billing->uid)->update('out_billing_inv_khusus', $update_data);
-			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar.');
+			$msg = $cek_saldo > 5000000
+				? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
+				: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
+
+			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar. ' . $msg);
 			redirect('outgoinghlp/daftar_invoice_khusus');
 			return;
 		}

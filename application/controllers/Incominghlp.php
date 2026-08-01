@@ -273,6 +273,24 @@ class Incominghlp extends CI_Controller
 		echo json_encode($data);
 	}
 
+	public function get_penerima()
+	{
+		$search = $this->input->post('search');
+
+		$this->cb->select('uid, nama, kode');
+		$this->cb->from('in_penerima');
+
+		if ($search) {
+			$this->cb->like('nama', $search);
+			$this->cb->or_like('kode', $search);
+		}
+
+		$query = $this->cb->get();
+		$data  = $query->result();
+
+		echo json_encode($data);
+	}
+
 	// =============================================
 	// KEMASAN SMU INCOMING
 	// =============================================
@@ -1235,10 +1253,37 @@ class Incominghlp extends CI_Controller
 		$bil_uid    = $this->input->post('bil_uid');
 		$new_status = $this->input->post('new_status');
 		$bill_catg  = $this->input->post('bill_catg');
-		$nama_penerima = $this->input->post('nama_penerima');
-		$alamat_penerima = $this->input->post('alamat_penerima');
-		$telepon_penerima = $this->input->post('telepon_penerima');
+		// $nama_penerima = $this->input->post('nama_penerima');
+		// $alamat_penerima = $this->input->post('alamat_penerima');
+		// $telepon_penerima = $this->input->post('telepon_penerima');
 		$pay_methode = $this->input->post('pay_methode');
+
+		$nama_penerima    = preg_replace('/\s+/', ' ', trim($this->input->post('nama_penerima', TRUE)));
+		$telepon_penerima = trim($this->input->post('telepon_penerima', TRUE));
+		$alamat_penerima  = trim($this->input->post('alamat_penerima', TRUE));
+
+		$penerima_uid = '';
+
+		if ($nama_penerima !== '') {
+			$penerima = $this->cb->where('nama', $nama_penerima)
+				->limit(1)
+				->get('in_penerima')
+				->row();
+
+			if ($penerima) {
+				$penerima_uid     = $penerima->uid;
+				$telepon_penerima = $penerima->telepon;
+				$alamat_penerima  = $penerima->alamat;
+			} else {
+				$this->cb->insert('in_penerima', [
+					'nama'    => $nama_penerima,
+					'telepon' => $telepon_penerima,
+					'alamat'  => $alamat_penerima,
+				]);
+				$penerima_uid = $this->cb->insert_id();
+			}
+		}
+
 		if ($pay_methode == '1') {
 			$agent_deposit = $this->cb->where('uid', $this->input->post('nama_agent'))->get('all_agent_deposit')->row();
 
@@ -1387,6 +1432,7 @@ class Incominghlp extends CI_Controller
 		// =============================================
 		if ($new_status == '1') {
 			$update_data = [
+				'penerima_uid'     => $penerima_uid,
 				'nama'     => $nama_penerima,
 				'alamat'   => $alamat_penerima,
 				'telepon'  => $telepon_penerima,
@@ -1445,6 +1491,7 @@ class Incominghlp extends CI_Controller
 		// =============================================
 		if ($new_status == '0') {
 			$update_data = [
+				'penerima_uid'     => $penerima_uid,
 				'nama'     => $nama_penerima,
 				'alamat'   => $alamat_penerima,
 				'telepon'  => $telepon_penerima,

@@ -412,11 +412,9 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nama Penerima</label>
-                                        <input type="text" class="form-control" name="nama_penerima" id="inv_nama_penerima">
-                                        <!-- <input type="hidden" name="agent_uid" id="inv_agent_uid">
-                                        <select name="nama_agent" id="inv_nama_agent" class="form-control select2-agent-inv">
-                                            <option value="">:: Pilih Agent</option>
-                                        </select> -->
+                                        <select name="nama_penerima" id="inv_nama_penerima"
+                                            class="form-control select2-penerima-inv"></select>
+                                        <small class="text-muted" id="inv_penerima_hint"></small>
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-xs-12">
@@ -812,7 +810,6 @@
                             $('#inv_no_invoice').val(no_invoice);
 
                         }
-                        $('#inv_nama_penerima').val(r.nama);
                         $('#inv_alamat_penerima').val(r.alamat);
                         $('#inv_telepon_penerima').val(r.telepon);
                         var payMethode = r.pay_methode ? String(r.pay_methode) : '3';
@@ -934,7 +931,12 @@
                         $('#modalDetailInvoice').modal('show');
 
                         $('#modalDetailInvoice').one('shown.bs.modal', function() {
-
+                            $('#inv_nama_penerima').empty();
+                            if (r.nama) {
+                                $('#inv_nama_penerima').append(
+                                    new Option(r.nama, r.nama, true, true)
+                                ).trigger('change');
+                            }
                             if (res.billing.bill_catg_uid) {
                                 // Sudah ada kategori — pakai yang tersimpan
                                 $('#inv_bill_catg').append(
@@ -1107,12 +1109,78 @@
                 }
             });
 
+            $('.select2-penerima-inv').select2({
+                placeholder: ':: Pilih penerima atau ketik nama baru',
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#modalDetailInvoice .modal-content'),
+                createTag: function(params) {
+                    var term = $.trim(params.term);
+                    if (term === '') return null;
+                    return {
+                        id: term,
+                        text: term,
+                        isNew: true
+                    };
+                },
+                templateResult: function(data) {
+                    if (data.isNew) {
+                        return $('<span><i class="fa fa-plus"></i> Penerima baru: </span>')
+                            .append($('<b></b>').text(data.text));
+                    }
+                    return data.text;
+                },
+                ajax: {
+                    url: '<?= base_url('incominghlp/get_penerima') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.nama,
+                                    text: item.nama,
+                                    telepon: item.telepon,
+                                    alamat: item.alamat
+                                };
+                            })
+                        };
+                    }
+                }
+            });
+
+            $(document).on('select2:select', '#inv_nama_penerima', function(e) {
+                var data = e.params.data;
+                if (data.isNew) {
+                    $('#inv_telepon_penerima, #inv_alamat_penerima').val('');
+                    $('#inv_penerima_hint').text('Penerima baru — isi telepon & alamat, akan disimpan otomatis.');
+                } else {
+                    $('#inv_telepon_penerima').val(data.telepon || '');
+                    $('#inv_alamat_penerima').val(data.alamat || '');
+                    $('#inv_penerima_hint').text('');
+                }
+            });
+
+            $(document).on('select2:clear', '#inv_nama_penerima', function() {
+                $('#inv_telepon_penerima, #inv_alamat_penerima').val('');
+                $('#inv_penerima_hint').text('');
+            });
+
             // Init Select2 dinamis di dalam Modal
             $('#modalDetailInvoice').on('shown.bs.modal', function() {
                 ['select2-agent-inv', 'select2-catg-inv'].forEach(function(cls) {
                     var el = $('.' + cls);
                     if (el.data('select2')) el.select2('destroy');
                 });
+
+                $('#inv_nama_penerima').empty().trigger('change');
+                $('#inv_penerima_hint').text('');
 
                 $('.select2-agent-inv').select2({
                     placeholder: ':: Pilih Agent',

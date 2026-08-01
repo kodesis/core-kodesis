@@ -5529,33 +5529,33 @@ class Outgoinghlp extends CI_Controller
 			'H'  => 'Asal',
 			'I'  => 'Koli',
 			'J'  => 'Berat',
-			'K'  => 'Biaya Gudang',
-			'L'  => 'Volume',
-			'M'  => 'Total Ch.W',
-			'N'  => 'SubTotal Sewa Gudang',
-			'O'  => 'Cargo Development Charge',
-			'P'  => 'PPN BG',
-			'Q'  => 'Administrasi',
-			'R'  => 'Materai',
-			'S'  => 'Total Sewa Gudang',
-			'T'  => 'Jasa Terminal Handling',
-			'U'  => 'Biaya Jaster',
-			'V'  => 'Biaya CSC',
-			'W'  => 'SubTotal KC',
-			'X'  => 'PPN KC',
-			'Y'  => 'Total KC',
-			'Z'  => 'Total',
-			'AA' => 'Pembayaran',
-			'AB' => 'Keterangan',
-			'AC' => 'Jaster',
+			// 'K'  => 'Biaya Gudang',
+			'K'  => 'Volume',
+			'L'  => 'Total Ch.W',
+			// 'N'  => 'SubTotal Sewa Gudang',
+			// 'O'  => 'Cargo Development Charge',
+			// 'P'  => 'PPN BG',
+			// 'Q'  => 'Administrasi',
+			// 'R'  => 'Materai',
+			'M'  => 'Total Sewa Gudang',
+			// 'T'  => 'Jasa Terminal Handling',
+			// 'U'  => 'Biaya Jaster',
+			// 'V'  => 'Biaya CSC',
+			// 'W'  => 'SubTotal KC',
+			// 'X'  => 'PPN KC',
+			// 'Y'  => 'Total KC',
+			'N'  => 'Total',
+			'O' => 'Pembayaran',
+			'P' => 'Keterangan',
+			'Q' => 'Jaster',
 		];
 
 		foreach ($headers as $col => $label) {
 			$sheet->setCellValue($col . '1', $label);
 		}
 
-		$sheet->getStyle('A1:AC1')->getFont()->setBold(true)->setSize(12);
-		$sheet->getStyle('A1:AC1')->getAlignment()
+		$sheet->getStyle('A1:Q1')->getFont()->setBold(true)->setSize(12);
+		$sheet->getStyle('A1:Q1')->getAlignment()
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 		$nomor  = 1;
@@ -5626,8 +5626,8 @@ class Outgoinghlp extends CI_Controller
 				$sheet->setCellValue('H' . $rowNum, $s['tujuan']);
 				$sheet->setCellValue('I' . $rowNum, $s['jumlah']);
 				$sheet->setCellValue('J' . $rowNum, $s['chargeable']);
-				$sheet->setCellValue('K' . $rowNum, $s['sewa_gudang']);
-				$sheet->setCellValue('L' . $rowNum, $s['volume']);
+				// $sheet->setCellValue('K' . $rowNum, $s['sewa_gudang']);
+				$sheet->setCellValue('K' . $rowNum, $s['volume']);
 
 				$rowNum++;
 				$no_smu++;
@@ -5648,23 +5648,23 @@ class Outgoinghlp extends CI_Controller
 			$sheet->setCellValue('C'  . $startRow, $tgl_txt);
 			$sheet->setCellValue('D'  . $startRow, $nama_agent);
 			$sheet->setCellValue('E'  . $startRow, $nama_pengirim);
-			$sheet->setCellValue('M'  . $startRow, $total_chargeable);
-			$sheet->setCellValue('N'  . $startRow, $total_cargo);
-			$sheet->setCellValue('O'  . $startRow, $total_cdc);
-			$sheet->setCellValue('P'  . $startRow, $bg_ppn);
-			$sheet->setCellValue('Q'  . $startRow, $administrasi);
-			$sheet->setCellValue('R'  . $startRow, $materai);
-			$sheet->setCellValue('S'  . $startRow, $bg_total);
-			$sheet->setCellValue('T'  . $startRow, $total_kade);
-			$sheet->setCellValue('U'  . $startRow, $total_jaster);
-			$sheet->setCellValue('V'  . $startRow, $total_csc);
-			$sheet->setCellValue('W'  . $startRow, $kc_sub_total);
-			$sheet->setCellValue('X'  . $startRow, $kc_ppn);
-			$sheet->setCellValue('Y'  . $startRow, $kc_total);
-			$sheet->setCellValue('Z'  . $startRow, $grand_total);
-			$sheet->setCellValue('AA' . $startRow, $pay);
-			$sheet->setCellValue('AB' . $startRow, $user_name);
-			$sheet->setCellValue('AC' . $startRow, $jaster);
+			$sheet->setCellValue('L'  . $startRow, $total_chargeable);
+			// $sheet->setCellValue('M'  . $startRow, $total_cargo);
+			// $sheet->setCellValue('O'  . $startRow, $total_cdc);
+			// $sheet->setCellValue('P'  . $startRow, $bg_ppn);
+			// $sheet->setCellValue('Q'  . $startRow, $administrasi);
+			// $sheet->setCellValue('R'  . $startRow, $materai);
+			$sheet->setCellValue('M'  . $startRow, $bg_total);
+			// $sheet->setCellValue('T'  . $startRow, $total_kade);
+			// $sheet->setCellValue('U'  . $startRow, $total_jaster);
+			// $sheet->setCellValue('V'  . $startRow, $total_csc);
+			// $sheet->setCellValue('W'  . $startRow, $kc_sub_total);
+			// $sheet->setCellValue('X'  . $startRow, $kc_ppn);
+			// $sheet->setCellValue('Y'  . $startRow, $kc_total);
+			$sheet->setCellValue('N'  . $startRow, $grand_total);
+			$sheet->setCellValue('O' . $startRow, $pay);
+			$sheet->setCellValue('P' . $startRow, $user_name);
+			$sheet->setCellValue('Q' . $startRow, $jaster);
 
 			$nomor++;
 		}
@@ -5679,7 +5679,7 @@ class Outgoinghlp extends CI_Controller
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 		$sheet->setCellValue('A' . $totalRow, 'TOTAL');
 
-		foreach (['L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as $col) {
+		foreach (['L', 'M', 'N'] as $col) {
 			$sheet->setCellValue($col . $totalRow, '=SUM(' . $col . $firstRow . ':' . $col . $lastRow . ')');
 		}
 

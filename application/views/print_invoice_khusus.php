@@ -49,7 +49,7 @@
             </td>
             <td width="30%">
                 <br><br><br>
-                <b>KEPADA YTH.:</b><br>
+                <b>KEPADA YTH. :</b><br>
                 <?= $nama_agent ?><br>
                 <?= $billing->alamat ?><br>
                 <?= $billing->telepon ?>

@@ -2320,7 +2320,7 @@ class Outgoinghlp extends CI_Controller
 			'time_terbang'     => $this->input->post('time_terbang'),
 			'pengirim_uid'     => $pengirim_uid,
 			'nama_pengirim'    => $pengirim_nama,
-			'telepon_pengirim' => $pengirim_telepon,
+			'telepon_pengirim' => $pengirim_telepon,a
 			'alamat_pengirim'  => $pengirim_alamat,
 			'nama_penerima'    => $this->input->post('nama_penerima'),
 			'telepon_penerima' => $this->input->post('telepon_penerima'),
@@ -4421,7 +4421,8 @@ class Outgoinghlp extends CI_Controller
 
 			// Nama pengirim
 			$pengirim_row = $this->cb->select('nama')->where('uid', $uid_pengirim)->get('out_pengirim')->row();
-			$nama_pengirim = $pengirim_row->nama ?? $nama;
+			$nama_pengirim_billing = $pengirim_row->nama ?? $nama;
+			
 
 			// Kasir
 			$kasir_row = $this->db->select('nama')->where('nip', $user_kasir)->get('users')->row();
@@ -4433,7 +4434,7 @@ class Outgoinghlp extends CI_Controller
 			)) : '';
 
 			// List SMU per billing
-			$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang, volume')
+			$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang, volume, nama_pengirim')
 				->where('bill_uid', $uid)
 				->order_by('uid', 'ASC')
 				->get('out_list')->result_array();
@@ -4449,6 +4450,8 @@ class Outgoinghlp extends CI_Controller
 				$sheet->setCellValue('J' . $rowNum, $s['chargeable']);
 				$sheet->setCellValue('K' . $rowNum, $s['sewa_gudang']);
 				$sheet->setCellValue('L' . $rowNum, $s['volume']);
+
+				$nama_pengirim = $s['nama_pengirim'] ?: $nama_pengirim_billing;
 
 				$rowNum++;
 				$no_smu++;

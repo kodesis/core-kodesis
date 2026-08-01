@@ -204,7 +204,7 @@
                         <tr>
                             <td>Kepada Yth.</td>
                             <td>:</td>
-                            <td><?= $btb->nama ?></td>
+                            <td><?= $nama_agent ?></td>
                         </tr>
                     </table>
                 </td>

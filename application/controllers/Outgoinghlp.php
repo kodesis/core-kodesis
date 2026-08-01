@@ -278,9 +278,9 @@ class Outgoinghlp extends CI_Controller
 				// ";
 
 				$print = "
-				    <a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_csd_actual_isi/{$r->csd_uid}'>
+				    <a target='_web' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_csd_actual_isi/{$r->csd_uid}'>
 				        <i class='fa fa-print'></i> CSD JASTER
-				    </a><a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_csd_actual_sementara/{$r->csd_uid}'>
+				    </a><a target='_web' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_csd_actual_sementara/{$r->csd_uid}'>
 				        <i class='fa fa-print'></i> CSD RA
 				    </a>
 				";

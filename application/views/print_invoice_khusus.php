@@ -43,9 +43,10 @@
         <tr>
             <td width="30%">
                 <?= $corp_logo_mbz ?><br>
-                PT. BANGUN DESA TEKNOLOGI<br>
-                BANDARA LANUD HALIM PERDANA KUSUMA<br>
-                Tel: (021) 22080 2395
+                CV MAJU BERSAMA ZEJAHTERA<br>
+                Vivo Business Park A30 Jl Pembangunan 3,<br>
+                Kelurahan Karanganyar Kecamatan Neglasari Kota Tangerang<br>
+                Telp : 021-2982 6200
             </td>
             <td width="30%">
                 <br><br><br>

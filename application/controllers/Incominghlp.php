@@ -1236,6 +1236,8 @@ class Incominghlp extends CI_Controller
 		$new_status = $this->input->post('new_status');
 		$bill_catg  = $this->input->post('bill_catg');
 		$nama_penerima = $this->input->post('nama_penerima');
+		$alamat_penerima = $this->input->post('alamat_penerima');
+		$telepon_penerima = $this->input->post('telepon_penerima');
 		$pay_methode = $this->input->post('pay_methode');
 		if ($pay_methode == '1') {
 			$agent_deposit = $this->cb->where('uid', $this->input->post('nama_agent'))->get('all_agent_deposit')->row();
@@ -1386,6 +1388,8 @@ class Incominghlp extends CI_Controller
 		if ($new_status == '1') {
 			$update_data = [
 				'nama'     => $nama_penerima,
+				'alamat'   => $alamat_penerima,
+				'telepon'  => $telepon_penerima,
 				'total_pieces'     => $total_pieces,
 				'total_gross'      => $total_gross,
 				'total_volume'     => $total_volume,
@@ -1442,6 +1446,8 @@ class Incominghlp extends CI_Controller
 		if ($new_status == '0') {
 			$update_data = [
 				'nama'     => $nama_penerima,
+				'alamat'   => $alamat_penerima,
+				'telepon'  => $telepon_penerima,
 				'total_pieces'     => $total_pieces,
 				'total_gross'      => $total_gross,
 				'total_volume'     => $total_volume,

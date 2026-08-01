@@ -2320,7 +2320,7 @@ class Outgoinghlp extends CI_Controller
 			'time_terbang'     => $this->input->post('time_terbang'),
 			'pengirim_uid'     => $pengirim_uid,
 			'nama_pengirim'    => $pengirim_nama,
-			'telepon_pengirim' => $pengirim_telepon,a
+			'telepon_pengirim' => $pengirim_telepon,
 			'alamat_pengirim'  => $pengirim_alamat,
 			'nama_penerima'    => $this->input->post('nama_penerima'),
 			'telepon_penerima' => $this->input->post('telepon_penerima'),
@@ -4421,13 +4421,13 @@ class Outgoinghlp extends CI_Controller
 
 			// Nama pengirim
 			$pengirim_row = $this->cb->select('nama')->where('uid', $uid_pengirim)->get('out_pengirim')->row();
-			if($nama_pengirim = $pengirim_row->nama ?? '') {
+			if ($nama_pengirim = $pengirim_row->nama ?? '') {
 				$nama_pengirim = $nama_pengirim;
 			} else {
 				$nama_pengirim = $nama;
 			}
 			// $nama_pengirim_billing = $pengirim_row->nama ?? $nama;
-			
+
 
 			// Kasir
 			$kasir_row = $this->db->select('nama')->where('nip', $user_kasir)->get('users')->row();

@@ -400,7 +400,9 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Nominal Top Up</label>
-                                        <input type="number" class="form-control" name="nominal_topup" id="nominal_topup_i" placeholder="Nominal" required>
+                                        <input type="text" class="form-control" id="nominal_topup_i"
+                                            placeholder="Nominal" inputmode="numeric" autocomplete="off">
+                                        <input type="hidden" name="nominal_topup" id="nominal_topup_val">
                                     </div>
                                 </div>
                                 <!-- <div class="col-md-6 col-xs-12">
@@ -781,6 +783,27 @@
                 }
             });
 
+            function formatRibuan(angka) {
+                return String(angka).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+            $(document).on('input', '#nominal_topup_i', function() {
+                var el = this;
+                var sisaKanan = el.value.length - el.selectionStart;
+
+                var raw = el.value.replace(/\D/g, '');
+                $('#nominal_topup_val').val(raw);
+                el.value = raw ? formatRibuan(raw) : '';
+
+                var pos = el.value.length - sisaKanan;
+                el.setSelectionRange(pos, pos);
+            });
+
+            function setNominalTopup(nilai) {
+                var raw = String(nilai || '').replace(/\D/g, '');
+                $('#nominal_topup_val').val(raw);
+                $('#nominal_topup_i').val(raw ? formatRibuan(raw) : '');
+            }
         });
     </script>
 </body>

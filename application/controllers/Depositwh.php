@@ -312,7 +312,8 @@ class Depositwh extends CI_Controller
 		// 1. Ambil data dari POST input form
 		$agent_uid       = $this->input->post('nama_agent'); // Di form select name="nama_agent" nilainya adalah UID
 		$tanggal_deposit = $this->input->post('tanggal_deposit');
-		$nominal_topup   = $this->input->post('nominal_topup');
+		// $nominal_topup   = $this->input->post('nominal_topup');
+		$nominal_topup = (int) preg_replace('/\D/', '', $this->input->post('nominal_topup', TRUE));
 
 		// Ambil data session yang dibutuhkan
 		$login_branch    = $this->session->userdata('branch_code'); // Sesuaikan nama session Anda

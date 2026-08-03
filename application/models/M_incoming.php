@@ -611,7 +611,7 @@ class M_incoming extends CI_Model
 	}
 
 	// ====================================
-	// DAFTAR TUJUAN
+	// DAFTAR ASAL
 	// ====================================
 
 	private $table_asal = 'in_asal';
@@ -639,7 +639,7 @@ class M_incoming extends CI_Model
 		if (!empty($_POST['search']['value'])) {
 			$search = $_POST['search']['value'];
 			$this->cb->group_start()
-				->like('b.kode', $search)
+				->like('a.kode', $search)
 				->or_like('a.kode_kota', $search)
 				->or_like('a.nama', $search)
 				->or_like('u.user_name', $search)
@@ -693,6 +693,93 @@ class M_incoming extends CI_Model
 	public function update_asal($data, $uid)
 	{
 		return $this->cb->where('uid', $uid)->update('in_asal', $data);
+	}
+
+	// ====================================
+	// DAFTAR Penerima
+	// ====================================
+
+	private $table_penerima = 'in_penerima';
+
+	private $orderable_penerima = [
+		0  => 'a.kode',
+		1  => 'a.nama',
+		2  => 'a.telepon',
+		3  => 'a.alamat',
+		4  => 'u.user_name',
+		5  => 'a.post_date',
+		// 5  => 'a.status',
+	];
+
+	private function _base_query_penerima()
+	{
+		$this->cb->select("
+        a.*, u.nama as user_name
+    ", FALSE)
+			->from('in_penerima a')
+			->join($this->db->database . '.users u',      'u.nip = a.user_code',    'left');
+		// ->where('btb_p !=', '1');
+		// ->where('(is_do != 1 OR is_do IS NULL)');
+
+		// Search
+		if (!empty($_POST['search']['value'])) {
+			$search = $_POST['search']['value'];
+			$this->cb->group_start()
+				->like('a.kode', $search)
+				->or_like('a.nama', $search)
+				->or_like('a.telepon', $search)
+				->or_like('a.alamat', $search)
+				->or_like('u.user_name', $search)
+				->or_like('a.post_date', $search)
+				// ->or_like('o.koli_smu', $search)
+				// ->or_like('o.gross_smu', $search)
+				->group_end();
+		}
+
+		// Order
+		$orderCol = $_POST['order'][0]['column'] ?? null;
+		// $orderCol = null;
+		if ($orderCol !== null && !empty($this->orderable_penerima[$orderCol])) {
+			$col = $this->orderable_penerima[$orderCol];
+			$dir = ($_POST['order'][0]['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
+			$this->cb->order_by($col, $dir);
+		} else {
+			// $this->cb->order_by('o.tgl_masuk', 'DESC');
+			$this->cb->order_by('a.kode', 'DESC');
+		}
+	}
+
+	public function get_datatables_penerima()
+	{
+		$this->_base_query_penerima();
+
+		if ($_POST['length'] != -1) {
+			$this->cb->limit($_POST['length'], $_POST['start']);
+		}
+
+		return $this->cb->get()->result();
+	}
+
+	public function count_filtered_penerima()
+	{
+		$this->_base_query_penerima();
+		return $this->cb->get()->num_rows();
+	}
+
+	public function count_all_penerima()
+	{
+		// return $this->cb->count_all($this->table);
+		return $this->cb->count_all_results($this->table_penerima);
+	}
+
+	public function insert_penerima($data)
+	{
+		return $this->cb->insert('in_penerima', $data);
+	}
+
+	public function update_penerima($data, $uid)
+	{
+		return $this->cb->where('uid', $uid)->update('in_penerima', $data);
 	}
 	// ====================================
 	// DAFTAR AVSEC

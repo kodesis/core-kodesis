@@ -266,6 +266,7 @@
 					if (strpos($a, '919') !== false) { ?>
 						<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
 						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_asal">- Asal</a></li>
+						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_penerima">- Penerima</a></li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '915') !== false) { ?>

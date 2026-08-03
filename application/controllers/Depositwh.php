@@ -259,7 +259,7 @@ class Depositwh extends CI_Controller
 			} else {
 				$display_kode = '<span class="text-danger"><i class="fa fa-arrow-circle-down"></i> Penggunaan Saldo</span>';
 				$invoice_detail = $this->cb->where('uid', $r->billing_uid)->get($r->asal_table)->row();
-				$no_invoice = $invoice_detail->no_invoice;
+				$no_invoice = $invoice_detail->no_invoice ?? '';
 				$users = $this->db->where('nip', $r->user_kasir)->get('users')->row();
 				$nama_kasir = $users ? $users->nama : '';
 			}

@@ -2838,7 +2838,7 @@ class Incominghlp extends CI_Controller
 	}
 
 
-	// DAFTAR TUJUAN
+	// DAFTAR ASAL
 	public function daftar_asal()
 	{
 		$nip = $this->session->userdata('nip');
@@ -2989,6 +2989,161 @@ class Incominghlp extends CI_Controller
 		}
 
 		redirect('incominghlp/daftar_asal');
+	}
+
+	// DAFTAR PENERIMA
+	public function daftar_penerima()
+	{
+		$nip = $this->session->userdata('nip');
+		$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+		$query = $this->db->query($sql);
+		$res2 = $query->result_array();
+		$result = $res2[0]['COUNT(Id)'];
+
+		$sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+		$query2 = $this->db->query($sql2);
+		$res2 = $query2->result_array();
+		$result2 = $res2[0]['COUNT(id)'];
+
+		$data['count_inbox'] = $result;
+		$data['count_inbox2'] = $result2;
+
+		$data['title'] = "Daftar Asal";
+
+
+		$this->load->view('in_daftar_penerima', $data);
+	}
+
+	public function getData_penerima()
+	{
+		$results = $this->M_incoming->get_datatables_penerima();
+		$data    = [];
+
+		$no = 0;
+		foreach ($results as $r) {
+
+
+			// Dates
+			$wday1 = substr($r->post_date, 0, 4);
+			$wday2 = substr($r->post_date, 4, 2);
+			$wday3 = substr($r->post_date, 6, 2);
+			$wday4 = substr($r->post_date, 8, 2);
+			$wday5 = substr($r->post_date, 10, 2);
+			$wday6 = substr($r->post_date, 12, 2);
+			$time2 = "$wday4" . ":" . "$wday5";
+			if ($r->post_date != "") {
+				$tanggal_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+			} else {
+				$tanggal_txt = "";
+			}
+
+
+			// 	if ($r->status == '1') {
+			// 		$hold = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Ready</span> ";
+			// 		$button_hold = "<a class='btn btn-sm btn-danger' href='" . base_url() . "incominghlp/pengirim_hold/{$r->uid}/0'>
+			// <i class='fa fa-remove'></i> Hold</a>";
+			// 	} else {
+			// 		$hold = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>Hold</span> ";
+			// 		$button_hold = "<a class='btn btn-sm btn-success' href='" . base_url() . "incominghlp/pengirim_hold/{$r->uid}/1'>
+			// <i class='fa fa-check'></i> Ready</a>";
+			// 	}
+
+			$button_edit = "<a class='btn btn-sm btn-warning btn-edit' data-uid='{$r->uid}'>
+        <i class='fa fa-pencil'></i> Edit</a>";
+
+			// $button = $button_hold . ' ' . $button_edit;
+
+
+
+			$data[] = [
+				// $r->uid,
+				$r->kode,
+				$r->nama,
+				$r->telepon,
+				$r->alamat,
+				$r->user_name ?? '-',
+				$tanggal_txt ?? '-',
+				$button_edit,
+			];
+		}
+
+		$output = [
+			'draw'            => intval($_POST['draw'] ?? 0),
+			'recordsTotal'    => $this->M_incoming->count_all_penerima(),
+			'recordsFiltered' => $this->M_incoming->count_filtered_penerima(),
+			'data'            => $data,
+		];
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($output));
+	}
+
+	public function edit_penerima($uid)
+	{
+		$this->cb->from('in_penerima');
+		$this->cb->where('uid', $uid);
+
+		$row = $this->cb->get()->row();
+
+		if (!$row) {
+			echo json_encode(['status' => 'error', 'message' => 'Data tidak ditemukan.']);
+			return;
+		}
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($row));
+	}
+
+	public function store_penerima()
+	{
+		$nama = $this->input->post('nama_penerima');
+		$telepon = $this->input->post('nomor_telepon');
+		$alamat = $this->input->post('alamat');
+
+		$data = [
+			// 'kode'                          => $kode,
+			'nama'                        => $nama,
+			'telepon'                       => $telepon,
+			'alamat'                        => $alamat,
+			// 'npwp'                          => $npwp,
+			// 'post_date'                     => $post_dates,
+			// 'user'                          => $this->session->userdata('nip'),
+		];
+
+		$uid = $this->input->post('uid'); // untuk edit
+
+		if ($uid) {
+			$this->M_incoming->update_penerima($data, $uid);
+			$this->session->set_flashdata('message_name', 'Penerima berhasil diupdate.');
+		} else {
+			$signdate = time();
+			$post_date1 = date("Ymd", $signdate);
+			$post_date2 = date("His", $signdate);
+			$post_dates = "$post_date1" . "$post_date2";
+
+			$in_penerima = $this->cb->select('MAX(CAST(kode AS UNSIGNED)) as kode')->from('in_penerima')->get()->row();
+
+			$no_mydisburse1 = $in_penerima->kode;
+
+			if ($no_mydisburse1 > 0) {
+				$disburse1 = $no_mydisburse1 + 1;
+				$nodis1 = sprintf("%05d", $disburse1); // Diubah jadi %05d agar menghasilkan 5 digit
+				$no = $nodis1;
+			} else {
+				$no = "00001"; // Tetap 5 digit
+			}
+
+			$data['user_code']  = $this->session->userdata('nip');
+			$data['post_date'] = $post_dates;
+			$data['kode'] = $no;
+
+			$this->M_incoming->insert_penerima($data);
+			$this->session->set_flashdata('message_name', 'Penerima berhasil ditambahkan.');
+		}
+
+		redirect('incominghlp/daftar_penerima');
 	}
 
 

@@ -168,7 +168,7 @@ class M_incoming extends CI_Model
 			$search = $_POST['search']['value'];
 			$this->cb->group_start()
 				->like('b.no_invoice', $search)
-				->or_like('l.nama', $search) // Diubah dari b.nama ke l.nama sesuai select
+				->or_like('nama_penerima', $search) // Diubah dari b.nama ke l.nama sesuai select
 				->or_like('l.smu', $search)
 				->or_like('u1.nama', $search) // Menggunakan u1 (kasir) atau u2 (acc) untuk pencarian user
 				->or_like('u2.nama', $search)

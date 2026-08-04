@@ -427,16 +427,12 @@
                                         </select> -->
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xs-12">
+                                <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Alamat Penerima</label>
                                         <input type="text" class="form-control" name="alamat_penerima" id="inv_alamat_penerima">
-                                        <!-- <input type="hidden" name="agent_uid" id="inv_agent_uid">
-                                        <select name="nama_agent" id="inv_nama_agent" class="form-control select2-agent-inv">
-                                            <option value="">:: Pilih Agent</option>
-                                        </select> -->
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Metode Pembayaran</label>
@@ -867,7 +863,7 @@
                             $('#inv_no_invoice').val(no_invoice);
 
                         }
-                        $('#inv_alamat_penerima').val(r.alamat);
+                        // $('#inv_alamat_penerima').val(r.alamat);
                         $('#inv_telepon_penerima').val(r.telepon);
                         var payMethode = r.pay_methode ? String(r.pay_methode) : '3';
                         $('#inv_pay_methode').val(payMethode);
@@ -1170,7 +1166,19 @@
                 placeholder: ':: Pilih penerima atau ketik nama baru',
                 allowClear: true,
                 tags: true,
+                minimumInputLength: 1,
                 dropdownParent: $('#modalDetailInvoice .modal-content'),
+                language: {
+                    inputTooShort: function() {
+                        return '';
+                    },
+                    searching: function() {
+                        return 'Mencari...';
+                    },
+                    noResults: function() {
+                        return 'Tidak ditemukan';
+                    }
+                },
                 createTag: function(params) {
                     var term = $.trim(params.term);
                     if (term === '') return null;
@@ -1182,7 +1190,7 @@
                 },
                 templateResult: function(data) {
                     if (data.isNew) {
-                        return $('<span><i class="fa fa-plus"></i> Penerima baru: </span>')
+                        return $('<span><i class="fa fa-plus"></i> Penerima pickup sementara: </span>')
                             .append($('<b></b>').text(data.text));
                     }
                     return data.text;
@@ -1215,17 +1223,20 @@
             $(document).on('select2:select', '#inv_nama_penerima', function(e) {
                 var data = e.params.data;
                 if (data.isNew) {
-                    $('#inv_telepon_penerima, #inv_alamat_penerima').val('');
-                    $('#inv_penerima_hint').text('Penerima baru — isi telepon & alamat, akan disimpan otomatis.');
+                    // $('#inv_telepon_penerima, #inv_alamat_penerima').val('');
+                    $('#inv_telepon_penerima').val('');
+                    $('#inv_penerima_hint').text('Penerima pickup sementara — isi nama & telepon, Tidak akan disimpan.');
                 } else {
+                    console.log('Penerima lama dipilih:', data);
                     $('#inv_telepon_penerima').val(data.telepon || '');
-                    $('#inv_alamat_penerima').val(data.alamat || '');
+                    // $('#inv_alamat_penerima').val(data.alamat || '');
                     $('#inv_penerima_hint').text('');
                 }
             });
 
             $(document).on('select2:clear', '#inv_nama_penerima', function() {
-                $('#inv_telepon_penerima, #inv_alamat_penerima').val('');
+                // $('#inv_telepon_penerima, #inv_alamat_penerima').val('');
+                $('#inv_telepon_penerima').val('');
                 $('#inv_penerima_hint').text('');
             });
 

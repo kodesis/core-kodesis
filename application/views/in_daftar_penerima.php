@@ -489,6 +489,62 @@
                     $('#tambahCustomer').modal('show');
                 });
             });
+
+            $(document).on('click', '.btn-delete', function() {
+                var uid = $(this).data('uid');
+                var nama = $(this).data('nama') || 'data ini';
+
+                if (!uid) {
+                    Swal.fire('Perhatian', 'UID tidak ditemukan.', 'warning');
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Hapus penerima?',
+                    text: nama + ' akan dihapus dan tidak bisa dikembalikan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#d9534f',
+                    reverseButtons: true
+                }).then(function(result) {
+                    if (!result.isConfirmed) return;
+
+                    $.ajax({
+                        url: '<?= base_url('incominghlp/delete_penerima') ?>',
+                        type: 'POST',
+                        data: {
+                            uid: uid
+                        },
+                        dataType: 'json',
+                        beforeSend: function() {
+                            Swal.fire({
+                                title: 'Menghapus...',
+                                allowOutsideClick: false,
+                                didOpen: () => Swal.showLoading()
+                            });
+                        },
+                        success: function(res) {
+                            if (res.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: res.message,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                $('#kemasan_table').DataTable().ajax.reload(null, false);
+                            } else {
+                                Swal.fire('Gagal', res.msg, 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error(xhr.status, xhr.responseText);
+                            Swal.fire('Error', 'Terjadi kesalahan pada server.', 'error');
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>

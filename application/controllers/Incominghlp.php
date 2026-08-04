@@ -277,7 +277,7 @@ class Incominghlp extends CI_Controller
 	{
 		$search = $this->input->post('search');
 
-		$this->cb->select('uid, nama, kode');
+		$this->cb->select('uid, nama, kode, telepon');
 		$this->cb->from('in_penerima');
 
 		if ($search) {
@@ -1305,14 +1305,15 @@ class Incominghlp extends CI_Controller
 				$penerima_uid     = $penerima->uid;
 				$telepon_penerima = $penerima->telepon;
 				$alamat_penerima  = $penerima->alamat;
-			} else {
-				$this->cb->insert('in_penerima', [
-					'nama'    => $nama_penerima,
-					'telepon' => $telepon_penerima,
-					'alamat'  => $alamat_penerima,
-				]);
-				$penerima_uid = $this->cb->insert_id();
 			}
+			// else {
+			// 	$this->cb->insert('in_penerima', [
+			// 		'nama'    => $nama_penerima,
+			// 		'telepon' => $telepon_penerima,
+			// 		'alamat'  => $alamat_penerima,
+			// 	]);
+			// 	$penerima_uid = $this->cb->insert_id();
+			// }
 		}
 
 		if ($pay_methode == '1') {
@@ -3049,7 +3050,8 @@ class Incominghlp extends CI_Controller
 			// 	}
 
 			$button_edit = "<a class='btn btn-sm btn-warning btn-edit' data-uid='{$r->uid}'>
-        <i class='fa fa-pencil'></i> Edit</a>";
+        <i class='fa fa-pencil'></i> Edit</a><a class='btn btn-sm btn-danger btn-delete' data-uid='{$r->uid}'>
+        <i class='fa fa-trash'></i> Delete</a>";
 
 			// $button = $button_hold . ' ' . $button_edit;
 
@@ -3094,6 +3096,21 @@ class Incominghlp extends CI_Controller
 		$this->output
 			->set_content_type('application/json')
 			->set_output(json_encode($row));
+	}
+
+	public function delete_penerima()
+	{
+		$uid = $this->input->post('uid');
+		$delete = $this->cb->where('uid', $uid)->delete('in_penerima');
+
+		if (!$delete) {
+			echo json_encode(['status' => 'error', 'message' => 'Data Gagal dihapus.']);
+			return;
+		}
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode(['status' => 'success', 'message' => 'Data berhasil dihapus.']));
 	}
 
 	public function store_penerima()

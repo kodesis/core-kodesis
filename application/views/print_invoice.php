@@ -20,7 +20,7 @@
 
         @page {
             size: A4;
-            margin: 12mm;
+            margin: 13mm;
         }
 
         table.tbl-smu {
@@ -64,7 +64,7 @@
     </table>
 
     <!-- LIST SMU -->
-    <table width="100%" cellspacing="0" border="2" cellpadding="3" class="tbl-smu">
+    <table width="100%" cellspacing="0" border="1" cellpadding="3" class="tbl-smu">
         <tr>
             <td height="40" align="center"><b>No</b></td>
             <td align="center"><b>SMU</b></td>

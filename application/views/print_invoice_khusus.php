@@ -6,14 +6,14 @@
     <style>
         td {
             font-family: "Verdana", "Arial";
-            font-size: 12pt;
+            font-size: 14pt;
             color: #000000;
             text-decoration: none;
         }
 
         th {
             font-family: "Verdana", "Arial";
-            font-size: 13pt;
+            font-size: 15pt;
             color: #000000;
             text-decoration: none;
         }

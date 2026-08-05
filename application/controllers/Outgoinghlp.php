@@ -4178,7 +4178,7 @@ class Outgoinghlp extends CI_Controller
 		if (!$billing) show_error('Data tidak ditemukan.', 404);
 
 		// Jaster dari out_list
-		$jaster_row = $this->cb->select('a.uid, a.jaster, b.nama as nama_agent_list', FALSE)
+		$jaster_row = $this->cb->select('a.uid, a.jaster, b.nama as nama_agent_list, b.alamat as alamat_agent, b.telepon as telepon_agent', FALSE)
 			->from('out_list a')
 			->join('out_agent b', 'b.uid = a.agent_uid', 'left')
 			->where('a.bill_uid', $uid)
@@ -4309,6 +4309,7 @@ class Outgoinghlp extends CI_Controller
 		$data['btb_name']     = $btb_name;
 		$data['tanggal_txt']  = $tanggal_txt;
 		$data['list_btb']     = $list_btb;
+		$data['agents']     = $jaster_row;
 
 		$this->load->view('print_invoice', $data);
 	}
@@ -5340,7 +5341,7 @@ class Outgoinghlp extends CI_Controller
 		if (!$billing) show_error('Data tidak ditemukan.', 404);
 
 		// Jaster dari out_list
-		$jaster_row = $this->cb->select('a.uid, a.jaster, b.nama as nama_agent_list', FALSE)
+		$jaster_row = $this->cb->select('a.uid, a.jaster, b.nama as nama_agent_list, b.alamat as alamat_agent, b.telepon as telepon_agent', FALSE)
 			->from('out_list a')
 			->join('out_agent b', 'b.uid = a.agent_uid', 'left')
 			->where('a.bill_khusus_uid', $uid)
@@ -5477,6 +5478,7 @@ class Outgoinghlp extends CI_Controller
 		$data['btb_name']     = $btb_name;
 		$data['tanggal_txt']  = $tanggal_txt;
 		$data['list_btb']     = $list_btb;
+		$data['agents']     = $jaster_row;
 
 		$this->load->view('print_invoice_khusus', $data);
 	}

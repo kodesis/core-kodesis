@@ -51,7 +51,6 @@
                 <br><br><br>
                 <b>KEPADA YTH. :</b><br>
                 <?= $billing->nama ?><br>
-                <?= $billing->alamat ?><br>
                 <?= $billing->telepon ?>
             </td>
             <td width="40%">

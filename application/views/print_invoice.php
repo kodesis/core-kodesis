@@ -52,7 +52,14 @@
                 <b>KEPADA YTH. :</b><br>
                 <?= $nama_agent ?><br>
                 <?= $billing->alamat ?><br>
-                <?= $billing->telepon ?>
+                <?php
+
+                if ($billing->telepon != '' || $billing->telepon != null || $billing->telepon != '0') {
+                    echo $billing->telepon;
+                } else {
+                    echo $agents->telepon_agent;
+                }
+                ?>
             </td>
             <td width="40%">
                 <br><br><br>

@@ -20,7 +20,7 @@
 
         @page {
             size: A4;
-            margin: 10mm;
+            margin: 12mm;
         }
 
         table.tbl-smu {

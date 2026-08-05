@@ -941,7 +941,7 @@ class M_outgoing extends CI_Model
 		2  => 'a.alamat',
 		3  => 'a.telepon',
 		4  => 'a.npwp',
-		5  => 'u.user_name',
+		5  => 'user_name',
 		6  => 'a.post_date',
 		7  => 'a.hold',
 	];

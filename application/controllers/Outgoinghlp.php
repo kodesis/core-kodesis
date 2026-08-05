@@ -3563,9 +3563,10 @@ class Outgoinghlp extends CI_Controller
 	{
 		// Ambil billing
 		$billing = $this->cb->where('b.uid', $uid)
-			->select('b.*, c.nama_billing as nama_catg, c.jenis_billing')
+			->select('b.*, c.nama_billing as nama_catg, c.jenis_billing, l.pesawat')
 			->from('out_billing b')
 			->join('out_bill_catg c', 'c.uid = b.bill_catg_uid', 'left')
+			->join('out_list l', 'l.bill_uid = b.uid', 'left')
 			->get()->row();
 
 		if (!$billing) {
@@ -4007,6 +4008,12 @@ class Outgoinghlp extends CI_Controller
 
 
 			$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
+
+			$update_data_list = [
+				'pesawat'     => $this->input->post('pesawat'),
+			];
+			$this->cb->where(['bill_uid' => $bil_uid])->update('out_list', $update_data_list);
+
 			$this->session->set_flashdata('message_name', 'Invoice berhasil diupdate.');
 			redirect('outgoinghlp/daftar_invoice');
 			return;
@@ -4311,7 +4318,8 @@ class Outgoinghlp extends CI_Controller
 	{
 		$dari      = $this->input->post('dari');
 		$sampai    = $this->input->post('sampai');
-		$pengirim  = $this->input->post('pengirim');
+		$pesawat  = $this->input->post('pesawat');
+		$agent  = $this->input->post('agent');
 		$kasir     = $this->input->post('kasir');
 		$pay_methode = $this->input->post('pay_methode');
 
@@ -4319,27 +4327,31 @@ class Outgoinghlp extends CI_Controller
 		$end_date   = str_replace('-', '', $sampai) . '235959';
 
 		// Base query
-		$this->cb->select('*', FALSE);
-		$this->cb->from('out_billing');
-		$this->cb->where('status', '1');
+		$this->cb->select('b.*', FALSE);
+		$this->cb->from('out_billing b');
+		$this->cb->join('out_list l', 'l.bill_uid = b.uid', 'left');
+		$this->cb->where('b.status', '1');
 		$this->cb->where("tanggal_invoice BETWEEN '$start_date' AND '$end_date'", NULL, FALSE);
 
-		if ($pengirim) {
-			$this->cb->where('pengirim_uid', $pengirim);
+		if ($pesawat) {
+			$this->cb->where('l.pesawat', $pesawat);
+		}
+		if ($agent) {
+			$this->cb->where('b.agent_uid', $agent);
 		}
 		if ($kasir) {
-			$this->cb->where('user_kasir', $kasir);
+			$this->cb->where('b.user_kasir', $kasir);
 		}
 		if ($pay_methode == '1') {
-			$this->cb->where('pay_methode', '1');
+			$this->cb->where('b.pay_methode', '1');
 		} else if ($pay_methode == '2') {
-			$this->cb->where('pay_methode', '2');
+			$this->cb->where('b.pay_methode', '2');
 		} else if ($pay_methode == '3') {
-			$this->cb->where('pay_methode', '3');
+			$this->cb->where('b.pay_methode', '3');
 		} else if ($pay_methode == '4') {
-			$this->cb->where('pay_methode', '4');
+			$this->cb->where('b.pay_methode', '4');
 		} else if ($pay_methode == '5') {
-			$this->cb->where('pay_methode', '5');
+			$this->cb->where('b.pay_methode', '5');
 		}
 
 		$this->cb->order_by('no_invoice, tanggal_invoice', 'ASC');

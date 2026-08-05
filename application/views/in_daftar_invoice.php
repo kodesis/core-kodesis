@@ -465,6 +465,18 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Pesawat</label>
+                                        <select name="pesawat" id="inv_pesawat" class="form-control">
+                                            <option value="">:: Pilih Pesawat</option>
+                                            <option value="BATIK">BATIK</option>
+                                            <option value="CITILINK">CITILINK</option>
+                                            <option value="FLYJAYA">FLYJAYA</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6 col-xs-12" style="display:none;">
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Invoice</label>
@@ -613,6 +625,17 @@
                                     <div class="form-group">
                                         <label class="form-label">Sampai</label>
                                         <input type="date" class="form-control" name="sampai" id="sampai_r" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Pesawat</label>
+                                        <select name="pesawat" id="rekap_pesawat" class="form-control">
+                                            <option value="">:: Pilih Pesawat</option>
+                                            <option value="BATIK">BATIK</option>
+                                            <option value="CITILINK">CITILINK</option>
+                                            <option value="FLYJAYA">FLYJAYA</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -864,6 +887,7 @@
 
                         }
                         // $('#inv_alamat_penerima').val(r.alamat);
+                        $('#inv_pesawat').val(r.pesawat);
                         $('#inv_telepon_penerima').val(r.telepon);
                         var payMethode = r.pay_methode ? String(r.pay_methode) : '3';
                         $('#inv_pay_methode').val(payMethode);

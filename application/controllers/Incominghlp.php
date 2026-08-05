@@ -1106,8 +1106,9 @@ class Incominghlp extends CI_Controller
 	{
 		// Ambil data header invoice in_billing
 		$billing = $this->cb->where('b.uid', $uid)
-			->select('b.*, c.nama_billing as nama_catg, c.jenis_billing, c.sewa_gudang as rate_sewa, c.kade as rate_kade, c.csc as rate_csc')
+			->select('b.*, l.pesawat, c.nama_billing as nama_catg, c.jenis_billing, c.sewa_gudang as rate_sewa, c.kade as rate_kade, c.csc as rate_csc')
 			->from('in_billing b')
+			->join('in_list l', 'l.bill_uid = b.uid', 'left')
 			->join('in_bill_catg c', 'c.uid = b.bill_catg_uid', 'left')
 			->get()->row();
 
@@ -1561,6 +1562,12 @@ class Incominghlp extends CI_Controller
 				'hari'        => $days
 			];
 			$this->cb->where('uid', $bil_uid)->update('in_billing', $update_data);
+
+			$update_data_list = [
+				'pesawat'     => $this->input->post('pesawat'),
+			];
+			$this->cb->where(['bill_uid' => $bil_uid])->update('in_list', $update_data_list);
+
 			$this->session->set_flashdata('message_name', 'Invoice berhasil diupdate.');
 			redirect('incominghlp/daftar_invoice');
 			return;
@@ -1844,26 +1851,27 @@ class Incominghlp extends CI_Controller
 	{
 		$dari      = $this->input->post('dari');
 		$sampai    = $this->input->post('sampai');
-		$penerima  = $this->input->post('pengirim');
+		$pesawat  = $this->input->post('pesawat');
 		$kasir     = $this->input->post('kasir');
 
 		$start_date = str_replace('-', '', $dari)   . '000000';
 		$end_date   = str_replace('-', '', $sampai) . '235959';
 
-		$this->cb->select('uid, no_invoice, tanggal_invoice, nama, total_chargeable, total_cargo, total_cdc,
-        bg_ppn, administrasi, materai, bg_total, total_kade, total_csc, kc_sub_total, kc_ppn, kc_total,
-        grand_total, user_kasir, pay_methode, hari, status, remarks_void, opsi_dg, nominal_surcharge_dg', FALSE);
-		$this->cb->from('in_billing');
-		$this->cb->where("tanggal_invoice BETWEEN '$start_date' AND '$end_date'", NULL, FALSE);
+		$this->cb->select('b.uid, b.no_invoice, b.tanggal_invoice, b.nama, b.total_chargeable, b.total_cargo, b.total_cdc,
+        b.bg_ppn, b.administrasi, b.materai, b.bg_total, b.total_kade, b.total_csc, b.kc_sub_total, b.kc_ppn, b.kc_total,
+        b.grand_total, b.user_kasir, b.pay_methode, b.hari, b.status, b.remarks_void, b.opsi_dg, b.nominal_surcharge_dg, l.pesawat', FALSE);
+		$this->cb->from('in_billing b');
+		$this->cb->join('in_list l', 'l.bill_uid = b.uid', 'left');
+		$this->cb->where("b.tanggal_invoice BETWEEN '$start_date' AND '$end_date'", NULL, FALSE);
 
-		if ($penerima) {
-			$this->cb->like('nama', $penerima);
+		if ($pesawat) {
+			$this->cb->where('l.pesawat', $pesawat);
 		}
 		if ($kasir) {
-			$this->cb->where('user_kasir', $kasir);
+			$this->cb->where('b.user_kasir', $kasir);
 		}
 
-		$this->cb->order_by('tanggal_invoice', 'ASC');
+		$this->cb->order_by('b.tanggal_invoice', 'ASC');
 		$results = $this->cb->get()->result_array();
 
 		require APPPATH . 'third_party/autoload.php';

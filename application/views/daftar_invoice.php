@@ -465,7 +465,14 @@
                                             value="<?= date('Y-m-d') ?>">
                                     </div>
                                 </div>
-
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Pesawat</label>
+                                        <select class="form-control select2-pesawat-inv" name="pesawat" id="inv_pesawat">
+                                            <option selected>:: Pilih Pesawat</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Biaya Administrasi</label>
@@ -597,15 +604,23 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 col-xs-12">
+                                <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
-                                        <label class="form-label">Pengirim</label>
-                                        <select name="pengirim" id="rekap_pengirim" class="form-control select2-nama-rekap">
-                                            <option value="">:: Pilih Nama</option>
+                                        <label class="form-label">Pesawat</label>
+                                        <select name="pesawat" id="rekap_pesawat" class="form-control select2-pesawat-rekap">
+                                            <option value="">:: Pilih Pesawat</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xs-12">
+                                <div class="col-md-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Agent</label>
+                                        <select name="agent" id="rekap_agent" class="form-control select2-nama-rekap">
+                                            <option value="">:: Pilih Agent</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Kasir Duty</label>
                                         <select name="kasir" id="rekap_kasir" class="form-control select2-kasir-rekap">
@@ -964,6 +979,10 @@
                         $('#modalDetailInvoice').modal('show');
 
                         $('#modalDetailInvoice').one('shown.bs.modal', function() {
+                            $('#inv_pesawat').append(
+                                new Option(res.billing.pesawat, res.billing.pesawat, true, true)
+                            ).trigger('change');
+
                             // Baru append setelah Select2 siap
                             $('#inv_bill_catg').append(
                                 new Option('[' + res.billing.jenis_billing + '] ' + res.billing.nama_catg, res.billing.bill_catg_uid, true, true)
@@ -1026,6 +1045,33 @@
                 ['select2-agent-inv', 'select2-nama-inv', 'select2-catg-inv'].forEach(function(cls) {
                     var el = $('.' + cls);
                     if (el.data('select2')) el.select2('destroy');
+                });
+
+                $('.select2-pesawat-inv').select2({
+                    placeholder: ':: Pilih Pesawat',
+                    allowClear: true,
+                    dropdownParent: $('#modalDetailInvoice .modal-content'),
+                    ajax: {
+                        url: '<?= base_url('outgoinghlp/get_pesawat') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.nama,
+                                        text: item.nama
+                                    };
+                                })
+                            };
+                        }
+                    }
                 });
 
                 // Perbaikan: mengubah dropdownParent mengarah ke .modal-content bukan div .modal utama
@@ -1149,7 +1195,7 @@
                 allowClear: true,
                 dropdownParent: $('#modalRekap .modal-content'),
                 ajax: {
-                    url: '<?= base_url('outgoinghlp/get_pengirim') ?>',
+                    url: '<?= base_url('outgoinghlp/get_agent') ?>',
                     type: 'POST',
                     dataType: 'json',
                     delay: 250,
@@ -1163,6 +1209,33 @@
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.uid,
+                                    text: item.nama
+                                };
+                            })
+                        };
+                    }
+                }
+            });
+
+            $('.select2-pesawat-rekap').select2({
+                placeholder: ':: Pilih Pesawat',
+                allowClear: true,
+                dropdownParent: $('#modalRekap .modal-content'),
+                ajax: {
+                    url: '<?= base_url('outgoinghlp/get_pesawat') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.nama,
                                     text: item.nama
                                 };
                             })

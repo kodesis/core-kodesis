@@ -361,12 +361,12 @@
                                     <table border="0" cellspacing=0 cellpadding=0 width=100%>
                                         <tr>
                                             <td>&nbsp;<br></td>
-                                            <td>&nbsp;<br></td>
-                                            <td>&nbsp;<br></td>
+                                            <!-- <td>&nbsp;<br></td> -->
+                                            <!-- <td>&nbsp;<br></td> -->
                                         </tr>
                                         <tr>
                                             <td width=70%>Informasi keamanan lainnya :&nbsp;</td>
-                                            <td align="right">&nbsp;</td>
+                                            <!-- <td align="right">&nbsp;</td> -->
                                         </tr>
                                         <tr>
                                             <td width=30%>&nbsp;</td>
@@ -378,11 +378,11 @@
                                             <td></td>
                                             <td align="right">&nbsp;</td>
                                         </tr>
-                                        <tr>
+                                        <!-- <tr>
                                             <td width=30%>&nbsp;</td>
                                             <td></td>
                                             <td align="right">&nbsp;</td>
-                                        </tr>
+                                        </tr> -->
                                     </table>
                                 </td>
                                 <td align="right"><b class="data-value"><?= $row->nama_agent ?></b></td>

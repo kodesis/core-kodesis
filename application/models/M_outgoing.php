@@ -965,7 +965,7 @@ class M_outgoing extends CI_Model
 				->or_like('a.alamat', $search)
 				->or_like('a.telepon', $search)
 				// ->or_like('o.npwp', $search)
-				->or_like('user_name', $search)
+				->or_like('u.nama', $search)
 				->or_like('a.post_date', $search)
 				->or_like('a.hold', $search)
 				// ->or_like('o.koli_smu', $search)

@@ -33,10 +33,10 @@
     </style>
 </head>
 
-<body style="width:240mm; max-width:240mm;">
+<body style="width:235mm; max-width:235mm;">
 
     <!-- HEADER INVOICE -->
-    <table border="0" style="width:100%; max-width:240mm;" cellpadding="0">
+    <table border="0" style="width:100%; max-width:235mm;" cellpadding="0">
         <tr>
             <td colspan="3" align="center"><b>INVOICE</b></td>
         </tr>
@@ -230,7 +230,7 @@
         } */
     </style>
 
-    <table border="0" style="width:100%; max-width:240mm;">
+    <table border="0" style="width:100%; max-width:235mm;">
         <tr>
             <td colspan="2" align="center">
                 <b><u>SURAT JALAN</u></b><br><?= $sj_no ?>
@@ -285,7 +285,7 @@
     <br><br>
 
     <!-- TTD SURAT JALAN -->
-    <table style="width:100%; max-width:240mm;">
+    <table style="width:100%; max-width:235mm;">
         <tr>
             <td align="left">KASIR</td>
             <td align="center">AVSEC RUKO</td>

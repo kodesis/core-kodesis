@@ -33,10 +33,10 @@
     </style>
 </head>
 
-<body style="width:240mm; max-width:240mm;">
+<body style="width:235mm; max-width:235mm;">
 
     <!-- HEADER -->
-    <table border="0" style="width:100%; max-width:240mm;" cellpadding="3">
+    <table border="0" style="width:100%; max-width:235mm;" cellpadding="3">
         <tr>
             <td colspan="3" align="center"><b>INVOICE</b></td>
         </tr>
@@ -139,7 +139,7 @@
         <!-- <div style="page-break-before: always;"></div> -->
 
         <!-- HEADER BTB -->
-        <table border="0" style="width:100%; max-width:240mm;">
+        <table border="0" style="width:100%; max-width:235mm;">
             <tr>
                 <td colspan="2" align="center">
                     <b><u>BUKTI TIMBANG BARANG</u></b><br><?= $btb_no ?>
@@ -200,7 +200,7 @@
         <br><br>
 
         <!-- TTD BTB -->
-        <table style="width:100%; max-width:240mm;">
+        <table style="width:100%; max-width:235mm;">
             <tr>
                 <td align="left">ACCEPTANCE</td>
                 <td align="right">PENGIRIM</td>

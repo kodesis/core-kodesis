@@ -163,8 +163,8 @@
         </tr>
 
         <!-- PADDING ROWS JIKA DATA < 26 -->
-        <?php if (count($list) < 15):
-            $row = 15 - count($list); ?>
+        <?php if (count($list) < 25):
+            $row = 25 - count($list); ?>
             <tr>
                 <td>
                     <table width="100%" cellspacing="0" cellpadding="0">
@@ -203,7 +203,7 @@
                         <td align="right">Petugas Gudang</td>
                     </tr>
                     <tr>
-                        <td colspan="4">&nbsp;<br><br><br><br></td>
+                        <td colspan="4">&nbsp;<br><br></td>
                     </tr>
                     <tr>
                         <td>
@@ -226,28 +226,32 @@
         <!-- LEMBAR -->
         <tr>
             <td>
-                <table border="0" width="40%" cellspacing="0" cellpadding="0">
-                    <tr>
-                        <td style="font-size:8pt;">Lembar I</td>
-                        <td>:</td>
-                        <td style="font-size:8pt;">PT. Bangun Desa Teknologi</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size:8pt;">Lembar II</td>
-                        <td>:</td>
-                        <td style="font-size:8pt;">Airline/Ground Handling</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size:8pt;">Lembar III</td>
-                        <td>:</td>
-                        <td style="font-size:8pt;">Extra Copy</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size:8pt;">Lembar IV</td>
-                        <td>:</td>
-                        <td style="font-size:8pt;"></td>
-                    </tr>
-                </table>
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <table border="0" width="40%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="font-size:8pt;">Lembar I</td>
+                            <td>:</td>
+                            <td style="font-size:8pt;">PT. Bangun Desa Teknologi</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:8pt;">Lembar II</td>
+                            <td>:</td>
+                            <td style="font-size:8pt;">Airline/Ground Handling</td>
+                        </tr>
+                    </table>
+                    <table border="0" width="40%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="font-size:8pt;">Lembar III</td>
+                            <td>:</td>
+                            <td style="font-size:8pt;">Extra Copy</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:8pt;">Lembar IV</td>
+                            <td>:</td>
+                            <td style="font-size:8pt;"></td>
+                        </tr>
+                    </table>
+                </div>
             </td>
         </tr>
 

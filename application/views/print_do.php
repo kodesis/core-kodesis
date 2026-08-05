@@ -163,8 +163,8 @@
         </tr>
 
         <!-- PADDING ROWS JIKA DATA < 26 -->
-        <?php if (count($list) < 26):
-            $row = 25 - count($list); ?>
+        <?php if (count($list) < 15):
+            $row = 15 - count($list); ?>
             <tr>
                 <td>
                     <table width="100%" cellspacing="0" cellpadding="0">

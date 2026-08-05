@@ -6,14 +6,14 @@
     <style>
         td {
             font-family: "Verdana", "Arial";
-            font-size: 14pt;
+            font-size: 11pt;
             color: #000000;
             text-decoration: none;
         }
 
         th {
             font-family: "Verdana", "Arial";
-            font-size: 15pt;
+            font-size: 12pt;
             color: #000000;
             text-decoration: none;
         }
@@ -217,7 +217,7 @@
     <!-- SURAT JALAN -->
     <!-- ================================== -->
     <style>
-        td {
+        /* td {
             font-family: "Verdana", "Arial";
             font-size: 9pt;
             color: #000000;
@@ -227,7 +227,7 @@
             font-family: "Verdana", "Arial";
             font-size: 10pt;
             color: #000000;
-        }
+        } */
     </style>
 
     <table border="0" style="width:100%; max-width:240mm;">

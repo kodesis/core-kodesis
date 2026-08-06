@@ -70,7 +70,6 @@ class M_incoming extends CI_Model
 				->group_end();
 		}
 
-
 		// Order
 		$orderCol = $_POST['order'][0]['column'] ?? null;
 		if ($orderCol !== null && !empty($this->orderable_kemasan_smu[$orderCol])) {

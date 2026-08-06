@@ -1044,7 +1044,7 @@
                 serverSide: true,
                 scrollX: true,
                 order: [
-                    [10, 'asc']
+                    // [10, 'asc']
                 ],
                 ajax: {
                     url: '<?= base_url("outgoinghlp/getData_kemasan_smu") ?>',

@@ -2186,19 +2186,26 @@ class Outgoinghlp extends CI_Controller
     </button>
 ";
 			} else {
-
-				if ($r->btb_p != '1') {
+				if ($r->fly_p == '1') {
 					$aksi = "
-    <button class='btn btn-sm btn-primary btn-btb' data-uid='{$r->uid}' data-smu='{$r->smu}'>
-        <i class='fa fa-send'> ke BTB</i>
-    </button>
-";
-				} else {
+    <button class='btn btn-sm btn-success' >
+        <i class='fa fa-check'> Sudah Berangkat</i>
+    </button>";
+				} else if ($r->out_p == '1') {
+					$aksi = "
+    <button class='btn btn-sm btn-success' >
+        <i class='fa fa-check'> Sudah Ter Invoice</i>
+    </button>";
+				} else if ($r->btb_p == '1') {
 					$aksi = "
     <button class='btn btn-sm btn-success' >
         <i class='fa fa-check'> Sudah di BTB</i>
-    </button>
-";
+    </button>";
+				} else {
+					$aksi = "
+    <button class='btn btn-sm btn-primary btn-btb' data-uid='{$r->uid}' data-smu='{$r->smu}'>
+        <i class='fa fa-send'> ke BTB</i>
+    </button>";
 				}
 			}
 
@@ -2517,6 +2524,7 @@ class Outgoinghlp extends CI_Controller
 			'post_date_upd'    => $postdate,
 		];
 
+		$warning = 0;
 		$il = $this->cb->where('uid', $uid)->get('out_list')->row();
 		echo ('UID LIST' . $uid);
 		if ($il->bill_uid) {
@@ -2527,9 +2535,41 @@ class Outgoinghlp extends CI_Controller
 			];
 			$this->cb->where('uid', $il->bill_uid)->update('out_billing', $data_billing);
 		}
+		if ($il->btb_uid) {
+			echo ('MASUK');
+			$data_btb = [
+				'total_pieces'        => $this->input->post('jumlah'),
+				'total_gross'       => $this->input->post('gross'),
+				'total_volume'       => $this->input->post('volume'),
+				'total_chargeable'       => $this->input->post('chargeable'),
+			];
+			$this->cb->where('uid', $il->bill_uid)->update('out_list_btb', $data_btb);
+		}
 		$this->cb->where('uid', $uid)->update('out_list', $data);
 
-		$this->session->set_flashdata('message_name', 'Data berhasil diupdate.');
+		if ($il->bill_uid) {
+			$bil = $this->cb->where('uid', $il->bill_uid)->get('in_billing')->row();
+
+			if ($bil->pay_status != '1' && $bil->status != '1') {
+				echo ('MASUK');
+				$data_billing = [
+					'total_pieces'        => $this->input->post('jumlah'),
+					'total_gross'       => $this->input->post('gross'),
+					'total_volume'       => $this->input->post('volume'),
+					'total_chargeable'       => $this->input->post('chargeable'),
+				];
+				$this->cb->where('uid', $il->bill_uid)->update('in_billing', $data_billing);
+			} else {
+				$warning = '1';
+			}
+		}
+
+		if ($warning == '1') {
+			$this->session->set_flashdata('message_error', 'Data SMU berhasil diperbarui, Tapi Data Billing Tidak di perbarui karena sudah Bayar Invoice.');
+		} else {
+			$this->session->set_flashdata('message_name', 'Data SMU berhasil diperbarui.');
+		}
+		// $this->session->set_flashdata('message_name', 'Data berhasil diupdate.');
 		redirect('outgoinghlp/daftar_kemasan_smu');
 	}
 

@@ -440,25 +440,27 @@ class M_outgoing extends CI_Model
 		// LOGIKA SORTING PRIORITAS KUSTOM (Sesuai Permintaan)
 		// =========================================================================
 		$custom_priority_order = "CASE 
-            -- Prioritas 4 (Paling bawah): Jika data merupakan SMU lama
-            WHEN (o.smu_lama IS NOT NULL AND o.smu_lama != '0' AND o.smu_lama != '') THEN 4
+            -- Prioritas 5 (Paling bawah): Jika data merupakan SMU lama
+            WHEN (o.smu_lama IS NOT NULL AND o.smu_lama != '0' AND o.smu_lama != '') THEN 5
 
             -- Prioritas 1 (Paling atas): Volume ada isinya (>0) dan belum di-BTB (btb_p != '1')
             WHEN (o.volume > 0 AND o.volume IS NOT NULL AND o.volume != '') AND (o.btb_p != '1' OR o.btb_p IS NULL) THEN 1
 
             -- Prioritas 2 (Kedua): Volume kosong, bernilai 0, atau NULL
             WHEN (o.volume = '0' OR o.volume = '' OR o.volume IS NULL) THEN 2
-
+			
             -- Prioritas 3 (Ketiga): Volume ada isinya (>0) dan sudah di-BTB (btb_p = '1')
             WHEN (o.volume > 0 AND o.volume IS NOT NULL AND o.volume != '') AND o.btb_p = '1' THEN 3
+
+            -- Prioritas 4 (Ketiga): Volume ada isinya (>0) dan sudah di-Invoice (out_p = '1')
+            WHEN (o.volume > 0 AND o.volume IS NOT NULL AND o.volume != '') AND o.out_p = '1' THEN 4
 
             -- Cadangan fallback default
             ELSE 5
         END";
 
 		// Terapkan sorting kustom terlebih dahulu (escape di-set ke FALSE agar query raw SQL CASE WHEN tidak rusak)
-		$this->cb->order_by($custom_priority_order, 'ASC', FALSE);
-		$this->cb->order_by('o.uid', 'DESC');
+
 
 		// =========================================================================
 		// URUTAN KEDUA (Sub-sorting berdasarkan pilihan kolom DataTables ATAU default post_date/uid)
@@ -471,7 +473,9 @@ class M_outgoing extends CI_Model
 		} else {
 			// Default sub-sorting menggunakan post_date terbaru dan uid terbaru
 			// $this->cb->order_by('o.post_date', 'DESC');
-			$this->cb->order_by('o.uid', 'ASC');
+			$this->cb->order_by($custom_priority_order, 'ASC', FALSE);
+			$this->cb->order_by('o.uid', 'DESC');
+			// $this->cb->order_by('o.uid', 'ASC');
 		}
 	}
 
@@ -631,8 +635,8 @@ class M_outgoing extends CI_Model
 			$search = $_POST['search']['value'];
 			$this->cb->group_start()
 				->like('b.invoice_num', $search)
-				->or_like('o.no_invoice', $search)
-				->or_like('o.catg_smu', $search)
+				->or_like('b.no_invoice', $search)
+				// ->or_like('b.catg_smu', $search)
 				->or_like('o.smu', $search)
 				->or_like('o.nama_agent', $search)
 				->or_like('b.total_pieces', $search)

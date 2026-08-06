@@ -344,8 +344,22 @@ class Incominghlp extends CI_Controller
 				$post_date_txt = "$wday3-$wday2-$wday1 $wday4:$wday5";
 			}
 
-			if ($r->out_p == '1') {
-				$aksi = "";
+			// if ($r->out_p == '1') {
+			// 	$aksi = "";
+			// } else {
+			// 	$aksi = "<a class='btn btn-sm btn-primary' href='" . base_url() . "incominghlp/buat_invoice/{$r->uid}'><i class='fa fa-send'></i> Ke Invoice</a>";
+			// }
+
+			if ($r->fly_p == '1') {
+				$aksi = "
+    <button class='btn btn-sm btn-success' >	
+        <i class='fa fa-check'> Sudah Berangkat</i>
+    </button>";
+			} else if ($r->out_p == '1') {
+				$aksi = "
+    <button class='btn btn-sm btn-success' >
+        <i class='fa fa-check'> Sudah Ter Invoice</i>
+    </button>";
 			} else {
 				$aksi = "<a class='btn btn-sm btn-primary' href='" . base_url() . "incominghlp/buat_invoice/{$r->uid}'><i class='fa fa-send'></i> Ke Invoice</a>";
 			}
@@ -588,9 +602,64 @@ class Incominghlp extends CI_Controller
 			'upd_date'        => $post_date,
 			'user_upd'        => $this->session->userdata('nip'),
 		];
-
 		$this->cb->where('uid', $uid)->update('in_list', $data_update);
-		$this->session->set_flashdata('message_name', 'Data SMU Incoming berhasil diperbarui.');
+
+		$il = $this->cb->where('uid', $uid)->get('in_list')->row();
+
+		$warning = '0';
+		if ($il->btb_uid) {
+			echo ('MASUK');
+			$data_btb = [
+				'total_pieces'        => $this->input->post('jumlah'),
+				'total_gross'       => $this->input->post('gross'),
+				'total_volume'       => $this->input->post('volume'),
+				'total_chargeable'       => $this->input->post('chargeable'),
+			];
+			$this->cb->where('uid', $il->bill_uid)->update('out_list_btb', $data_btb);
+		}
+
+		if ($il->bill_uid || $il->bill_khusus_uid) {
+			if ($il->bill_uid) {
+				$bil = $this->cb->where('uid', $il->bill_uid)->get('out_billing')->row();
+
+				if ($bil->pay_status != '1' && $bil->status != '1') {
+					echo ('MASUK');
+					$data_billing = [
+						'total_pieces'        => $this->input->post('jumlah'),
+						'total_gross'       => $this->input->post('gross'),
+						'total_volume'       => $this->input->post('volume'),
+						'total_chargeable'       => $this->input->post('chargeable'),
+					];
+					$this->cb->where('uid', $il->bill_uid)->update('out_billing', $data_billing);
+				} else {
+					$warning = '1';
+				}
+			} else if ($il->bill_khusus_uid) {
+				$bil = $this->cb->where('uid', $il->bill_khusus_uid)->get('out_billing_inv_khusus')->row();
+
+				if ($bil->pay_status != '1' && $bil->status != '1') {
+					echo ('MASUK');
+					$data_billing = [
+						'total_pieces'        => $this->input->post('jumlah'),
+						'total_gross'       => $this->input->post('gross'),
+						'total_volume'       => $this->input->post('volume'),
+						'total_chargeable'       => $this->input->post('chargeable'),
+					];
+					$this->cb->where('uid', $il->bill_uid)->update('out_billing_inv_khusus', $data_billing);
+				} else {
+					$warning = '1';
+				}
+			}
+		}
+
+		if ($warning == '1') {
+			$this->session->set_flashdata('message_error', 'Data SMU Incoming berhasil diperbarui, Tapi Data Billing Tidak di perbarui karena sudah Bayar Invoice.');
+		} else {
+			$this->session->set_flashdata('message_name', 'Data SMU Incoming berhasil diperbarui.');
+		}
+
+
+
 		redirect('incominghlp/daftar_kemasan_smu');
 	}
 

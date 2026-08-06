@@ -82,7 +82,8 @@
                                         <td>
                                             <!-- : -->&nbsp;
                                         </td>
-                                        <td align="right"><b><?= $row->no_pesawat ?></b></td>
+                                        <!-- <td align="right"><b><?= $row->no_pesawat ?></b></td> -->
+                                        <td align="right"><b><?= $pesawat ?></b></td>
                                     </tr>
                                     <tr>
                                         <td>

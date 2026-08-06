@@ -239,6 +239,13 @@
 
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
+                                        <label class="form-label">Nomor Pesawat</label>
+                                        <input type="text" class="form-control" name="nomor_pesawat" id="t_nomor_pesawat">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
                                         <label class="form-label">Alasan</label>
                                         <select class="form-control" name="alasan" id="t_alasan" required>
                                             <option value="0">Pilih Alasan</option>
@@ -420,7 +427,11 @@
 
                     // Isi data SMU
                     $('#t_smu').val(data.smu);
-
+                    if (data.nomor_pesawat) {
+                        $('#t_nomor_pesawat').val(data.nomor_pesawat);
+                    } else {
+                        $('#t_nomor_pesawat').val(data.no_pesawat);
+                    }
                     // Sembunyikan Input No CSD (Karena di-generate oleh sistem saat simpan)
                     $('#group_no_csd').hide();
                     $('#no_csd').val('');
@@ -469,7 +480,11 @@
 
                     // Isi data SMU
                     $('#t_smu').val(data.smu);
-
+                    if (data.nomor_pesawat) {
+                        $('#t_nomor_pesawat').val(data.nomor_pesawat);
+                    } else {
+                        $('#t_nomor_pesawat').val(data.no_pesawat);
+                    }
                     // Isi data CSD & Logistik
                     $('#t_status_keamanan').val(data.status_keamanan);
                     $('#t_methode_pemeriksaan').val(data.methode_pemeriksaan);

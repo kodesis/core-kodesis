@@ -68,7 +68,8 @@
                                         <tr>
                                             <td>Nomor Penerbangan&nbsp;</td>
                                             <td>:&nbsp;</td>
-                                            <td align="right"><b class="data-value"><?= $row->no_pesawat ?></b></td>
+                                            <!-- <td align="right"><b class="data-value"><?= $row->no_pesawat ?></b></td> -->
+                                            <td align="right"><b class="data-value"><?= $pesawat ?></b></td>
                                         </tr>
                                         <tr>
                                             <td>Tanggal Penerbangan&nbsp;</td>
@@ -391,7 +392,8 @@ eof
                                         <tr>
                                             <td>Nomor Penerbangan&nbsp;</td>
                                             <td>:&nbsp;</td>
-                                            <td align="right"><b class="data-value"><?= $row->no_pesawat ?></b></td>
+                                            <!-- <td align="right"><b class="data-value"><?= $row->no_pesawat ?></b></td> -->
+                                            <td align="right"><b class="data-value"><?= $pesawat ?></b></td>
                                         </tr>
                                         <tr>
                                             <td>Tanggal Penerbangan&nbsp;</td>

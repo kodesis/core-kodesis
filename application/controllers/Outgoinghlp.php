@@ -404,6 +404,7 @@ class Outgoinghlp extends CI_Controller
             o.uid AS smu_uid_val,
             o.smu,
             o.no_pesawat,
+            c.nomor_pesawat,
             o.tanggal_terbang,
             o.komoditi,
             b.total_pieces as koli_smu,
@@ -455,6 +456,7 @@ class Outgoinghlp extends CI_Controller
 			'tgl_csd'                      => date('Y-m-d'),
 			'post_date'               	   => date('YmdHis'),
 			'user'                         => $this->session->userdata('nip'),
+			'nomor_pesawat'                => $this->input->post('nomor_pesawat'),
 			// 'usercode'                     => $this->session->userdata('nip')
 		];
 
@@ -536,7 +538,8 @@ class Outgoinghlp extends CI_Controller
             c.uid AS csd_uid,
             o.uid AS smu_uid_val,
             o.smu,
-            o.no_pesawat,
+            c.nomor_pesawat as no_pesawat_csd,
+            o.no_pesawat as no_pesawat_list,
             o.tanggal_terbang,
             o.komoditi,
             b.total_pieces as koli_smu,
@@ -558,6 +561,13 @@ class Outgoinghlp extends CI_Controller
 
 		if (!$row) {
 			show_error('Data CSD tidak ditemukan.', 404);
+		}
+
+		// $pesawat = '';
+		if ($row->no_pesawat_csd) {
+			$pesawat = $row->no_pesawat_csd;
+		} else {
+			$pesawat = $row->no_pesawat_list;
 		}
 
 		// Logika metode pemeriksaan utama
@@ -623,6 +633,7 @@ class Outgoinghlp extends CI_Controller
 			'check_spx' => $check_spx,
 			'check_sco' => $check_sco,
 			'checklist' => $checklist,
+			'pesawat' => $pesawat,
 		];
 
 		// Memuat view cetak CSD Actual
@@ -637,7 +648,8 @@ class Outgoinghlp extends CI_Controller
             c.uid AS csd_uid,
             o.uid AS smu_uid_val,
             o.smu,
-            o.no_pesawat,
+            c.nomor_pesawat as no_pesawat_csd,
+            o.no_pesawat as no_pesawat_list,
             o.tanggal_terbang,
             o.komoditi,
             b.total_pieces as koli_smu,
@@ -659,6 +671,13 @@ class Outgoinghlp extends CI_Controller
 
 		if (!$row) {
 			show_error('Data CSD tidak ditemukan.', 404);
+		}
+
+		// $pesawat = '';
+		if ($row->no_pesawat_csd) {
+			$pesawat = $row->no_pesawat_csd;
+		} else {
+			$pesawat = $row->no_pesawat_list;
 		}
 
 		// Logika metode pemeriksaan utama
@@ -722,6 +741,7 @@ class Outgoinghlp extends CI_Controller
 			'check_spx' => $check_spx,
 			'check_sco' => $check_sco,
 			'checklist' => $checklist,
+			'pesawat' => $pesawat
 		];
 
 		// Memuat view cetak CSD Actual
@@ -736,7 +756,8 @@ class Outgoinghlp extends CI_Controller
             c.uid AS csd_uid,
             o.uid AS smu_uid_val,
             o.smu,
-            o.no_pesawat,
+            c.nomor_pesawat as no_pesawat_csd,
+            o.no_pesawat as no_pesawat_list,
             o.tanggal_terbang,
             o.komoditi,
             b.total_pieces as koli_smu,
@@ -762,6 +783,13 @@ class Outgoinghlp extends CI_Controller
 
 		if (!$row) {
 			show_error('Data CSD tidak ditemukan.', 404);
+		}
+
+		// $pesawat = '';
+		if ($row->no_pesawat_csd) {
+			$pesawat = $row->no_pesawat_csd;
+		} else {
+			$pesawat = $row->no_pesawat_list;
 		}
 
 		// Logika metode pemeriksaan utama
@@ -830,6 +858,7 @@ class Outgoinghlp extends CI_Controller
 			'hour'      => $wday4,
 			'minute'    => $wday5,
 			'second'    => $wday6,
+			'pesawat'    => $pesawat,
 		];
 
 		// Memuat view cetak CSD Actual
@@ -3284,9 +3313,15 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		// Ambil kategori billing
-		$catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra')
-			->where('hold !=', '1')
-			->get('out_bill_catg')->row();
+
+		$catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra');
+		$this->cb->where('hold !=', '1');
+		// if ($smu->pesawat == "CITILINK") {
+		// 	$this->cb->where('uid', '');
+		// } else {
+		// 	$this->cb->where_not('uid !=', '');
+		// }
+		$this->cb->get('out_bill_catg')->row();
 
 		if (!$catg) {
 			$this->session->set_flashdata('message_error', 'Kategori billing tidak ditemukan.');

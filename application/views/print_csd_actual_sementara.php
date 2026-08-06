@@ -69,7 +69,9 @@
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td height=18>&nbsp;<?= $row->no_pesawat ?></td>
+                                    <!-- <td height=18>&nbsp;<?= $row->no_pesawat ?></td> -->
+                                    <td height=18>&nbsp;<?= $pesawat ?></td>
+
                                 </tr>
                                 <tr>
                                     <td></td>

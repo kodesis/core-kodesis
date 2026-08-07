@@ -605,8 +605,9 @@ class M_outgoing extends CI_Model
 		10 => 'u.nama',
 	];
 
-	private function _base_query_invoice()
+	private function _base_query_invoice($agent = null, $pay = null, $jurnal = null)
 	{
+
 		$this->cb->select("
         o.smu, o.pesawat, o.catg_smu, o.jaster as is_jaster, b.*, u.nama as nama_kasir,
         IF(EXISTS(
@@ -627,6 +628,15 @@ class M_outgoing extends CI_Model
 			->from('out_billing b')
 			->join('out_list o',  'o.bill_uid = b.uid',  'left')
 			->join($this->db->database . '.users u',      'u.nip = b.user_kasir',    'left');
+		if ($agent !== null && $agent !== '') {
+			$this->cb->where('o.agent_uid', $agent);
+		}
+		if ($pay !== null && $pay !== '') {
+			$this->cb->where('b.pay_status', $pay);
+		}
+		if ($jurnal !== null && $jurnal !== '') {
+			$this->cb->where('b.jurnal_status', $jurnal);
+		}
 		// ->where('out_khusus !=', '1');
 		// ->where('btb_p !=', '1');
 		// ->where('(is_do != 1 OR is_do IS NULL)');
@@ -670,9 +680,9 @@ class M_outgoing extends CI_Model
 		}
 	}
 
-	public function get_datatables_invoice()
+	public function get_datatables_invoice($agent, $pay, $jurnal)
 	{
-		$this->_base_query_invoice();
+		$this->_base_query_invoice($agent, $pay, $jurnal);
 
 		if ($_POST['length'] != -1) {
 			$this->cb->limit($_POST['length'], $_POST['start']);
@@ -681,13 +691,13 @@ class M_outgoing extends CI_Model
 		return $this->cb->get()->result();
 	}
 
-	public function count_filtered_invoice()
+	public function count_filtered_invoice($agent, $pay, $jurnal)
 	{
-		$this->_base_query_invoice();
+		$this->_base_query_invoice($agent, $pay, $jurnal);
 		return $this->cb->get()->num_rows();
 	}
 
-	public function count_all_invoice()
+	public function count_all_invoice($agent, $pay, $jurnal)
 	{
 		// return $this->cb->count_all($this->table);
 		return $this->cb->count_all_results($this->table_invoice);

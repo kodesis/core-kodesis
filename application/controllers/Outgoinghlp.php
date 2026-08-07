@@ -3539,7 +3539,12 @@ class Outgoinghlp extends CI_Controller
 
 	public function getData_invoice()
 	{
-		$results = $this->M_outgoing->get_datatables_invoice();
+
+		$agent  = $this->input->post('f_agent');
+		$pay    = $this->input->post('f_pay');
+		$jurnal = $this->input->post('f_jurnal');
+
+		$results = $this->M_outgoing->get_datatables_invoice($agent, $pay, $jurnal);
 		$data    = [];
 
 		$no = 0;
@@ -3631,8 +3636,8 @@ class Outgoinghlp extends CI_Controller
 
 		$output = [
 			'draw'            => intval($_POST['draw'] ?? 0),
-			'recordsTotal'    => $this->M_outgoing->count_all_invoice(),
-			'recordsFiltered' => $this->M_outgoing->count_filtered_invoice(),
+			'recordsTotal'    => $this->M_outgoing->count_all_invoice($agent, $pay, $jurnal),
+			'recordsFiltered' => $this->M_outgoing->count_filtered_invoice($agent, $pay, $jurnal),
 			'data'            => $data,
 		];
 

@@ -264,6 +264,27 @@
                                     </li>
                                 </ul>
                             </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <select id="f_agent" class="form-control select2-filter">
+                                        <option value="">:: Semua Agent</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select id="f_pay" class="form-control select2-filter">
+                                        <option value="">:: Semua Status Invoice</option>
+                                        <option value="0">Belum Invoice</option>
+                                        <option value="1">Sudah Invoice</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select id="f_jurnal" class="form-control select2-filter">
+                                        <option value="">:: Semua Status Jurnal</option>
+                                        <option value="0">Belum Bayar</option>
+                                        <option value="1">Sudah Bayar</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="x_content">
                                 <div class="table-responsive">
                                     <table id="kemasan_table" class="table table-striped table-bordered" style="width:100%">
@@ -810,7 +831,12 @@
                 ],
                 ajax: {
                     url: '<?= base_url("outgoinghlp/getData_invoice") ?>',
-                    type: 'POST'
+                    type: 'POST',
+                    data: function(d) {
+                        d.f_agent = $('#f_agent').val();
+                        d.f_pay = $('#f_pay').val();
+                        d.f_jurnal = $('#f_jurnal').val();
+                    }
                 },
                 columnDefs: [{
                         orderable: false,
@@ -837,6 +863,15 @@
                         next: "Selanjutnya"
                     }
                 }
+            });
+
+            $('#f_agent, #f_pay, #f_jurnal').on('change', function() {
+                $('#kemasan_table').DataTable().ajax.reload();
+            });
+
+            $('#f_pay, #f_jurnal').select2({
+                minimumResultsForSearch: Infinity,
+                width: '100%'
             });
 
             // Buka modal saat click row datatable
@@ -1198,6 +1233,34 @@
                 dropdownParent: $('#modalRekap .modal-content'),
                 ajax: {
                     url: '<?= base_url('outgoinghlp/get_agent') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.uid,
+                                    text: item.nama
+                                };
+                            })
+                        };
+                    }
+                }
+            });
+
+            $('.select2-agent').select2({
+                placeholder: ':: Pilih Agent',
+                allowClear: true,
+                // dropdownParent: $('#modalDetailInvoice .modal-content'),
+                ajax: {
+                    url: '<?= base_url('outgoinghlp/get_agent') ?>',
+                    // url: '<?= base_url('outgoinghlp/get_agent_deposit') ?>',
                     type: 'POST',
                     dataType: 'json',
                     delay: 250,

@@ -2572,7 +2572,7 @@ class Outgoinghlp extends CI_Controller
 				'total_volume'       => $this->input->post('volume'),
 				'total_chargeable'       => $this->input->post('chargeable'),
 			];
-			$this->cb->where('uid', $il->bill_uid)->update('out_list_btb', $data_btb);
+			$this->cb->where('uid', $il->btb_uid)->update('out_list_btb', $data_btb);
 		}
 		$this->cb->where('uid', $uid)->update('out_list', $data);
 

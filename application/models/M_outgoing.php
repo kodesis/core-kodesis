@@ -602,7 +602,7 @@ class M_outgoing extends CI_Model
 		7  => 'b.total',
 		8  => 'b.tanggal_invoice',
 		9  => 'b.jaster',
-		10 => 'b.nama_kasir',
+		10 => 'b.user_kasir',
 	];
 
 	private function _base_query_invoice()
@@ -1738,5 +1738,91 @@ class M_outgoing extends CI_Model
 	public function update_kategori_harga_khusus($data, $uid)
 	{
 		return $this->cb->where('uid', $uid)->update('out_bill_catg_inv_khusus', $data);
+	}
+
+	private $table_outbound_manifest = 'ra_csd';
+
+	private $orderable_outbound_manifest = [
+		0  => 'o.uid',
+		1  => 'o.catg_smu',
+		2  => 'o.smu',
+		3  => 'o.tujuan',
+		4  => 'o.jumlah',
+		5  => 'o.gross',
+		6  => 'o.volume',
+		7  => 'o.nama_pengirim',
+		8  => 'o.post_date',
+		9  => 'o.jaster',
+		10 => 'o.btb_p',
+	];
+
+	// =========================================================================
+	// BASE QUERY BUILDER (Menggabungkan ra_csd dan out_list)
+	// =========================================================================
+	private function _base_query_outbound_manifest()
+	{
+
+		$this->cb->select("
+            o.*, b.pay_status, b.jurnal_status
+        ", FALSE)
+			->from('out_list o')
+			->where('out_p', '1')
+			->join($this->db->database . '.users u', 'u.nip = o.user_in', 'left')
+			->join('out_billing b', 'b.uid = o.bill_uid', 'left');
+
+		// Logic Search
+		if (!empty($_POST['search']['value'])) {
+			$search = $_POST['search']['value'];
+			$this->cb->group_start()
+				->like('o.smu', $search)
+				->or_like('o.tujuan', $search)
+				->or_like('o.jumlah', $search)
+				->or_like('o.gross', $search)
+				->or_like('o.volume', $search)
+				->or_like('o.nama_pengirim', $search)
+				->or_like('o.post_date', $search)
+				->group_end();
+		}
+
+		// Logic Sorting Kolom Datatable
+		$orderCol = $_POST['order'][0]['column'] ?? null;
+		if ($orderCol !== null && !empty($this->orderable_outbound_manifest[$orderCol])) {
+			$col = $this->orderable_outbound_manifest[$orderCol];
+			$dir = ($_POST['order'][0]['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
+			$this->cb->order_by($col, $dir);
+		} else {
+			$this->cb->order_by("o.fly_p", "ASC");
+			$this->cb->order_by("o.uid", "DESC");
+		}
+	}
+
+	// =========================================================================
+	// DATATABLE GET DATA METHOD
+	// =========================================================================
+	public function get_datatables_outbound_manifest()
+	{
+		$this->_base_query_outbound_manifest();
+
+		if (isset($_POST['length']) && $_POST['length'] != -1) {
+			$this->cb->limit(intval($_POST['length']), intval($_POST['start']));
+		}
+
+		return $this->cb->get()->result();
+	}
+
+	// =========================================================================
+	// DATATABLE COUNT METHODS
+	// =========================================================================
+	public function count_filtered_outbound_manifest()
+	{
+		$this->_base_query_outbound_manifest();
+		return $this->cb->get()->num_rows();
+	}
+
+	public function count_all_outbound_manifest()
+	{
+		$this->cb->from('ra_csd c')
+			->join('out_list o', 'c.smu_uid = o.uid', 'inner');
+		return $this->cb->count_all_results();
 	}
 }

@@ -7956,17 +7956,18 @@ class Outgoinghlp extends CI_Controller
 				$post_date_txt = "";
 			}
 
-			$wday1 = substr($r->fly_date, 0, 4);
-			$wday2 = substr($r->fly_date, 4, 2);
-			$wday3 = substr($r->fly_date, 6, 2);
-			$wday4 = substr($r->fly_date, 8, 2);
-			$wday5 = substr($r->fly_date, 10, 2);
-			$wday6 = substr($r->fly_date, 12, 2);
-			$time2 = "$wday4" . ":" . "$wday5";
-			if ($r->fly_date != "") {
+			$fly_date_txt = "";
+			if ($r->fly_date) {
+				$wday1 = substr($r->fly_date, 0, 4);
+				$wday2 = substr($r->fly_date, 4, 2);
+				$wday3 = substr($r->fly_date, 6, 2);
+				$wday4 = substr($r->fly_date, 8, 2);
+				$wday5 = substr($r->fly_date, 10, 2);
+				$wday6 = substr($r->fly_date, 12, 2);
+				$time2 = "$wday4" . ":" . "$wday5";
+				// if ($r->fly_date != "") {
 				$fly_date_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
-			} else {
-				$fly_date_txt = "";
+				// }
 			}
 
 

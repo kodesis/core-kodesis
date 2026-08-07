@@ -11,11 +11,14 @@ class Track extends CI_Controller
     private $kol_smu = 'smu';
 
     /** Tahapan: kode => [kolom petugas, kolom tanggal] */
+    /** kode => [kolom petugas, kolom tanggal, kolom gambar] */
     private $tahap = array(
-        'diterima' => array('in_p',  'in_date'),
-        'btb'      => array('btb_p', 'btb_date'),
-        'invoice'  => array('out_p', 'out_date'),
-        'terbang'  => array('fly_p', 'fly_date'),
+        'diterima' => array('in_p',       'in_date',       null),
+        'btb'      => array('btb_p',      'btb_date',      null),
+        'invoice'  => array('out_p',      'out_date',      null),
+        'manifest' => array('manifest_p', 'manifest_date', 'manifest_image'),
+        'loading'  => array('loading_p',  'loading_date',  'loading_image'),
+        'terbang'  => array('fly_p',      'fly_date',      'fly_image'),
     );
 
     public function __construct()
@@ -56,10 +59,12 @@ class Track extends CI_Controller
                 // --- Riwayat dari kolom *_date / *_p ---
                 $riwayat = array();
                 foreach ($this->tahap as $kode => $k) {
-                    list($kol_p, $kol_d) = $k;
+                    list($kol_p, $kol_d, $kol_img) = $k;
                     $tgl = isset($row[$kol_d]) ? $row[$kol_d] : null;
 
                     if ($this->kosong($tgl)) continue;
+
+                    $foto = ($kol_img && !empty($row[$kol_img])) ? $row[$kol_img] : '';
 
                     $riwayat[] = array(
                         'kode'    => $kode,
@@ -67,6 +72,7 @@ class Track extends CI_Controller
                         'petugas' => isset($row[$kol_p]) ? $row[$kol_p] : '',
                         'lokasi'  => '',
                         'catatan' => '',
+                        'foto'    => $foto,
                     );
                 }
                 $data['riwayat'] = $riwayat;

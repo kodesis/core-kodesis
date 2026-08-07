@@ -16,11 +16,11 @@ $notfound = isset($notfound) ? $notfound : false;
 
 $steps = array(
    array('kode' => 'diterima', 'nama' => 'SMU Diterima',       'ket' => 'Barang masuk gudang, dokumen SMU diterbitkan'),
-   array('kode' => 'btb',  'nama' => 'Timbang &amp; Ukur',     'ket' => 'Verifikasi berat aktual dan dimensi koli'),
    array('kode' => 'btb',     'nama' => 'Screening X-Ray',    'ket' => 'Pemeriksaan sekuriti oleh regulated agent'),
-   array('kode' => 'invoice',   'nama' => 'Build-Up Gudang',    'ket' => 'Barang ditata dan siap dimuat'),
-   array('kode' => 'terbang', 'nama' => 'Manifest Maskapai',  'ket' => 'Dokumen diserahkan dan dimanifestkan'),
-   array('kode' => 'terbang',  'nama' => 'Loading ke Pesawat', 'ket' => 'Koli dimuat ke kompartemen kargo'),
+   array('kode' => 'btb',  'nama' => 'Timbang &amp; Ukur',     'ket' => 'Verifikasi berat aktual dan dimensi koli'),
+   array('kode' => 'manifest',   'nama' => 'Build-Up Gudang',    'ket' => 'Barang ditata dan siap dimuat'),
+   array('kode' => 'manifest', 'nama' => 'Manifest Maskapai',  'ket' => 'Dokumen diserahkan dan dimanifestkan'),
+   array('kode' => 'loading',  'nama' => 'Loading ke Pesawat', 'ket' => 'Koli dimuat ke kompartemen kargo'),
    array('kode' => 'terbang',  'nama' => 'Terbang',            'ket' => 'Pesawat berangkat dari bandara asal'),
 );
 
@@ -355,6 +355,37 @@ if (!function_exists('tr_val')) {
             display: none;
          }
       }
+
+      .tr-foto {
+         display: inline-block;
+         margin-top: 10px;
+         position: relative;
+         border-radius: 6px;
+         overflow: hidden;
+         line-height: 0;
+      }
+
+      .tr-foto img {
+         width: 120px;
+         height: 90px;
+         object-fit: cover;
+         display: block;
+         border: 1px solid #e6e6e6;
+         border-radius: 6px;
+      }
+
+      .tr-foto span {
+         position: absolute;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         background: rgba(4, 38, 63, .75);
+         color: #fff;
+         font-size: 11px;
+         line-height: 1.8;
+         text-align: center;
+         letter-spacing: .5px;
+      }
    </style>
 
 </head>
@@ -499,9 +530,18 @@ if (!function_exists('tr_val')) {
                                     <i class="fa fa-user-o"></i> <?= $d['petugas'] ?>
                                  <?php endif; ?>
                               </div>
+
                               <?php if (!empty($d['catatan'])) : ?>
                                  <p class="tr-ket m-t-5"><em><?= $d['catatan'] ?></em></p>
                               <?php endif; ?>
+
+                              <?php if (!empty($d['foto']) && $s['nama'] != "Manifest Maskapai") : ?>
+                                 <a href="#" class="tr-foto" data-src="<?= base_url($d['foto']) ?>" data-judul="<?= $s['nama'] ?>">
+                                    <img src="<?= base_url($d['foto']) ?>" alt="Bukti <?= $s['nama'] ?>">
+                                    <span><i class="fa fa-search-plus"></i> Lihat foto</span>
+                                 </a>
+                              <?php endif; ?>
+
                            <?php else : ?>
                               <div class="tr-meta" style="color:#b3b3b3;">Menunggu</div>
                            <?php endif; ?>
@@ -553,8 +593,29 @@ if (!function_exists('tr_val')) {
             $('#railFill').css('width', persen + '%');
             $('#railPlane').css('left', persen + '%');
          }, 150);
+
+         $(document).on('click', '.tr-foto', function(e) {
+            e.preventDefault();
+            $('#modalFotoImg').attr('src', $(this).data('src'));
+            $('#modalFotoJudul').text('Bukti ' + $(this).data('judul'));
+            $('#modalFoto').modal('show');
+         });
       });
    </script>
+
+   <div class="modal fade" id="modalFoto" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="modalFotoJudul"></h5>
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+               <img id="modalFotoImg" src="" style="max-width:100%;">
+            </div>
+         </div>
+      </div>
+   </div>
 
 </body>
 

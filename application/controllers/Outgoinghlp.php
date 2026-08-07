@@ -7911,30 +7911,23 @@ class Outgoinghlp extends CI_Controller
 				$i_catg_k = "Belum Dipilih";
 			}
 
-			if ($r->jaster == '1') {
-				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
-			} else {
-				$jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
-			}
-
-
-
-			// <button class='btn btn-sm btn-primary btn-do' data-uid='{$r->uid}'>
-			//     <i class='fa fa-send'> ke DO</i>
-			// </button>
-			// 			$aksi = "
-			//     <button class='btn btn-sm btn-warning btn-edit' data-uid='{$r->uid}'>
-			//         <i class='fa fa-pencil'> Edit</i>
-			//     </button>
-			// ";
-
 			if ($r->fly_p == '1') {
-				$aksi = "
+				$status = "
     <button class='btn btn-sm btn-success'>
         <i class='fa fa-old'><b> Sudah Terbang </b></i>
     </button>";
+				$aksi = "";
+			} else if ($r->loading_p == '1') {
+				$status = "Sudah di Loading";
+				$aksi = "<button type='button' class='btn btn-sm btn-primary btn-update' data-uid='{$r->uid}' data-status='Sudah Terbang' ><i class='fa fa-send'></i> Update Status Terbang</button>";
+			} else if ($r->manifest_p == '1') {
+				$status = "Sudah di Manifest";
+
+				$aksi = "<button type='button' class='btn btn-sm btn-primary btn-update' data-uid='{$r->uid}' data-status='Sudah Loading' ><i class='fa fa-send'></i> Update Status Loading</button>";
 			} else {
-				$aksi = "<button type='button' class='btn btn-sm btn-primary btn-buat-invoice' data-uid='{$r->uid}' ><i class='fa fa-send'></i> Update Status Terbang</button>";
+				$status = "Sudah di Timbang";
+
+				$aksi = "<button type='button' class='btn btn-sm btn-primary btn-update' data-uid='{$r->uid}' data-status='Sudah Manifest' ><i class='fa fa-send'></i> Update Status Manifest</button>";
 			}
 
 			$pesawat = $this->cb->where('nama', $r->pesawat)->get('out_pesawat')->row();
@@ -7962,6 +7955,34 @@ class Outgoinghlp extends CI_Controller
 				$post_date_txt = "";
 			}
 
+			$manifest_date_txt = "";
+			if ($r->manifest_date) {
+				$wday1 = substr($r->manifest_date, 0, 4);
+				$wday2 = substr($r->manifest_date, 4, 2);
+				$wday3 = substr($r->manifest_date, 6, 2);
+				$wday4 = substr($r->manifest_date, 8, 2);
+				$wday5 = substr($r->manifest_date, 10, 2);
+				$wday6 = substr($r->manifest_date, 12, 2);
+				$time2 = "$wday4" . ":" . "$wday5";
+				// if ($r->manifest_date != "") {
+				$manifest_date_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+				// }
+			}
+
+			$loading_date_txt = "";
+			if ($r->loading_date) {
+				$wday1 = substr($r->loading_date, 0, 4);
+				$wday2 = substr($r->loading_date, 4, 2);
+				$wday3 = substr($r->loading_date, 6, 2);
+				$wday4 = substr($r->loading_date, 8, 2);
+				$wday5 = substr($r->loading_date, 10, 2);
+				$wday6 = substr($r->loading_date, 12, 2);
+				$time2 = "$wday4" . ":" . "$wday5";
+				// if ($r->loading_date != "") {
+				$loading_date_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+				// }
+			}
+
 			$fly_date_txt = "";
 			if ($r->fly_date) {
 				$wday1 = substr($r->fly_date, 0, 4);
@@ -7982,7 +8003,10 @@ class Outgoinghlp extends CI_Controller
 				$i_catg_k,
 				$SMU,
 				$r->tujuan,
+				$status,
 				$post_date_txt ?? '-',
+				$manifest_date_txt ?? '-',
+				$loading_date_txt ?? '-',
 				$fly_date_txt ?? '-',
 				// $print,
 				$aksi,
@@ -8002,29 +8026,96 @@ class Outgoinghlp extends CI_Controller
 	}
 
 
-	public function store_outbound_manifest($uid)
+	public function store_outbound_manifest()
 	{
 		$signdate  = time();
 		$post_date = date('YmdHis', $signdate);
 
-		$tanggal_masuk = $this->input->post('tanggal_masuk');
-		$re_in_date_ex = explode('-', $tanggal_masuk);
-		$re_in_date    = isset($re_in_date_ex[0], $re_in_date_ex[1], $re_in_date_ex[2]) ? $re_in_date_ex[0] . $re_in_date_ex[1] . $re_in_date_ex[2] : date('Ymd');
-		$in_date       = $re_in_date . date('His', $signdate);
+		$uid    = $this->input->post('uid');
+		$status = $this->input->post('status');
 
-		$data_list = [
-			'fly_p'      => '1',
-			'fly_date' => $post_date,
+		$map = [
+			'Sudah Manifest' => ['manifest', 'manifest_p', 'manifest_date', 'manifest_image'],
+			'Sudah Loading'  => ['loading',  'loading_p',  'loading_date',  'loading_image'],
+			'Sudah Terbang'  => ['fly',      'fly_p',      'fly_date',      'fly_image'],
 		];
 
-		$this->cb->where('uid', $uid);
-		$update = $this->cb->update('out_list', $data_list);
+		if (!$uid)                             return $this->json(false, 'SMU Tidak Ada.');
+		if (!$status || !isset($map[$status])) return $this->json(false, 'Status Tidak Valid.');
+		if (empty($_FILES['foto']['name']))    return $this->json(false, 'Foto bukti wajib diunggah.');
 
-		if ($update) {
-			$this->session->set_flashdata('message_name', 'SMU Berhasil di Update!');
-		} else {
-			$this->session->set_flashdata('message_error', 'SMU Gagal Di update.');
+		$row = $this->cb->select('smu')->where('uid', $uid)->get('out_list')->row();
+		if (!$row) return $this->json(false, 'Data SMU tidak ditemukan.');
+
+		list($kode, $kol_p, $kol_date, $kol_img) = $map[$status];
+
+		// upload/tracking/990/99012345678_1842/
+		$smu_bersih = preg_replace('/[^A-Za-z0-9]/', '', $row->smu);
+		$prefix     = substr($smu_bersih, 0, 3);
+		$folder     = 'upload/tracking/' . $prefix . '/' . $smu_bersih . '_' . $uid . '/';
+		$folder_abs = FCPATH . $folder;
+
+		if (!is_dir($folder_abs) && !mkdir($folder_abs, 0755, true)) {
+			return $this->json(false, 'Gagal membuat folder penyimpanan.');
 		}
-		redirect('outgoinghlp/daftar_outbound_manifest');
+
+		$this->load->library('upload', [
+			'upload_path'   => $folder_abs,
+			'allowed_types' => 'jpg|jpeg|png|webp',
+			'max_size'      => 5120,
+			'file_name'     => $kode . '_' . $post_date,
+			'overwrite'     => FALSE,
+		]);
+
+		if (!$this->upload->do_upload('foto')) {
+			return $this->json(false, strip_tags($this->upload->display_errors()));
+		}
+
+		$nama_file = $this->upload->data('file_name');
+
+		$this->cb->where('uid', $uid);
+		$update = $this->cb->update('out_list', [
+			$kol_p    => '1',
+			$kol_date => $post_date,
+			$kol_img  => $folder . $nama_file,
+		]);
+
+		if (!$update) {
+			@unlink($folder_abs . $nama_file);
+			return $this->json(false, 'SMU Gagal Di update.');
+		}
+
+		$this->tulis_info($folder_abs, [
+			'uid'     => $uid,
+			'smu'     => $row->smu,
+			'status'  => $status,
+			'kode'    => $kode,
+			'waktu'   => $post_date,
+			'petugas' => $this->session->userdata('nama'),
+			'file'    => $nama_file,
+		]);
+
+		return $this->json(true, 'SMU Berhasil di Update!');
+	}
+
+	private function tulis_info($folder_abs, $entri)
+	{
+		$path = $folder_abs . 'info.json';
+		$info = is_file($path) ? json_decode(file_get_contents($path), true) : [];
+		if (!is_array($info)) $info = [];
+
+		$info['uid'] = $entri['uid'];
+		$info['smu'] = $entri['smu'];
+		unset($entri['uid'], $entri['smu']);
+		$info['riwayat'][] = $entri;
+
+		@file_put_contents($path, json_encode($info, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+	}
+
+	private function json($status, $message)
+	{
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode(['status' => $status, 'message' => $message]));
 	}
 }

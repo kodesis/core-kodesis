@@ -267,7 +267,10 @@
                                                 <th>SMU</th>
                                                 <th>Tujuan</th>
                                                 <th>Post Date</th>
+                                                <th>Manifest Date</th>
+                                                <th>Loading Date</th>
                                                 <th>Fly Date</th>
+                                                <th>Status</th>
                                                 <th>#</th>
                                             </tr>
                                         </thead>
@@ -430,40 +433,199 @@
         });
     </script>
     <script>
-        $(document).on('click', '.btn-buat-invoice', function(e) {
+        $(document).on('click', '.btn-update', function(e) {
             e.preventDefault();
 
             var uid = $(this).data('uid');
+            var status = $(this).data('status');
+            var fotoTerpilih = null;
+            var stream = null;
 
-            // Tampilkan loading SweetAlert terlebih dahulu
-            // Swal.fire({
-            //     title: 'Sedang Memproses...',
-            //     html: 'Mengambil estimasi nomor invoice terbaru dari database...',
-            //     allowOutsideClick: false,
-            //     didOpen: () => {
-            //         Swal.showLoading();
-            //     }
-            // });
-
-            // Ambil nomor invoice berikutnya via AJAX
-
-            // Tampilkan dialog konfirmasi dengan no invoice
             Swal.fire({
                 title: 'Konfirmasi Update Status',
-                html: `Apakah Anda yakin ingin memproses SMU menjadi status "Terbang" ?`,
+                html: `
+            <p>Apakah Anda yakin ingin memproses SMU menjadi status "${status}" ?</p>
+
+            <div class="btn-group btn-group-sm" style="margin-bottom:10px;">
+                <button type="button" class="btn btn-outline-primary active" id="tab-kamera">
+                    <i class="fa fa-camera"></i> Ambil Foto
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="tab-file">
+                    <i class="fa fa-upload"></i> Pilih File
+                </button>
+            </div>
+
+            <div id="area-kamera">
+                <video id="cam-video" autoplay playsinline
+                       style="width:60%; border-radius:6px; background:#000;"></video>
+                <button type="button" class="btn btn-sm btn-dark btn-block" id="btn-jepret"
+                        style="margin-top:8px;">
+                    <i class="fa fa-circle"></i> Jepret
+                </button>
+                <p id="cam-error" style="color:#d33; font-size:13px; display:none; margin-top:8px;"></p>
+            </div>
+
+            <div id="area-file" style="display:none;">
+                <input type="file" id="swal-foto" accept="image/*" class="form-control">
+            </div>
+
+            <div id="area-preview" style="display:none; margin-top:10px;">
+                <img id="swal-preview" style="max-width:60%; border-radius:6px;">
+                <br>
+                <button type="button" class="btn btn-sm btn-link" id="btn-ulang">Ambil ulang</button>
+            </div>
+        `,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, Update Status!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '<?= base_url() ?>outgoinghlp/store_outbound_manifest/' + uid;
+                cancelButtonText: 'Batal',
+                width: 480,
+
+                didOpen: function() {
+                    var video = document.getElementById('cam-video');
+
+                    function bukaKamera() {
+                        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                            return gagalKamera('Browser tidak mendukung kamera. Gunakan Pilih File.');
+                        }
+                        navigator.mediaDevices.getUserMedia({
+                            video: {
+                                facingMode: 'environment'
+                            }
+                        }).then(function(s) {
+                            stream = s;
+                            video.srcObject = s;
+                        }).catch(function() {
+                            gagalKamera('Kamera tidak dapat diakses. Gunakan Pilih File.');
+                        });
+                    }
+
+                    function gagalKamera(pesan) {
+                        $('#cam-error').text(pesan).show();
+                        $('#cam-video, #btn-jepret').hide();
+                    }
+
+                    function tutupKamera() {
+                        if (stream) {
+                            stream.getTracks().forEach(function(t) {
+                                t.stop();
+                            });
+                            stream = null;
+                        }
+                    }
+
+                    function tampilPreview(file) {
+                        fotoTerpilih = file;
+                        $('#swal-preview').attr('src', URL.createObjectURL(file));
+                        $('#area-preview').show();
+                        $('#area-kamera, #area-file').hide();
+                        tutupKamera();
+                    }
+
+                    bukaKamera();
+
+                    $('#tab-kamera').on('click', function() {
+                        $(this).addClass('active');
+                        $('#tab-file').removeClass('active');
+                        $('#area-file, #area-preview').hide();
+                        $('#area-kamera').show();
+                        $('#cam-error').hide();
+                        $('#cam-video, #btn-jepret').show();
+                        fotoTerpilih = null;
+                        bukaKamera();
+                    });
+
+                    $('#tab-file').on('click', function() {
+                        $(this).addClass('active');
+                        $('#tab-kamera').removeClass('active');
+                        $('#area-kamera, #area-preview').hide();
+                        $('#area-file').show();
+                        fotoTerpilih = null;
+                        tutupKamera();
+                    });
+
+                    $('#btn-jepret').on('click', function() {
+                        if (!stream) return;
+                        var canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        canvas.toBlob(function(blob) {
+                            tampilPreview(new File([blob], 'kamera.jpg', {
+                                type: 'image/jpeg'
+                            }));
+                        }, 'image/jpeg', 0.85);
+                    });
+
+                    $('#swal-foto').on('change', function() {
+                        if (this.files[0]) tampilPreview(this.files[0]);
+                    });
+
+                    $('#btn-ulang').on('click', function() {
+                        fotoTerpilih = null;
+                        $('#area-preview').hide();
+                        $('#swal-foto').val('');
+                        $('#tab-kamera').trigger('click');
+                    });
+                },
+
+                willClose: function() {
+                    if (stream) stream.getTracks().forEach(function(t) {
+                        t.stop();
+                    });
+                },
+
+                preConfirm: function() {
+                    if (!fotoTerpilih) {
+                        Swal.showValidationMessage('Foto bukti wajib diambil atau diunggah');
+                        return false;
+                    }
+                    if (fotoTerpilih.size > 5 * 1024 * 1024) {
+                        Swal.showValidationMessage('Ukuran foto maksimal 5 MB');
+                        return false;
+                    }
+                    return fotoTerpilih;
                 }
+
+            }).then(function(result) {
+                if (!result.isConfirmed) return;
+
+                var fd = new FormData();
+                fd.append('uid', uid);
+                fd.append('status', status);
+                fd.append('foto', result.value, result.value.name);
+
+                Swal.fire({
+                    title: 'Mengunggah...',
+                    allowOutsideClick: false,
+                    didOpen: function() {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '<?= base_url() ?>outgoinghlp/store_outbound_manifest',
+                    type: 'POST',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.status) {
+                            Swal.fire('Berhasil', res.message, 'success').then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Gagal', res.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Gagal', 'Terjadi kesalahan pada server.', 'error');
+                    }
+                });
             });
-
-
         });
     </script>
 

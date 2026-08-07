@@ -4151,7 +4151,7 @@ class Outgoinghlp extends CI_Controller
 				$saldo_row = $this->cb
 					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 					->where('agent_uid', $agent_deposit_uid)
-					->where('asal_table', 'out_billing')
+					// ->where('asal_table', 'out_billing')
 					->get('all_topup')
 					->row();
 
@@ -4181,7 +4181,7 @@ class Outgoinghlp extends CI_Controller
 				$saldo_row = $this->cb
 					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 					->where('agent_uid', $agent_deposit_uid)
-					->where('asal_table', 'out_billing')
+					// ->where('asal_table', 'out_billing')
 					->get('all_topup')
 					->row();
 				$cek_saldo = (float)($saldo_row->saldo ?? 0);

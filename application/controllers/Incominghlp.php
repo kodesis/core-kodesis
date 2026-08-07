@@ -607,20 +607,10 @@ class Incominghlp extends CI_Controller
 		$il = $this->cb->where('uid', $uid)->get('in_list')->row();
 
 		$warning = '0';
-		if ($il->btb_uid) {
-			echo ('MASUK');
-			$data_btb = [
-				'total_pieces'        => $this->input->post('jumlah'),
-				'total_gross'       => $this->input->post('gross'),
-				'total_volume'       => $this->input->post('volume'),
-				'total_chargeable'       => $this->input->post('chargeable'),
-			];
-			$this->cb->where('uid', $il->bill_uid)->update('out_list_btb', $data_btb);
-		}
+		
 
-		if ($il->bill_uid || $il->bill_khusus_uid) {
 			if ($il->bill_uid) {
-				$bil = $this->cb->where('uid', $il->bill_uid)->get('out_billing')->row();
+				$bil = $this->cb->where('uid', $il->bill_uid)->get('in_billing')->row();
 
 				if ($bil->pay_status != '1' && $bil->status != '1') {
 					echo ('MASUK');
@@ -630,27 +620,12 @@ class Incominghlp extends CI_Controller
 						'total_volume'       => $this->input->post('volume'),
 						'total_chargeable'       => $this->input->post('chargeable'),
 					];
-					$this->cb->where('uid', $il->bill_uid)->update('out_billing', $data_billing);
+					$this->cb->where('uid', $il->bill_uid)->update('in_billing', $data_billing);
 				} else {
 					$warning = '1';
 				}
-			} else if ($il->bill_khusus_uid) {
-				$bil = $this->cb->where('uid', $il->bill_khusus_uid)->get('out_billing_inv_khusus')->row();
-
-				if ($bil->pay_status != '1' && $bil->status != '1') {
-					echo ('MASUK');
-					$data_billing = [
-						'total_pieces'        => $this->input->post('jumlah'),
-						'total_gross'       => $this->input->post('gross'),
-						'total_volume'       => $this->input->post('volume'),
-						'total_chargeable'       => $this->input->post('chargeable'),
-					];
-					$this->cb->where('uid', $il->bill_uid)->update('out_billing_inv_khusus', $data_billing);
-				} else {
-					$warning = '1';
-				}
-			}
-		}
+			} 
+		
 
 		if ($warning == '1') {
 			$this->session->set_flashdata('message_error', 'Data SMU Incoming berhasil diperbarui, Tapi Data Billing Tidak di perbarui karena sudah Bayar Invoice.');
@@ -705,136 +680,10 @@ class Incominghlp extends CI_Controller
 		echo json_encode(['status' => 'success']);
 	}
 
-	public function get_next_no()
-	{
-		// Query untuk mencari nilai MAX dari kolom 'no' di tabel out_list_btb
-		$this->cb->select('MAX(CAST(no AS UNSIGNED)) as max_no');
-		$query = $this->cb->get('out_list_btb');
-		$row = $query->row();
-
-		// Jika data masih kosong, nomor BTB dimulai dari 1
-		$next_no_int = (!empty($row->max_no)) ? ($row->max_no + 1) : 1;
-
-		// Pad angka dengan nol di depan hingga panjangnya 6 digit (contoh: 2 -> 000002)
-		// Silakan ubah angka 6 di bawah jika panjang digit nomor BTB Anda berbeda
-		$next_no = str_pad($next_no_int, 6, "0", STR_PAD_LEFT);
-
-		return $this->output
-			->set_content_type('application/json')
-			->set_output(json_encode([
-				'status' => 'success',
-				'next_no' => $next_no
-			]));
-	}
-
 	/**
 	 * Memproses satu data ke BTB menggunakan AJAX POST
 	 */
-	public function proses_single_btb()
-	{
-		// Ambil data UID yang dikirimkan via AJAX POST
-		$q_uid = $this->input->post('uid');
-
-		if (empty($q_uid)) {
-			return $this->output
-				->set_content_type('application/json')
-				->set_status_header(400)
-				->set_output(json_encode([
-					'status' => 'error',
-					'message' => 'Parameter UID tidak ditemukan.'
-				]));
-		}
-
-		// Mengambil user ID yang aktif saat ini dari session
-		$now_uid = $this->session->userdata('nip');
-
-		if (empty($now_uid)) {
-			return $this->output
-				->set_content_type('application/json')
-				->set_output(json_encode([
-					'status' => 'error',
-					'message' => 'Sesi User UID telah habis. Silakan login kembali.'
-				]));
-		}
-
-		// Membuat timestamp format YmdHis (contoh: 20261024143045)
-		$post_dates = date("YmdHis");
-
-		$btb_date_input = $this->input->post('btb_date');
-		$tanggal = date("Ymd", strtotime($btb_date_input)) . date("His");
-
-		// Mulai database transaction untuk menjamin keutuhan data
-		$this->cb->trans_start();
-
-		// 1. CARI & HITUNG NOMOR BTB TERBARU (Secara realtime di dalam Transaction agar aman dari race condition)
-		$this->cb->select('MAX(CAST(no AS UNSIGNED)) as max_no');
-		$query_max = $this->cb->get('out_list_btb');
-		$row_max = $query_max->row();
-		$btb_no_int = (!empty($row_max->max_no)) ? ($row_max->max_no + 1) : 1;
-
-		// Pad angka hasil kalkulasi agar tetap tersimpan dengan format nol di depan (misal: 000002)
-		$btb_no = str_pad($btb_no_int, 6, "0", STR_PAD_LEFT);
-
-		// 2. TAMBAHKAN HEADER BTB BARU (INSERT INTO out_list_btb)
-		$data_insert_btb = [
-			'user'      => $now_uid,
-			// 'post_date_ke_btb' => $post_dates,
-			'no'        => $btb_no,
-			'tanggal'   => $tanggal,
-		];
-		$this->cb->insert('out_list_btb', $data_insert_btb);
-
-		// Ambil btb_uid yang baru saja digenerate oleh database
-		$btb_uid = $this->cb->insert_id();
-
-		// 3. UPDATE DATA TUNGGAL PADA out_list MENGGUNAKAN btb_uid YANG BARU SAJA DI-INSERT
-		$data_update_list = [
-			'btb_date' => $post_dates,
-			'btb_p'    => '1',
-			'btb_uid'  => $btb_uid,
-			'user_btb' => $now_uid
-		];
-		$this->cb->where('uid', $q_uid);
-		$this->cb->update('out_list', $data_update_list);
-
-		// 4. HITUNG TOTAL BARU UNTUK BTB_UID TERKAIT (SUM)
-		$this->cb->select('SUM(jumlah) as total_qty, SUM(gross) as total_gross, SUM(chargeable) as total_chargeable, SUM(volume) as total_volume');
-		$this->cb->where('btb_uid', $btb_uid);
-		$query_sum = $this->cb->get('out_list');
-		$totals = $query_sum->row();
-
-		// 5. UPDATE SUMMARY KE TABEL out_list_btb YANG BARU SAJA KITA BUAT DI ATAS
-		$data_summary = [
-			'total_pieces'     => $totals->total_qty ?? 0,
-			'total_gross'      => $totals->total_gross ?? 0,
-			'total_volume'     => $totals->total_volume ?? 0,
-			'total_chargeable' => $totals->total_chargeable ?? 0
-		];
-		$this->cb->where('uid', $btb_uid);
-		$this->cb->update('out_list_btb', $data_summary);
-
-		// Selesaikan transaction
-		$this->cb->trans_complete();
-
-		// Cek apakah seluruh operasi database sukses tanpa error
-		if ($this->cb->trans_status() === FALSE) {
-			return $this->output
-				->set_content_type('application/json')
-				->set_output(json_encode([
-					'status' => 'error',
-					'message' => 'Terjadi kesalahan sistem saat memperbarui data BTB.'
-				]));
-		}
-
-		// Berikan respon sukses ke AJAX frontend dengan info nomor BTB yang berhasil dibuat
-		return $this->output
-			->set_content_type('application/json')
-			->set_output(json_encode([
-				'status' => 'success',
-				'message' => 'Data berhasil dibuat dan diproses ke BTB Baru dengan No: ' . $btb_no
-			]));
-	}
-
+	
 	public function rekap_kemasan_smu()
 	{
 		$dari   = $this->input->post('dari');
@@ -1721,7 +1570,6 @@ class Incominghlp extends CI_Controller
 				$saldo_row = $this->cb
 					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 					->where('agent_uid', $agent_deposit_uid)
-					// ->where('asal_table', 'out_billing')
 					->get('all_topup')
 					->row();
 				$cek_saldo = (float)($saldo_row->saldo ?? 0);

@@ -43,6 +43,9 @@
 
                     <button class="btn btn-full btn-l font-600 font-13 gradient-highlight mt-4 rounded-s w-100" id="btn-login">Sign In</button>
 
+                    <p class="mt-3 text-center">
+                        Lacak status pengiriman SMU? <a href="<?= base_url('track/') ?>" style="color: #004e81;">Klik di sini untuk detail</a>
+                    </p>
                 </form>
 
             </div>

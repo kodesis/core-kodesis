@@ -4402,6 +4402,8 @@ class Outgoinghlp extends CI_Controller
 		$dari      = $this->input->post('dari');
 		$sampai    = $this->input->post('sampai');
 		$pesawat  = $this->input->post('pesawat');
+		$pesawat = is_array($pesawat) ? array_filter($pesawat) : array();
+
 		$agent  = $this->input->post('agent');
 		$kasir     = $this->input->post('kasir');
 		$pay_methode = $this->input->post('pay_methode');
@@ -4416,13 +4418,10 @@ class Outgoinghlp extends CI_Controller
 		$this->cb->where('b.status', '1');
 		$this->cb->where("tanggal_invoice BETWEEN '$start_date' AND '$end_date'", NULL, FALSE);
 
-		if ($pesawat == "GARUDA" || $pesawat == "CITILINK") {
-			$this->cb->where_in('l.pesawat', ['GARUDA', 'CITILINK']);
-		} else {
-			if ($pesawat) {
-				$this->cb->where('l.pesawat', $pesawat);
-			}
+		if (!empty($pesawat)) {
+			$this->cb->where_in('l.pesawat', $pesawat);
 		}
+
 		if ($agent) {
 			$this->cb->where('b.agent_uid', $agent);
 		}
@@ -4444,6 +4443,8 @@ class Outgoinghlp extends CI_Controller
 		$this->cb->order_by('no_invoice, tanggal_invoice', 'ASC');
 		$results = $this->cb->get()->result_array();
 
+		// var_dump($results);
+		// exit();
 		// Load PhpSpreadsheet
 		require APPPATH . 'third_party/autoload.php';
 

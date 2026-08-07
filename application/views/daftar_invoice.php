@@ -607,8 +607,10 @@
                                 <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Pesawat</label>
-                                        <select name="pesawat" id="rekap_pesawat" class="form-control select2-pesawat-rekap">
+                                        <!-- <select name="pesawat" id="rekap_pesawat" class="form-control select2-pesawat-rekap">
                                             <option value="">:: Pilih Pesawat</option>
+                                        </select> -->
+                                        <select name="pesawat[]" id="rekap_pesawat" class="form-control select2-pesawat-rekap" multiple>
                                         </select>
                                     </div>
                                 </div>
@@ -1217,9 +1219,36 @@
                 }
             });
 
+            // $('.select2-pesawat-rekap').select2({
+            //     placeholder: ':: Pilih Pesawat',
+            //     allowClear: true,
+            //     dropdownParent: $('#modalRekap .modal-content'),
+            //     ajax: {
+            //         url: '<?= base_url('outgoinghlp/get_pesawat') ?>',
+            //         type: 'POST',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function(params) {
+            //             return {
+            //                 search: params.term
+            //             };
+            //         },
+            //         processResults: function(data) {
+            //             return {
+            //                 results: $.map(data, function(item) {
+            //                     return {
+            //                         id: item.nama,
+            //                         text: item.nama
+            //                     };
+            //                 })
+            //             };
+            //         }
+            //     }
+            // });
+
             $('.select2-pesawat-rekap').select2({
                 placeholder: ':: Pilih Pesawat',
-                allowClear: true,
+                multiple: true,
                 dropdownParent: $('#modalRekap .modal-content'),
                 ajax: {
                     url: '<?= base_url('outgoinghlp/get_pesawat') ?>',

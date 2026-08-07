@@ -1676,6 +1676,7 @@ class Incominghlp extends CI_Controller
 			redirect('incominghlp/daftar_invoice');
 			return;
 		}
+		$msg = '';
 
 		// 3. Cegah pembayaran ganda & invoice yang sudah dibatalkan
 		if ($billing->pay_status == '1' && $billing->jurnal_status == '0') {
@@ -1689,7 +1690,8 @@ class Incominghlp extends CI_Controller
 
 				$coa_debit = $agent_deposit->coa_sbb;
 
-				$saldo_row = $this->cb->select('SUM(topup_saldo) - SUM(usage_saldo) as saldo')
+				$saldo_row = $this->cb
+					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 					->where('agent_uid', $agent_deposit_uid)
 					->where('asal_table', 'in_billing')
 					->get('all_topup')
@@ -1715,6 +1717,18 @@ class Incominghlp extends CI_Controller
 				} else {
 					$this->cb->insert('all_topup', $data_topup);
 				}
+
+				$saldo_row = $this->cb
+					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
+					->where('agent_uid', $agent_deposit_uid)
+					// ->where('asal_table', 'out_billing')
+					->get('all_topup')
+					->row();
+				$cek_saldo = (float)($saldo_row->saldo ?? 0);
+
+				$msg = $cek_saldo > 5000000
+					? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
+					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
 			} else if ($pay_methode == '3' || $pay_methode == '4') {
 				$coa_debit = $coa_bank;
 			} else if ($pay_methode == '6') {
@@ -1757,7 +1771,7 @@ class Incominghlp extends CI_Controller
 				'pay_methode'       => $pay_methode,
 			];
 			$this->cb->where('uid', $billing->uid)->update('in_billing', $update_data);
-			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar.');
+			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar.' . $msg);
 			redirect('incominghlp/daftar_invoice');
 			return;
 		} else {

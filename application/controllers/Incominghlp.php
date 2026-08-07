@@ -1933,8 +1933,12 @@ class Incominghlp extends CI_Controller
 		$this->cb->join('in_list l', 'l.bill_uid = b.uid', 'left');
 		$this->cb->where("b.tanggal_invoice BETWEEN '$start_date' AND '$end_date'", NULL, FALSE);
 
-		if ($pesawat) {
-			$this->cb->where('l.pesawat', $pesawat);
+		if ($pesawat == "GARUDA" || $pesawat == "CITILINK") {
+			$this->cb->where_in('l.pesawat', ['GARUDA', 'CITILINK']);
+		} else {
+			if ($pesawat) {
+				$this->cb->where('l.pesawat', $pesawat);
+			}
 		}
 		if ($kasir) {
 			$this->cb->where('b.user_kasir', $kasir);

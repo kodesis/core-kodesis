@@ -602,7 +602,7 @@ class M_outgoing extends CI_Model
 		7  => 'b.total',
 		8  => 'b.tanggal_invoice',
 		9  => 'b.jaster',
-		10 => 'b.user_kasir',
+		10 => 'nama_kasir',
 	];
 
 	private function _base_query_invoice()
@@ -645,7 +645,7 @@ class M_outgoing extends CI_Model
 				->or_like('b.total', $search)
 				->or_like('b.tanggal_invoice', $search)
 				->or_like('b.jaster', $search)
-				->or_like('b.nama_kasir', $search)
+				->or_like('nama_kasir', $search)
 				// ->or_like('o.koli_smu', $search)
 				// ->or_like('o.gross_smu', $search)
 				->group_end();

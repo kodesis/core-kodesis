@@ -523,7 +523,7 @@ class M_outgoing extends CI_Model
 	private function _base_query_btb()
 	{
 		$this->cb->select("
-        o.smu, o.nama_agent, o.out_p, o.out_date, o.pesawat, b.*, u.nama
+        o.smu, o.nama_agent, o.out_p, o.out_date, o.pesawat, b.*, u.nama, o.jaster as is_jaster
     ", FALSE)
 			->from('out_list_btb b')
 			->join('out_list o',  'o.btb_uid = b.uid',  'left')

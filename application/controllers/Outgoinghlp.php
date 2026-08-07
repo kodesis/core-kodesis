@@ -3104,6 +3104,12 @@ class Outgoinghlp extends CI_Controller
 				$SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
 			}
 
+			if ($r->is_jaster == '1') {
+				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
+			} else {
+				$jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
+			}
+
 			$data[] = [
 				$r->no,
 				$SMU,
@@ -3111,6 +3117,7 @@ class Outgoinghlp extends CI_Controller
 				$r->total_pieces ?? '-',
 				$r->total_gross ?? '-',
 				$r->total_volume ?? '-',
+				$jaster,
 				$tanggal_txt ?? '-',
 				$tanggal_txt_inv ?? '-',
 				$r->nama ?? '-',

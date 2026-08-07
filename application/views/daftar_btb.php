@@ -287,6 +287,7 @@
                                                 <th>Pieces</th>
                                                 <th>Berat</th>
                                                 <th>Volume</th>
+                                                <th>Jaster</th>
                                                 <th>Tanggal</th>
                                                 <th>Tanggal Invoice</th>
                                                 <th>Acceptance</th>

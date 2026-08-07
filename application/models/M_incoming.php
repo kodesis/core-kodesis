@@ -41,7 +41,7 @@ class M_incoming extends CI_Model
 		3  => 'o.asal',
 		4  => 'o.jumlah',
 		5  => 'o.gross',
-		6  => 'o.user_in',
+		6  => 'u.nama',
 		7  => 'o.post_date',
 	];
 
@@ -65,7 +65,7 @@ class M_incoming extends CI_Model
 				->or_like('o.asal', $search)
 				->or_like('o.jumlah', $search)
 				->or_like('o.gross', $search)
-				->or_like('o.user_name', $search)
+				->or_like('u.nama', $search)
 				->or_like('o.post_date', $search)
 				->group_end();
 		}

@@ -1738,13 +1738,13 @@ class Incominghlp extends CI_Controller
 
 			$nominal = $this->convertToNumberWithComma($billing->grand_total);
 
-			if ($billing->pay_methode == '1') {
+			if ($pay_methode == '1') {
 				$metode_agent = "DEPOSIT";
-			} else if ($billing->pay_methode == '3') {
+			} else if ($pay_methode == '3') {
 				$metode_agent = "TRANSFER";
-			} else if ($billing->pay_methode == '4') {
+			} else if ($pay_methode == '4') {
 				$metode_agent = "TAGIHAN";
-			} else if ($billing->pay_methode == '6') {
+			} else if ($pay_methode == '6') {
 				$metode_agent = "QRIS";
 			}
 

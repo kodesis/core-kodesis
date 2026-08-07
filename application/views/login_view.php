@@ -92,14 +92,16 @@
 
                </div>
 
-               <div class="container-login100-form-btn m-t-32 ">
+               <div class="container-login100-form-btn m-t-20 ">
+                  <div class="d-flex flex-column align-items-center">
+                     <button class="login100-form-btn">
+                        Login
+                     </button>
 
-                  <button class="login100-form-btn">
-
-                     &nbsp;&nbsp;Login&nbsp;&nbsp;
-
-                  </button>&nbsp;
-
+                     <p class="mt-3 text-center">
+                        Lacak status pengiriman SMU? <a href="<?= base_url('track/') ?>" style="color: #004e81;">Klik di sini untuk detail</a>
+                     </p>
+                  </div>
             </form>
 
             <!--button class="login100-form-btn" onclick="window.location.replace('<?php echo base_url(); ?>login/register_view');">

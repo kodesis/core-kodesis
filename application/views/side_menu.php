@@ -213,6 +213,11 @@
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '906') !== false) { ?>
+						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_outbound_manifest">Outbound Manifest</a></li>
+						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li> -->
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '906') !== false) { ?>
 						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_deposit">Daftar Deposit</a></li> -->
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');

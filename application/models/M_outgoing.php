@@ -1747,13 +1747,9 @@ class M_outgoing extends CI_Model
 		1  => 'o.catg_smu',
 		2  => 'o.smu',
 		3  => 'o.tujuan',
-		4  => 'o.jumlah',
-		5  => 'o.gross',
-		6  => 'o.volume',
-		7  => 'o.nama_pengirim',
-		8  => 'o.post_date',
-		9  => 'o.jaster',
-		10 => 'o.btb_p',
+		4  => 'o.post_date',
+		5  => 'o.fly_date',
+		6 => 'o.fly_p',
 	];
 
 	// =========================================================================
@@ -1766,7 +1762,7 @@ class M_outgoing extends CI_Model
             o.*, b.pay_status, b.jurnal_status
         ", FALSE)
 			->from('out_list o')
-			->where('out_p', '1')
+			->where('b.jurnal_status', '1')
 			->join($this->db->database . '.users u', 'u.nip = o.user_in', 'left')
 			->join('out_billing b', 'b.uid = o.bill_uid', 'left');
 

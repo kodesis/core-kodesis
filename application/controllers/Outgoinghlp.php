@@ -7922,40 +7922,13 @@ class Outgoinghlp extends CI_Controller
 			//     </button>
 			// ";
 
-			if ($r->smu_lama) {
+			if ($r->fly_p == '1') {
 				$aksi = "
-    <button class='btn btn-sm btn-secondary'>
-        <i class='fa fa-old'><b> SMU Lama </b></i>
-    </button>
-";
-			} else if ($r->volume == '0' || $r->volume == '') {
-				$aksi = "
-    <button class='btn btn-sm btn-danger'>
-        <i class='fa fa-times'> Volume Tidak Boleh 0</i>
-    </button>
-";
+    <button class='btn btn-sm btn-success'>
+        <i class='fa fa-old'><b> Sudah Terbang </b></i>
+    </button>";
 			} else {
-				if ($r->fly_p == '1') {
-					$aksi = "
-    <button class='btn btn-sm btn-success' >
-        <i class='fa fa-check'> Sudah Berangkat</i>
-    </button>";
-				} else if ($r->out_p == '1') {
-					$aksi = "
-    <button class='btn btn-sm btn-success' >
-        <i class='fa fa-check'> Sudah Ter Invoice</i>
-    </button>";
-				} else if ($r->btb_p == '1') {
-					$aksi = "
-    <button class='btn btn-sm btn-success' >
-        <i class='fa fa-check'> Sudah di BTB</i>
-    </button>";
-				} else {
-					$aksi = "
-    <button class='btn btn-sm btn-primary btn-btb' data-uid='{$r->uid}' data-smu='{$r->smu}'>
-        <i class='fa fa-send'> ke BTB</i>
-    </button>";
-				}
+				$aksi = "<button type='button' class='btn btn-sm btn-primary btn-buat-invoice' data-uid='{$r->uid}' ><i class='fa fa-send'></i> Update Status Terbang</button>";
 			}
 
 			$pesawat = $this->cb->where('nama', $r->pesawat)->get('out_pesawat')->row();
@@ -7983,18 +7956,27 @@ class Outgoinghlp extends CI_Controller
 				$post_date_txt = "";
 			}
 
+			$wday1 = substr($r->fly_date, 0, 4);
+			$wday2 = substr($r->fly_date, 4, 2);
+			$wday3 = substr($r->fly_date, 6, 2);
+			$wday4 = substr($r->fly_date, 8, 2);
+			$wday5 = substr($r->fly_date, 10, 2);
+			$wday6 = substr($r->fly_date, 12, 2);
+			$time2 = "$wday4" . ":" . "$wday5";
+			if ($r->fly_date != "") {
+				$fly_date_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+			} else {
+				$fly_date_txt = "";
+			}
+
 
 			$data[] = [
 				$r->uid,
 				$i_catg_k,
 				$SMU,
 				$r->tujuan,
-				$r->jumlah ?? '-',
-				$r->gross ?? '-',
-				$r->volume ?? '-',
-				$r->nama_pengirim ?? '-',
 				$post_date_txt ?? '-',
-				$jaster,
+				$fly_date_txt ?? '-',
 				// $print,
 				$aksi,
 			];
@@ -8013,7 +7995,7 @@ class Outgoinghlp extends CI_Controller
 	}
 
 
-	public function store_outbound_manifest()
+	public function store_outbound_manifest($uid)
 	{
 		$signdate  = time();
 		$post_date = date('YmdHis', $signdate);
@@ -8023,126 +8005,19 @@ class Outgoinghlp extends CI_Controller
 		$re_in_date    = isset($re_in_date_ex[0], $re_in_date_ex[1], $re_in_date_ex[2]) ? $re_in_date_ex[0] . $re_in_date_ex[1] . $re_in_date_ex[2] : date('Ymd');
 		$in_date       = $re_in_date . date('His', $signdate);
 
-		$tujuan_row = $this->cb->where('uid', $this->input->post('tujuan'))->get('out_tujuan')->row();
-		$tujuan = $tujuan_row->kode_kota ?? '';
-
-		// $pengirim = $this->cb->where('uid', $this->input->post('nama_pengirim'))->get('out_pengirim')->row();
-		// $pengirim_uid = $pengirim->uid ?? null;
-		// $pengirim_nama = $pengirim->nama ?? '';
-		// $pengirim_alamat = $pengirim->alamat ?? '';
-		// $pengirim_telepon = $pengirim->telepon ?? '';
-
-		$nama_pengirim    = preg_replace('/\s+/', ' ', trim($this->input->post('nama_pengirim', TRUE)));
-		$telepon_pengirim = trim($this->input->post('telepon_pengirim', TRUE));
-		$alamat_pengirim  = trim($this->input->post('alamat_pengirim', TRUE));
-
-		$pengirim = $this->cb->where('nama', $nama_pengirim)->get('out_pengirim')->row();
-
-		if ($pengirim) {
-			$pengirim_uid     = $pengirim->uid;
-			$pengirim_nama    = $pengirim->nama;
-			$pengirim_alamat  = $pengirim->alamat;
-			$pengirim_telepon = $pengirim->telepon;
-		} else {
-			$this->cb->insert('out_pengirim', [
-				'nama'    => $nama_pengirim,
-				'alamat'  => $alamat_pengirim,
-				'telepon' => $telepon_pengirim,
-			]);
-
-			$pengirim_uid     = $this->cb->insert_id();   // ← ambil di sini
-			$pengirim_nama    = $nama_pengirim;
-			$pengirim_alamat  = $alamat_pengirim;
-			$pengirim_telepon = $telepon_pengirim;
-		}
-
-		$agent = $this->cb->where('uid', $this->input->post('nama_agent'))->get('out_agent')->row();
-		$agent_uid = $agent->uid ?? null;
-		$agent_nama = $agent->nama ?? '';
-		$agent_alamat = $agent->alamat ?? '';
-		$agent_telepon = $agent->telepon ?? '';
-		$uid  = $this->input->post('uid');
-
-		$data = [
-			'branch_code'      => $this->session->userdata('kode_cabang'),
-			'post_date'        => $post_date,
-			'smu'              => $this->input->post('smu'),
-			'tanggal_smu'      => $this->input->post('tanggal_smu'),
-			'tujuan'           => $tujuan,
-			'tujuan_uid'       => $this->input->post('tujuan'),
-			'no_pesawat'       => $this->input->post('no_pesawat'),
-			'pesawat'          => $this->input->post('pesawat'),
-			'tanggal_terbang'  => $this->input->post('tanggal_terbang'),
-			'time_terbang'     => $this->input->post('time_terbang'),
-			'pengirim_uid'     => $pengirim_uid,
-			'nama_pengirim'    => $pengirim_nama,
-			'telepon_pengirim' => $pengirim_telepon,
-			'alamat_pengirim'  => $pengirim_alamat,
-			'nama_penerima'    => $this->input->post('nama_penerima'),
-			'telepon_penerima' => $this->input->post('telepon_penerima'),
-			'alamat_penerima'  => $this->input->post('alamat_penerima'),
-			'agent_uid'        => $agent_uid,
-			'nama_agent'       => $agent_nama,
-			'alamat_agent'     => $agent_alamat,
-			'telepon_agent'    => $agent_telepon,
-			'jaster'           => $this->input->post('jaster') ? '1' : '0',
-
-			// Mengaktifkan kembali kolom utama agar terisi ke database
-			'jumlah'           => $this->input->post('jumlah'),
-			'gross'            => $this->input->post('gross'),
-			'volume'           => $this->input->post('volume'),
-			'chargeable'       => $this->input->post('chargeable'),
-			'komoditi'         => strtoupper($this->input->post('komoditi')),
-			'in_date'          => $in_date,
-
-			'user_in'          => $this->session->userdata('nip'),
-			'status'           => '1',
-			'in_p'             => '1',
-			'jns_barang'       => $this->input->post('jns_barang'),
-			'catg_smu'         => $this->input->post('catg_smu'),
+		$data_list = [
+			'fly_p'      => '1',
+			'fly_date' => $post_date,
 		];
 
-		$cek_smu = $this->cb->where([
-			'smu'          => $this->input->post('smu'),
-		])->get('out_list')->num_rows();
+		$this->cb->where('uid', $uid);
+		$update = $this->cb->update('out_list', $data_list);
 
-		if ($cek_smu > 0) {
-			$this->session->set_flashdata('message_error', 'SMU sudah ada di database.');
-			redirect('outgoinghlp/daftar_kemasan_smu');
-			return;
+		if ($update) {
+			$this->session->set_flashdata('message_name', 'SMU Berhasil di Update!');
+		} else {
+			$this->session->set_flashdata('message_error', 'SMU Gagal Di update.');
 		}
-
-		$this->cb->insert('out_list', $data);
-		$inserted_uid = $this->cb->insert_id(); // Dapatkan UID record utama yang baru saja tersimpan
-
-		// Menyimpan data dimensi dinamis dari form tambah modal ke out_dimensi
-		$dim_panjang = $this->input->post('dim_panjang');
-		if (!empty($dim_panjang) && is_array($dim_panjang)) {
-			$dim_lebar        = $this->input->post('dim_lebar');
-			$dim_tinggi       = $this->input->post('dim_tinggi');
-			$dim_pieces       = $this->input->post('dim_pieces');
-			$dim_dimensi      = $this->input->post('dim_dimensi');
-			$dim_volume       = $this->input->post('dim_volume');
-			$dim_total_volume = $this->input->post('dim_total_volume');
-
-			for ($i = 0; $i < count($dim_panjang); $i++) {
-				// Simpan baris hanya jika nilai panjang valid (> 0)
-				if (floatval($dim_panjang[$i]) > 0) {
-					$this->cb->insert('out_dimensi', [
-						'uid_list'     => $inserted_uid,
-						'panjang'      => floatval($dim_panjang[$i]),
-						'lebar'        => floatval($dim_lebar[$i]),
-						'tinggi'       => floatval($dim_tinggi[$i]),
-						'pieces'       => intval($dim_pieces[$i]),
-						'dimensi'      => $dim_dimensi[$i],
-						'volume'       => floatval($dim_volume[$i]),
-						'total_volume' => floatval($dim_total_volume[$i]),
-					]);
-				}
-			}
-		}
-
-		$this->session->set_flashdata('message_name', 'SMU berhasil ditambahkan.');
-		redirect('outgoinghlp/daftar_kemasan_smu');
+		redirect('outgoinghlp/daftar_outbound_manifest');
 	}
 }

@@ -514,10 +514,11 @@ class M_outgoing extends CI_Model
 		3  => 'b.total_pieces',
 		4  => 'b.total_gross',
 		5  => 'b.total_volume',
-		6  => 'b.tanggal',
-		7 => 'o.out_date',
-		8  => 'u.nama',
-		9  => 'o.out_p',
+		6  => 'o.jaster',
+		7 => 'b.tanggal',
+		8 => 'o.out_date',
+		9  => 'u.nama',
+		10  => 'o.out_p',
 	];
 
 	private function _base_query_btb()

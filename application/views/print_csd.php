@@ -112,7 +112,7 @@
         }
 
         .header-right table td {
-            border: 1px solid #000;
+            /* border: 1px solid #000; */
             padding: 4px 6px;
             font-size: 9pt;
         }
@@ -160,11 +160,17 @@
         }
 
         .status-box {
-            border-top: 1px solid #000;
+            /* border-top: 1px solid #000; */
         }
 
         .status-box table td {
-            border: 1px solid #000;
+            
+            /* border-top:none; */
+            border-left:none;
+            border-right:none;
+            /* border-bottom:none; */
+
+            /* border: 1px solid #000; */
             padding: 4px 6px;
             font-size: 9pt;
         }
@@ -269,6 +275,7 @@
             align-items: flex-end;
             justify-content: flex-end;
         }
+        
     </style>
 </head>
 
@@ -291,20 +298,20 @@
                         </div>
                         <div class="header-right">
                             <table>
-                                <tr>
-                                    <td class="label-col">Nomor SMU / AWB<br><span class="sublabel">(Number of Airway Bill)</span></td>
-                                    <td class="colon-col">:</td>
-                                    <td class="right"><b class="data-value"><?= $row->smu ?></b></td>
+                                <tr >
+                                    <td class="label-col" style="border-top:none; border-left:none;">Nomor SMU / AWB<br><span class="sublabel">(Number of Airway Bill)</span></td>
+                                    <td class="colon-col" style="border-top:none;">:</td>
+                                    <td class="right" style="border-top:none; border-right:none;"><b class="data-value"><?= $row->smu ?></b></td>
                                 </tr>
                                 <tr>
-                                    <td class="label-col">Nomor Penerbangan</td>
-                                    <td class="colon-col">:</td>
-                                    <td class="right"><b class="data-value"><?= $row->no_pesawat ?></b></td>
+                                    <td class="label-col" style="border-top:none; border-left:none;">Nomor Penerbangan</td>
+                                    <td class="colon-col" >:</td>
+                                    <td class="right" style="border-top:none; border-right:none;"><b class="data-value"><?= $row->no_pesawat ?></b></td>
                                 </tr>
                                 <tr>
-                                    <td class="label-col">Tanggal Penerbangan</td>
-                                    <td class="colon-col">:</td>
-                                    <td class="right data-value"><?= $row->tanggal_terbang ?></td>
+                                    <td class="label-col" style="border-bottom:none; border-left:none;">Tanggal Penerbangan</td>
+                                    <td class="colon-col"style="border-bottom:none;">:</td>
+                                    <td class="right data-value" style="border-bottom:none; border-right:none;"><?= $row->tanggal_terbang ?></td>
                                 </tr>
                             </table>
                         </div>
@@ -383,11 +390,11 @@
                                 <table>
                                     <tr>
                                         <td class="checkbox-cell"><?= $check_spx ?></td>
-                                        <td><i>Passenger Aircraft (SPX)</i></td>
+                                        <td style="border-left: 1px solid #000;"><i>Passenger Aircraft (SPX)</i></td>
                                     </tr>
                                     <tr>
                                         <td class="checkbox-cell"><?= $check_sco ?></td>
-                                        <td><i>Cargo Aircraft Only (SCO)</i></td>
+                                        <td style="border-left: 1px solid #000;"><i>Cargo Aircraft Only (SCO)</i></td>
                                     </tr>
                                 </table>
                             </div>
@@ -441,6 +448,10 @@
                             <div>Status Keamanan diterbitkan oleh<br><i>Security Status Issued By</i></div>
                             <div style="margin-top:4px;">Nama Petugas Pengawas Keamanan Penerbangan<br><i>Name of Supervisor Aviation Security</i></div>
                             <div class="sig-name"><?= $row->avsec_nama ?></div>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
                         </div>
                         <div class="sig-col">
                             <div>Status Keamanan Diterbitkan pada<br><i>Security Status issued on</i></div>

@@ -266,7 +266,7 @@
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4">
-                                    <select id="f_agent" class="form-control select2-filter">
+                                    <select id="f_agent" class="form-control select2-agent">
                                         <option value="">:: Semua Agent</option>
                                     </select>
                                 </div>

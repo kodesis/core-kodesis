@@ -1135,7 +1135,7 @@ class M_outgoing extends CI_Model
 		1  => 'a.nama',
 		2  => 'a.alamat',
 		3  => 'a.telepon',
-		5  => 'u.user_name',
+		5  => 'u.nama',
 		6  => 'a.post_date',
 		7  => 'a.status',
 	];
@@ -1158,7 +1158,7 @@ class M_outgoing extends CI_Model
 				->or_like('a.nama', $search)
 				->or_like('a.alamat', $search)
 				->or_like('a.telepon', $search)
-				->or_like('u.user_name', $search)
+				->or_like('u.nama', $search)
 				->or_like('a.post_date', $search)
 				->or_like('a.status', $search)
 				// ->or_like('o.koli_smu', $search)

@@ -296,6 +296,7 @@
                                                 <th>Kategori SMU</th>
                                                 <th>SMU</th>
                                                 <th>Agent</th>
+                                                <th>Pengirim</th>
                                                 <th>Koli</th>
                                                 <th>Chargeable</th>
                                                 <th>Total</th>

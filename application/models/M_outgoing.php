@@ -596,7 +596,8 @@ class M_outgoing extends CI_Model
 		1  => 'b.no_invoice',
 		2  => 'o.catg_smu',
 		3  => 'o.smu',
-		4  => 'b.nama_agent',
+		4  => 'o.nama_agent',
+		4  => 'o.nama_pengirim',
 		5  => 'b.total_pieces',
 		6  => 'b.total_chargeable',
 		7  => 'b.total',
@@ -609,7 +610,7 @@ class M_outgoing extends CI_Model
 	{
 
 		$this->cb->select("
-        o.smu, o.pesawat, o.catg_smu, o.jaster as is_jaster, b.*, u.nama as nama_kasir,
+        o.smu, o.pesawat, o.catg_smu, o.jaster as is_jaster, o.nama_agent as list_agent, o.nama_pengirim as list_pengirim, b.*, u.nama as nama_kasir,
         IF(EXISTS(
             SELECT 1 FROM all_topup t
             WHERE t.billing_uid = b.uid
@@ -650,6 +651,7 @@ class M_outgoing extends CI_Model
 				// ->or_like('b.catg_smu', $search)
 				->or_like('o.smu', $search)
 				->or_like('o.nama_agent', $search)
+				->or_like('o.nama_pengirim', $search)
 				->or_like('b.total_pieces', $search)
 				->or_like('b.total_chargeable', $search)
 				->or_like('b.total', $search)

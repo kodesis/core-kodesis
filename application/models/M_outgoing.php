@@ -323,7 +323,7 @@ class M_outgoing extends CI_Model
 		1  => 'o.no_ch',
 		2  => 'o.wh_name',
 		3  => 'o.total_koli',
-		4  => 'd.total_berat',       // driver
+		4  => 'o.total_berat',       // driver
 		5  => 't.no_segel',  // truck
 		6  => 'o.no_sticker',
 		7  => 'o.truck_uid',
@@ -354,7 +354,7 @@ class M_outgoing extends CI_Model
 				->or_like('o.no_ch', $search)
 				->or_like('o.wh_name', $search)
 				->or_like('o.total_koli', $search)
-				->or_like('d.total_berat', $search)
+				->or_like('o.total_berat', $search)
 				->or_like('t.no_segel', $search)
 				->or_like('o.no_sticker', $search)
 				->or_like('o.tgl_ch', $search)

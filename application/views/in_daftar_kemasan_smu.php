@@ -338,7 +338,7 @@
                                                     <option value="BATIK">BATIK</option>
                                                     <option value="CITILINK">CITILINK</option>
                                                     <option value="FLYJAYA">FLYJAYA</option>
-                                                    <option value="GARUDA">GARUDA</option>
+                                                    <!-- <option value="GARUDA">GARUDA</option> -->
                                                 </select>
                                             </div>
                                         </div>

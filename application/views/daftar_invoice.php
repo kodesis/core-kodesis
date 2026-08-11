@@ -522,7 +522,7 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Kategori Billing</label>
-                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv">
+                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" require>
                                             <option value="">Pilih Kategori Billing</option>
                                         </select>
                                     </div>
@@ -556,7 +556,7 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Jaster</label>
-                                        <select class="form-control" name="jaster" id="inv_jaster">
+                                        <select class="form-control" name="jaster" id="inv_jaster" require>
                                             <option value="0">Non Jaster</option>
                                             <option value="1">Jaster</option>
                                         </select>

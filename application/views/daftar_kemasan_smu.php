@@ -342,13 +342,24 @@
 
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
-                                        <label class="form-label">SMU</label>
-                                        <div class="input-group">
+                                        <label class="form-label">Nomor SMU</label>
+
+                                        <!-- Input Group untuk mode Manual (Default Tampil) -->
+                                        <div class="input-group" id="smu_group_manual">
                                             <input type="text" class="form-control" id="smu_prefix_input" placeholder="938" maxlength="3" style="max-width:70px;" readonly>
                                             <span class="input-group-addon">-</span>
-                                            <input type="text" class="form-control smu-number-input" placeholder="00449002" maxlength="8" required>
+                                            <input type="text" class="form-control smu-number-input" id="smu_number_input" placeholder="00449002" maxlength="8" required>
                                         </div>
-                                        <input type="hidden" name="smu" id="smu_hidden" required>
+
+                                        <!-- Input untuk Mode Full/Scan (Default Sembunyi) -->
+                                        <input type="text" name="smu" id="smu_hidden" class="form-control" placeholder="Scan SMU di sini..." style="display: none;" required>
+                                    </div>
+
+                                    <!-- Checkbox / Switcher Mode -->
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="check_mode_scan"> Mode Direct Scan SMU
+                                        </label>
                                     </div>
                                 </div>
 
@@ -1032,6 +1043,27 @@
     </script>
     <script>
         $(document).ready(function() {
+
+            $('#inputBarcode').on('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Tahan form agar tidak submit
+
+                    let barcodeValue = $(this).val(); // Mengambil nilai (contoh: 888-12742133)
+
+                    if (barcodeValue !== '') {
+                        // Jalankan fungsi pencarian / pemrosesan data Anda
+                        prosesData(barcodeValue);
+
+                        // Clear input setelah di-scan
+                        $(this).val('');
+                    }
+                }
+            });
+
+            function prosesData(code) {
+                console.log("Data berhasil ditangkap:", code);
+                // Panggil AJAX atau pindah fokus ke elemen berikutnya
+            }
 
             var today = new Date().toISOString().split('T')[0];
             $('#t_tanggal_masuk').val(today);
@@ -2018,17 +2050,17 @@
 
             // Reset saat modal tambah tutup
             $('#modalTambahSMU').on('hidden.bs.modal', function() {
-                $('#t_nama_pengirim').empty().trigger('change');
-                $(this).find('form')[0].reset();
-                $('#t_pembagi_label').text('');
-                $('#bodyDimensiTambah').html('<tr class="no-data-row"><td colspan="9" class="text-center">Tidak ada data</td></tr>');
-                $('#t_total_volume_sum').text('0.00');
-                $('#t_total_volume_all').text('0.00');
-                $('.select2-pesawat-tambah, .select2-tujuan-tambah, .select2-pengirim-tambah, .select2-penerima-tambah, .select2-agent-tambah').val(null).trigger('change');
+                // $('#t_nama_pengirim').empty().trigger('change');
+                // $(this).find('form')[0].reset();
+                // $('#t_pembagi_label').text('');
+                // $('#bodyDimensiTambah').html('<tr class="no-data-row"><td colspan="9" class="text-center">Tidak ada data</td></tr>');
+                // $('#t_total_volume_sum').text('0.00');
+                // $('#t_total_volume_all').text('0.00');
+                // $('.select2-pesawat-tambah, .select2-tujuan-tambah, .select2-pengirim-tambah, .select2-penerima-tambah, .select2-agent-tambah').val(null).trigger('change');
 
-                // Reset kembali ke default tanggal masuk hari ini setelah form dibersihkan
-                var today = new Date().toISOString().split('T')[0];
-                $('#t_tanggal_masuk').val(today);
+                // // Reset kembali ke default tanggal masuk hari ini setelah form dibersihkan
+                // var today = new Date().toISOString().split('T')[0];
+                // $('#t_tanggal_masuk').val(today);
             });
 
             $('#btn-selesai-smu').on('click', function(e) {
@@ -2176,6 +2208,102 @@
                     }
                 });
             });
+
+            $('#check_mode_scan').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#smu_group_manual').hide();
+                    $('#smu_prefix_input, .smu-number-input').prop('disabled', true); // Nonaktifkan agar tidak ikut ter-submit
+
+                    $('#smu_hidden').show().prop('disabled', false).focus();
+                } else {
+                    $('#smu_group_manual').show();
+                    $('#smu_prefix_input, .smu-number-input').prop('disabled', false);
+
+                    $('#smu_hidden').hide().val('').prop('disabled', true);
+                }
+            });
+
+            // 2. Handling Scan / Enter pada input #smu_hidden
+            $('#smu_hidden').on('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Cegah auto-submit form
+
+                    let rawValue = $(this).val().trim();
+                    if (rawValue === '') return;
+
+                    // 1. Bersihkan karakter selain angka (menghilangkan strip '-', spasi, dll)
+                    // Contoh "888-1274905200001" menjadi "8881274905200001"
+                    let cleanDigits = rawValue.replace(/\D/g, '');
+
+                    // 2. Potong hanya mengambil 11 digit pertama (3 digit Prefix + 8 digit Nomor SMU)
+                    // Contoh "8881274905200001" menjadi "88812749052"
+                    let smu11Digits = cleanDigits.substring(0, 11);
+
+                    if (smu11Digits.length === 11) {
+                        let prefix = smu11Digits.substring(0, 3); // "888"
+                        let number = smu11Digits.substring(3, 11); // "12749052"
+
+                        // Format kembali menjadi standard SMU (888-12749052)
+                        let formattedSMU = prefix + '-' + number;
+
+                        // Set nilai yang sudah bersih kembali ke input #smu_hidden
+                        $(this).val(formattedSMU);
+
+                        // Opsional: Ambil nomor koli jika nanti Anda butuh info kolinya
+                        let koliNumber = cleanDigits.substring(11); // "00001"
+
+                        // Auto-select Select2 Pesawat berdasarkan 3 digit prefix awal
+                        autoSelectPesawatByPrefix(prefix);
+
+                    } else {
+                        alert('Format barcode SMU tidak valid!');
+                    }
+                }
+            });
+
+            // 3. Fungsi Auto-Select Pesawat berdasarkan Prefix lewat AJAX Select2
+            function autoSelectPesawatByPrefix(prefix) {
+                $.ajax({
+                    url: '<?= base_url('outgoinghlp/get_pesawat') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        search: prefix
+                    },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            // Cari item yang prefix-nya persis cocok
+                            let matchedItem = data.find(item => item.prefix == prefix) || data[0];
+
+                            // Buat option baru di Select2 jika belum ter-render
+                            let newOption = new Option(
+                                matchedItem.nama + ' - ' + matchedItem.prefix,
+                                matchedItem.nama,
+                                true,
+                                true
+                            );
+
+                            // Attach data kustom (prefix, jaster) ke element option
+                            $(newOption).data('data', {
+                                id: matchedItem.nama,
+                                text: matchedItem.nama + ' - ' + matchedItem.prefix,
+                                prefix: matchedItem.prefix,
+                                jaster: matchedItem.jaster
+                            });
+
+                            // Trigger perubahan ke Select2
+                            $('#t_pesawat').append(newOption).trigger('change');
+
+                            var jasterVal = matchedItem.jaster;
+                            if (jasterVal !== undefined) {
+                                $('#t_jaster').prop('checked', parseInt(jasterVal) == 1);
+                            }
+                            // Isi juga prefix input manual jika sewaktu-waktu switched back
+                            $('#smu_prefix_input').val(matchedItem.prefix);
+                        }
+                    }
+                });
+            }
         });
     </script>
 

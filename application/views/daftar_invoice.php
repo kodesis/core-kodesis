@@ -522,7 +522,7 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Kategori Billing</label>
-                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" require>
+                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" required>
                                             <option value="">Pilih Kategori Billing</option>
                                         </select>
                                     </div>
@@ -1218,14 +1218,49 @@
                 var val = $(this).data('val');
                 var $form = $(this).closest('form');
 
+                // Batal tidak perlu validasi isian
                 if (val == '3') {
                     if (!confirm('Yakin ingin membatalkan invoice ini?')) return;
+                    $('#inv_new_status').val(val);
+                    $form.submit();
+                    return;
                 }
 
+                var kosong = [];
+
+                if (!$('#inv_bill_catg').val()) kosong.push('Kategori Billing');
+                if (!$('#inv_no_invoice').val().trim()) kosong.push('No. Invoice');
+                if (!$('#inv_pesawat').val()) kosong.push('Pesawat');
+
+                if (kosong.length) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap',
+                        html: 'Mohon lengkapi:<br><b>' + kosong.join('<br>') + '</b>'
+                    });
+
+                    // Tandai field yang kosong
+                    $('#inv_bill_catg, #inv_no_invoice, #inv_pesawat').each(function() {
+                        var $g = $(this).closest('.form-group');
+                        $g.toggleClass('has-error', !$(this).val());
+                    });
+
+                    return;
+                }
+
+                $('.form-group').removeClass('has-error');
                 $('.btn-status-inv').removeClass('active');
                 $(this).addClass('active');
                 $('#inv_new_status').val(val);
                 $form.submit();
+            });
+
+            $(document).on('change', '#inv_bill_catg, #inv_pesawat', function() {
+                $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
+            });
+
+            $(document).on('input', '#inv_no_invoice', function() {
+                $(this).closest('.form-group').toggleClass('has-error', !$(this).val().trim());
             });
 
             $('.select2-nama-rekap').select2({

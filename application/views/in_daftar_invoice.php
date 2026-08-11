@@ -503,7 +503,7 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Kategori Billing</label>
-                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" require>
+                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" required>
                                             <option value="">Pilih Kategori Billing</option>
                                         </select>
                                     </div>
@@ -1182,6 +1182,7 @@
                 var val = $(this).data('val');
                 var $form = $(this).closest('form');
 
+                // Void: tidak validasi isian, tapi remarks wajib
                 if (val == '3') {
                     $('#inv_row_remarks').show();
                     $('#inv_remarks').attr('required', true);
@@ -1194,18 +1195,60 @@
                         confirmButtonColor: '#d33',
                         cancelButtonColor: '#3085d6',
                         confirmButtonText: 'Ya, Void!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $('#inv_new_status').val(val);
-                            $form.submit();
+                    }).then(function(result) {
+                        if (!result.isConfirmed) return;
+
+                        if (!$('#inv_remarks').val().trim()) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Alasan Wajib Diisi',
+                                text: 'Mohon isi Remarks Void sebelum membatalkan invoice.'
+                            });
+                            $('#inv_remarks').closest('.form-group').addClass('has-error');
+                            return;
                         }
+
+                        $('#inv_new_status').val(val);
+                        $form.submit();
                     });
-                } else {
-                    $('#inv_row_remarks').hide();
-                    $('#inv_remarks').attr('required', false);
-                    $('#inv_new_status').val(val);
-                    $form.submit();
+                    return;
                 }
+
+                // Ubah / Cetak: validasi isian wajib
+                $('#inv_row_remarks').hide();
+                $('#inv_remarks').attr('required', false);
+
+                var kosong = [];
+
+                if (!$('#inv_bill_catg').val()) kosong.push('Kategori Billing');
+                if (!$('#inv_no_invoice').val().trim()) kosong.push('No. Invoice');
+                if (!$('#inv_pesawat').val()) kosong.push('Pesawat');
+                if (!$('#inv_nama_penerima').val()) kosong.push('Nama Penerima');
+
+                if (kosong.length) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap',
+                        html: 'Mohon lengkapi:<br><b>' + kosong.join('<br>') + '</b>'
+                    });
+
+                    $('#inv_bill_catg, #inv_no_invoice, #inv_pesawat, #inv_nama_penerima').each(function() {
+                        $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
+                    });
+
+                    return;
+                }
+
+                $('.form-group').removeClass('has-error');
+                $('#inv_new_status').val(val);
+                $form.submit();
+            });
+            $(document).on('change', '#inv_bill_catg, #inv_pesawat, #inv_nama_penerima', function() {
+                $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
+            });
+
+            $(document).on('input', '#inv_no_invoice, #inv_remarks', function() {
+                $(this).closest('.form-group').toggleClass('has-error', !$(this).val().trim());
             });
 
             $('.select2-penerima-inv').select2({

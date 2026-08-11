@@ -109,6 +109,10 @@
         .select2-container--open {
             z-index: 9999999 !important;
         }
+
+        .select2-dropdown {
+            z-index: 99999;
+        }
     </style>
 </head>
 
@@ -630,14 +634,25 @@
                                 <div class="col-md-12 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Pesawat</label>
-                                        <select name="pesawat" id="rekap_pesawat" class="form-control">
-                                            <option value="">:: Pilih Pesawat</option>
+                                        <select name="pesawat[]" id="rekap_pesawat" class="form-control" multiple="multiple">
+                                            <!-- HAPUS BARIS INI: <option value="">:: Pilih Pesawat</option> -->
                                             <option value="BATIK">BATIK</option>
                                             <option value="CITILINK">CITILINK</option>
                                             <option value="FLYJAYA">FLYJAYA</option>
                                         </select>
                                     </div>
                                 </div>
+                                <!-- <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Pesawat</label>
+                                        <select name="pesawat[]" id="rekap_pesawat" class="form-control" multiple>
+                                            <option value="">:: Pilih Pesawat</option>
+                                            <option value="BATIK">BATIK</option>
+                                            <option value="CITILINK">CITILINK</option>
+                                            <option value="FLYJAYA">FLYJAYA</option>
+                                        </select>
+                                    </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -1052,6 +1067,13 @@
                 });
             });
 
+
+            $(document).ready(function() {
+                $('#rekap_pesawat').select2({
+                    placeholder: "Pilih Pesawat",
+                    allowClear: true
+                });
+            });
 
             // Show/hide agent saat pay_methode berubah
             $(document).on('change', '#inv_pay_methode', function() {

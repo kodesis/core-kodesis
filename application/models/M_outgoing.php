@@ -350,15 +350,14 @@ class M_outgoing extends CI_Model
 		if (!empty($_POST['search']['value'])) {
 			$search = $_POST['search']['value'];
 			$this->cb->group_start()
-				->like('o.csd_num', $search)
-				->or_like('o.no_csd', $search)
-				->or_like('o.smu', $search)
-				->or_like('o.no_segel', $search)
+				->like('o.no_do', $search)
+				->or_like('o.no_ch', $search)
+				->or_like('o.wh_name', $search)
+				->or_like('o.total_koli', $search)
+				->or_like('d.total_berat', $search)
+				->or_like('t.no_segel', $search)
 				->or_like('o.no_sticker', $search)
-				->or_like('o.no_pesawat', $search)
-				->or_like('o.tanggal_terbang', $search)
-				->or_like('d.nama', $search)
-				->or_like('t.no_polisi', $search)
+				->or_like('o.tgl_ch', $search)
 				->or_like('u.nama', $search)
 				->group_end();
 		}

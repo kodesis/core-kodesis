@@ -754,7 +754,7 @@ class M_outgoing extends CI_Model
 			$search = $_POST['search']['value'];
 			$this->cb->group_start()
 				->like('b.invoice_num', $search)
-				->or_like('o.no_invoice', $search)
+				->or_like('b.no_invoice', $search)
 				->or_like('o.catg_smu', $search)
 				->or_like('o.smu', $search)
 				->or_like('o.nama_agent', $search)

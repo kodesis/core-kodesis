@@ -1506,7 +1506,8 @@
 
                     // Volume di input jangan dibulatkan
                     // $('#d_volume').val(total_all.toFixed(2));
-                    $('#d_volume').val(Math.round(total_all));
+                    total_all = Math.round(total_all)
+                    $('#d_volume').val(total_all);
 
                     // Hitung chargeable ( Gross vs Volume terbesar dibulatkan )
                     var gross = parseFloat($('#d_gross').val()) || 0;
@@ -1931,7 +1932,8 @@
                 $('#t_total_volume_all').text(total_vol_all.toFixed(2));
                 // Volume jangan dibulatkan di input
                 // $('#t_volume').val(total_vol_all.toFixed(2));
-                $('#t_volume').val(Math.round(total_vol_all));
+                total_vol_all = Math.round(total_vol_all)
+                $('#t_volume').val(total_vol_all);
 
                 // Auto-sum pieces dimensi ke input Jumlah (Koli)
                 $('#t_jumlah').val(total_koli);

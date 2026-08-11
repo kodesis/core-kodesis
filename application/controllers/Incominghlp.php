@@ -607,25 +607,25 @@ class Incominghlp extends CI_Controller
 		$il = $this->cb->where('uid', $uid)->get('in_list')->row();
 
 		$warning = '0';
-		
 
-			if ($il->bill_uid) {
-				$bil = $this->cb->where('uid', $il->bill_uid)->get('in_billing')->row();
 
-				if ($bil->pay_status != '1' && $bil->status != '1') {
-					echo ('MASUK');
-					$data_billing = [
-						'total_pieces'        => $this->input->post('jumlah'),
-						'total_gross'       => $this->input->post('gross'),
-						'total_volume'       => $this->input->post('volume'),
-						'total_chargeable'       => $this->input->post('chargeable'),
-					];
-					$this->cb->where('uid', $il->bill_uid)->update('in_billing', $data_billing);
-				} else {
-					$warning = '1';
-				}
-			} 
-		
+		if ($il->bill_uid) {
+			$bil = $this->cb->where('uid', $il->bill_uid)->get('in_billing')->row();
+
+			if ($bil->pay_status != '1' && $bil->status != '1') {
+				echo ('MASUK');
+				$data_billing = [
+					'total_pieces'        => $this->input->post('jumlah'),
+					'total_gross'       => $this->input->post('gross'),
+					'total_volume'       => $this->input->post('volume'),
+					'total_chargeable'       => $this->input->post('chargeable'),
+				];
+				$this->cb->where('uid', $il->bill_uid)->update('in_billing', $data_billing);
+			} else {
+				$warning = '1';
+			}
+		}
+
 
 		if ($warning == '1') {
 			$this->session->set_flashdata('message_error', 'Data SMU Incoming berhasil diperbarui, Tapi Data Billing Tidak di perbarui karena sudah Bayar Invoice.');
@@ -683,7 +683,7 @@ class Incominghlp extends CI_Controller
 	/**
 	 * Memproses satu data ke BTB menggunakan AJAX POST
 	 */
-	
+
 	public function rekap_kemasan_smu()
 	{
 		$dari   = $this->input->post('dari');
@@ -1783,6 +1783,7 @@ class Incominghlp extends CI_Controller
 		$dari      = $this->input->post('dari');
 		$sampai    = $this->input->post('sampai');
 		$pesawat  = $this->input->post('pesawat');
+		$pesawat = is_array($pesawat) ? array_filter($pesawat) : array();
 		$kasir     = $this->input->post('kasir');
 
 		$start_date = str_replace('-', '', $dari)   . '000000';
@@ -1795,12 +1796,8 @@ class Incominghlp extends CI_Controller
 		$this->cb->join('in_list l', 'l.bill_uid = b.uid', 'left');
 		$this->cb->where("b.tanggal_invoice BETWEEN '$start_date' AND '$end_date'", NULL, FALSE);
 
-		if ($pesawat == "GARUDA" || $pesawat == "CITILINK") {
-			$this->cb->where_in('l.pesawat', ['GARUDA', 'CITILINK']);
-		} else {
-			if ($pesawat) {
-				$this->cb->where('l.pesawat', $pesawat);
-			}
+		if (!empty($pesawat)) {
+			$this->cb->where_in('l.pesawat', $pesawat);
 		}
 		if ($kasir) {
 			$this->cb->where('b.user_kasir', $kasir);

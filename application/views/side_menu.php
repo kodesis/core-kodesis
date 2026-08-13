@@ -209,6 +209,7 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '905') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice">Daftar Invoice</a></li>
+						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_bukti_potong">Daftar Bukti Potong</a></li>
 						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li> -->
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');

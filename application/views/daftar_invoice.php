@@ -300,6 +300,7 @@
                                                 <th>Koli</th>
                                                 <th>Chargeable</th>
                                                 <th>Total</th>
+                                                <th>Total Setelah PPH</th>
                                                 <th>Tanggal</th>
                                                 <th>Jaster</th>
                                                 <th>Kasir</th>
@@ -441,6 +442,11 @@
                                                 <th>GRAND TOTAL</th>
                                                 <td colspan="2" class="text-right"><b id="inv_grand_total"></b></td>
                                             </tr>
+                                            <tr id="inv_row_pph_23" style="display:none;">
+                                                <td>GRAND TOTAL SETELAH PPH</td>
+                                                <td class="text-right" id="inv_total_pph"></td>
+                                                <td class="text-right" id="inv_setelah_pph"></td>
+                                            </tr>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -512,6 +518,8 @@
                                     </div>
                                 </div>
 
+
+
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Biaya Materai</label>
@@ -562,7 +570,16 @@
                                         </select>
                                     </div>
                                 </div>
-
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">PPH 23</label>
+                                        <select class="form-control" name="pph_23" id="inv_pph_23" required>
+                                            <option value="">:: Pilih PPH</option>
+                                            <option value="0">Non PPH 23</option>
+                                            <option value="1">PPH 23</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
 
@@ -598,21 +615,21 @@
                     <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('outgoinghlp/rekap_invoice') ?>">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-4 col-xs-12">
+                                <div class="col-md-3 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Dari</label>
                                         <input type="date" class="form-control" name="dari" id="dari_r">
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-xs-12">
+                                <div class="col-md-3 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Sampai</label>
                                         <input type="date" class="form-control" name="sampai" id="sampai_r">
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-xs-12">
+                                <div class="col-md-3 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Metode Pembayaran</label>
                                         <select class="form-control" name="pay_methode">
@@ -625,7 +642,16 @@
                                         </select>
                                     </div>
                                 </div>
-
+                                <div class="col-md-3 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Filter PPH</label>
+                                        <select class="form-control" name="pph_23">
+                                            <option value="All">Semua</option>
+                                            <option value="0">No PPH</option>
+                                            <option value="1">PPH</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Pesawat</label>
@@ -899,6 +925,11 @@
                         $('#inv_agent').val(r.nama_agent);
                         $('#inv_cdc').val(r.cdc);
                         $('#inv_jaster').val(r.is_jaster);
+                        $('#inv_pph_23').val(
+                            (r.is_pph_23 === null || r.is_pph_23 === undefined || r.is_pph_23 === '') ?
+                            '' :
+                            String(r.is_pph_23)
+                        );
                         $('#inv_new_status').val(r.status);
                         $('#inv_pengirim_uid').val(r.pengirim_uid);
 
@@ -931,6 +962,13 @@
                             $('#inv_row_jaster').hide();
                         }
 
+                        console.log('PPH-23 : ' + r.is_pph_23);
+                        if (r.is_pph_23 > 0) {
+                            $('#inv_row_pph_23').show();
+                        } else {
+                            $('#inv_row_pph_23').hide();
+                        }
+
                         // Billing totals
                         $('#inv_sub_total').text(r.total_cargo_k);
                         $('#inv_total_cdc').text(r.total_cdc_k);
@@ -951,6 +989,9 @@
                         $('#inv_total_pieces').text(r.total_pieces_k);
                         $('#inv_total_berat').text(r.total_chargeable_k);
                         $('#inv_total_sewa').text(r.total_cargo_k);
+
+                        $('#inv_total_pph').text(r.total_pph);
+                        $('#inv_setelah_pph').text(r.total_setelah_pph);
 
                         // List SMU
                         var html = '';
@@ -1231,6 +1272,7 @@
                 if (!$('#inv_bill_catg').val()) kosong.push('Kategori Billing');
                 if (!$('#inv_no_invoice').val().trim()) kosong.push('No. Invoice');
                 if (!$('#inv_pesawat').val()) kosong.push('Pesawat');
+                if ($('#inv_pph_23').val() === '') kosong.push('PPH 23');
 
                 if (kosong.length) {
                     Swal.fire({
@@ -1239,11 +1281,11 @@
                         html: 'Mohon lengkapi:<br><b>' + kosong.join('<br>') + '</b>'
                     });
 
-                    // Tandai field yang kosong
                     $('#inv_bill_catg, #inv_no_invoice, #inv_pesawat').each(function() {
-                        var $g = $(this).closest('.form-group');
-                        $g.toggleClass('has-error', !$(this).val());
+                        $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
                     });
+                    $('#inv_pph_23').closest('.form-group')
+                        .toggleClass('has-error', $('#inv_pph_23').val() === '');
 
                     return;
                 }
@@ -1261,6 +1303,10 @@
 
             $(document).on('input', '#inv_no_invoice', function() {
                 $(this).closest('.form-group').toggleClass('has-error', !$(this).val().trim());
+            });
+
+            $(document).on('change', '#inv_pph_23', function() {
+                $(this).closest('.form-group').toggleClass('has-error', $(this).val() === '');
             });
 
             $('.select2-nama-rekap').select2({

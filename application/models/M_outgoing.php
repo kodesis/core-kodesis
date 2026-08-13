@@ -596,13 +596,14 @@ class M_outgoing extends CI_Model
 		2  => 'o.catg_smu',
 		3  => 'o.smu',
 		4  => 'o.nama_agent',
-		4  => 'o.nama_pengirim',
-		5  => 'b.total_pieces',
-		6  => 'b.total_chargeable',
-		7  => 'b.total',
-		8  => 'b.tanggal_invoice',
-		9  => 'b.jaster',
-		10 => 'u.nama',
+		5  => 'o.nama_pengirim',
+		6  => 'b.total_pieces',
+		7  => 'b.total_chargeable',
+		8  => 'b.total',
+		9  => 'b.total_setelah_pph',
+		10  => 'b.tanggal_invoice',
+		11  => 'b.jaster',
+		12 => 'u.nama',
 	];
 
 	private function _base_query_invoice($agent = null, $pay = null, $jurnal = null)

@@ -3608,6 +3608,8 @@ class Outgoinghlp extends CI_Controller
 			}
 
 			$nominal = 'Rp. ' . number_format((float)$r->total);
+			$nominal_pph = 'Rp. ' . number_format((float)$r->total_pph);
+			$nominal_setelah_pph = 'Rp. ' . number_format((float)$r->total_setelah_pph);
 			if ($r->pay_status == 0) {
 				$nominal = "<span>$nominal</span>";
 			} else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
@@ -3628,6 +3630,7 @@ class Outgoinghlp extends CI_Controller
 				// $r->total ?? '-',
 				// 'Rp. ' . number_format((float)$r->total),
 				$nominal,
+				$nominal_setelah_pph . "<br>(PPH 23 : " . $nominal_pph . ")",
 				$tanggal_txt ?? '-',
 				$jaster ?? '-',
 				$warning_topup,
@@ -3727,9 +3730,12 @@ class Outgoinghlp extends CI_Controller
 		$billing->kc_ppn_k          = number_format($kc_ppn);
 		$billing->kc_total_k        = number_format($kc_total);
 		$billing->grand_total_k     = number_format($grand_total);
+		$billing->total_pph     = number_format($billing->total_pph);
+		$billing->total_setelah_pph     = number_format($billing->total_setelah_pph);
 
 		$billing->is_jaster = $jaster_opt;
 
+		// $billing->is_pph_23 =
 		$new_no_invoice = "HLP.OUT-JASTER" . "-" . "$billing->invoice_num";
 
 		$billing->no_invoice = $new_no_invoice;
@@ -3772,6 +3778,10 @@ class Outgoinghlp extends CI_Controller
 		// List SMU
 		$list = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang')
 			->where('bill_uid', $uid)->order_by('uid', 'ASC')->get('out_list')->result();
+
+		// var_dump($billing);
+		// echo ("PPH_23 : " . $billing->is_pph_23);
+		// exit();
 
 		$this->output->set_content_type('application/json')->set_output(json_encode([
 			'billing' => $billing,
@@ -3816,7 +3826,10 @@ class Outgoinghlp extends CI_Controller
 		$bil_uid    = $this->input->post('bil_uid');
 		$new_status = $this->input->post('new_status');
 		$bill_catg  = $this->input->post('bill_catg');
-		// echo ('Catg Bill =' . $bill_catg);
+		$pph_23  = $this->input->post('pph_23');
+
+
+		// echo ('Catg Bill =' . $pph_23);
 		// exit();
 		$jaster     = $this->input->post('jaster');
 		$pay_methode = $this->input->post('pay_methode');
@@ -3986,6 +3999,16 @@ class Outgoinghlp extends CI_Controller
 		$kc_total      = $kc_sub_total + $kc_ppn;
 		$total         = round($bg_total + $kc_total);
 
+		if ($pph_23 == '1') {
+			$sub_total_sebelum_pph = $total_cargo + $total_jaster + $total_kade + $total_csc;
+			$total_pph = $sub_total_sebelum_pph * 0.02;
+		} else {
+			$total_pph = 0;
+		}
+
+		$total_setelah_pph = $total - $total_pph;
+
+
 		// =============================================
 		// STATUS 1 - CETAK
 		// =============================================
@@ -4018,6 +4041,9 @@ class Outgoinghlp extends CI_Controller
 				'kc_ppn'           => $kc_ppn,
 				'kc_total'         => $kc_total,
 				'grand_total'      => $total,
+				'is_pph_23' => $pph_23,
+				'total_pph'      => $total_pph,
+				'total_setelah_pph'      => $total_setelah_pph,
 				'grand_total_paid' => $total,
 				'status'           => '1',
 				'pay_status'       => '1',
@@ -4036,6 +4062,19 @@ class Outgoinghlp extends CI_Controller
 			$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
 
 
+			if ($pph_23 == '1') {
+				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
+
+				$keterangan = "Potongan PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
+				$j1_coa_debit = '11505';
+				// $j1_coa_kredit = "23014";
+				// $j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
+				$j1_coa_kredit = '99002';
+
+				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $total_pph, $this->input->post('tanggal_invoice'));
+
+				$total = $total_setelah_pph;
+			}
 
 			$nominal = $this->convertToNumberWithComma($total);
 
@@ -4082,6 +4121,9 @@ class Outgoinghlp extends CI_Controller
 				'kc_ppn'           => $kc_ppn,
 				'kc_total'         => $kc_total,
 				'grand_total'      => $total,
+				'is_pph_23' => $pph_23,
+				'total_pph'        => $total_pph,
+				'total_setelah_pph' => $total_setelah_pph,
 				'grand_total_paid' => $total,
 				'status'           => '0',
 				'pay_status'       => '',
@@ -4218,6 +4260,22 @@ class Outgoinghlp extends CI_Controller
 				->get('out_list')
 				->row();
 
+			$total = $billing->grand_total;
+
+			if ($billing->is_pph_23 == '1') {
+				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
+
+				$keterangan = "Pembayaran PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
+				$j1_coa_kredit = '11505';
+				// $j1_coa_kredit = "23014";
+				// $j1_coa_debit = $coa_utility['nomor_coa_utang_pph23'];
+				$j1_coa_debit = '99002';
+				$this->posting($coa_debit, $coa_kredit, $keterangan, $billing->total_pph, $billing->tanggal_invoice);
+
+				$total = $billing->total_setelah_pph;
+			}
+
+
 			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice . ". METODE : " . $metode_agent;
 
 			// $sub_total = $billing->total_cargo;
@@ -4226,7 +4284,6 @@ class Outgoinghlp extends CI_Controller
 			// $total = $total_nonpph;
 
 			// $total = $total_nonpph;
-			$total = $billing->grand_total;
 			$nominal = $this->convertToNumberWithComma($total);
 
 			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $billing->tanggal_invoice, '');
@@ -4413,6 +4470,7 @@ class Outgoinghlp extends CI_Controller
 		$agent  = $this->input->post('agent');
 		$kasir     = $this->input->post('kasir');
 		$pay_methode = $this->input->post('pay_methode');
+		$pph_23 = $this->input->post('pph_23');
 
 		$start_date = str_replace('-', '', $dari)   . '000000';
 		$end_date   = str_replace('-', '', $sampai) . '235959';
@@ -4444,6 +4502,10 @@ class Outgoinghlp extends CI_Controller
 			$this->cb->where('b.pay_methode', '4');
 		} else if ($pay_methode == '5') {
 			$this->cb->where('b.pay_methode', '5');
+		}
+
+		if ($pph_23 == '1') {
+			$this->cb->where('b.is_pph_23', '1');
 		}
 
 		$this->cb->order_by('no_invoice, tanggal_invoice', 'ASC');
@@ -4489,17 +4551,19 @@ class Outgoinghlp extends CI_Controller
 			'X'  => 'PPN KC',
 			'Y'  => 'Total KC',
 			'Z'  => 'Total',
-			'AA' => 'Pembayaran',
-			'AB' => 'Keterangan',
-			'AC' => 'Jaster',
+			'AA'  => 'Total PPH',
+			'AB'  => 'Total Setelah PPH',
+			'AC' => 'Pembayaran',
+			'AD' => 'Keterangan',
+			'AE' => 'Jaster',
 		];
 
 		foreach ($headers as $col => $label) {
 			$sheet->setCellValue($col . '1', $label);
 		}
 
-		$sheet->getStyle('A1:AC1')->getFont()->setBold(true)->setSize(12);
-		$sheet->getStyle('A1:AC1')->getAlignment()
+		$sheet->getStyle('A1:AE1')->getFont()->setBold(true)->setSize(12);
+		$sheet->getStyle('A1:AE1')->getAlignment()
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 		$nomor  = 1;
@@ -4530,6 +4594,8 @@ class Outgoinghlp extends CI_Controller
 			$kc_ppn           = $r['kc_ppn'];
 			$kc_total         = $r['kc_total'];
 			$grand_total      = $r['grand_total'];
+			$total_pph      = $r['total_pph'];
+			$total_setelah_pph      = $r['total_setelah_pph'];
 
 			// Format pembayaran
 			$pay_map = ['1' => 'Deposit', '2' => 'Cash', '3' => 'Transfer', '4' => 'Tagihan', '5' => 'FOC', '6' => 'QRIS'];
@@ -4588,7 +4654,7 @@ class Outgoinghlp extends CI_Controller
 
 			// Merge kolom header billing jika ada lebih dari 1 SMU
 			if ($endRow > $startRow) {
-				foreach (['A', 'B', 'C', 'D', 'E', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC'] as $col) {
+				foreach (['A', 'B', 'C', 'D', 'E', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE'] as $col) {
 					$sheet->mergeCells($col . $startRow . ':' . $col . $endRow);
 				}
 			}
@@ -4613,9 +4679,11 @@ class Outgoinghlp extends CI_Controller
 			$sheet->setCellValue('X'  . $startRow, $kc_ppn);
 			$sheet->setCellValue('Y'  . $startRow, $kc_total);
 			$sheet->setCellValue('Z'  . $startRow, $grand_total);
-			$sheet->setCellValue('AA' . $startRow, $pay);
-			$sheet->setCellValue('AB' . $startRow, $user_name);
-			$sheet->setCellValue('AC' . $startRow, $jaster);
+			$sheet->setCellValue('AA'  . $startRow, $total_pph);
+			$sheet->setCellValue('AB'  . $startRow, $total_setelah_pph);
+			$sheet->setCellValue('AC' . $startRow, $pay);
+			$sheet->setCellValue('AD' . $startRow, $user_name);
+			$sheet->setCellValue('AE' . $startRow, $jaster);
 
 			$nomor++;
 		}
@@ -4630,12 +4698,12 @@ class Outgoinghlp extends CI_Controller
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 		$sheet->setCellValue('A' . $totalRow, 'TOTAL');
 
-		foreach (['L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as $col) {
+		foreach (['L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB'] as $col) {
 			$sheet->setCellValue($col . $totalRow, '=SUM(' . $col . $firstRow . ':' . $col . $lastRow . ')');
 		}
 
 		// Autosize
-		$cols = array_merge(range('A', 'Z'), ['AA', 'AB', 'AC']);
+		$cols = array_merge(range('A', 'AB'), ['AC', 'AD', 'AE']);
 		foreach ($cols as $col) {
 			$sheet->getColumnDimension($col)->setAutoSize(true);
 		}

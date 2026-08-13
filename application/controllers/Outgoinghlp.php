@@ -3730,8 +3730,8 @@ class Outgoinghlp extends CI_Controller
 		$billing->kc_ppn_k          = number_format($kc_ppn);
 		$billing->kc_total_k        = number_format($kc_total);
 		$billing->grand_total_k     = number_format($grand_total);
-		$billing->total_pph     = number_format($billing->total_pph);
-		$billing->total_setelah_pph     = number_format($billing->total_setelah_pph);
+		$billing->total_pph     = $billing->total_pph > 0 ? number_format($billing->total_pph) : '';
+		$billing->total_setelah_pph     = $billing->total_setelah_pph > 0 ? number_format($billing->total_setelah_pph) : '';
 
 		$billing->is_jaster = $jaster_opt;
 

@@ -3478,41 +3478,40 @@ class Outgoinghlp extends CI_Controller
 		redirect('outgoinghlp/daftar_btb');
 	}
 
-
-public function daftar_invoice()
+	public function daftar_invoice()
 {
     $nip = $this->session->userdata('nip');
     $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
     $query = $this->db->query($sql);
     $res2 = $query->result_array();
     $result = $res2[0]['COUNT(Id)'];
-
+ 
     $sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
     $query2 = $this->db->query($sql2);
     $res2 = $query2->result_array();
     $result2 = $res2[0]['COUNT(id)'];
-
+ 
     $data['count_inbox'] = $result;
     $data['count_inbox2'] = $result2;
-
+ 
     $data['title'] = "Daftar Invoice";
-
+ 
     // Ambil data COA
     $coa_12002 = $this->m_coa->getCoaByCode('12002');
     $coa_12001 = $this->m_coa->getCoaByCode('12001');
     $merged_coa_debit_depo = array_merge($coa_12002, $coa_12001);
     $coa_debit_depo = $this->m_coa->getCoaByCode('210');
     $coa_debit_transfer = $merged_coa_debit_depo;
-
+ 
     $coa_41002 = $this->m_coa->getCoaByCode('41002');
     $coa_13010 = $this->m_coa->getCoaByCode('13010');
     $merged_coa_kredit_transfer = array_merge($coa_41002, $coa_13010);
-
+ 
     $data['coa_1'] = $coa_debit_depo;
     $data['coa_2'] = $coa_41002;
     $data['coa_3'] = $coa_debit_transfer;
     $data['coa_4'] = $merged_coa_kredit_transfer;
-
+ 
     // ============================================
     // Filter & search dari GET (form submit biasa, reload halaman)
     // ============================================
@@ -3520,7 +3519,7 @@ public function daftar_invoice()
     $pay    = $this->input->get('f_pay');
     $jurnal = $this->input->get('f_jurnal');
     $search = $this->input->get('f_search');
-
+ 
     // Supaya dropdown filter agent tetap menampilkan nama yang sedang aktif
     // setelah reload halaman (select2 ajax butuh Option awal manual).
     // SESUAIKAN query ini dengan tabel/model yang sama dipakai endpoint
@@ -3531,7 +3530,7 @@ public function daftar_invoice()
         $f_agent_nama = $agent_row->nama ?? null;
     }
     $data['f_agent_nama'] = $f_agent_nama;
-
+ 
     // ============================================
     // Pagination server-side
     // ============================================
@@ -3541,7 +3540,7 @@ public function daftar_invoice()
         $page = 1;
     }
     $offset = ($page - 1) * $per_page;
-
+ 
     $total_rows  = $this->M_outgoing->count_invoice($agent, $pay, $jurnal, $search);
     $total_pages = (int) ceil($total_rows / $per_page);
     if ($total_pages < 1) {
@@ -3552,19 +3551,19 @@ public function daftar_invoice()
         $page   = $total_pages;
         $offset = ($page - 1) * $per_page;
     }
-
+ 
     $results = $this->M_outgoing->get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset);
-
+ 
     // Lookup out_pesawat sekali saja (hindari N+1 query)
     $pesawat_rows = $this->cb->get('out_pesawat')->result();
     $pesawat_map  = [];
     foreach ($pesawat_rows as $p) {
         $pesawat_map[$p->nama] = $p->warna ?? null;
     }
-
+ 
     $rows = [];
     foreach ($results as $r) {
-
+ 
         $wday1 = substr($r->tanggal_invoice, 0, 4);
         $wday2 = substr($r->tanggal_invoice, 4, 2);
         $wday3 = substr($r->tanggal_invoice, 6, 2);
@@ -3577,7 +3576,7 @@ public function daftar_invoice()
         } else {
             $tanggal_txt = "";
         }
-
+ 
         if ($r->catg_smu == '1') {
             $l_catg_k = "Langsung(Direct)";
         } else if ($r->catg_smu == '2') {
@@ -3589,26 +3588,26 @@ public function daftar_invoice()
         } else {
             $l_catg_k = '';
         }
-
+ 
         if ($r->is_jaster == '1') {
             $jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
         } else {
             $jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
         }
-
+ 
         $print = '';
         if ($r->pay_status == '1') {
             $print = "<a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_invoice/{$r->uid}'>
         <i class='fa fa-print'></i> Invoice</a>";
         }
-
+ 
         $warna = $pesawat_map[$r->pesawat] ?? null;
         if ($warna) {
             $SMU = "<span class='btn btn-sm' style='color:#fff; border:1px solid #fff; background-color:#$warna;'>$r->smu</span> ";
         } else {
             $SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
         }
-
+ 
         if ($r->pay_methode == '1' && $r->pay_status == '1') {
             if ($r->has_topup) {
                 $warning_topup = "<span>$r->nama_kasir</span>";
@@ -3618,8 +3617,10 @@ public function daftar_invoice()
         } else {
             $warning_topup = "<span>$r->nama_kasir</span>";
         }
-
-        $nominal = 'Rp. ' . number_format((float)$r->total);
+ 
+        $nominal             = 'Rp. ' . number_format((float)$r->total);
+        $nominal_pph         = 'Rp. ' . number_format((float)$r->total_pph);
+        $nominal_setelah_pph = 'Rp. ' . number_format((float)$r->total_setelah_pph);
         if ($r->pay_status == 0) {
             $nominal = "<span>$nominal</span>";
         } else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
@@ -3627,7 +3628,7 @@ public function daftar_invoice()
         } else if ($r->pay_status == 1 && $r->jurnal_status == 1) {
             $nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
         }
-
+ 
         $rows[] = [
             'uid'            => $r->uid,
             'invoice_num'    => $r->invoice_num,
@@ -3639,13 +3640,14 @@ public function daftar_invoice()
             'total_pieces'   => $r->total_pieces ?? '-',
             'total_chg'      => $r->total_chargeable ?? '-',
             'nominal'        => $nominal,
+            'pph'            => $nominal_setelah_pph . "<br>(PPH 23 : " . $nominal_pph . ")",
             'tanggal'        => $tanggal_txt ?? '-',
             'jaster'         => $jaster ?? '-',
             'warning_topup'  => $warning_topup,
             'print'          => $print,
         ];
     }
-
+ 
     $data['rows']         = $rows;
     $data['current_page'] = $page;
     $data['total_pages']  = $total_pages;
@@ -3655,129 +3657,123 @@ public function daftar_invoice()
     $data['f_pay']        = $pay;
     $data['f_jurnal']     = $jurnal;
     $data['f_search']     = $search;
-
+ 
     $this->load->view('daftar_invoice', $data);
 }
  
-public function getData_invoice()
-{
-    $agent  = $this->input->post('f_agent');
-    $pay    = $this->input->post('f_pay');
-    $jurnal = $this->input->post('f_jurnal');
- 
-    $results = $this->M_outgoing->get_datatables_invoice($agent, $pay, $jurnal);
-    $data    = [];
- 
-    // ============================================
-    // FIX N+1 QUERY: ambil semua data out_pesawat
-    // SEKALI SAJA sebelum loop, bukan per baris.
-    // Sebelumnya: query ke DB di setiap iterasi foreach
-    // (bisa puluhan query per load halaman).
-    // ============================================
-    $pesawat_rows = $this->cb->get('out_pesawat')->result();
-    $pesawat_map  = [];
-    foreach ($pesawat_rows as $p) {
-        $pesawat_map[$p->nama] = $p->warna ?? null;
-    }
- 
-    $no = 0;
-    foreach ($results as $r) {
- 
-        // Dates
-        $wday1 = substr($r->tanggal_invoice, 0, 4);
-        $wday2 = substr($r->tanggal_invoice, 4, 2);
-        $wday3 = substr($r->tanggal_invoice, 6, 2);
-        $wday4 = substr($r->tanggal_invoice, 8, 2);
-        $wday5 = substr($r->tanggal_invoice, 10, 2);
-        $wday6 = substr($r->tanggal_invoice, 12, 2);
-        $time2 = "$wday4" . ":" . "$wday5";
-        if ($r->tanggal_invoice != "") {
-            $tanggal_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
-        } else {
-            $tanggal_txt = "";
-        }
- 
-        if ($r->catg_smu == '1') {
-            $l_catg_k = "Langsung(Direct)";
-        } else if ($r->catg_smu == '2') {
-            $l_catg_k = "Transhipment";
-        } else if ($r->catg_smu == '3') {
-            $l_catg_k = "Terminal change(w/o inv)";
-        } else if ($r->catg_smu == '4') {
-            $l_catg_k = "Direct from RA";
-        } else {
-            $l_catg_k = '';
-        }
- 
-        if ($r->is_jaster == '1') {
-            $jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
-        } else {
-            $jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
-        }
-        $print = '';
-        if ($r->pay_status == '1') {
-            $print = "<a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_invoice/{$r->uid}'>
+
+	public function getData_invoice()
+	{
+
+		$agent  = $this->input->post('f_agent');
+		$pay    = $this->input->post('f_pay');
+		$jurnal = $this->input->post('f_jurnal');
+
+		$results = $this->M_outgoing->get_datatables_invoice($agent, $pay, $jurnal);
+		$data    = [];
+
+		$no = 0;
+		foreach ($results as $r) {
+
+
+			// Dates
+			$wday1 = substr($r->tanggal_invoice, 0, 4);
+			$wday2 = substr($r->tanggal_invoice, 4, 2);
+			$wday3 = substr($r->tanggal_invoice, 6, 2);
+			$wday4 = substr($r->tanggal_invoice, 8, 2);
+			$wday5 = substr($r->tanggal_invoice, 10, 2);
+			$wday6 = substr($r->tanggal_invoice, 12, 2);
+			$time2 = "$wday4" . ":" . "$wday5";
+			if ($r->tanggal_invoice != "") {
+				$tanggal_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+			} else {
+				$tanggal_txt = "";
+			}
+
+			if ($r->catg_smu == '1') {
+				$l_catg_k = "Langsung(Direct)";
+			} else if ($r->catg_smu == '2') {
+				$l_catg_k = "Transhipment";
+			} else if ($r->catg_smu == '3') {
+				$l_catg_k = "Terminal change(w/o inv)";
+			} else if ($r->catg_smu == '4') {
+				$l_catg_k = "Direct from RA";
+			} else {
+				$l_catg_k = '';
+			}
+
+			if ($r->is_jaster == '1') {
+				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
+			} else {
+				$jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
+			}
+			$print = '';
+			if ($r->pay_status == '1') {
+				$print = "<a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_invoice/{$r->uid}'>
         <i class='fa fa-print'></i> Invoice</a>";
-        }
- 
-        // FIX: lookup dari array (memory), bukan query DB per baris
-        $warna = $pesawat_map[$r->pesawat] ?? null;
-        if ($warna) {
-            $SMU = "<span class='btn btn-sm' style='color:#fff; border:1px solid #fff; background-color:#$warna;'>$r->smu</span> ";
-        } else {
-            $SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
-        }
-        if ($r->pay_methode == '1' && $r->pay_status == '1') {
-            // $cek_topup = $this->cb->where('billing_uid', $r->uid)->where('asal_table', 'out_billing')->get('all_topup')->num_rows();
- 
-            if ($r->has_topup) {
-                $warning_topup = "<span>$r->nama_kasir</span>";
-            } else {
-                $warning_topup = "<span class='btn btn-sm' style='color:white; background-color:red;'>$r->nama_kasir</span><span style='color:red;'>Invoice Belum Terpotong &#128544;<span>";
-            }
-        } else {
-            $warning_topup = "<span>$r->nama_kasir</span>";
-        }
- 
-        $nominal = 'Rp. ' . number_format((float)$r->total);
-        if ($r->pay_status == 0) {
-            $nominal = "<span>$nominal</span>";
-        } else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
-            $nominal = "<span class='btn btn-sm' style='color:white; background-color:red;'>$nominal</span><span style='color:red;'>Belum Terbayar &#128544;<span>";
-        } else if ($r->pay_status == 1 && $r->jurnal_status == 1) {
-            $nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
-        }
-        $data[] = [
-            $r->uid,
-            $r->invoice_num,
-            $r->no_invoice,
-            $l_catg_k,
-            $SMU,
-            $r->list_agent,
-            $r->list_pengirim,
-            $r->total_pieces ?? '-',
-            $r->total_chargeable ?? '-',
-            // $r->total ?? '-',
-            // 'Rp. ' . number_format((float)$r->total),
-            $nominal,
-            $tanggal_txt ?? '-',
-            $jaster ?? '-',
-            $warning_topup,
-            $print,
-        ];
-    }
- 
-    $output = [
-        'draw'            => intval($_POST['draw'] ?? 0),
-        'recordsTotal'    => $this->M_outgoing->count_all_invoice($agent, $pay, $jurnal),
-        'recordsFiltered' => $this->M_outgoing->count_filtered_invoice($agent, $pay, $jurnal),
-        'data'            => $data,
-    ];
- 
-    $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($output));
-}
+			}
+
+			$pesawat = $this->cb->where('nama', $r->pesawat)->get('out_pesawat')->row();
+			$warna = $pesawat->warna ?? Null;
+			if ($warna) {
+				$SMU = "<span class='btn btn-sm' style='color:#fff; border:1px solid #fff; background-color:#$warna;'>$r->smu</span> ";
+			} else {
+				$SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
+			}
+			if ($r->pay_methode == '1' && $r->pay_status == '1') {
+				// $cek_topup = $this->cb->where('billing_uid', $r->uid)->where('asal_table', 'out_billing')->get('all_topup')->num_rows();
+
+				if ($r->has_topup) {
+					$warning_topup = "<span>$r->nama_kasir</span>";
+				} else {
+					$warning_topup = "<span class='btn btn-sm' style='color:white; background-color:red;'>$r->nama_kasir</span><span style='color:red;'>Invoice Belum Terpotong &#128544;<span>";
+				}
+			} else {
+				$warning_topup = "<span>$r->nama_kasir</span>";
+			}
+
+			$nominal = 'Rp. ' . number_format((float)$r->total);
+			$nominal_pph = 'Rp. ' . number_format((float)$r->total_pph);
+			$nominal_setelah_pph = 'Rp. ' . number_format((float)$r->total_setelah_pph);
+			if ($r->pay_status == 0) {
+				$nominal = "<span>$nominal</span>";
+			} else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
+				$nominal = "<span class='btn btn-sm' style='color:white; background-color:red;'>$nominal</span><span style='color:red;'>Belum Terbayar &#128544;<span>";
+			} else if ($r->pay_status == 1 && $r->jurnal_status == 1) {
+				$nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
+			}
+			$data[] = [
+				$r->uid,
+				$r->invoice_num,
+				$r->no_invoice,
+				$l_catg_k,
+				$SMU,
+				$r->list_agent,
+				$r->list_pengirim,
+				$r->total_pieces ?? '-',
+				$r->total_chargeable ?? '-',
+				// $r->total ?? '-',
+				// 'Rp. ' . number_format((float)$r->total),
+				$nominal,
+				$nominal_setelah_pph . "<br>(PPH 23 : " . $nominal_pph . ")",
+				$tanggal_txt ?? '-',
+				$jaster ?? '-',
+				$warning_topup,
+				$print,
+			];
+		}
+
+		$output = [
+			'draw'            => intval($_POST['draw'] ?? 0),
+			'recordsTotal'    => $this->M_outgoing->count_all_invoice($agent, $pay, $jurnal),
+			'recordsFiltered' => $this->M_outgoing->count_filtered_invoice($agent, $pay, $jurnal),
+			'data'            => $data,
+		];
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($output));
+	}
 
 	public function get_detail_invoice($uid)
 	{
@@ -3859,9 +3855,12 @@ public function getData_invoice()
 		$billing->kc_ppn_k          = number_format($kc_ppn);
 		$billing->kc_total_k        = number_format($kc_total);
 		$billing->grand_total_k     = number_format($grand_total);
+		$billing->total_pph     = $billing->total_pph > 0 ? number_format($billing->total_pph) : '';
+		$billing->total_setelah_pph     = $billing->total_setelah_pph > 0 ? number_format($billing->total_setelah_pph) : '';
 
 		$billing->is_jaster = $jaster_opt;
 
+		// $billing->is_pph_23 =
 		$new_no_invoice = "HLP.OUT-JASTER" . "-" . "$billing->invoice_num";
 
 		$billing->no_invoice = $new_no_invoice;
@@ -3904,6 +3903,10 @@ public function getData_invoice()
 		// List SMU
 		$list = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang')
 			->where('bill_uid', $uid)->order_by('uid', 'ASC')->get('out_list')->result();
+
+		// var_dump($billing);
+		// echo ("PPH_23 : " . $billing->is_pph_23);
+		// exit();
 
 		$this->output->set_content_type('application/json')->set_output(json_encode([
 			'billing' => $billing,
@@ -3948,7 +3951,10 @@ public function getData_invoice()
 		$bil_uid    = $this->input->post('bil_uid');
 		$new_status = $this->input->post('new_status');
 		$bill_catg  = $this->input->post('bill_catg');
-		// echo ('Catg Bill =' . $bill_catg);
+		$pph_23  = $this->input->post('pph_23');
+
+
+		// echo ('Catg Bill =' . $pph_23);
 		// exit();
 		$jaster     = $this->input->post('jaster');
 		$pay_methode = $this->input->post('pay_methode');
@@ -4118,6 +4124,16 @@ public function getData_invoice()
 		$kc_total      = $kc_sub_total + $kc_ppn;
 		$total         = round($bg_total + $kc_total);
 
+		if ($pph_23 == '1') {
+			$sub_total_sebelum_pph = $total_cargo + $total_jaster + $total_kade + $total_csc;
+			$total_pph = $sub_total_sebelum_pph * 0.02;
+		} else {
+			$total_pph = 0;
+		}
+
+		$total_setelah_pph = $total - $total_pph;
+
+
 		// =============================================
 		// STATUS 1 - CETAK
 		// =============================================
@@ -4150,6 +4166,9 @@ public function getData_invoice()
 				'kc_ppn'           => $kc_ppn,
 				'kc_total'         => $kc_total,
 				'grand_total'      => $total,
+				'is_pph_23' => $pph_23,
+				'total_pph'      => $total_pph,
+				'total_setelah_pph'      => $total_setelah_pph,
 				'grand_total_paid' => $total,
 				'status'           => '1',
 				'pay_status'       => '1',
@@ -4168,6 +4187,19 @@ public function getData_invoice()
 			$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
 
 
+			if ($pph_23 == '1') {
+				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
+
+				$keterangan = "Potongan PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
+				$j1_coa_debit = '11505';
+				// $j1_coa_kredit = "23014";
+				// $j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
+				$j1_coa_kredit = '99002';
+
+				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $total_pph, $this->input->post('tanggal_invoice'));
+
+				$total = $total_setelah_pph;
+			}
 
 			$nominal = $this->convertToNumberWithComma($total);
 
@@ -4214,6 +4246,9 @@ public function getData_invoice()
 				'kc_ppn'           => $kc_ppn,
 				'kc_total'         => $kc_total,
 				'grand_total'      => $total,
+				'is_pph_23' => $pph_23,
+				'total_pph'        => $total_pph,
+				'total_setelah_pph' => $total_setelah_pph,
 				'grand_total_paid' => $total,
 				'status'           => '0',
 				'pay_status'       => '',
@@ -4350,6 +4385,22 @@ public function getData_invoice()
 				->get('out_list')
 				->row();
 
+			$total = $billing->grand_total;
+
+			if ($billing->is_pph_23 == '1') {
+				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
+
+				$keterangan = "Pembayaran PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
+				$j1_coa_kredit = '11505';
+				// $j1_coa_kredit = "23014";
+				// $j1_coa_debit = $coa_utility['nomor_coa_utang_pph23'];
+				$j1_coa_debit = '99002';
+				$this->posting($coa_debit, $coa_kredit, $keterangan, $billing->total_pph, $billing->tanggal_invoice);
+
+				$total = $billing->total_setelah_pph;
+			}
+
+
 			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice . ". METODE : " . $metode_agent;
 
 			// $sub_total = $billing->total_cargo;
@@ -4358,7 +4409,6 @@ public function getData_invoice()
 			// $total = $total_nonpph;
 
 			// $total = $total_nonpph;
-			$total = $billing->grand_total;
 			$nominal = $this->convertToNumberWithComma($total);
 
 			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $billing->tanggal_invoice, '');
@@ -4545,6 +4595,7 @@ public function getData_invoice()
 		$agent  = $this->input->post('agent');
 		$kasir     = $this->input->post('kasir');
 		$pay_methode = $this->input->post('pay_methode');
+		$pph_23 = $this->input->post('pph_23');
 
 		$start_date = str_replace('-', '', $dari)   . '000000';
 		$end_date   = str_replace('-', '', $sampai) . '235959';
@@ -4576,6 +4627,10 @@ public function getData_invoice()
 			$this->cb->where('b.pay_methode', '4');
 		} else if ($pay_methode == '5') {
 			$this->cb->where('b.pay_methode', '5');
+		}
+
+		if ($pph_23 == '1') {
+			$this->cb->where('b.is_pph_23', '1');
 		}
 
 		$this->cb->order_by('no_invoice, tanggal_invoice', 'ASC');
@@ -4621,17 +4676,19 @@ public function getData_invoice()
 			'X'  => 'PPN KC',
 			'Y'  => 'Total KC',
 			'Z'  => 'Total',
-			'AA' => 'Pembayaran',
-			'AB' => 'Keterangan',
-			'AC' => 'Jaster',
+			'AA'  => 'Total PPH',
+			'AB'  => 'Total Setelah PPH',
+			'AC' => 'Pembayaran',
+			'AD' => 'Keterangan',
+			'AE' => 'Jaster',
 		];
 
 		foreach ($headers as $col => $label) {
 			$sheet->setCellValue($col . '1', $label);
 		}
 
-		$sheet->getStyle('A1:AC1')->getFont()->setBold(true)->setSize(12);
-		$sheet->getStyle('A1:AC1')->getAlignment()
+		$sheet->getStyle('A1:AE1')->getFont()->setBold(true)->setSize(12);
+		$sheet->getStyle('A1:AE1')->getAlignment()
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 		$nomor  = 1;
@@ -4662,6 +4719,8 @@ public function getData_invoice()
 			$kc_ppn           = $r['kc_ppn'];
 			$kc_total         = $r['kc_total'];
 			$grand_total      = $r['grand_total'];
+			$total_pph      = $r['total_pph'];
+			$total_setelah_pph      = $r['total_setelah_pph'];
 
 			// Format pembayaran
 			$pay_map = ['1' => 'Deposit', '2' => 'Cash', '3' => 'Transfer', '4' => 'Tagihan', '5' => 'FOC', '6' => 'QRIS'];
@@ -4720,7 +4779,7 @@ public function getData_invoice()
 
 			// Merge kolom header billing jika ada lebih dari 1 SMU
 			if ($endRow > $startRow) {
-				foreach (['A', 'B', 'C', 'D', 'E', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC'] as $col) {
+				foreach (['A', 'B', 'C', 'D', 'E', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE'] as $col) {
 					$sheet->mergeCells($col . $startRow . ':' . $col . $endRow);
 				}
 			}
@@ -4745,9 +4804,11 @@ public function getData_invoice()
 			$sheet->setCellValue('X'  . $startRow, $kc_ppn);
 			$sheet->setCellValue('Y'  . $startRow, $kc_total);
 			$sheet->setCellValue('Z'  . $startRow, $grand_total);
-			$sheet->setCellValue('AA' . $startRow, $pay);
-			$sheet->setCellValue('AB' . $startRow, $user_name);
-			$sheet->setCellValue('AC' . $startRow, $jaster);
+			$sheet->setCellValue('AA'  . $startRow, $total_pph);
+			$sheet->setCellValue('AB'  . $startRow, $total_setelah_pph);
+			$sheet->setCellValue('AC' . $startRow, $pay);
+			$sheet->setCellValue('AD' . $startRow, $user_name);
+			$sheet->setCellValue('AE' . $startRow, $jaster);
 
 			$nomor++;
 		}
@@ -4762,12 +4823,12 @@ public function getData_invoice()
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 		$sheet->setCellValue('A' . $totalRow, 'TOTAL');
 
-		foreach (['L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'] as $col) {
+		foreach (['L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB'] as $col) {
 			$sheet->setCellValue($col . $totalRow, '=SUM(' . $col . $firstRow . ':' . $col . $lastRow . ')');
 		}
 
 		// Autosize
-		$cols = array_merge(range('A', 'Z'), ['AA', 'AB', 'AC']);
+		$cols = array_merge(range('A', 'AB'), ['AC', 'AD', 'AE']);
 		foreach ($cols as $col) {
 			$sheet->getColumnDimension($col)->setAutoSize(true);
 		}
@@ -8250,5 +8311,259 @@ public function getData_invoice()
 		$this->output
 			->set_content_type('application/json')
 			->set_output(json_encode(['status' => $status, 'message' => $message]));
+	}
+
+	// DAFTAR INVOICE
+	public function daftar_bukti_potong()
+	{
+		$nip = $this->session->userdata('nip');
+		$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+		$query = $this->db->query($sql);
+		$res2 = $query->result_array();
+		$result = $res2[0]['COUNT(Id)'];
+
+		$sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+		$query2 = $this->db->query($sql2);
+		$res2 = $query2->result_array();
+		$result2 = $res2[0]['COUNT(id)'];
+
+		$data['count_inbox'] = $result;
+		$data['count_inbox2'] = $result2;
+
+		$data['title'] = "Daftar Bukti Potong";
+
+		$this->load->view('daftar_bukpot', $data);
+	}
+
+	public function getData_bukti_potong()
+	{
+
+		$agent  = $this->input->post('f_agent');
+
+		$results = $this->M_outgoing->get_datatables_bukti_potong($agent);
+		$data    = [];
+
+		$no = 0;
+		foreach ($results as $r) {
+
+			$wday1 = substr($r->tanggal_invoice, 0, 4);
+			$wday2 = substr($r->tanggal_invoice, 4, 2);
+			$wday3 = substr($r->tanggal_invoice, 6, 2);
+			$wday4 = substr($r->tanggal_invoice, 8, 2);
+			$wday5 = substr($r->tanggal_invoice, 10, 2);
+			$wday6 = substr($r->tanggal_invoice, 12, 2);
+			$time2 = "$wday4" . ":" . "$wday5";
+			if ($r->tanggal_invoice != "") {
+				$tanggal_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+			} else {
+				$tanggal_txt = "";
+			}
+
+			if ($r->is_jaster == '1') {
+				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
+			} else {
+				$jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
+			}
+
+			$pesawat = $this->cb->where('nama', $r->pesawat)->get('out_pesawat')->row();
+			$warna = $pesawat->warna ?? Null;
+			if ($warna) {
+				$SMU = "<span class='btn btn-sm' style='color:#fff; border:1px solid #fff; background-color:#$warna;'>$r->smu</span> ";
+			} else {
+				$SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
+			}
+
+
+			$nominal_pph = 'Rp. ' . number_format((float)$r->total_pph);
+			$nominal_setelah_pph = 'Rp. ' . number_format((float)$r->total_setelah_pph);
+
+			$data[] = [
+				$r->uid,
+				$r->invoice_num,
+				$r->no_invoice,
+				$SMU,
+				$r->list_agent,
+				$r->list_pengirim,
+				$nominal_pph,
+				$nominal_setelah_pph,
+				$r->bukti_potong,
+				$tanggal_txt ?? '-',
+				$jaster ?? '-',
+			];
+		}
+
+		$output = [
+			'draw'            => intval($_POST['draw'] ?? 0),
+			'recordsTotal'    => $this->M_outgoing->count_all_bukti_potong($agent),
+			'recordsFiltered' => $this->M_outgoing->count_filtered_bukti_potong($agent),
+			'data'            => $data,
+		];
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($output));
+	}
+
+	public function get_detail_bukti_potong($uid)
+	{
+		// Ambil billing
+		$billing = $this->cb->where('b.uid', $uid)
+			->select('b.*, c.nama_billing as nama_catg, c.jenis_billing, l.pesawat')
+			->from('out_billing b')
+			->join('out_bill_catg c', 'c.uid = b.bill_catg_uid', 'left')
+			->join('out_list l', 'l.bill_uid = b.uid', 'left')
+			->get()->row();
+
+		if (!$billing) {
+			echo json_encode(['status' => 'error']);
+			return;
+		}
+
+		// Ambil jaster dari out_list
+		$jaster_row = $this->cb->select('jaster')
+			->where('bill_uid', $uid)->get('out_list')->row();
+		$jaster_opt = $jaster_row->jaster ?? 0;
+
+		if ($billing->bill_catg_uid == '' || $billing->bill_catg_uid == null) {
+
+			// Ambil jaster dari out_list
+			$catg_bill_row = $this->cb->select('o.catg_bill, c.jenis_billing, c.nama_billing as nama_catg,')
+				->where('bill_uid', $uid)->from('out_list o')->join('out_bill_catg c', 'c.uid = o.catg_bill', 'left')->get()->row();
+			$catg_bill = $catg_bill_row->catg_bill ?? 0;
+			$jenis_billing = $catg_bill_row->jenis_billing ?? '';
+			$nama_catg = $catg_bill_row->nama_catg ?? '';
+		} else {
+			$catg_bill = $billing->bill_catg_uid;
+			$jenis_billing = $billing->jenis_billing;
+			$nama_catg = $billing->nama_catg;
+		}
+		// Ambil kategori billing
+		$catg = $this->cb->where('hold !=', '1')->get('out_bill_catg')->row();
+
+		// Hitung total
+		$total_berat = $billing->total_chargeable > 0
+			? $billing->total_chargeable
+			: $this->cb->select_sum('chargeable')->where('bill_uid', $uid)->get('out_list')->row()->chargeable;
+
+		$total_pieces = $billing->total_pieces > 0
+			? $billing->total_pieces
+			: $this->cb->select_sum('jumlah')->where('bill_uid', $uid)->get('out_list')->row()->jumlah;
+
+		$total_berat   = (float)$total_berat;
+		$catg_sewa     = (float)$catg->sewa_gudang;
+		$catg_kade     = (float)$catg->kade;
+		$catg_csc      = (float)$catg->csc;
+		$catg_jasa_ra  = (float)$catg->jasa_ra;
+
+		$total_sewa    = $billing->total_cargo   > 0 ? (float)$billing->total_cargo   : $total_berat * $catg_sewa;
+		$bg_ppn        = $billing->bg_ppn        > 0 ? (float)$billing->bg_ppn        : $total_sewa * 0.11;
+		$administrasi  = $billing->administrasi  > 0 ? (float)$billing->administrasi  : 0;
+		$materai       = $billing->materai       > 0 ? (float)$billing->materai       : 0;
+		$bg_total      = $billing->bg_total      > 0 ? (float)$billing->bg_total      : $total_sewa + $bg_ppn + $administrasi + $materai;
+		$total_kade    = $billing->total_kade    > 0 ? (float)$billing->total_kade    : $total_berat * $catg_kade;
+		$total_csc     = $billing->total_csc     > 0 ? (float)$billing->total_csc     : $total_berat * $catg_csc;
+		$total_jaster  = $jaster_opt > 0 ? ($billing->total_jaster > 0 ? (float)$billing->total_jaster : $total_berat * $catg_jasa_ra) : 0;
+		$kc_sub_total  = $billing->kc_sub_total  > 0 ? (float)$billing->kc_sub_total  : $total_kade + $total_csc + $total_jaster;
+		$kc_ppn        = $billing->kc_ppn        > 0 ? (float)$billing->kc_ppn        : $kc_sub_total * 0.11;
+		$kc_total      = $billing->kc_total      > 0 ? (float)$billing->kc_total      : $kc_sub_total + $kc_ppn;
+		$grand_total   = $billing->grand_total   > 0 ? (float)$billing->grand_total   : $kc_total + $bg_total;
+
+		// Format angka
+		$billing->total_pieces_k    = number_format($total_pieces);
+		$billing->total_chargeable_k = number_format($total_berat);
+		$billing->total_cargo_k     = number_format($total_sewa);
+		$billing->total_cdc_k       = $billing->total_cdc > 0 ? number_format($billing->total_cdc) : '';
+		$billing->bg_ppn_k          = number_format($bg_ppn);
+		$billing->administrasi_k    = number_format($administrasi);
+		$billing->materai_k         = number_format($materai);
+		$billing->bg_total_k        = number_format($bg_total);
+		$billing->total_kade_k      = number_format($total_kade);
+		$billing->total_csc_k       = number_format($total_csc);
+		$billing->total_jaster_k    = $jaster_opt > 0 ? number_format($total_jaster) : '';
+		$billing->kc_sub_total_k    = number_format($kc_sub_total);
+		$billing->kc_ppn_k          = number_format($kc_ppn);
+		$billing->kc_total_k        = number_format($kc_total);
+		$billing->grand_total_k     = number_format($grand_total);
+		$billing->total_pph     = $billing->total_pph > 0 ? number_format($billing->total_pph) : '';
+		$billing->total_setelah_pph     = $billing->total_setelah_pph > 0 ? number_format($billing->total_setelah_pph) : '';
+
+		$billing->is_jaster = $jaster_opt;
+
+		// $billing->is_pph_23 =
+		$new_no_invoice = "HLP.OUT-JASTER" . "-" . "$billing->invoice_num";
+
+		$billing->no_invoice = $new_no_invoice;
+		$billing->nama_catg = $nama_catg;
+		if ($jenis_billing == '0') {
+			$jenis_billing = 'UMUM';
+		} else if ($jenis_billing == '1') {
+			$jenis_billing = 'TRANSIT';
+		}
+		$billing->jenis_billing = $jenis_billing;
+		$billing->bill_catg_uid = $catg_bill;
+
+		if ($billing->pay_methode == '1') {
+			$topup = $this->cb->select('agent_uid')
+				->where(['billing_uid' => $uid, 'asal_table' => 'out_billing'])->get('all_topup')->row();
+			if ($topup) {
+
+				$agent = $this->cb->select('uid, kode, nama')
+					->where('uid', $topup->agent_uid)->get('all_agent_deposit')->row();
+
+				$agent_deposit_uid = $agent->uid;
+				$kode_agent_deposit = $agent->kode;
+				$nama_agent_deposit = $agent->nama;
+			} else {
+				$agent_deposit_uid = '';
+				$kode_agent_deposit = '';
+				$nama_agent_deposit = '';
+			}
+		} else {
+			$agent_deposit_uid = '';
+			$kode_agent_deposit = '';
+			$nama_agent_deposit = '';
+		}
+
+		$billing->agent_deposit_uid = $agent_deposit_uid;
+		$billing->kode_agent_deposit = $kode_agent_deposit;
+		$billing->nama_agent_deposit = $nama_agent_deposit;
+
+
+		// List SMU
+		$list = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang, nama_agent, nama_pengirim')
+			->where('bill_uid', $uid)->order_by('uid', 'ASC')->get('out_list')->result();
+
+		// var_dump($billing);
+		// echo ("PPH_23 : " . $billing->is_pph_23);
+		// exit();
+
+		$this->output->set_content_type('application/json')->set_output(json_encode([
+			'billing' => $billing,
+			'list'    => $list,
+		]));
+	}
+
+	public function update_bukti_potong()
+	{
+		$uid = $this->input->post('bil_uid');
+
+		$data_update = [
+			'bukti_potong'          => $this->input->post('bukti_potong'),
+		];
+
+		$this->cb->trans_start(); // Gunakan transaksi DB agar aman
+
+		// Update data utama
+		$this->cb->where('uid', $uid)->update('out_billing', $data_update);
+
+		$this->cb->trans_complete();
+
+		if ($this->cb->trans_status() === FALSE) {
+			$this->session->set_flashdata('message_error', 'Gagal memperbarui data.');
+		} else {
+			$this->session->set_flashdata('message_name', 'Bukti Potong berhasil diperbarui.');
+		}
+
+		redirect('outgoinghlp/daftar_bukti_potong'); // Sesuaikan base_url controller Anda
 	}
 }

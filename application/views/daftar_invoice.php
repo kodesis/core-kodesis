@@ -317,6 +317,7 @@
                                                 <th>Koli</th>
                                                 <th>Chargeable</th>
                                                 <th>Total</th>
+                                                <th>PPH 23</th>
                                                 <th>Tanggal</th>
                                                 <th>Jaster</th>
                                                 <th>Kasir</th>
@@ -337,6 +338,7 @@
                                                         <td><?= $row['total_pieces'] ?></td>
                                                         <td><?= $row['total_chg'] ?></td>
                                                         <td><?= $row['nominal'] ?></td>
+                                                        <td><?= $row['pph'] ?></td>
                                                         <td><?= $row['tanggal'] ?></td>
                                                         <td><?= $row['jaster'] ?></td>
                                                         <td><?= $row['warning_topup'] ?></td>
@@ -345,7 +347,7 @@
                                                 <?php endforeach; ?>
                                             <?php else: ?>
                                                 <tr>
-                                                    <td colspan="13" class="text-center">Tidak ada data</td>
+                                                    <td colspan="14" class="text-center">Tidak ada data</td>
                                                 </tr>
                                             <?php endif; ?>
                                         </tbody>

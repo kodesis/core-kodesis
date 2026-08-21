@@ -596,13 +596,14 @@ class M_outgoing extends CI_Model
 		2  => 'o.catg_smu',
 		3  => 'o.smu',
 		4  => 'o.nama_agent',
-		4  => 'o.nama_pengirim',
-		5  => 'b.total_pieces',
-		6  => 'b.total_chargeable',
-		7  => 'b.total',
-		8  => 'b.tanggal_invoice',
-		9  => 'b.jaster',
-		10 => 'u.nama',
+		5  => 'o.nama_pengirim',
+		6  => 'b.total_pieces',
+		7  => 'b.total_chargeable',
+		8  => 'b.total',
+		9  => 'b.total_setelah_pph',
+		10  => 'b.tanggal_invoice',
+		11  => 'b.jaster',
+		12 => 'u.nama',
 	];
 
 	private function _base_query_invoice($agent = null, $pay = null, $jurnal = null)
@@ -789,6 +790,100 @@ public function count_invoice($agent, $pay, $jurnal, $search)
  
     return $this->cb->get()->num_rows();
 }
+ 
+
+	// ====================================
+	// DAFTAR BUKTI POTONG
+	// ====================================
+
+	private $table_bukti_potong = 'out_billing';
+
+	private $orderable_bukti_potong = [
+		0  => 'b.invoice_num',
+		1  => 'b.no_invoice',
+		2  => 'o.smu',
+		3  => 'o.nama_agent',
+		4  => 'o.nama_pengirim',
+		5  => 'b.total_pph',
+		6  => 'b.total_setelah_pph',
+		7  => 'b.bukti_potong',
+		8  => 'b.tanggal_invoice',
+		9  => 'b.jaster',
+		10 => 'u.nama',
+	];
+
+	private function _base_query_bukti_potong($agent = null, $pay = null, $jurnal = null)
+	{
+
+		$this->cb->select("
+        o.smu, o.pesawat, o.catg_smu, o.jaster as is_jaster, o.nama_agent as list_agent, o.nama_pengirim as list_pengirim, b.*, u.nama as nama_kasir,
+    ", FALSE)
+			->from('out_billing b')
+			->join('out_list o',  'o.bill_uid = b.uid',  'left')
+			->join($this->db->database . '.users u',      'u.nip = b.user_kasir',    'left');
+		$this->cb->where('b.is_pph_23', '1');
+
+		if ($agent !== null && $agent !== '') {
+			$this->cb->where('o.agent_uid', $agent);
+		}
+		// Search
+		if (!empty($_POST['search']['value'])) {
+			$search = $_POST['search']['value'];
+			$this->cb->group_start()
+				->like('b.invoice_num', $search)
+				->or_like('b.no_invoice', $search)
+				// ->or_like('b.catg_smu', $search)
+				->or_like('o.smu', $search)
+				->or_like('o.nama_agent', $search)
+				->or_like('o.nama_pengirim', $search)
+				->or_like('b.total_pph', $search)
+				->or_like('b.total_setelah_pph', $search)
+				->or_like('b.bukti_potong', $search)
+				->or_like('b.tanggal_invoice', $search)
+				->or_like('b.jaster', $search)
+				->or_like('u.nama', $search)
+				// ->or_like('o.koli_smu', $search)
+				// ->or_like('o.gross_smu', $search)
+				->group_end();
+		}
+
+		// Prioritas paling atas: warning (pay_method=1 tapi belum ada topup)
+
+		// Order
+		$orderCol = $_POST['order'][0]['column'] ?? null;
+		// $orderCol = null;
+		if ($orderCol !== null && !empty($this->orderable_bukti_potong[$orderCol])) {
+			$col = $this->orderable_bukti_potong[$orderCol];
+			$dir = ($_POST['order'][0]['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
+			$this->cb->order_by($col, $dir);
+		} else {
+			$this->cb->order_by("(b.bukti_potong IS NULL OR b.bukti_potong = '')", 'DESC', FALSE);
+			$this->cb->order_by('b.uid', 'DESC');
+		}
+	}
+
+	public function get_datatables_bukti_potong($agent)
+	{
+		$this->_base_query_bukti_potong($agent);
+
+		if ($_POST['length'] != -1) {
+			$this->cb->limit($_POST['length'], $_POST['start']);
+		}
+
+		return $this->cb->get()->result();
+	}
+
+	public function count_filtered_bukti_potong($agent)
+	{
+		$this->_base_query_bukti_potong($agent);
+		return $this->cb->get()->num_rows();
+	}
+
+	public function count_all_bukti_potong($agent)
+	{
+		// return $this->cb->count_all($this->table);
+		return $this->cb->count_all_results($this->table_bukti_potong);
+	}
 
 	// ====================================
 	// DAFTAR INVOICE KHUSUS

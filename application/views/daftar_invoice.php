@@ -264,33 +264,50 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="row mb-2">
-                                <div class="col-md-4">
-                                    <select id="f_agent" class="form-control select2-agent">
-                                        <option value="">:: Semua Agent</option>
-                                    </select>
+                            <form id="filterForm" method="get" action="<?= current_url() ?>">
+                                <!-- reset ke halaman 1 setiap kali filter/search berubah -->
+                                <input type="hidden" name="page" value="1">
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <select name="f_agent" id="f_agent" class="form-control select2-agent">
+                                            <option value="">:: Semua Agent</option>
+                                            <?php if (!empty($f_agent) && !empty($f_agent_nama)): ?>
+                                                <option value="<?= htmlspecialchars($f_agent) ?>" selected><?= htmlspecialchars($f_agent_nama) ?></option>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="f_pay" id="f_pay" class="form-control select2-filter">
+                                            <option value="">:: Semua Status Invoice</option>
+                                            <option value="0" <?= ($f_pay ?? '') === '0' ? 'selected' : '' ?>>Belum Invoice</option>
+                                            <option value="1" <?= ($f_pay ?? '') === '1' ? 'selected' : '' ?>>Sudah Invoice</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="f_jurnal" id="f_jurnal" class="form-control select2-filter">
+                                            <option value="">:: Semua Status Jurnal</option>
+                                            <option value="0" <?= ($f_jurnal ?? '') === '0' ? 'selected' : '' ?>>Belum Bayar</option>
+                                            <option value="1" <?= ($f_jurnal ?? '') === '1' ? 'selected' : '' ?>>Sudah Bayar</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <input type="text" name="f_search" class="form-control" placeholder="Cari..." value="<?= htmlspecialchars($f_search ?? '') ?>">
+                                            <span class="input-group-btn">
+                                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Cari</button>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <select id="f_pay" class="form-control select2-filter">
-                                        <option value="">:: Semua Status Invoice</option>
-                                        <option value="0">Belum Invoice</option>
-                                        <option value="1">Sudah Invoice</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <select id="f_jurnal" class="form-control select2-filter">
-                                        <option value="">:: Semua Status Jurnal</option>
-                                        <option value="0">Belum Bayar</option>
-                                        <option value="1">Sudah Bayar</option>
-                                    </select>
-                                </div>
-                            </div>
+                            </form>
                             <div class="x_content">
+                                <div class="mb-2">
+                                    Menampilkan <?= count($rows) ?> dari <?= $total_rows ?> total data (Halaman <?= $current_page ?> dari <?= $total_pages ?>)
+                                </div>
                                 <div class="table-responsive">
                                     <table id="kemasan_table" class="table table-striped table-bordered" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>UID</th>
                                                 <th>No</th>
                                                 <th>No Invoice</th>
                                                 <th>Kategori SMU</th>
@@ -300,15 +317,78 @@
                                                 <th>Koli</th>
                                                 <th>Chargeable</th>
                                                 <th>Total</th>
-                                                <th>Total Setelah PPH</th>
                                                 <th>Tanggal</th>
                                                 <th>Jaster</th>
                                                 <th>Kasir</th>
                                                 <th>Print</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+                                            <?php if (!empty($rows)): ?>
+                                                <?php $no = ($current_page - 1) * $per_page + 1; ?>
+                                                <?php foreach ($rows as $row): ?>
+                                                    <tr data-uid="<?= $row['uid'] ?>" style="cursor:pointer;">
+                                                        <td><?= $no++ ?></td>
+                                                        <td><?= $row['no_invoice'] ?></td>
+                                                        <td><?= $row['catg'] ?></td>
+                                                        <td><?= $row['smu'] ?></td>
+                                                        <td><?= $row['agent'] ?></td>
+                                                        <td><?= $row['pengirim'] ?></td>
+                                                        <td><?= $row['total_pieces'] ?></td>
+                                                        <td><?= $row['total_chg'] ?></td>
+                                                        <td><?= $row['nominal'] ?></td>
+                                                        <td><?= $row['tanggal'] ?></td>
+                                                        <td><?= $row['jaster'] ?></td>
+                                                        <td><?= $row['warning_topup'] ?></td>
+                                                        <td><?= $row['print'] ?></td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="13" class="text-center">Tidak ada data</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
                                     </table>
                                 </div>
+
+                                <?php
+                                function build_page_url_invoice($page_num, $f_search, $f_agent, $f_pay, $f_jurnal)
+                                {
+                                    $params = array_filter([
+                                        'page'     => $page_num,
+                                        'f_search' => $f_search,
+                                        'f_agent'  => $f_agent,
+                                        'f_pay'    => $f_pay,
+                                        'f_jurnal' => $f_jurnal,
+                                    ], function ($v) {
+                                        return $v !== null && $v !== '';
+                                    });
+                                    return current_url() . '?' . http_build_query($params);
+                                }
+                                ?>
+                                <?php if ($total_pages > 1): ?>
+                                    <nav>
+                                        <ul class="pagination">
+                                            <li class="<?= $current_page <= 1 ? 'disabled' : '' ?>">
+                                                <a href="<?= build_page_url_invoice(max(1, $current_page - 1), $f_search, $f_agent, $f_pay, $f_jurnal) ?>">Sebelumnya</a>
+                                            </li>
+                                            <?php
+                                            $start = max(1, $current_page - 3);
+                                            $end   = min($total_pages, $current_page + 3);
+                                            for ($i = $start; $i <= $end; $i++):
+                                            ?>
+                                                <li class="<?= $i === $current_page ? 'active' : '' ?>">
+                                                    <a href="<?= build_page_url_invoice($i, $f_search, $f_agent, $f_pay, $f_jurnal) ?>"><?= $i ?></a>
+                                                </li>
+                                            <?php endfor; ?>
+                                            <li class="<?= $current_page >= $total_pages ? 'disabled' : '' ?>">
+                                                <a href="<?= build_page_url_invoice(min($total_pages, $current_page + 1), $f_search, $f_agent, $f_pay, $f_jurnal) ?>">Selanjutnya</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                <?php endif; ?>
+
                                 <h6>* klik nama customer untuk edit</h6>
                             </div>
                         </div>
@@ -442,11 +522,6 @@
                                                 <th>GRAND TOTAL</th>
                                                 <td colspan="2" class="text-right"><b id="inv_grand_total"></b></td>
                                             </tr>
-                                            <tr id="inv_row_pph_23" style="display:none;">
-                                                <td>GRAND TOTAL SETELAH PPH</td>
-                                                <td class="text-right" id="inv_total_pph"></td>
-                                                <td class="text-right" id="inv_setelah_pph"></td>
-                                            </tr>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -518,8 +593,6 @@
                                     </div>
                                 </div>
 
-
-
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Biaya Materai</label>
@@ -530,7 +603,7 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Kategori Billing</label>
-                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" required>
+                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" require>
                                             <option value="">Pilih Kategori Billing</option>
                                         </select>
                                     </div>
@@ -570,16 +643,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="form-label">PPH 23</label>
-                                        <select class="form-control" name="pph_23" id="inv_pph_23" required>
-                                            <option value="">:: Pilih PPH</option>
-                                            <option value="0">Non PPH 23</option>
-                                            <option value="1">PPH 23</option>
-                                        </select>
-                                    </div>
-                                </div>
+
                             </div>
                             <hr>
 
@@ -615,21 +679,21 @@
                     <form class="form-horizontal form-label-left" method="POST" action="<?= base_url('outgoinghlp/rekap_invoice') ?>">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-3 col-xs-12">
+                                <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Dari</label>
                                         <input type="date" class="form-control" name="dari" id="dari_r">
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 col-xs-12">
+                                <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Sampai</label>
                                         <input type="date" class="form-control" name="sampai" id="sampai_r">
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 col-xs-12">
+                                <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Metode Pembayaran</label>
                                         <select class="form-control" name="pay_methode">
@@ -642,16 +706,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Filter PPH</label>
-                                        <select class="form-control" name="pph_23">
-                                            <option value="All">Semua</option>
-                                            <option value="0">No PPH</option>
-                                            <option value="1">PPH</option>
-                                        </select>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-4 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Pesawat</label>
@@ -847,53 +902,12 @@
             $('.select2').select2();
 
             // =============================================
-            // DATATABLE
+            // TABEL DIRENDER LANGSUNG DARI SERVER (PHP), TIDAK PAKAI AJAX/DATATABLES
+            // Filter tetap berfungsi seperti sebelumnya, tapi submit via GET
+            // (reload halaman) alih-alih ajax.reload().
             // =============================================
-            $('#kemasan_table').DataTable({
-                processing: true,
-                serverSide: true,
-                scrollX: true,
-                order: [
-                    // [0, 'desc']
-                ],
-                ajax: {
-                    url: '<?= base_url("outgoinghlp/getData_invoice") ?>',
-                    type: 'POST',
-                    data: function(d) {
-                        d.f_agent = $('#f_agent').val();
-                        d.f_pay = $('#f_pay').val();
-                        d.f_jurnal = $('#f_jurnal').val();
-                    }
-                },
-                columnDefs: [{
-                        orderable: false,
-                        targets: [-1]
-                    },
-                    {
-                        visible: false,
-                        targets: 0
-                    } // sembunyikan kolom uid
-                ],
-                rowCallback: function(row, data) {
-                    $(row).attr('data-uid', data[0]);
-                    $(row).css('cursor', 'pointer');
-                },
-                language: {
-                    search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ data",
-                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-                    infoEmpty: "Tidak ada data",
-                    zeroRecords: "Data tidak ditemukan",
-                    processing: "Memuat data...",
-                    paginate: {
-                        previous: "Sebelumnya",
-                        next: "Selanjutnya"
-                    }
-                }
-            });
-
             $('#f_agent, #f_pay, #f_jurnal').on('change', function() {
-                $('#kemasan_table').DataTable().ajax.reload();
+                $('#filterForm').submit();
             });
 
             $('#f_pay, #f_jurnal').select2({
@@ -925,11 +939,6 @@
                         $('#inv_agent').val(r.nama_agent);
                         $('#inv_cdc').val(r.cdc);
                         $('#inv_jaster').val(r.is_jaster);
-                        $('#inv_pph_23').val(
-                            (r.is_pph_23 === null || r.is_pph_23 === undefined || r.is_pph_23 === '') ?
-                            '' :
-                            String(r.is_pph_23)
-                        );
                         $('#inv_new_status').val(r.status);
                         $('#inv_pengirim_uid').val(r.pengirim_uid);
 
@@ -962,13 +971,6 @@
                             $('#inv_row_jaster').hide();
                         }
 
-                        console.log('PPH-23 : ' + r.is_pph_23);
-                        if (r.is_pph_23 > 0) {
-                            $('#inv_row_pph_23').show();
-                        } else {
-                            $('#inv_row_pph_23').hide();
-                        }
-
                         // Billing totals
                         $('#inv_sub_total').text(r.total_cargo_k);
                         $('#inv_total_cdc').text(r.total_cdc_k);
@@ -989,9 +991,6 @@
                         $('#inv_total_pieces').text(r.total_pieces_k);
                         $('#inv_total_berat').text(r.total_chargeable_k);
                         $('#inv_total_sewa').text(r.total_cargo_k);
-
-                        $('#inv_total_pph').text(r.total_pph);
-                        $('#inv_setelah_pph').text(r.total_setelah_pph);
 
                         // List SMU
                         var html = '';
@@ -1112,7 +1111,12 @@
                     success: function(res) {
                         if (res.status === 'success') {
                             $('#modalDetailInvoice').modal('hide');
-                            $('#invoice_table').DataTable().ajax.reload();
+                            // NOTE: sebelumnya memanggil $('#invoice_table').DataTable() yang
+                            // sebenarnya sudah salah target (id tsb tidak pernah ada di DOM,
+                            // tabel yang benar adalah #kemasan_table) — jadi refresh data
+                            // sebenarnya tidak pernah jalan. Sekarang tabel dirender server-side
+                            // jadi cara paling sederhana & benar untuk refresh data: reload halaman.
+                            location.reload();
                         }
                     }
                 });
@@ -1259,54 +1263,14 @@
                 var val = $(this).data('val');
                 var $form = $(this).closest('form');
 
-                // Batal tidak perlu validasi isian
                 if (val == '3') {
                     if (!confirm('Yakin ingin membatalkan invoice ini?')) return;
-                    $('#inv_new_status').val(val);
-                    $form.submit();
-                    return;
                 }
 
-                var kosong = [];
-
-                if (!$('#inv_bill_catg').val()) kosong.push('Kategori Billing');
-                if (!$('#inv_no_invoice').val().trim()) kosong.push('No. Invoice');
-                if (!$('#inv_pesawat').val()) kosong.push('Pesawat');
-                if ($('#inv_pph_23').val() === '') kosong.push('PPH 23');
-
-                if (kosong.length) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Data Belum Lengkap',
-                        html: 'Mohon lengkapi:<br><b>' + kosong.join('<br>') + '</b>'
-                    });
-
-                    $('#inv_bill_catg, #inv_no_invoice, #inv_pesawat').each(function() {
-                        $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
-                    });
-                    $('#inv_pph_23').closest('.form-group')
-                        .toggleClass('has-error', $('#inv_pph_23').val() === '');
-
-                    return;
-                }
-
-                $('.form-group').removeClass('has-error');
                 $('.btn-status-inv').removeClass('active');
                 $(this).addClass('active');
                 $('#inv_new_status').val(val);
                 $form.submit();
-            });
-
-            $(document).on('change', '#inv_bill_catg, #inv_pesawat', function() {
-                $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
-            });
-
-            $(document).on('input', '#inv_no_invoice', function() {
-                $(this).closest('.form-group').toggleClass('has-error', !$(this).val().trim());
-            });
-
-            $(document).on('change', '#inv_pph_23', function() {
-                $(this).closest('.form-group').toggleClass('has-error', $(this).val() === '');
             });
 
             $('.select2-nama-rekap').select2({

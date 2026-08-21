@@ -957,6 +957,11 @@
                         $('#inv_agent').val(r.nama_agent);
                         $('#inv_cdc').val(r.cdc);
                         $('#inv_jaster').val(r.is_jaster);
+                        $('#inv_pph_23').val(
+                            (r.is_pph_23 === null || r.is_pph_23 === undefined || r.is_pph_23 === '') ?
+                            '' :
+                            String(r.is_pph_23)
+                        );
                         $('#inv_new_status').val(r.status);
                         $('#inv_pengirim_uid').val(r.pengirim_uid);
 
@@ -989,6 +994,13 @@
                             $('#inv_row_jaster').hide();
                         }
 
+                        console.log('PPH-23 : ' + r.is_pph_23);
+                        if (r.is_pph_23 > 0) {
+                            $('#inv_row_pph_23').show();
+                        } else {
+                            $('#inv_row_pph_23').hide();
+                        }
+
                         // Billing totals
                         $('#inv_sub_total').text(r.total_cargo_k);
                         $('#inv_total_cdc').text(r.total_cdc_k);
@@ -1009,6 +1021,9 @@
                         $('#inv_total_pieces').text(r.total_pieces_k);
                         $('#inv_total_berat').text(r.total_chargeable_k);
                         $('#inv_total_sewa').text(r.total_cargo_k);
+
+                        $('#inv_total_pph').text(r.total_pph);
+                        $('#inv_setelah_pph').text(r.total_setelah_pph);
 
                         // List SMU
                         var html = '';
@@ -1129,12 +1144,7 @@
                     success: function(res) {
                         if (res.status === 'success') {
                             $('#modalDetailInvoice').modal('hide');
-                            // NOTE: sebelumnya memanggil $('#invoice_table').DataTable() yang
-                            // sebenarnya sudah salah target (id tsb tidak pernah ada di DOM,
-                            // tabel yang benar adalah #kemasan_table) — jadi refresh data
-                            // sebenarnya tidak pernah jalan. Sekarang tabel dirender server-side
-                            // jadi cara paling sederhana & benar untuk refresh data: reload halaman.
-                            location.reload();
+                            $('#invoice_table').DataTable().ajax.reload();
                         }
                     }
                 });
@@ -1281,14 +1291,54 @@
                 var val = $(this).data('val');
                 var $form = $(this).closest('form');
 
+                // Batal tidak perlu validasi isian
                 if (val == '3') {
                     if (!confirm('Yakin ingin membatalkan invoice ini?')) return;
+                    $('#inv_new_status').val(val);
+                    $form.submit();
+                    return;
                 }
 
+                var kosong = [];
+
+                if (!$('#inv_bill_catg').val()) kosong.push('Kategori Billing');
+                if (!$('#inv_no_invoice').val().trim()) kosong.push('No. Invoice');
+                if (!$('#inv_pesawat').val()) kosong.push('Pesawat');
+                if ($('#inv_pph_23').val() === '') kosong.push('PPH 23');
+
+                if (kosong.length) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap',
+                        html: 'Mohon lengkapi:<br><b>' + kosong.join('<br>') + '</b>'
+                    });
+
+                    $('#inv_bill_catg, #inv_no_invoice, #inv_pesawat').each(function() {
+                        $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
+                    });
+                    $('#inv_pph_23').closest('.form-group')
+                        .toggleClass('has-error', $('#inv_pph_23').val() === '');
+
+                    return;
+                }
+
+                $('.form-group').removeClass('has-error');
                 $('.btn-status-inv').removeClass('active');
                 $(this).addClass('active');
                 $('#inv_new_status').val(val);
                 $form.submit();
+            });
+
+            $(document).on('change', '#inv_bill_catg, #inv_pesawat', function() {
+                $(this).closest('.form-group').toggleClass('has-error', !$(this).val());
+            });
+
+            $(document).on('input', '#inv_no_invoice', function() {
+                $(this).closest('.form-group').toggleClass('has-error', !$(this).val().trim());
+            });
+
+            $(document).on('change', '#inv_pph_23', function() {
+                $(this).closest('.form-group').toggleClass('has-error', $(this).val() === '');
             });
 
             $('.select2-nama-rekap').select2({

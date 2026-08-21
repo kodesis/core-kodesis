@@ -524,6 +524,11 @@
                                                 <th>GRAND TOTAL</th>
                                                 <td colspan="2" class="text-right"><b id="inv_grand_total"></b></td>
                                             </tr>
+                                            <tr id="inv_row_pph_23" style="display:none;">
+                                                <td>GRAND TOTAL SETELAH PPH</td>
+                                                <td class="text-right" id="inv_total_pph"></td>
+                                                <td class="text-right" id="inv_setelah_pph"></td>
+                                            </tr>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -595,6 +600,8 @@
                                     </div>
                                 </div>
 
+
+
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Biaya Materai</label>
@@ -605,7 +612,7 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">Kategori Billing</label>
-                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" require>
+                                        <select name="bill_catg" id="inv_bill_catg" class="form-control select2-catg-inv" required>
                                             <option value="">Pilih Kategori Billing</option>
                                         </select>
                                     </div>
@@ -645,7 +652,16 @@
                                         </select>
                                     </div>
                                 </div>
-
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">PPH 23</label>
+                                        <select class="form-control" name="pph_23" id="inv_pph_23" required>
+                                            <option value="">:: Pilih PPH</option>
+                                            <option value="0">Non PPH 23</option>
+                                            <option value="1">PPH 23</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
 

@@ -2579,7 +2579,7 @@ class Outgoinghlp extends CI_Controller
 		if ($il->bill_uid) {
 			$bil = $this->cb->where('uid', $il->bill_uid)->get('out_billing')->row();
 
-			if ($bil->pay_status != '1' && $bil->status != '1') {
+			if ($bil->pay_status != '1' && $bil->jurnal_status != '1') {
 				echo ('MASUK');
 				$data_billing = [
 					'total_pieces'        => $this->input->post('jumlah'),
@@ -2594,7 +2594,7 @@ class Outgoinghlp extends CI_Controller
 		}else if ($il->bill_khusus_uid) {
 			$bil = $this->cb->where('uid', $il->bill_khusus_uid)->get('out_billing_inv_khusus')->row();
 
-			if ($bil->pay_status != '1' && $bil->status != '1') {
+			if ($bil->pay_status != '1' && $bil->jurnal_status != '1') {
 				echo ('MASUK');
 				$data_billing = [
 					'total_pieces'        => $this->input->post('jumlah'),

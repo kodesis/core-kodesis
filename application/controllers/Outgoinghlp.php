@@ -2591,6 +2591,21 @@ class Outgoinghlp extends CI_Controller
 			} else {
 				$warning = '1';
 			}
+		}else if ($il->bill_khusus_uid) {
+			$bil = $this->cb->where('uid', $il->bill_khusus_uid)->get('out_billing_inv_khusus')->row();
+
+			if ($bil->pay_status != '1' && $bil->status != '1') {
+				echo ('MASUK');
+				$data_billing = [
+					'total_pieces'        => $this->input->post('jumlah'),
+					'total_gross'       => $this->input->post('gross'),
+					'total_volume'       => $this->input->post('volume'),
+					'total_chargeable'       => $this->input->post('chargeable'),
+				];
+				$this->cb->where('uid', $il->bill_khusus_uid)->update('out_billing_inv_khusus', $data_billing);
+			} else {
+				$warning = '1';
+			}
 		}
 
 		if ($warning == '1') {

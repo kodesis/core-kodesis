@@ -1470,7 +1470,9 @@
                 if (max_val < 10) {
                     max_val = 10;
                 }
-                $('#d_chargeable').val(Math.ceil(max_val));
+                // $('#d_chargeable').val(Math.ceil(max_val));
+                $('#d_chargeable').val(Math.round(max_val));
+
             }
 
             // Hitung dimensi otomatis saat input berubah
@@ -1515,7 +1517,8 @@
                     if (max_val < 10) {
                         max_val = 10;
                     }
-                    $('#d_chargeable').val(Math.ceil(max_val));
+                    // $('#d_chargeable').val(Math.ceil(max_val));
+                    $('#d_chargeable').val(Math.round(max_val));
                 }
             }
 
@@ -1539,7 +1542,8 @@
                 if (max_val < 10) {
                     max_val = 10;
                 }
-                $('#d_chargeable').val(Math.ceil(max_val));
+                // $('#d_chargeable').val(Math.ceil(max_val));
+                $('#d_chargeable').val(Math.round(max_val));
             });
 
             // Tambah dimensi baru

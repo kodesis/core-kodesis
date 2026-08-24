@@ -4323,10 +4323,11 @@ class Outgoinghlp extends CI_Controller
 			redirect('outgoinghlp/daftar_invoice');
 			return;
 		}
-
 		// 3. Cegah pembayaran ganda & invoice yang sudah dibatalkan
 		if ($billing->pay_status == '1' && $billing->jurnal_status == '0') {
 			$msg = '';
+
+			$ket_bank = '';
 
 			if ($pay_methode == '1') {
 				$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
@@ -4379,6 +4380,14 @@ class Outgoinghlp extends CI_Controller
 					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
 			} else if ($pay_methode == '3' || $pay_methode == '4') {
 				$coa_debit = $coa_bank;
+
+				if ($coa_bank == "12001") {
+					$ket_bank = 'Melalui Bank BCA EKS';
+				} else if ($coa_bank == "12002") {
+					$ket_bank = 'Melalui Bank BNI BDT';
+				} else if ($coa_bank == "12004") {
+					$ket_bank = 'Melalui Bank BNI MBZ';
+				}
 			} else if ($pay_methode == '6') {
 				$coa_debit = '12001';
 			}
@@ -4405,7 +4414,7 @@ class Outgoinghlp extends CI_Controller
 			if ($billing->is_pph_23 == '1') {
 				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
 
-				$keterangan = "Pembayaran PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
+				$keterangan = "Pembayaran PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice . "; " . $ket_bank;
 				$j1_coa_kredit = '11505';
 				// $j1_coa_kredit = "23014";
 				// $j1_coa_debit = $coa_utility['nomor_coa_utang_pph23'];
@@ -4416,7 +4425,7 @@ class Outgoinghlp extends CI_Controller
 			}
 
 
-			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice . ". METODE : " . $metode_agent;
+			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice . ". METODE : " . $metode_agent . "; " . $ket_bank;
 
 			// $sub_total = $billing->total_cargo;
 			// $total_ppn = $billing->bg_ppn + $billing->kc_ppn;

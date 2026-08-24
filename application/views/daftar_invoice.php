@@ -810,6 +810,7 @@
                                         <select name="coa_bank" id="b_bank" class="form-control" required>
                                             <option value="12001" selected>BANK EKS</option>
                                             <option value="12002">BANK BDT</option>
+                                            <option value="12004">BANK MBZ</option>
                                         </select>
                                     </div>
                                 </div>

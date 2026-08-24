@@ -1909,7 +1909,8 @@
                     $('#t_volume').val(0);
 
                     var gross = parseFloat($('#t_gross').val()) || 0;
-                    $('#t_chargeable').val(Math.ceil(gross));
+                    // $('#t_chargeable').val(Math.ceil(gross));
+                    $('#t_chargeable').val(Math.round(gross));
                 } else {
                     rows.each(function(index) {
                         $(this).find('td:first').text(index + 1);
@@ -1948,7 +1949,9 @@
                 if (chargeableVal < 10) {
                     chargeableVal = 10;
                 }
-                $('#t_chargeable').val(Math.ceil(chargeableVal));
+                // $('#t_chargeable').val(Math.ceil(chargeableVal));
+                $('#t_chargeable').val(Math.round(chargeableVal));
+
             }
 
             function hitungRowDimensiTambah(row) {
@@ -2027,7 +2030,8 @@
                 if (max_val < 10) {
                     max_val = 10;
                 }
-                $('#t_chargeable').val(Math.ceil(max_val));
+                // $('#t_chargeable').val(Math.ceil(max_val));
+                $('#t_chargeable').val(Math.round(max_val));
             });
 
             // Auto hitung chargeable pada form tambah (apabila volume diubah manual - dibulatkan)
@@ -2038,7 +2042,8 @@
                 if (max_val < 10) {
                     max_val = 10;
                 }
-                $('#t_chargeable').val(Math.ceil(max_val));
+                // $('#t_chargeable').val(Math.ceil(max_val));
+                $('#t_chargeable').val(Math.round(max_val));
             });
 
             // Menutup select2 saat modal tambah di-scroll

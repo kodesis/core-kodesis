@@ -2591,7 +2591,7 @@ class Outgoinghlp extends CI_Controller
 			} else {
 				$warning = '1';
 			}
-		}else if ($il->bill_khusus_uid) {
+		} else if ($il->bill_khusus_uid) {
 			$bil = $this->cb->where('uid', $il->bill_khusus_uid)->get('out_billing_inv_khusus')->row();
 
 			if ($bil->pay_status != '1' && $bil->jurnal_status != '1') {
@@ -3494,188 +3494,188 @@ class Outgoinghlp extends CI_Controller
 	}
 
 	public function daftar_invoice()
-{
-    $nip = $this->session->userdata('nip');
-    $sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
-    $query = $this->db->query($sql);
-    $res2 = $query->result_array();
-    $result = $res2[0]['COUNT(Id)'];
- 
-    $sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
-    $query2 = $this->db->query($sql2);
-    $res2 = $query2->result_array();
-    $result2 = $res2[0]['COUNT(id)'];
- 
-    $data['count_inbox'] = $result;
-    $data['count_inbox2'] = $result2;
- 
-    $data['title'] = "Daftar Invoice";
- 
-    // Ambil data COA
-    $coa_12002 = $this->m_coa->getCoaByCode('12002');
-    $coa_12001 = $this->m_coa->getCoaByCode('12001');
-    $merged_coa_debit_depo = array_merge($coa_12002, $coa_12001);
-    $coa_debit_depo = $this->m_coa->getCoaByCode('210');
-    $coa_debit_transfer = $merged_coa_debit_depo;
- 
-    $coa_41002 = $this->m_coa->getCoaByCode('41002');
-    $coa_13010 = $this->m_coa->getCoaByCode('13010');
-    $merged_coa_kredit_transfer = array_merge($coa_41002, $coa_13010);
- 
-    $data['coa_1'] = $coa_debit_depo;
-    $data['coa_2'] = $coa_41002;
-    $data['coa_3'] = $coa_debit_transfer;
-    $data['coa_4'] = $merged_coa_kredit_transfer;
- 
-    // ============================================
-    // Filter & search dari GET (form submit biasa, reload halaman)
-    // ============================================
-    $agent  = $this->input->get('f_agent');
-    $pay    = $this->input->get('f_pay');
-    $jurnal = $this->input->get('f_jurnal');
-    $search = $this->input->get('f_search');
- 
-    // Supaya dropdown filter agent tetap menampilkan nama yang sedang aktif
-    // setelah reload halaman (select2 ajax butuh Option awal manual).
-    // SESUAIKAN query ini dengan tabel/model yang sama dipakai endpoint
-    // 'outgoinghlp/get_agent' (nama tabel & kolom uid/nama agent).
-    $f_agent_nama = null;
-    if (!empty($agent)) {
-        $agent_row = $this->cb->where('uid', $agent)->get('customer')->row(); // TODO: sesuaikan nama tabel
-        $f_agent_nama = $agent_row->nama ?? null;
-    }
-    $data['f_agent_nama'] = $f_agent_nama;
- 
-    // ============================================
-    // Pagination server-side
-    // ============================================
-    $per_page = 25; // ubah sesuai kebutuhan
-    $page     = (int) ($this->input->get('page') ?? 1);
-    if ($page < 1) {
-        $page = 1;
-    }
-    $offset = ($page - 1) * $per_page;
- 
-    $total_rows  = $this->M_outgoing->count_invoice($agent, $pay, $jurnal, $search);
-    $total_pages = (int) ceil($total_rows / $per_page);
-    if ($total_pages < 1) {
-        $total_pages = 1;
-    }
-    // Jaga-jaga kalau user akses halaman yang sudah tidak ada datanya
-    if ($page > $total_pages) {
-        $page   = $total_pages;
-        $offset = ($page - 1) * $per_page;
-    }
- 
-    $results = $this->M_outgoing->get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset);
- 
-    // Lookup out_pesawat sekali saja (hindari N+1 query)
-    $pesawat_rows = $this->cb->get('out_pesawat')->result();
-    $pesawat_map  = [];
-    foreach ($pesawat_rows as $p) {
-        $pesawat_map[$p->nama] = $p->warna ?? null;
-    }
- 
-    $rows = [];
-    foreach ($results as $r) {
- 
-        $wday1 = substr($r->tanggal_invoice, 0, 4);
-        $wday2 = substr($r->tanggal_invoice, 4, 2);
-        $wday3 = substr($r->tanggal_invoice, 6, 2);
-        $wday4 = substr($r->tanggal_invoice, 8, 2);
-        $wday5 = substr($r->tanggal_invoice, 10, 2);
-        $wday6 = substr($r->tanggal_invoice, 12, 2);
-        $time2 = "$wday4" . ":" . "$wday5";
-        if ($r->tanggal_invoice != "") {
-            $tanggal_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
-        } else {
-            $tanggal_txt = "";
-        }
- 
-        if ($r->catg_smu == '1') {
-            $l_catg_k = "Langsung(Direct)";
-        } else if ($r->catg_smu == '2') {
-            $l_catg_k = "Transhipment";
-        } else if ($r->catg_smu == '3') {
-            $l_catg_k = "Terminal change(w/o inv)";
-        } else if ($r->catg_smu == '4') {
-            $l_catg_k = "Direct from RA";
-        } else {
-            $l_catg_k = '';
-        }
- 
-        if ($r->is_jaster == '1') {
-            $jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
-        } else {
-            $jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
-        }
- 
-        $print = '';
-        if ($r->pay_status == '1') {
-            $print = "<a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_invoice/{$r->uid}'>
+	{
+		$nip = $this->session->userdata('nip');
+		$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+		$query = $this->db->query($sql);
+		$res2 = $query->result_array();
+		$result = $res2[0]['COUNT(Id)'];
+
+		$sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+		$query2 = $this->db->query($sql2);
+		$res2 = $query2->result_array();
+		$result2 = $res2[0]['COUNT(id)'];
+
+		$data['count_inbox'] = $result;
+		$data['count_inbox2'] = $result2;
+
+		$data['title'] = "Daftar Invoice";
+
+		// Ambil data COA
+		$coa_12002 = $this->m_coa->getCoaByCode('12002');
+		$coa_12001 = $this->m_coa->getCoaByCode('12001');
+		$merged_coa_debit_depo = array_merge($coa_12002, $coa_12001);
+		$coa_debit_depo = $this->m_coa->getCoaByCode('210');
+		$coa_debit_transfer = $merged_coa_debit_depo;
+
+		$coa_41002 = $this->m_coa->getCoaByCode('41002');
+		$coa_13010 = $this->m_coa->getCoaByCode('13010');
+		$merged_coa_kredit_transfer = array_merge($coa_41002, $coa_13010);
+
+		$data['coa_1'] = $coa_debit_depo;
+		$data['coa_2'] = $coa_41002;
+		$data['coa_3'] = $coa_debit_transfer;
+		$data['coa_4'] = $merged_coa_kredit_transfer;
+
+		// ============================================
+		// Filter & search dari GET (form submit biasa, reload halaman)
+		// ============================================
+		$agent  = $this->input->get('f_agent');
+		$pay    = $this->input->get('f_pay');
+		$jurnal = $this->input->get('f_jurnal');
+		$search = $this->input->get('f_search');
+
+		// Supaya dropdown filter agent tetap menampilkan nama yang sedang aktif
+		// setelah reload halaman (select2 ajax butuh Option awal manual).
+		// SESUAIKAN query ini dengan tabel/model yang sama dipakai endpoint
+		// 'outgoinghlp/get_agent' (nama tabel & kolom uid/nama agent).
+		$f_agent_nama = null;
+		if (!empty($agent)) {
+			$agent_row = $this->cb->where('uid', $agent)->get('customer')->row(); // TODO: sesuaikan nama tabel
+			$f_agent_nama = $agent_row->nama ?? null;
+		}
+		$data['f_agent_nama'] = $f_agent_nama;
+
+		// ============================================
+		// Pagination server-side
+		// ============================================
+		$per_page = 25; // ubah sesuai kebutuhan
+		$page     = (int) ($this->input->get('page') ?? 1);
+		if ($page < 1) {
+			$page = 1;
+		}
+		$offset = ($page - 1) * $per_page;
+
+		$total_rows  = $this->M_outgoing->count_invoice($agent, $pay, $jurnal, $search);
+		$total_pages = (int) ceil($total_rows / $per_page);
+		if ($total_pages < 1) {
+			$total_pages = 1;
+		}
+		// Jaga-jaga kalau user akses halaman yang sudah tidak ada datanya
+		if ($page > $total_pages) {
+			$page   = $total_pages;
+			$offset = ($page - 1) * $per_page;
+		}
+
+		$results = $this->M_outgoing->get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset);
+
+		// Lookup out_pesawat sekali saja (hindari N+1 query)
+		$pesawat_rows = $this->cb->get('out_pesawat')->result();
+		$pesawat_map  = [];
+		foreach ($pesawat_rows as $p) {
+			$pesawat_map[$p->nama] = $p->warna ?? null;
+		}
+
+		$rows = [];
+		foreach ($results as $r) {
+
+			$wday1 = substr($r->tanggal_invoice, 0, 4);
+			$wday2 = substr($r->tanggal_invoice, 4, 2);
+			$wday3 = substr($r->tanggal_invoice, 6, 2);
+			$wday4 = substr($r->tanggal_invoice, 8, 2);
+			$wday5 = substr($r->tanggal_invoice, 10, 2);
+			$wday6 = substr($r->tanggal_invoice, 12, 2);
+			$time2 = "$wday4" . ":" . "$wday5";
+			if ($r->tanggal_invoice != "") {
+				$tanggal_txt = "$wday3" . "-" . "$wday2" . "-" . "$wday1" . " " . "$time2";
+			} else {
+				$tanggal_txt = "";
+			}
+
+			if ($r->catg_smu == '1') {
+				$l_catg_k = "Langsung(Direct)";
+			} else if ($r->catg_smu == '2') {
+				$l_catg_k = "Transhipment";
+			} else if ($r->catg_smu == '3') {
+				$l_catg_k = "Terminal change(w/o inv)";
+			} else if ($r->catg_smu == '4') {
+				$l_catg_k = "Direct from RA";
+			} else {
+				$l_catg_k = '';
+			}
+
+			if ($r->is_jaster == '1') {
+				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
+			} else {
+				$jaster = "<span class='btn btn-sm' style='color:#d9534f; border:1px solid #d9534f; background:transparent;'>No Jaster</span> ";
+			}
+
+			$print = '';
+			if ($r->pay_status == '1') {
+				$print = "<a target='_blank' class='btn btn-sm btn-primary' href='" . base_url() . "outgoinghlp/print_invoice/{$r->uid}'>
         <i class='fa fa-print'></i> Invoice</a>";
-        }
- 
-        $warna = $pesawat_map[$r->pesawat] ?? null;
-        if ($warna) {
-            $SMU = "<span class='btn btn-sm' style='color:#fff; border:1px solid #fff; background-color:#$warna;'>$r->smu</span> ";
-        } else {
-            $SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
-        }
- 
-        if ($r->pay_methode == '1' && $r->pay_status == '1') {
-            if ($r->has_topup) {
-                $warning_topup = "<span>$r->nama_kasir</span>";
-            } else {
-                $warning_topup = "<span class='btn btn-sm' style='color:white; background-color:red;'>$r->nama_kasir</span><span style='color:red;'>Invoice Belum Terpotong &#128544;<span>";
-            }
-        } else {
-            $warning_topup = "<span>$r->nama_kasir</span>";
-        }
- 
-        $nominal             = 'Rp. ' . number_format((float)$r->total);
-        $nominal_pph         = 'Rp. ' . number_format((float)$r->total_pph);
-        $nominal_setelah_pph = 'Rp. ' . number_format((float)$r->total_setelah_pph);
-        if ($r->pay_status == 0) {
-            $nominal = "<span>$nominal</span>";
-        } else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
-            $nominal = "<span class='btn btn-sm' style='color:white; background-color:red;'>$nominal</span><span style='color:red;'>Belum Terbayar &#128544;<span>";
-        } else if ($r->pay_status == 1 && $r->jurnal_status == 1) {
-            $nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
-        }
- 
-        $rows[] = [
-            'uid'            => $r->uid,
-            'invoice_num'    => $r->invoice_num,
-            'no_invoice'     => $r->no_invoice,
-            'catg'           => $l_catg_k,
-            'smu'            => $SMU,
-            'agent'          => $r->list_agent,
-            'pengirim'       => $r->list_pengirim,
-            'total_pieces'   => $r->total_pieces ?? '-',
-            'total_chg'      => $r->total_chargeable ?? '-',
-            'nominal'        => $nominal,
-            'pph'            => $nominal_setelah_pph . "<br>(PPH 23 : " . $nominal_pph . ")",
-            'tanggal'        => $tanggal_txt ?? '-',
-            'jaster'         => $jaster ?? '-',
-            'warning_topup'  => $warning_topup,
-            'print'          => $print,
-        ];
-    }
- 
-    $data['rows']         = $rows;
-    $data['current_page'] = $page;
-    $data['total_pages']  = $total_pages;
-    $data['total_rows']   = $total_rows;
-    $data['per_page']     = $per_page;
-    $data['f_agent']      = $agent;
-    $data['f_pay']        = $pay;
-    $data['f_jurnal']     = $jurnal;
-    $data['f_search']     = $search;
- 
-    $this->load->view('daftar_invoice', $data);
-}
- 
+			}
+
+			$warna = $pesawat_map[$r->pesawat] ?? null;
+			if ($warna) {
+				$SMU = "<span class='btn btn-sm' style='color:#fff; border:1px solid #fff; background-color:#$warna;'>$r->smu</span> ";
+			} else {
+				$SMU = "<span class='btn btn-sm' style='color:#73879C;'>$r->smu</span> ";
+			}
+
+			if ($r->pay_methode == '1' && $r->pay_status == '1') {
+				if ($r->has_topup) {
+					$warning_topup = "<span>$r->nama_kasir</span>";
+				} else {
+					$warning_topup = "<span class='btn btn-sm' style='color:white; background-color:red;'>$r->nama_kasir</span><span style='color:red;'>Invoice Belum Terpotong &#128544;<span>";
+				}
+			} else {
+				$warning_topup = "<span>$r->nama_kasir</span>";
+			}
+
+			$nominal             = 'Rp. ' . number_format((float)$r->total);
+			$nominal_pph         = 'Rp. ' . number_format((float)$r->total_pph);
+			$nominal_setelah_pph = 'Rp. ' . number_format((float)$r->total_setelah_pph);
+			if ($r->pay_status == 0) {
+				$nominal = "<span>$nominal</span>";
+			} else if ($r->pay_status == 1 && $r->jurnal_status == 0) {
+				$nominal = "<span class='btn btn-sm' style='color:white; background-color:red;'>$nominal</span><span style='color:red;'>Belum Terbayar &#128544;<span>";
+			} else if ($r->pay_status == 1 && $r->jurnal_status == 1) {
+				$nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
+			}
+
+			$rows[] = [
+				'uid'            => $r->uid,
+				'invoice_num'    => $r->invoice_num,
+				'no_invoice'     => $r->no_invoice,
+				'catg'           => $l_catg_k,
+				'smu'            => $SMU,
+				'agent'          => $r->list_agent,
+				'pengirim'       => $r->list_pengirim,
+				'total_pieces'   => $r->total_pieces ?? '-',
+				'total_chg'      => $r->total_chargeable ?? '-',
+				'nominal'        => $nominal,
+				'pph'            => $nominal_setelah_pph . "<br>(PPH 23 : " . $nominal_pph . ")",
+				'tanggal'        => $tanggal_txt ?? '-',
+				'jaster'         => $jaster ?? '-',
+				'warning_topup'  => $warning_topup,
+				'print'          => $print,
+			];
+		}
+
+		$data['rows']         = $rows;
+		$data['current_page'] = $page;
+		$data['total_pages']  = $total_pages;
+		$data['total_rows']   = $total_rows;
+		$data['per_page']     = $per_page;
+		$data['f_agent']      = $agent;
+		$data['f_pay']        = $pay;
+		$data['f_jurnal']     = $jurnal;
+		$data['f_search']     = $search;
+
+		$this->load->view('daftar_invoice', $data);
+	}
+
 
 	public function getData_invoice()
 	{
@@ -6321,13 +6321,15 @@ class Outgoinghlp extends CI_Controller
 			$topup_saldo      = $r['topup_saldo'];
 			$sisa_saldo       = $r['sisa_saldo'];
 			$t_agent_uid      = $r['agent_uid'];
+			$topup_date      = $r['topup_date'];
+			$topup_date_formatted = strtolower(date('j F Y', strtotime($topup_date)));
 
 			// Cek apakah ini row topup (tanpa billing)
 			if (empty($t_billing_uid)) {
 				// Row topup saldo murni
 				$sheet->mergeCells('A' . $rowNum . ':K' . $rowNum);
 				$sheet->getStyle('A' . $rowNum)->getAlignment()->setHorizontal($center);
-				$sheet->setCellValue('A' . $rowNum, 'Topup Deposit');
+				$sheet->setCellValue('A' . $rowNum, 'Topup Deposit Tanggal : ' . $topup_date_formatted);
 				$sheet->getStyle('L' . $rowNum)->getAlignment()->setHorizontal($right);
 				$sheet->setCellValue('L' . $rowNum, $topup_saldo);
 				$sheet->getStyle('M' . $rowNum)->getAlignment()->setHorizontal($right);

@@ -554,13 +554,15 @@ class Depositwh extends CI_Controller
 			$sisa_saldo       = $r['sisa_saldo'];
 			$t_agent_uid      = $r['agent_uid'];
 			$asal_table       = $r['asal_table'];
+			$topup_date      = $r['topup_date'];
+			$topup_date_formatted = strtolower(date('j F Y', strtotime($topup_date)));
 
 			// Cek apakah ini row topup (tanpa billing)
 			if (empty($t_billing_uid)) {
 				// Row topup saldo murni
 				$sheet->mergeCells('A' . $rowNum . ':K' . $rowNum);
 				$sheet->getStyle('A' . $rowNum)->getAlignment()->setHorizontal($center);
-				$sheet->setCellValue('A' . $rowNum, 'Topup Deposit');
+				$sheet->setCellValue('A' . $rowNum, 'Topup Deposit Tanggal : ' . $topup_date_formatted);
 				$sheet->getStyle('L' . $rowNum)->getAlignment()->setHorizontal($right);
 				$sheet->setCellValue('L' . $rowNum, $topup_saldo);
 				$sheet->getStyle('M' . $rowNum)->getAlignment()->setHorizontal($right);

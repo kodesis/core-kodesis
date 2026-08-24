@@ -179,120 +179,129 @@
 				</ul>
 			</li> -->
 		<?php } ?>
-		<?php $a = $this->session->userdata('level');
-		if (strpos($a, '90') !== false) { ?>
-			<li>
-				<a><i class="fa fa-edit"></i>Outgoing WH<span class="fa fa-chevron-down"></span></a>
-				<ul class="nav child_menu">
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '901') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_csd">Daftar CSD (Kasir)</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '902') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_do">Daftar DO</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '902') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_reject">Daftar Reject Item</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '903') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_kemasan_smu">Daftar Kemasan SMU</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_btb">Daftar BTB</a></li>
 
-					<?php } ?>
+		<?php $a = $this->session->userdata('level');
+		if (strpos($a, '90') !== false || strpos($a, '91') !== false || strpos($a, '92') !== false) { ?>
+			<li>
+				<a><i class="fa fa-cubes"></i> Warehouse <span class="fa fa-chevron-down"></span></a>
+				<ul class="nav child_menu">
 					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '904') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_csd_actual">Daftar CSD (Actual)</a></li>
+					if (strpos($a, '90') !== false) { ?>
+						<li>
+							<a><i class="fa fa-edit"></i>Outgoing WH<span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '901') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_csd">Daftar CSD (Kasir)</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '902') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_do">Daftar DO</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '902') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_reject">Daftar Reject Item</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '903') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_kemasan_smu">Daftar Kemasan SMU</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_btb">Daftar BTB</a></li>
+
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '904') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_csd_actual">Daftar CSD (Actual)</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '905') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice">Daftar Invoice</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_bukti_potong">Daftar Bukti Potong</a></li>
+									<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li> -->
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '906') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_outbound_manifest">Outbound Manifest</a></li>
+									<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li> -->
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '906') !== false) { ?>
+									<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_deposit">Daftar Deposit</a></li> -->
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '909') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_agents">- Agents</a></li>
+									<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_driver">- Driver</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_truck">- Truck</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_pengirim">- Pengirim</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_tujuan">- Tujuan</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_avsec">- Avsec</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '905') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga">- Kategori Harga</a></li>
+								<?php } ?>
+							</ul>
+						</li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '905') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice">Daftar Invoice</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_bukti_potong">Daftar Bukti Potong</a></li>
-						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li> -->
+						<li>
+							<a><i class="fa fa-edit"></i>Outgoing Khusus WH<span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '905') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga_khusus">- Kategori Harga Khusus</a></li>
+								<?php } ?>
+							</ul>
+						</li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '906') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_outbound_manifest">Outbound Manifest</a></li>
-						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li> -->
+					if (strpos($a, '91') !== false) { ?>
+						<li>
+							<a><i class="fa fa-edit"></i>Incoming WH<span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '913') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>incominghlp/daftar_kemasan_smu">Daftar Kemasan SMU</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '915') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>incominghlp/daftar_invoice">Daftar Invoice</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '916') !== false) { ?>
+									<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_deposit">Daftar Deposit</a></li> -->
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '919') !== false) { ?>
+									<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
+									<li><a href="<?php echo base_url(); ?>incominghlp/daftar_asal">- Asal</a></li>
+									<li><a href="<?php echo base_url(); ?>incominghlp/daftar_penerima">- Penerima</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '915') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>incominghlp/kategori_harga">- Kategori Harga</a></li>
+								<?php } ?>
+							</ul>
+						</li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '906') !== false) { ?>
-						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_deposit">Daftar Deposit</a></li> -->
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '909') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_agents">- Agents</a></li>
-						<!-- <li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_driver">- Driver</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_truck">- Truck</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_pengirim">- Pengirim</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_tujuan">- Tujuan</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_avsec">- Avsec</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '905') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga">- Kategori Harga</a></li>
-					<?php } ?>
-				</ul>
-			</li>
-		<?php } ?>
-		<?php $a = $this->session->userdata('level');
-		if (strpos($a, '905') !== false) { ?>
-			<li>
-				<a><i class="fa fa-edit"></i>Outgoing Khusus WH<span class="fa fa-chevron-down"></span></a>
-				<ul class="nav child_menu">
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '905') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_invoice_khusus">Daftar Invoice Khusus</a></li>
-						<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga_khusus">- Kategori Harga Khusus</a></li>
-					<?php } ?>
-				</ul>
-			</li>
-		<?php } ?>
-		<?php $a = $this->session->userdata('level');
-		if (strpos($a, '91') !== false) { ?>
-			<li>
-				<a><i class="fa fa-edit"></i>Incoming WH<span class="fa fa-chevron-down"></span></a>
-				<ul class="nav child_menu">
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '913') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_kemasan_smu">Daftar Kemasan SMU</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '915') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_invoice">Daftar Invoice</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '916') !== false) { ?>
-						<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_deposit">Daftar Deposit</a></li> -->
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '919') !== false) { ?>
-						<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
-						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_asal">- Asal</a></li>
-						<li><a href="<?php echo base_url(); ?>incominghlp/daftar_penerima">- Penerima</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '915') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>incominghlp/kategori_harga">- Kategori Harga</a></li>
-					<?php } ?>
-				</ul>
-			</li>
-		<?php } ?>
-		<?php $a = $this->session->userdata('level');
-		if (strpos($a, '92') !== false) { ?>
-			<li>
-				<a><i class="fa fa-edit"></i>Deposit WH<span class="fa fa-chevron-down"></span></a>
-				<ul class="nav child_menu">
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '921') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>depositwh/daftar_deposit">Daftar Deposit</a></li>
-					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '922') !== false) { ?>
-						<li><a href="<?php echo base_url(); ?>depositwh/daftar_agents_deposit">- Agents Deposit</a></li>
+					if (strpos($a, '92') !== false) { ?>
+						<li>
+							<a><i class="fa fa-edit"></i>Deposit WH<span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu">
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '921') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>depositwh/daftar_deposit">Daftar Deposit</a></li>
+								<?php } ?>
+								<?php $a = $this->session->userdata('level');
+								if (strpos($a, '922') !== false) { ?>
+									<li><a href="<?php echo base_url(); ?>depositwh/daftar_agents_deposit">- Agents Deposit</a></li>
+								<?php } ?>
+							</ul>
+						</li>
 					<?php } ?>
 				</ul>
 			</li>

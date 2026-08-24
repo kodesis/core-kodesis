@@ -3541,7 +3541,7 @@ class Outgoinghlp extends CI_Controller
 		// 'outgoinghlp/get_agent' (nama tabel & kolom uid/nama agent).
 		$f_agent_nama = null;
 		if (!empty($agent)) {
-			$agent_row = $this->cb->where('uid', $agent)->get('customer')->row(); // TODO: sesuaikan nama tabel
+			$agent_row = $this->cb->where('uid', $agent)->get('out_agent')->row(); // TODO: sesuaikan nama tabel
 			$f_agent_nama = $agent_row->nama ?? null;
 		}
 		$data['f_agent_nama'] = $f_agent_nama;

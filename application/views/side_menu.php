@@ -190,7 +190,7 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '90') !== false) { ?>
 						<li>
-							<a><i class="fa fa-edit"></i>Outgoing WH<span class="fa fa-chevron-down"></span></a>
+							<a>Outgoing WH<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<?php $a = $this->session->userdata('level');
 								if (strpos($a, '901') !== false) { ?>
@@ -249,7 +249,7 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '905') !== false) { ?>
 						<li>
-							<a><i class="fa fa-edit"></i>Outgoing Khusus WH<span class="fa fa-chevron-down"></span></a>
+							<a>Outgoing Khusus WH<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<?php $a = $this->session->userdata('level');
 								if (strpos($a, '905') !== false) { ?>
@@ -262,7 +262,7 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '91') !== false) { ?>
 						<li>
-							<a><i class="fa fa-edit"></i>Incoming WH<span class="fa fa-chevron-down"></span></a>
+							<a>Incoming WH<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<?php $a = $this->session->userdata('level');
 								if (strpos($a, '913') !== false) { ?>
@@ -292,7 +292,7 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '92') !== false) { ?>
 						<li>
-							<a><i class="fa fa-edit"></i>Deposit WH<span class="fa fa-chevron-down"></span></a>
+							<a>Deposit WH<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
 								<?php $a = $this->session->userdata('level');
 								if (strpos($a, '921') !== false) { ?>

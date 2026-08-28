@@ -7,8 +7,11 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="images/favicon.ico" type="image/ico" />
-  <title><?= $this->session->userdata('nama_singkat') ?> | Business Development</title>
+  <?php $setting = $this->db->get('setting')->result(); ?>
+
+  <link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+  <title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
+  <title>Kodesis | Business Development</title>
   <!-- Bootstrap -->
   <link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
@@ -33,7 +36,7 @@
   <style>
     .col-xs-3 {
       width: 25%;
-      background-color: #008080;
+      background-color: #004e81;
     }
 
     .row {
@@ -47,97 +50,6 @@
 
     .btn_footer_panel .tag_ {
       padding-top: 37px;
-    }
-
-    /* Kontainer pembungkus tombol filter */
-    .filter-button-group {
-      display: flex !important;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      padding: 15px;
-      width: 100%;
-    }
-
-    /* Base style tombol rombakan total */
-    .btn-filter-custom {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      padding: 6px 14px !important;
-      font-size: 13px !important;
-      font-weight: 500 !important;
-      border-radius: 50px !important;
-      text-decoration: none !important;
-      transition: all 0.2s ease-in-out !important;
-      border: 1px solid transparent !important;
-      outline: none !important;
-    }
-
-    /* Gaya Lingkaran Badge Angka */
-    .badge-filter-custom {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: 20px !important;
-      height: 20px !important;
-      border-radius: 50% !important;
-      font-size: 11px !important;
-      font-weight: 600 !important;
-      margin-left: 8px !important;
-      padding: 0 !important;
-      /* Mematikan paksa absolute positioning bawaan template */
-      position: relative !important;
-      top: auto !important;
-      right: auto !important;
-      transform: none !important;
-    }
-
-    /* VARIANT 1: Gray / Secondary (All, Progress, Hold) */
-    .filter-gray-outline {
-      color: #6c757d !important;
-      border-color: #d1d5db !important;
-      background-color: #f9fafb !important;
-    }
-
-    .filter-gray-outline .badge-filter-custom {
-      background-color: #e5e7eb !important;
-      color: #374151 !important;
-    }
-
-    .filter-gray-active {
-      color: #fff !important;
-      background-color: #6c757d !important;
-      border-color: #6c757d !important;
-    }
-
-    .filter-gray-active .badge-filter-custom {
-      background-color: #fff !important;
-      color: #374151 !important;
-    }
-
-    /* VARIANT 2: Red / Danger (Overdue) */
-    .filter-red-outline {
-      color: #dc3545 !important;
-      border-color: #fca5a5 !important;
-      background-color: #fef2f2 !important;
-    }
-
-    .filter-red-outline .badge-filter-custom {
-      background-color: #fee2e2 !important;
-      color: #b91c1c !important;
-    }
-
-    .filter-red-active {
-      color: #fff !important;
-      background-color: #dc3545 !important;
-      border-color: #dc3545 !important;
-    }
-
-    .filter-red-active .badge-filter-custom {
-      background-color: #fff !important;
-      color: #b91c1c !important;
     }
   </style>
 </head>
@@ -193,7 +105,8 @@
       <div class="col-md-3 left_col">
         <div class="left_col scroll-view">
           <div class="navbar nav_title" style="border: 0;">
-            <a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> <?= $this->session->userdata('nama_singkat') ?> </span></a>
+            <a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
+              <span><?= $this->session->userdata('nama_singkat') ?></span></a>
           </div>
 
           <div class="clearfix"></div>
@@ -366,75 +279,30 @@
         </form>
 
       <?php } ?>
-      <?php
-      $seg_2 = $this->uri->segment(2);
-      if ($seg_2 != 'task_closed') {
-      ?>
-        <div class="filter-button-group">
 
-          <a href="<?= base_url('task/' . $seg_2) ?>"
-            class="btn-filter-custom <?= empty($current_filter) ? 'filter-gray-active' : 'filter-gray-outline' ?>">
-            All
-            <span class="badge-filter-custom"><?= $count_all ?></span>
-          </a>
-
-          <a href="<?= base_url('task/' . $seg_2 . '/progress') ?>"
-            class="btn-filter-custom <?= ($current_filter == 'progress') ? 'filter-gray-active' : 'filter-gray-outline' ?>">
-            Progress
-            <span class="badge-filter-custom"><?= $count_progress ?></span>
-          </a>
-
-          <a href="<?= base_url('task/' . $seg_2 . '/hold') ?>"
-            class="btn-filter-custom <?= ($current_filter == 'hold') ? 'filter-gray-active' : 'filter-gray-outline' ?>">
-            Hold
-            <span class="badge-filter-custom"><?= $count_hold ?></span>
-          </a>
-
-          <a href="<?= base_url('task/' . $seg_2 . '/overdue') ?>"
-            class="btn-filter-custom <?= ($current_filter == 'overdue') ? 'filter-red-active' : 'filter-red-outline' ?>">
-            Overdue
-            <span class="badge-filter-custom"><?= $count_overdue ?></span>
-          </a>
-
-        </div>
-      <?php
-      }
-      ?>
       <div class="">
         <table class="table table-stripped">
           <thead>
             <tr>
-              <th bgcolor="#008080">
+              <th bgcolor="#004e81">
                 <font color="white">No.</font>
               </th>
-              <th width="300" bgcolor="#008080">
+              <th width="300" bgcolor="#004e81">
                 <font color="white">Task Name</font>
               </th>
-              <!-- <th width="300" bgcolor="#008080">
+              <!-- <th width="300" bgcolor="#004e81">
                 <font color="white">Member Name</font>
               </th> -->
-              <th bgcolor="#008080">
+              <th bgcolor="#004e81">
                 <font color="white">PIC</font>
               </th>
-              <th bgcolor="#008080">
-                <font color="white">On Progress</font>
-              </th>
-              <th bgcolor="#008080">
-                <font color="white">Hold</font>
-              </th>
-              <th bgcolor="#008080">
-                <font color="white">Overdue</font>
-              </th>
-              <th bgcolor="#008080">
-                <font color="white">Closed</font>
-              </th>
-              <th bgcolor="#008080">
+              <th bgcolor="#004e81">
                 <font color="white">Created</font>
               </th>
-              <th bgcolor="#008080">
+              <th bgcolor="#004e81">
                 <font color="white">#</font>
               </th>
-              <!--th bgcolor="#008080"><font color="white">Status</font></th-->
+              <!--th bgcolor="#004e81"><font color="white">Status</font></th-->
             </tr>
           </thead>
           <?php
@@ -467,8 +335,6 @@
                 $color = '#00b894';
               } else if ($data->activity == '3') {
                 $color = '#636e72';
-              } else if ($data->activity == '2') {
-                $color = '#f8f87c';
               } else {
                 $color = '#ff7675';
               }
@@ -481,39 +347,6 @@
                 $nip = $this->session->userdata('nip');
                 $this->db->where('id_task', $data->id);
                 $task_detail = $this->db->get('task_detail')->row_array();
-
-                $today = date('Y-m-d');
-
-                // 1. Hitung yang OVERDUE
-                // Kriteria: activity = 1 (masih aktif) DAN due_date sudah terlewati (< hari ini)
-                $this->db->from('task_detail');
-                $this->db->where('id_task', $data->id);
-                $this->db->where('activity', 1);
-                $this->db->where('due_date <=', $today);
-                $count_overdue = $this->db->get()->num_rows();
-
-                // 2. Hitung yang PROGRESS (On Progress)
-                // Kriteria: activity = 1 (masih aktif) DAN due_date belum terlewati (>= hari ini)
-                $this->db->from('task_detail');
-                $this->db->where('id_task', $data->id);
-                $this->db->where('activity', 1);
-                $this->db->where('due_date >', $today);
-                $count_progress = $this->db->get()->num_rows();
-
-                // 3. Hitung yang CLOSED
-                // Kriteria: activity != 1 (sudah tidak aktif / selesai)
-                $this->db->from('task_detail');
-                $this->db->where('id_task', $data->id);
-                $this->db->where('activity', 3); // atau sesuaikan jika menggunakan '0'
-                $count_closed = $this->db->get()->num_rows();
-
-                // 3. Hitung yang CLOSED
-                // Kriteria: activity != 1 (sudah tidak aktif / selesai)
-                $this->db->from('task_detail');
-                $this->db->where('id_task', $data->id);
-                $this->db->where('activity', 2); // atau sesuaikan jika menggunakan '0'
-                $count_hold = $this->db->get()->num_rows();
-
                 if (!is_null($task_detail)) {
                 ?>
                   <tr style="background-color: <?= $color ?>;color:white;">
@@ -542,10 +375,6 @@
                         ?>
                       <a href="<?= base_url() . "task/task_view/" . $data->id ?>" style="text-decoration: none; color:white !important"><?= $get['nama'] ?></a>
                     </td>
-                    <td><?= $count_progress ?></td>
-                    <td><?= $count_hold ?></td>
-                    <td><?= $count_overdue ?></td>
-                    <td><?= $count_closed ?></td>
                     <td><a href="<?= base_url() . "task/task_view/" . $data->id ?>" style="text-decoration: none; color:white !important"><?php echo date('d/m/y', strtotime($data->date_created)); ?></a></td>
                     <td>
                       <!-- <a href="<?= base_url() . "task/task_view/" . $data->id ?>" class="btn btn-xs" style="background-color: white;color:black;">Open</a> -->
@@ -589,10 +418,6 @@
                       ?>
                       <a href="<?= base_url() . "task/task_view/" . $data->id ?>" style="text-decoration: none; color:white !important"><?= $get['nama'] ?></a>
                     </td>
-                    <td><?= $count_progress ?></td>
-                    <td><?= $count_hold ?></td>
-                    <td><?= $count_overdue ?></td>
-                    <td><?= $count_closed ?></td>
                     <td><a href="<?= base_url() . "task/task_view/" . $data->id ?>" style="text-decoration: none; color:white !important"><?php echo date('d/m/y', strtotime($data->date_created)); ?></a></td>
                     <td>
                       <!-- <a href="<?= base_url() . "task/task_view/" . $data->id ?>" class="btn btn-xs" style="background-color: white;color:black;">Open</a> -->
@@ -614,7 +439,7 @@
       </div>
 
       <!--pagination-->
-      <div class="row col-12 text-center">
+      <div class="row col-xs-12 text-center">
         <?php echo $pagination; ?>
       </div>
 

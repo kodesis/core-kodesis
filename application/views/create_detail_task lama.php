@@ -7,8 +7,10 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
-	<title><?= $this->session->userdata('nama_singkat') ?> | Business Development</title>
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
+	<title>Kodesis | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Font Awesome -->
@@ -36,7 +38,7 @@
 	<style>
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #004e81;
 		}
 
 		.row {
@@ -105,7 +107,8 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> <?= $this->session->userdata('nama_singkat') ?> </span></a>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
+							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
 					<div class="clearfix"></div>
@@ -311,8 +314,8 @@
 									<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
 									<div class="col-md-6 col-sm-6 col-xs-12">
 
-										<select required style="border-radius: 5px;" class="form-control" name="responsible_task">
-											<option value="" selected>Select Responsible</option>
+										<select required style="border-radius: 5px;" class="form-control" name="member_task" required>
+											<option value="">Select Responsible</option>
 											<?php foreach ($ss as $data) {
 												if ($data->nip != '') {
 											?>
@@ -323,18 +326,7 @@
 									</div>
 									<!-- </div> -->
 								</div>
-								<div class="item form-group">
-									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Card Responsible</label>
-									<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
-									<div class="col-md-6 col-sm-6 col-xs-12">
-										<select class="form-control js-example-basic-multiple" name="member_task[]" id="member_task" multiple>
-											<?php foreach ($ss as $data) { ?>
-												<option value="<?= $data->nip ?>" <?= set_select('member_task[]', $data->nip) ?>><?= $data->nama ?> (<?php echo $data->nama_jabatan; ?>)</option>
-											<?php } ?>
-										</select>
-									</div>
-									<!-- </div> -->
-								</div>
+
 								<div class="item form-group">
 									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
@@ -355,6 +347,7 @@
 									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
 									<div class="col-md6 col-sm-6 col-xs-12">
 										<input style="border-radius: 5px;" multiple type="file" name="att[]" class="form-control">
+										<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 									</div>
 								</div>
 
@@ -471,8 +464,8 @@
 										<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
 										<div class="col-md-6 col-sm-6 col-xs-12">
 
-											<select required style="border-radius: 5px;" class="form-control" name="responsible_task">
-												<option disabled selected>Select Responsible</option>
+											<select required style="border-radius: 5px;" class="form-control" name="member_task">
+												<option value="">Select Responsible</option>
 												<?php foreach ($ss as $data) {
 													if ($data->nip != '') {
 												?>
@@ -483,29 +476,7 @@
 										</div>
 										<!-- </div> -->
 									</div>
-									<div class="item form-group">
-										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Card Responsible</label>
-										<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
-										<div class="col-md-6 col-sm-6 col-xs-12">
 
-											<select class="form-control js-example-basic-multiple" name="member_task[]" id="member_task" multiple>
-												<?php
-												foreach ($ss as $data) :
-													if (strpos($x->member_detail, $data->nip) !== false) {
-												?>
-														<option selected value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?>
-															(<?php echo $data->nama_jabatan; ?>)</option>
-													<?php
-													} else { ?>
-														<option value="<?php echo $data->nip; ?>"><?php echo $data->nama; ?>
-															(<?php echo $data->nama_jabatan; ?>)</option>
-
-												<?php }
-												endforeach; ?>
-											</select>
-										</div>
-										<!-- </div> -->
-									</div>
 									<div class="item form-group">
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
@@ -524,10 +495,11 @@
 									</div>
 									<div class="item form-group">
 										<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>
-										<div class="col-md6 col-sm-3 col-xs-12">
+										<div class="col-md-6 col-sm-3 col-xs-12">
 											<input style="border-radius: 5px;" multiple type="file" name="att[]" class="form-control">
+											<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 										</div>
-										<div class="col-md6 col-sm-3 col-xs-12">
+										<div class="col-md-6 col-sm-3 col-xs-12">
 											<b> <?= $x->attachment == null ? 'File tidak ada' : $x->attachment ?></b>
 										</div>
 
@@ -657,25 +629,33 @@
 						title: 'Oops...',
 						text: 'Error Input!',
 					}) <?php
-						$this->session->unset_userdata('msg');
-					} else if ($this->session->userdata('msg_memo')) {
-						?>
+							$this->session->unset_userdata('msg');
+						} else if ($this->session->userdata('msg_memo')) {
+							?>
 					Swal.fire({
 						icon: 'success',
 						title: 'Success input',
 						text: 'Create & Send Success to ID <?php echo $this->session->userdata('msg_memo') ?>',
 					});
 				<?php
-						$this->session->unset_userdata('msg_memo');
-					} ?>
-				$("#submit-memo").on('click', function(e) {
-					if (!confirm('Are you sure that you want to submit the form')) {
-						event.preventDefault();
-					}
+							$this->session->unset_userdata('msg_memo');
+						} else if ($this->session->userdata('msg_error')) {
+				?>
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: '<?= $this->session->userdata('msg_error') ?>',
+					}) <?php
+							$this->session->unset_userdata('msg_error');
+						} ?>
+					$("#submit-memo").on('click', function(e) {
+						if (!confirm('Are you sure that you want to submit the form')) {
+							event.preventDefault();
+						}
 
-					// event.preventDefault();
+						// event.preventDefault();
 
-				});
+					});
 			});
 
 
@@ -724,6 +704,7 @@
 						'<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Attachment</label>' +
 						'<div class="col-md-6 col-sm-12 col-xs-12">' +
 						'<input style="border-radius: 5px;" type="file" class="form-control" multiple name="att' + x + '[]" placeholder="" >' +
+						'<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>' +
 						'</div>' +
 						'</div>' +
 						'<div class="item form-group">' +
@@ -871,10 +852,6 @@
 			// 	// $("#div_" + deleteindex).remove();
 			// 	// $(this).parent('div').parent('div').remove(); x--;
 			// });
-
-			$(document).ready(function() {
-				$('.js-example-basic-multiple').select2();
-			});
 		</script>
 
 </body>

@@ -1,24 +1,24 @@
 <div class="header header-auto-show header-fixed header-logo-center">
     <?php $logo = $this->db->get('utility')->row_array()['logo']; ?>
     <a href="<?= base_url('mobile') ?>" class="header-title"><img src="<?= $logo ?>" alt="logo" width="50px" id="kodesis_kotak"></a>
-    <?php if (!$this->uri->segment(3)) { ?>
+    <?php if (!$this->uri->segment(2)) { ?>
         <a href="#" data-menu="menu-main" class="header-icon header-icon-1"><i class="fas fa-bars"></i></a>
     <?php } else { ?>
-        <!-- <a href="#" class="header-icon header-icon-1"><i class="fas fa-chevron-left"></i></a> -->
+        <a href="#" data-back-button class="header-icon header-icon-1"><i class="fas fa-chevron-left"></i></a>
     <?php } ?>
     <a href="#" data-toggle-theme class="header-icon header-icon-4 show-on-theme-dark"><i class="fas fa-sun"></i></a>
     <a href="#" data-toggle-theme class="header-icon header-icon-4 show-on-theme-light"><i class="fas fa-moon"></i></a>
 </div>
 
-<?php if ($this->uri->segment(3) == 'task_view' && $this->uri->segment(5)) {  ?>
-    <form action="<?= base_url() ?>task/activity_comment" method="post" enctype="multipart/form-data">
+<?php if ($this->uri->segment(2) == 'task_view' && $this->uri->segment(4)) {  ?>
+    <form action="<?= base_url() ?>mobile/task/activity_comment" method="post" enctype="multipart/form-data">
         <div id="footer-bar" class="d-flex">
             <div class="me-3 speach-icon">
                 <a href="#" data-menu="menu-upload" class="bg-gray-dark ms-2"><i class="fa fa-plus pt-2"></i></a>
             </div>
             <div class="flex-fill speach-input">
                 <input type="hidden" name="id_task" value="<?= $this->uri->segment(3) ?>">
-                <input type="hidden" name="id_detail" value="<?= $this->uri->segment(5) ?>">
+                <input type="hidden" name="id_detail" value="<?= $this->uri->segment(4) ?>">
                 <textarea name="comment" id="comment" class="form-control" placeholder="Input text here"></textarea>
             </div>
             <div class="ms-3 speach-icon">
@@ -38,7 +38,7 @@
         <a href="#" data-menu="menu-main"><i class="fa fa-bars"></i><span>Menu</span></a>
         <a href="<?= base_url('mobile/app/inbox') ?>" class="<?= $this->uri->segment(1) == 'app' ? 'circle-nav active-nav' : '' ?>"><i class="fa-solid fa-inbox"></i><span>Inbox</span></a>
         <a href="<?= base_url('mobile/home') ?>" class="<?= $this->uri->segment(1) == 'home' ? 'circle-nav active-nav' : '' ?>"><i class="fa fa-home"></i><span>Welcome</span></a>
-        <a href="<?= base_url('mobile/task/task') ?>" class="<?= $this->uri->segment(1) == 'task' ? 'circle-nav active-nav' : '' ?>"><i class="fa-solid fa-bars-progress"></i><span>Project</span></a>
+        <a href="<?= base_url('mobile/task/task') ?>" class="<?= $this->uri->segment(1) == 'task' ? 'circle-nav active-nav' : '' ?>"><i class="fa-solid fa-bars-progress"></i><span>Task</span></a>
         <a href="<?= base_url('mobile/auth/logout') ?>" id="btn-logout"><i class="fa-solid fa-power-off"></i><span>Logout</span></a>
     </div>
 <?php } ?>
@@ -96,12 +96,12 @@
         <div class="list-group list-custom-small list-menu">
             <a id="nav-welcome" href="<?= base_url('mobile/task/task') ?>">
                 <i class="fa-solid fa-list gradient-blue color-white"></i>
-                <span>Project List</span>
+                <span>Task List</span>
                 <i class="fa fa-angle-right"></i>
             </a>
             <a id="nav-welcome" href="<?= base_url('mobile/task/task_closed') ?>">
                 <i class="fa-solid fa-list gradient-blue color-white"></i>
-                <span>Project Closed</span>
+                <span>Task List</span>
                 <i class="fa fa-angle-right"></i>
             </a>
             <a id="nav-welcome" href="<?= base_url('mobile/task/create_task') ?>">
@@ -112,7 +112,7 @@
         </div>
     <?php } ?>
 
-    <!-- Menu Absensi -->
+    <!-- Menu Task -->
     <?php
     $a = $this->session->userdata('level');
     if (strpos($a, '60') !== false) { ?>
@@ -133,12 +133,12 @@
                 <span>Data Photo</span>
                 <i class="fa fa-angle-right"></i>
             </a>
-            <!-- <a id="nav-welcome" href="<?= base_url('absensi/lokasi') ?>">
+            <!-- <a id="nav-welcome" href="<?= base_url('mobile/absensi/lokasi') ?>">
                 <i class="fa-solid fa-list gradient-blue color-white"></i>
                 <span>Data Lokasi</span>
                 <i class="fa fa-angle-right"></i>
             </a> -->
-            <!-- <a id="nav-welcome" href="<?= base_url('absensi/user') ?>">
+            <!-- <a id="nav-welcome" href="<?= base_url('mobile/absensi/user') ?>">
                 <i class="fa-solid fa-plus gradient-blue color-white"></i>
                 <span>User List</span>
                 <i class="fa fa-angle-right"></i>

@@ -53,6 +53,8 @@
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '601') !== false) { ?>
 						<li><a href="<?php echo base_url(); ?>task/task">Task List</a></li>
+						<li><a href="<?php echo base_url(); ?>task/task_closed">Task Closed</a></li>
+
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '601') !== false) { ?>

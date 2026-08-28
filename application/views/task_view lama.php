@@ -7,8 +7,10 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
-	<title>MOC | Business Development</title>
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
+	<title>Kodesis | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Font Awesome -->
@@ -69,99 +71,6 @@
 			justify-content: center;
 		}
 
-		/* Kontainer utama tombol pill */
-		.task-filter-container {
-			display: flex !important;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-items: center;
-			gap: 6px !important;
-			padding: 10px 8px !important;
-			width: 100%;
-		}
-
-		/* Rombakan total komponen tombol anchor */
-		.btn-task-pill {
-			display: inline-flex !important;
-			align-items: center !important;
-			justify-content: center !important;
-			padding: 5px 12px !important;
-			font-size: 13px !important;
-			font-weight: 500 !important;
-			border-radius: 50px !important;
-			text-decoration: none !important;
-			transition: all 0.2s ease-in-out !important;
-			border: 1px solid transparent !important;
-			outline: none !important;
-		}
-
-		/* Mematikan paksa absolute position bawaan template pada badge */
-		.badge-task-circle {
-			display: inline-flex !important;
-			align-items: center !important;
-			justify-content: center !important;
-			width: 20px !important;
-			height: 20px !important;
-			border-radius: 50% !important;
-			font-size: 11px !important;
-			font-weight: 600 !important;
-			margin-left: 6px !important;
-			padding: 0 !important;
-			position: relative !important;
-			top: auto !important;
-			right: auto !important;
-			transform: none !important;
-			flex-shrink: 0 !important;
-		}
-
-		/* VARIANT 1: Dark (All, Progress, Hold, Closed) saat TIDAK AKTIF */
-		.filter-dark-outline {
-			color: #343a40 !important;
-			border-color: #6c757d !important;
-			background-color: #f8f9fa !important;
-		}
-
-		.filter-dark-outline .badge-task-circle {
-			background-color: #fff !important;
-			color: #343a40 !important;
-		}
-
-		/* VARIANT 1: Dark (All, Progress, Hold, Closed) saat AKTIF */
-		.filter-dark-active {
-			color: #fff !important;
-			background-color: #212529 !important;
-			border-color: #212529 !important;
-		}
-
-		.filter-dark-active .badge-task-circle {
-			background-color: #fff !important;
-			color: #212529 !important;
-		}
-
-		/* VARIANT 2: Red (Overdue) saat TIDAK AKTIF */
-		.filter-red-outline {
-			color: #dc3545 !important;
-			border-color: #fca5a5 !important;
-			background-color: #fef2f2 !important;
-		}
-
-		.filter-red-outline .badge-task-circle {
-			background-color: #fff !important;
-			color: #dc3545 !important;
-		}
-
-		/* VARIANT 2: Red (Overdue) saat AKTIF */
-		.filter-red-active {
-			color: #fff !important;
-			background-color: #dc3545 !important;
-			border-color: #dc3545 !important;
-		}
-
-		.filter-red-active .badge-task-circle {
-			background-color: #fff !important;
-			color: #dc3545 !important;
-		}
-
 		/* Green */
 	</style>
 </head>
@@ -209,7 +118,8 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> <?= $this->session->userdata('nama_singkat') ?> </span></a>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
+							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
 					<div class="clearfix"></div>
@@ -358,12 +268,7 @@
 					<br>
 				 -->
 
-					<?php
-
-					$seg_4 = $this->uri->segment(4);
-					$allowed_status = ['progress', 'hold', 'overdue', 'closed'];
-					// if ($this->uri->segment(4) == false) { 
-					if (($this->uri->segment(3) == true && $this->uri->segment(4) == false) || in_array(strtolower($seg_4), $allowed_status)) {  ?>
+					<?php if ($this->uri->segment(4) == false) { ?>
 						<div align="center">
 							<font style="font-size:17px;">
 								Card List
@@ -378,7 +283,7 @@
 														if ($x != '') {
 															$this->db->where('nip', $x);
 															$get = $this->db->get('users')->row_array();
-															echo $get['nama'] . ', ' ?? 'SOMEONE' . ', ';
+															echo $get['nama'] . ', ';
 														}
 													}
 													?>
@@ -391,13 +296,11 @@
 						<div class="col-md-4">
 							<a href="<?= base_url('task/task') ?>" class="btn btn-warning"> <i class="fa fa-arrow-left"></i> Back</a>
 							<?php
-							// $this->db->where('a.pic', $this->session->userdata('nip'));
-							// $this->db->join('task_detail as b', 'a.id=b.id_task');
-							// $cek_role = $this->db->get('task as a')->num_rows();
+							$this->db->where('a.pic', $this->session->userdata('nip'));
+							$this->db->join('task_detail as b', 'a.id=b.id_task');
+							$cek_role = $this->db->get('task as a')->num_rows();
 
-							// $cek_status = $this->db->get_where('task', ['id' => $this->uri->segment(3)])->row_array();
 							$cek_status = $this->db->get_where('task', ['id' => $this->uri->segment(3)])->row_array();
-							$cek_role = $cek_status['pic'] == $this->session->userdata('nip');
 
 							if ($cek_role == true && $cek_status['activity'] == '1') { ?>
 								<a href="<?= base_url('task/detail_task/' . $this->uri->segment(3)) ?>" class="btn btn-primary"> <i class="fa fa-plus"></i> Add Card</a>
@@ -407,52 +310,18 @@
 								<a href="<?= base_url('task/close_task/' . $this->uri->segment(3)) ?>" class="btn btn-danger" id="btn-close-task"> Close Task</a>
 							<?php } ?>
 						</div>
-
-						<div class="task-filter-container" style="float: none; clear: both;">
-
-							<a href="<?= base_url('task/task_view/' . $this->uri->segment(3)) ?>"
-								class="btn-task-pill <?= empty($seg_4) ? 'filter-dark-active' : 'filter-dark-outline' ?>">
-								All <span class="badge-task-circle"><?= $count_all ?></span>
-							</a>
-
-							<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/progress') ?>"
-								class="btn-task-pill <?= ($seg_4 == 'progress') ? 'filter-dark-active' : 'filter-dark-outline' ?>">
-								Progress <span class="badge-task-circle"><?= $count_progress ?></span>
-							</a>
-
-							<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/hold') ?>"
-								class="btn-task-pill <?= ($seg_4 == 'hold') ? 'filter-dark-active' : 'filter-dark-outline' ?>">
-								Hold <span class="badge-task-circle"><?= $count_hold ?></span>
-							</a>
-
-							<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/overdue') ?>"
-								class="btn-task-pill <?= ($seg_4 == 'overdue') ? 'filter-red-active' : 'filter-red-outline' ?>">
-								Overdue <span class="badge-task-circle"><?= $count_overdue ?></span>
-							</a>
-
-							<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/closed') ?>"
-								class="btn-task-pill <?= ($seg_4 == 'closed') ? 'filter-dark-active' : 'filter-dark-outline' ?>">
-								Closed <span class="badge-task-circle"><?= $count_closed ?></span>
-							</a>
-
-						</div>
 					<?php } ?>
 					<font style="font-size:14px;">
-						<?php
-						// if ($this->uri->segment(3) == true && $this->uri->segment(4) == false) { 
-						if (($this->uri->segment(3) == true && $this->uri->segment(4) == false) || in_array(strtolower($seg_4), $allowed_status)) {
-						?>
+						<?php if ($this->uri->segment(3) == true && $this->uri->segment(4) == false) { ?>
 							<div class="table-responsive">
 								<table class="center table table-striped">
 									<thead>
 										<th bgcolor="#004e81" style="color:white">Card Name</th>
 										<th bgcolor="#004e81" style="color:white">Responsible</th>
-										<th bgcolor="#004e81" style="color:white">Member</th>
 										<!-- <th>Description</th> -->
 										<th bgcolor="#004e81" style="color:white">Start Date</th>
 										<th bgcolor="#004e81" style="color:white">Due Date</th>
 										<!-- <th>Attachment</th>  -->
-										<th bgcolor="#004e81" style="color:white">Status</th>
 										<th bgcolor="#004e81" style="color:white">Activity</th>
 										<!-- <th>Comment</th> -->
 										<th width="200" bgcolor="#004e81" style="color:white">Action</th>
@@ -460,131 +329,14 @@
 									<?php foreach ($task_detail as $x) {
 										$nip = $this->session->userdata('nip');
 										$kalimat = $x->read;
-										if (preg_match("/$nip/i", $kalimat ?? '')) {
-											// if ($x->due_date > date('Y-m-d')) {
-											// 	$color = '#00b894';
-											// } else if ($x->activity == '3') {
-											// 	$color = '#636e72';
-											// } else {
-											// 	$color = '#ff7675';
-											// }
-
-											$color = '#5D9CEC';
-											$font_color = 'azure';
-
-											// if ($x->activity == '3') {
-											// 	// 1. Jika statusnya CLOSED -> Abu-abu (#636e72)
-											// 	$color = '#636e72';
-											// } else if ($x->due_date) {
-											// 	// Buat objek tanggal untuk hari ini dan due date
-											// 	$today = new DateTime(date('Y-m-d'));
-											// 	$due = new DateTime($x->due_date);
-
-											// 	// Hitung selisih hari
-											// 	$diff = $today->diff($due);
-											// 	$days_left = (int)$diff->format('%r%a');
-
-											// 	if ($days_left >= 0) {
-											// 		// 2. Belum lewat (Hari H atau sisa waktu masih ada) -> Hijau (#00b894)
-											// 		$color = '#5D9CEC';
-											// 	} else {
-											// 		// Sudah lewat (Overdue), hitung berapa hari lewatnya
-											// 		$days_overdue = abs($days_left);
-
-											// 		if ($days_overdue <= 7) {
-											// 			// 3. Lewat 1 minggu kebawah -> Kuning/Orange (Gunakan kode warna kuning pilihan Anda, misal #fdcb6e)
-											// 			$color = '#fdcb6e';
-											// 			$font_color = 'gray';
-											// 		} elseif ($days_overdue > 7 && $days_overdue <= 30) {
-											// 			// 4. Lewat 1 minggu - 1 bulan -> Merah (#ff7675)
-											// 			$color = '#ff7675';
-											// 		} else {
-											// 			// 5. Lewat lebih dari 1 bulan -> Hitam (#404040 atau #000000)
-											// 			$color = '#404040';
-											// 		}
-											// 	}
-											// }
-
-											if ($x->activity == '1' || $x->activity == '2') {
-												if ($x->due_date) {
-													// Buat objek tanggal untuk hari ini dan tanggal jatuh tempo
-													$today = new DateTime(date('Y-m-d'));
-													$due = new DateTime($x->due_date);
-
-													// Hitung selisih hari
-													$diff = $today->diff($due);
-													$days_left = (int)$diff->format('%r%a');
-
-													if ($days_left > 0) {
-														// Belum lewat (Hari H atau sisa waktu masih ada) -> Progress Biru
-														// $color = 'gradient-blue';
-														$color = '#404040';
-														$status_text = 'On Progress';
-													} else {
-														// Sudah LEWAT (Nilai $days_left negatif, kita ubah jadi positif agar mudah dibaca)
-														$days_overdue = abs($days_left);
-
-														if ($days_overdue <= 7) {
-															// Lewat 1 minggu kebawah (1 - 7 hari) -> Kuning
-															// $color = 'gradient-yellow';
-															$color = '#ff7675';
-															$status_text = 'Overdue';
-														} elseif ($days_overdue > 7 && $days_overdue <= 30) {
-															// Lewat 1 minggu sampai 1 bulan (8 - 30 hari) -> Merah
-															$color = '#ff7675';
-															// $color = 'bg-black'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-															$status_text = 'Alert';
-														} else {
-															// Lewat 1 bulan ke atas (> 30 hari) -> Hitam
-															// $color = 'bg-black'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-															// $status_text = 'Alert Overdue > 1 Bln';
-															$color = '#ff7675';
-															$status_text = 'Alert';
-														}
-
-
-														//   $color = 'gradient-yellow';
-														//   $status_text = 'Overdue < 1 Ming';
-													}
-
-													// Cetak button badge-nya
-													$badge_due_time = '<button class="badge ' . $color . ' color-white font-10"><i class="fa fa-clock-o"></i> ' . $status_text . '</button>';
-												} else {
-													$badge_due_time = '';
-												}
+										if (preg_match("/$nip/i", $kalimat)) {
+											if ($x->activity == '1' && $x->due_date > date('Y-m-d')) {
+												$color = '#00b894';
+											} else if ($x->activity == '3') {
+												$color = '#636e72';
 											} else {
-												if ($x->closed_on) {
-													if ($x->closed_on == 'On Progress') {
-														// $color = 'gradient-blue';
-														$color = '#404040';
-														$status_text = 'Closed Progress';
-													} else if ($x->closed_on == 'Overdue < 1 Ming') {
-														// $color = 'gradient-yellow';
-														$color = '#404040';
-														$status_text = 'Closed Overdue < 1 Ming';
-													} else if ($x->closed_on == 'Overdue < 1 Bln') {
-														$color = '#404040';
-														$status_text = 'Closed Overdue < 1 Bln';
-													} else if ($x->closed_on == 'Overdue > 1 Bln') {
-														$color = '#404040'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-														$status_text = 'Closed Overdue > 1 Bln';
-													} else {
-														$color = '#404040'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-														$status_text = 'Closed Unknown';
-													}
-
-													$badge_due_time = '<button class="badge ' . $color . ' color-white font-10"><i class="fa fa-clock-o"></i> Closed On ' . $status_text . '</button>';
-												} else {
-													$color = '#404040'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-													$status_text = 'Closed Unknown';
-
-													$badge_due_time = '';
-												}
-
-
-												// Cetak button badge-nya
+												$color = '#ff7675';
 											}
-
 
 											if ($x->activity == '1') {
 												$activity = 'Open';
@@ -593,188 +345,26 @@
 											} else {
 												$activity = 'Closed';
 											}
-
-											if ($x->member_detail) {
-												$data_nip = explode(';', $x->member_detail);
-												$nama_members = array(); // 1. Bikin array kosong untuk menampung nama
-
-												foreach ($data_nip as $m) {
-													if ($m != '') {
-														$this->db->where('nip', $m);
-														$get = $this->db->get('users')->row_array();
-
-														// 2. Masukkan nama ke dalam array (jika null, ganti 'SOMEONE')
-														$nama_members[] = $get['nama'] ?? 'SOMEONE';
-													}
-												}
-
-												// 3. Gabungkan semua nama di dalam array dipisah dengan koma, lalu simpan ke variabel teks
-												$hasil_nama = implode(', ', $nama_members);
-
-												// Sekarang variabel $hasil_nama sudah berisi: "Nama A, Nama B, Nama C"
-												// echo $hasil_nama;
-											} else {
-												$data_nip = '';
-												$hasil_nama = ''; // Beri nilai kosong jika tidak ada member
-											}
 									?>
-											<tr style="background-color: <?= $color ?>;color:<?= $font_color ?>">
+											<tr style="background-color: <?= $color ?>;color:azure">
 												<td> <?= $x->task_name ?></td>
 												<td> <?= $x->nama ?></td>
-												<td> <?= $hasil_nama ?></td>
 												<td> <?= $x->start_date ?></td>
 												<td> <?= $x->due_date ?></td>
-												<td> <?= $status_text ?></td>
 												<td> <?= $activity ?></td>
 												<td>
-													<?php
-													if ($x->member_detail) {
-														$data_nip_member = explode(';', $x->member_detail);
-													} else {
-														$data_nip_member = []; // DIUBAH JADI ARRAY KOSONG AGAR in_array() TIDAK ERROR
-													}
-													$soeryo = '2146501';
-													$task = $this->db->get_where('task', ['id' => $x->id_task])->row();
-													// var_dump($task);
-													if ($soeryo != $this->session->userdata('nip') && $this->session->userdata('level_jabatan') <= 4 && $task->pic != $this->session->userdata('nip') && $x->responsible != $this->session->userdata('nip') && !in_array($this->session->userdata('nip'), $data_nip_member)) {
-													?>
-														<span>-</span>
-													<?php
-													} else {
-													?>
-														<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
-														<a href="<?= base_url('task/card_edit/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: black;color:white;">Edit</a>
-
-													<?php
-													}
-													?>
+													<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
+													<a href="<?= base_url('task/card_edit/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: black;color:white;">Edit</a>
 												</td>
 											</tr>
 										<?php } else {
-											// if ($x->activity == '1' && $x->due_date > date('Y-m-d')) {
-											// 	$color = '#00b894';
-											// } else if ($x->activity == '2') {
-											// 	$color = '#0984e3';
-											// } else {
-											// 	$color = '#ff7675';
-											// }
-
-											$color = '#5D9CEC';
-											$font_color = 'azure';
-
-											// if ($x->activity == '3') {
-											// 	// 1. Jika statusnya CLOSED -> Abu-abu (#636e72)
-											// 	$color = '#636e72';
-											// } else if ($x->due_date) {
-											// 	// Buat objek tanggal untuk hari ini dan due date
-											// 	$today = new DateTime(date('Y-m-d'));
-											// 	$due = new DateTime($x->due_date);
-
-											// 	// Hitung selisih hari
-											// 	$diff = $today->diff($due);
-											// 	$days_left = (int)$diff->format('%r%a');
-
-											// 	if ($days_left >= 0) {
-											// 		// 2. Belum lewat (Hari H atau sisa waktu masih ada) -> Hijau (#00b894)
-											// 		$color = '#5D9CEC';
-											// 	} else {
-											// 		// Sudah lewat (Overdue), hitung berapa hari lewatnya
-											// 		$days_overdue = abs($days_left);
-
-											// 		if ($days_overdue <= 7) {
-											// 			// 3. Lewat 1 minggu kebawah -> Kuning/Orange (Gunakan kode warna kuning pilihan Anda, misal #fdcb6e)
-											// 			$color = '#fdcb6e';
-											// 			$font_color = 'gray';
-											// 		} elseif ($days_overdue > 7 && $days_overdue <= 30) {
-											// 			// 4. Lewat 1 minggu - 1 bulan -> Merah (#ff7675)
-											// 			$color = '#ff7675';
-											// 		} else {
-											// 			// 5. Lewat lebih dari 1 bulan -> Hitam (#404040 atau #000000)
-											// 			$color = '#404040';
-											// 		}
-											// 	}
-											// }
-
-											if ($x->activity == '1' || $x->activity == '2') {
-												if ($x->due_date) {
-													// Buat objek tanggal untuk hari ini dan tanggal jatuh tempo
-													$today = new DateTime(date('Y-m-d'));
-													$due = new DateTime($x->due_date);
-
-													// Hitung selisih hari
-													$diff = $today->diff($due);
-													$days_left = (int)$diff->format('%r%a');
-
-													if ($days_left > 0) {
-														// Belum lewat (Hari H atau sisa waktu masih ada) -> Progress Biru
-														// $color = 'gradient-blue';
-														$color = '#404040';
-														$status_text = 'On Progress';
-													} else {
-														// Sudah LEWAT (Nilai $days_left negatif, kita ubah jadi positif agar mudah dibaca)
-														$days_overdue = abs($days_left);
-
-														if ($days_overdue <= 7) {
-															// Lewat 1 minggu kebawah (1 - 7 hari) -> Kuning
-															// $color = 'gradient-yellow';
-															$color = '#ff7675';
-															$status_text = 'Overdue';
-														} elseif ($days_overdue > 7 && $days_overdue <= 30) {
-															// Lewat 1 minggu sampai 1 bulan (8 - 30 hari) -> Merah
-															$color = '#ff7675';
-															// $color = 'bg-black'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-															$status_text = 'Alert';
-														} else {
-															// Lewat 1 bulan ke atas (> 30 hari) -> Hitam
-															// $color = 'bg-black'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-															// $status_text = 'Alert Overdue > 1 Bln';
-															$color = '#ff7675';
-															$status_text = 'Alert';
-														}
-
-
-														//   $color = 'gradient-yellow';
-														//   $status_text = 'Overdue < 1 Ming';
-													}
-
-													// Cetak button badge-nya
-													$badge_due_time = '<button class="badge ' . $color . ' color-white font-10"><i class="fa fa-clock-o"></i> ' . $status_text . '</button>';
-												} else {
-													$badge_due_time = 'Closed';
-												}
+											if ($x->activity == '1' && $x->due_date > date('Y-m-d')) {
+												$color = '#00b894';
+											} else if ($x->activity == '2') {
+												$color = '#0984e3';
 											} else {
-												if ($x->closed_on) {
-													if ($x->closed_on == 'On Progress') {
-														// $color = 'gradient-blue';
-														$color = '#404040';
-														$status_text = 'Closed Progress';
-													} else if ($x->closed_on == 'Overdue < 1 Ming') {
-														// $color = 'gradient-yellow';
-														$color = '#404040';
-														$status_text = 'Closed Overdue < 1 Ming';
-													} else if ($x->closed_on == 'Overdue < 1 Bln') {
-														$color = '#404040';
-														$status_text = 'Closed Overdue < 1 Bln';
-													} else if ($x->closed_on == 'Overdue > 1 Bln') {
-														$color = '#404040'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-														$status_text = 'Closed Overdue > 1 Bln';
-													} else {
-														$color = '#404040'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-														$status_text = 'Closed Unknown';
-													}
-
-													$badge_due_time = '<button class="badge ' . $color . ' color-white font-10"><i class="fa fa-clock-o"></i> Closed On ' . $status_text . '</button>';
-												} else {
-													$color = '#404040'; // Sesuaikan class CSS hitam Anda (misal: 'bg-black' / 'gradient-black')
-													$status_text = 'Closed Unknown';
-
-													$badge_due_time = '';
-												}
-
-
-												// Cetak button badge-nya
+												$color = '#ff7675';
 											}
-
 											if ($x->activity == '1') {
 												$activity = 'Open';
 											} else if ($x->activity == '2') {
@@ -782,62 +372,19 @@
 											} else {
 												$activity = 'Closed';
 											}
-
-											if ($x->member_detail) {
-												$data_nip = explode(';', $x->member_detail);
-												$nama_members = array(); // 1. Bikin array kosong untuk menampung nama
-
-												foreach ($data_nip as $m) {
-													if ($m != '') {
-														$this->db->where('nip', $m);
-														$get = $this->db->get('users')->row_array();
-
-														// 2. Masukkan nama ke dalam array (jika null, ganti 'SOMEONE')
-														$nama_members[] = $get['nama'] ?? 'SOMEONE';
-													}
-												}
-
-												// 3. Gabungkan semua nama di dalam array dipisah dengan koma, lalu simpan ke variabel teks
-												$hasil_nama = implode(', ', $nama_members);
-
-												// Sekarang variabel $hasil_nama sudah berisi: "Nama A, Nama B, Nama C"
-												// echo $hasil_nama;
-											} else {
-												$data_nip = '';
-												$hasil_nama = ''; // Beri nilai kosong jika tidak ada member
-											}
 										?>
-											<tr style="background-color: <?= $color ?>;color:<?= $font_color ?>">
+											<tr style="background-color: <?= $color ?>;color:azure">
 												<td> <?= $x->task_name ?></td>
 												<td> <?= $x->nama ?></td>
-												<td> <?= $hasil_nama ?></td>
+												<!-- <td> <?= $x->description ?></td> -->
 												<td> <?= $x->start_date ?></td>
 												<td> <?= $x->due_date ?></td>
 												<!-- <td> <?= $x->attachment ?></td> -->
-												<td> <?= $status_text ?></td>
 												<td> <?= $activity ?></td>
 												<!-- <td> <?= $x->comment ?></td> -->
 												<td>
-													<?php
-													if ($x->member_detail) {
-														$data_nip_member = explode(';', $x->member_detail);
-													} else {
-														$data_nip_member = []; // DIUBAH JADI ARRAY KOSONG AGAR in_array() TIDAK ERROR
-													}
-													$soeryo = '2146501';
-													$task = $this->db->get_where('task', ['id' => $x->id_task])->row();
-
-													if ($soeryo != $this->session->userdata('nip') && $this->session->userdata('level_jabatan') <= 4 && $task->pic != $this->session->userdata('nip') && $x->responsible != $this->session->userdata('nip') && !in_array($this->session->userdata('nip'), $data_nip_member)) {
-													?>
-														<span>-</span>
-													<?php
-													} else {
-													?>
-														<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
-														<i style="color: red;" class="fa fa-circle"></i>
-													<?php
-													}
-													?>
+													<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
+													<i style="color: red;" class="fa fa-circle"></i>
 												</td>
 											</tr>
 									<?php }
@@ -845,11 +392,7 @@
 
 								</table>
 							</div>
-						<?php
-							//  } else if ($this->uri->segment(4)) { 
-						} else if ($seg_4) {
-
-						?>
+						<?php } else if ($this->uri->segment(4)) { ?>
 							<div align="center">
 								<font style="font-size:17px;">
 									Card Detail</br>
@@ -888,31 +431,6 @@
 									</div>
 								</div>
 							</div>
-							<?php
-							if ($task_comment['member_detail']) {
-							?>
-								<div class="item form-group">
-									<div class="row">
-										<div class="col-md-2 col-sm-2  col-xs-4">
-											<span>Member</span>
-										</div>
-										<div class="col-md-4 col-sm-6">
-											<b>: <?php
-													$data_nip = explode(';', $task->member);
-													foreach ($data_nip as $x) {
-														if ($x != '') {
-															$this->db->where('nip', $x);
-															$get = $this->db->get('users')->row_array();
-															echo $get ? $get['nama'] . ', ' : 'SOMEONE, ';
-														}
-													}
-													?></b>
-										</div>
-									</div>
-								</div>
-							<?php
-							}
-							?>
 							<div class="item form-group">
 								<div class="row">
 									<div class="col-md-2 col-sm-2 col-xs-4">
@@ -956,7 +474,7 @@
 												if (file_exists('upload/task_comment/' . $x)) {
 													$url = base_url('upload/task_comment/' . $x);
 												} else {
-													$url = base_url('upload/task_comment/' . $x);
+													$url = base_url('upload/card_task/' . $x);
 												}
 											?>
 												<a download href="<?= $url ?>"> <?= $x ?></a>
@@ -1016,7 +534,8 @@
 										<input type="hidden" name="id_task" value="<?= $this->uri->segment(3) ?>">
 										<input type="hidden" name="id_detail" value="<?= $this->uri->segment(4) ?>">
 										<div class="col-md-8">
-											<input style="border-radius: 20px;" type="file" name="attach[]" class="form-control" multiple>
+											<input style="border-radius: 20px;" type="file" name="file[]" class="form-control" multiple>
+											<span class="info-message">Perhatian: Setiap file yang diunggah tidak boleh melebihi 4MB.</span>
 										</div>
 									</div>
 									<br>
@@ -1038,7 +557,7 @@
 							<?php } ?>
 
 							<?php foreach ($task_comment_member as $x) {
-								if ($x->member == $this->session->userdata('nip')) {
+								if ($x->member == $task_comment['responsible']) {
 							?>
 									<div class="row justify-content-center">
 										<div class="col-md-8">
@@ -1057,16 +576,15 @@
 												<?php if ($x->attachment != null) { ?>
 													<hr>
 													Attachment :
-													<b> <?php foreach (explode(';', $x->attachment) as $key => $xx) {
-															$attach_name = explode(';', $x->attachment_name);
+													<b> <?php foreach (explode(';', $x->attachment_name) as $xx) {
 															if (file_exists('upload/task_comment/' . $xx)) {
 																$url2 = base_url('upload/task_comment/' . $xx);
 															} else {
-																$url2 = base_url('upload/task_comment/' . $xx);
+																$url2 = base_url('upload/card_task/' . $xx);
 															}
 														?>
 															<a style="color: white;" href="<?= $url2 ?>" download>
-																<?= $attach_name[$key] . " || " ?>
+																<?= $xx . " || " ?>
 															</a>
 													<?php }
 													} ?>
@@ -1090,16 +608,15 @@
 												</span>
 												<?php if ($x->attachment != null) { ?>
 													<hr>
-													Attachment : <b> <?php foreach (explode(';', $x->attachment) as $key => $xx) {
-																			$attach_name = explode(';', $x->attachment_name);
-																			if (file_exists('upload/task_comment/' . $xx)) {
-																				$url3 = base_url('upload/task_comment/' . $xx);
+													Attachment : <b> <?php foreach (explode(';', $x->attachment_name) as $x) {
+																			if (file_exists('upload/task_comment/' . $x)) {
+																				$url3 = base_url('upload/task_comment/' . $x);
 																			} else {
-																				$url3 = base_url('upload/task_comment/' . $xx);
+																				$url3 = base_url('upload/card_task/' . $x);
 																			}
 																		?>
 															<a style="color: white;" href="<?= $url3 ?>" download>
-																<?= $attach_name[$key] . " || " ?>
+																<?= $x . " || " ?>
 															</a>
 													<?php }
 																	} ?>
@@ -1178,49 +695,58 @@
 							})
 
 						<?php unset($_SESSION['msg']);;
-						} ?>
-
-						$('a#btn-close-task').click(function(e) {
-							e.preventDefault();
-							var href = $(this).attr('href');
+						}
+						if ($this->session->userdata('msg_error')) {
+						?>
 							Swal.fire({
-								title: 'Are you sure?',
-								text: "You won't to closed this task?",
-								icon: 'warning',
-								showCancelButton: true,
-								confirmButtonColor: '#3085d6',
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Yes'
-							}).then((result) => {
-								if (result.isConfirmed) {
-									location.href = href;
-								}
+								icon: 'error',
+								title: 'Oops...',
+								text: '<?= $this->session->userdata('msg_error') ?>',
+							}) <?php
+								$this->session->unset_userdata('msg_error');
+							} ?>
+
+							$('a#btn-close-task').click(function(e) {
+								e.preventDefault();
+								var href = $(this).attr('href');
+								Swal.fire({
+									title: 'Are you sure?',
+									text: "You won't to closed this task?",
+									icon: 'warning',
+									showCancelButton: true,
+									confirmButtonColor: '#3085d6',
+									cancelButtonColor: '#d33',
+									confirmButtonText: 'Yes'
+								}).then((result) => {
+									if (result.isConfirmed) {
+										location.href = href;
+									}
+								})
 							})
-						})
 
-						$('form#form-comment-activity').on('submit', function() {
-							Swal.fire({
-								title: "Loading...",
-								timerProgressBar: true,
-								allowOutsideClick: false,
-								didOpen: () => {
-									Swal.showLoading();
-								},
-							});
-							$('#btn-comment-activity').attr('disabled', true)
-						})
+							$('form#form-comment-activity').on('submit', function() {
+								Swal.fire({
+									title: "Loading...",
+									timerProgressBar: true,
+									allowOutsideClick: false,
+									didOpen: () => {
+										Swal.showLoading();
+									},
+								});
+								$('#btn-comment-activity').attr('disabled', true)
+							})
 
-						$('form#form-change-status').on('submit', function() {
-							Swal.fire({
-								title: "Loading...",
-								timerProgressBar: true,
-								allowOutsideClick: false,
-								didOpen: () => {
-									Swal.showLoading();
-								},
-							});
-							$('#btn-change-status').attr('disabled', true)
-						})
+							$('form#form-change-status').on('submit', function() {
+								Swal.fire({
+									title: "Loading...",
+									timerProgressBar: true,
+									allowOutsideClick: false,
+									didOpen: () => {
+										Swal.showLoading();
+									},
+								});
+								$('#btn-change-status').attr('disabled', true)
+							})
 					})
 				</script>
 

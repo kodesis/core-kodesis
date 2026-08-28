@@ -3,16 +3,16 @@
   <div class="page-content">
     <div class="card card-style">
       <div class="content mb-0">
-        <?php if (!$this->uri->segment(3)) { ?>
-          <h3>Create Project</h3>
-          <form action="<?= base_url('task/save_task') ?>" method="post" enctype="multipart/form-data" id="form-create-task">
+        <?php if (!$this->uri->segment(4)) { ?>
+          <h3>Create Task</h3>
+          <form action="<?= base_url('mobile/task/save_task') ?>" method="post" enctype="multipart/form-data" id="form-create-task">
             <div class="has-borders no-icon mb-2">
-              <label for="project_name" class="form-label">Project Name <em>(required)</em></label>
+              <label for="project_name" class="form-label">Task Name <em>(required)</em></label>
               <input type="text" class="form-control" name="project_name" id="project_name" value="<?= set_value('project_name') ?>">
               <?= form_error('project_name') ?>
             </div>
             <div class="has-borders no-icon mb-2">
-              <label for="member_task" class="form-label">Project Member <em>(required)</em></label>
+              <label for="member_task" class="form-label">Task Member <em>(required)</em></label>
               <select class="form-control js-example-basic-multiple" name="member_task[]" id="member_task" multiple>
                 <?php foreach ($sendto as $data) { ?>
                   <option value="<?= $data->nip ?>" <?= set_select('member_task[]', $data->nip) ?>><?= $data->nama ?> (<?php echo $data->nama_jabatan; ?>)</option>
@@ -21,7 +21,7 @@
               <?= form_error('member_task[]') ?>
             </div>
             <div class="has-borders no-icon mb-2">
-              <label for="activity">Project Activity <em>(required)</em></label>
+              <label for="activity">Task Activity <em>(required)</em></label>
               <select name="activity" id="activity" class="form-select">
                 <option value="1" <?= set_select('activity', '1') ?>>Open</option>
                 <option value="2" <?= set_select('activity', '2') ?>>Pending</option>
@@ -31,24 +31,24 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="comment">Description</label>
-              <textarea name="comment" id="comment" class="form-control"><?= set_value('comment') ?></textarea>
+              <textarea name="comment" id="comment" class="form-control" rows="10"><?= set_value('comment') ?></textarea>
             </div>
             <div class="my-3">
-              <a href="<?= base_url('task/task') ?>" class="btn btn-warning">Back</a>
+              <a href="<?= base_url('mobile/task/task') ?>" class="btn btn-warning">Back</a>
               <button type="reset" class="btn btn-primary">Reset</button>
-              <button type="submit" class="btn btn-success" id="btn-submit-task">Submit Project</button>
+              <button type="submit" class="btn btn-success" id="btn-submit-task">Submit Task</button>
             </div>
           </form>
         <?php } else { ?>
-          <h3>Update Project</h3>
-          <form action="<?= base_url('task/update_task/' . $this->uri->segment(3)) ?>" method="post" enctype="multipart/form-data" id="form-create-task">
+          <h3>Update Task</h3>
+          <form action="<?= base_url('mobile/task/update_task/' . $this->uri->segment(4)) ?>" method="post" enctype="multipart/form-data" id="form-create-task">
             <div class="has-borders no-icon mb-2">
-              <label for="project_name" class="form-label">Project Name <em>(required)</em></label>
+              <label for="project_name" class="form-label">Task Name <em>(required)</em></label>
               <input type="text" class="form-control" name="project_name" id="project_name" value="<?= $task_edit['name'] ?>">
               <?= form_error('project_name') ?>
             </div>
             <div class="has-borders no-icon mb-2">
-              <label for="member_task" class="form-label">Project Member <em>(required)</em></label>
+              <label for="member_task" class="form-label">Task Member <em>(required)</em></label>
               <select class="form-control js-example-basic-multiple" name="member_task[]" id="member_task" multiple>
                 <?php
                 foreach ($sendto as $data) :
@@ -67,7 +67,7 @@
               <?= form_error('member_task[]') ?>
             </div>
             <div class="has-borders no-icon mb-2">
-              <label for="activity">Project Activity <em>(required)</em></label>
+              <label for="activity">Task Activity <em>(required)</em></label>
               <select name="activity" id="activity" class="form-select">
                 <option value="1" <?= $task_edit['activity'] == '1' ? 'selected' : '' ?>>Open</option>
                 <option value="2" <?= $task_edit['activity'] == '2' ? 'selected' : '' ?>>Pending</option>
@@ -77,12 +77,12 @@
             </div>
             <div class="has-borders no-icon mb-2">
               <label for="comment">Description</label>
-              <textarea name="comment" id="comment" class="form-control"><?= $task_edit['comment'] ?></textarea>
+              <textarea name="comment" id="comment" class="form-control" rows="10"><?= $task_edit['comment'] ?></textarea>
             </div>
             <div class="my-3">
-              <a href="<?= base_url('task/task') ?>" class="btn btn-warning">Back</a>
+              <a href="<?= base_url('mobile/task/task') ?>" class="btn btn-warning">Back</a>
               <button type="reset" class="btn btn-primary">Reset</button>
-              <button type="submit" class="btn btn-success" id="btn-submit-task">Update Project</button>
+              <button type="submit" class="btn btn-success" id="btn-submit-task">Update Task</button>
             </div>
           </form>
         <?php } ?>

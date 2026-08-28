@@ -6,6 +6,8 @@ class Home extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('mobile/m_app', 'M_app');
+
         if ($this->session->userdata('isLogin') == FALSE) {
             $this->session->set_flashdata(
                 'msg',
@@ -16,8 +18,6 @@ class Home extends CI_Controller
             );
             redirect('mobile/auth');
         }
-        $this->load->model('mobile/M_app', 'M_app');
-        $this->load->model('mobile/M_home', 'M_home');
     }
 
     public function index()
@@ -26,9 +26,6 @@ class Home extends CI_Controller
         $data['user'] = $this->M_app->getData('users', ['nip' => $this->session->userdata('nip')])->row();
         $data['memo'] = $this->M_app->inbox($this->session->userdata('nip'));
         $data['task'] = $this->M_app->task($this->session->userdata('nip'));
-        $data['task_stats'] = $this->M_home->get_task_statistics();
-
-        // var_dump($data['task_stats']);
         $this->load->view('mobile/Layouts/v_header', $data);
         $this->load->view('mobile/v_home', $data);
         $this->load->view('mobile/Layouts/v_footer', $data);

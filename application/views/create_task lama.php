@@ -7,8 +7,10 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" href="images/favicon.ico" type="image/ico" />
-	<title><?= $this->session->userdata('nama_singkat') ?> | Business Development</title>
+
+	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
+	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
+	<title>Kodesis | Business Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Font Awesome -->
@@ -36,7 +38,7 @@
 	<style>
 		.col-xs-3 {
 			width: 25%;
-			background-color: #008080;
+			background-color: #004e81;
 		}
 
 		.row {
@@ -105,7 +107,8 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42" width="60"><span> <?= $this->session->userdata('nama_singkat') ?> </span></a>
+						<a href="<?php echo base_url(); ?>" class="site_title"><img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
+							<span><?= $this->session->userdata('nama_singkat') ?></span></a>
 					</div>
 
 					<div class="clearfix"></div>

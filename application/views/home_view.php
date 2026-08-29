@@ -33,7 +33,6 @@
 	<!-- footer menu -->
 	<link rel="stylesheet" href="<?php echo base_url(); ?>src/css/mobile_menu/header.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>src/css/mobile_menu/icons.css">
-
 	<style>
 		.col-xs-3 {
 			width: 25%;
@@ -113,9 +112,9 @@
 			<div class="col-md-3 left_col">
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
-						<a href="<?php echo base_url(); ?>" class="site_title"><img
-								src="<?php echo base_url(); ?>img/boc_logo.png" alt="..." height="42"
-								width="60"><span> <?= $this->session->userdata('nama_singkat') ?> </span></a>
+						<a href="<?php echo base_url(); ?>" class="site_title">
+														<img src="<?= $this->session->userdata('icon') ?>" alt="..." width="60">
+								<span> <?= $this->session->userdata('nama_singkat') ?> </span></a>
 					</div>
 
 					<div class="clearfix"></div>
@@ -268,6 +267,9 @@
 					<div class="clearfix"></div>
 					<div class="row justify-content-center">
 						<div class="col-md-8 col-sm-8 col-xs-12">
+							<div class="justify-content-center d-flex">
+								<a href="<?= base_url('mobile/home') ?>" class="btn btn-primary"><i class="fa fa-phone"></i> Go To Mobile</a>
+							</div>
 							<div class="owl-carousel owl-theme">
 								<?php $bg = $this->db->get_where('utility', ['Id' => 1])->row_array() ?>
 								<div class="item">

@@ -226,6 +226,20 @@
                         <!-- <span class="badge gradient-red color-white"><?= $task['jumlah_task'] ?></span> -->
                         <i class="fa fa-angle-right"></i>
                     </a>
+                    <?php
+                    // $baseUrl = base_url();
+                    // $host = parse_url($baseUrl, PHP_URL_HOST);
+                    // $newHost = str_replace('mobile', '', $host);
+
+                    // // Rebuild the URL (this is a simplified example)
+                    // $newUrl = str_replace($host, $newHost, $baseUrl);
+                    $newUrl = base_url('home');
+                    ?>
+                    <a href="<?= $newUrl ?>">
+                        <i class="fa fa-desktop gradient-blue color-white"></i>
+                        <span>Go to Desktop</span>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 </div>
 
             </div>

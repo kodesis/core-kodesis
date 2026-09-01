@@ -4776,7 +4776,7 @@ class Outgoinghlp extends CI_Controller
 			)) : '';
 
 			// List SMU per billing
-			$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang, volume, nama_pengirim')
+			$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, gross, chargeable, sewa_gudang, volume, nama_pengirim')
 				->where('bill_uid', $uid)
 				->order_by('uid', 'ASC')
 				->get('out_list')->result_array();
@@ -4789,7 +4789,7 @@ class Outgoinghlp extends CI_Controller
 				$sheet->setCellValue('G' . $rowNum, $s['smu']);
 				$sheet->setCellValue('H' . $rowNum, $s['tujuan']);
 				$sheet->setCellValue('I' . $rowNum, $s['jumlah']);
-				$sheet->setCellValue('J' . $rowNum, $s['chargeable']);
+				$sheet->setCellValue('J' . $rowNum, $s['gross']);
 				$sheet->setCellValue('K' . $rowNum, $s['sewa_gudang']);
 				$sheet->setCellValue('L' . $rowNum, $s['volume']);
 
@@ -5936,7 +5936,7 @@ class Outgoinghlp extends CI_Controller
 			)) : '';
 
 			// List SMU per billing
-			$list_smu = $this->cb->select('uid, smu, tujuan, jumlah, chargeable, sewa_gudang, volume')
+			$list_smu = $this->cb->select('uid, smu, tujuan, gross, jumlah, chargeable, sewa_gudang, volume')
 				->where('bill_khusus_uid', $uid)
 				->order_by('uid', 'ASC')
 				->get('out_list')->result_array();
@@ -5949,7 +5949,7 @@ class Outgoinghlp extends CI_Controller
 				$sheet->setCellValue('G' . $rowNum, $s['smu']);
 				$sheet->setCellValue('H' . $rowNum, $s['tujuan']);
 				$sheet->setCellValue('I' . $rowNum, $s['jumlah']);
-				$sheet->setCellValue('J' . $rowNum, $s['chargeable']);
+				$sheet->setCellValue('J' . $rowNum, $s['gross']);
 				// $sheet->setCellValue('K' . $rowNum, $s['sewa_gudang']);
 				$sheet->setCellValue('K' . $rowNum, $s['volume']);
 

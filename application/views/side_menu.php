@@ -197,7 +197,7 @@
 									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_csd">Daftar CSD (Kasir)</a></li>
 								<?php } ?>
 								<?php $a = $this->session->userdata('level');
-								if (strpos($a, '902') !== false) { ?>
+								if (strpos($a, '901') !== false) { ?>
 									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_do">Daftar DO</a></li>
 								<?php } ?>
 								<?php $a = $this->session->userdata('level');

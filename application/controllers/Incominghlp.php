@@ -714,16 +714,20 @@ class Incominghlp extends CI_Controller
 		$headers = [
 			'A' => 'No',
 			'B' => 'SMU',
-			'C' => 'Asal',
-			'D' => 'Tanggal Masuk',
-			'E' => 'Tanggal Keluar',
-			'F' => 'No Penerbangan',
-			'G' => 'Nama Pesawat',
-			'H' => 'Tanggal Terbang',
-			'I' => 'Koli',
-			'J' => 'Berat',
-			'K' => 'Komoditi',
-			'L' => 'User Input SMU',
+			'C' => 'Nama Agent',
+			'D' => 'Nama Penerima',
+			'E' => 'Asal',
+			'F' => 'Tanggal Masuk',
+			'G' => 'Jam Masuk',
+			'H' => 'Tanggal Keluar',
+			'I' => 'Jam Keluar',
+			'J' => 'No Penerbangan',
+			'K' => 'Nama Pesawat',
+			'L' => 'Tanggal Terbang',
+			'M' => 'Koli',
+			'N' => 'Berat',
+			'O' => 'Komoditi',
+			'P' => 'User Input SMU',
 		];
 
 		foreach ($headers as $col => $label) {
@@ -748,25 +752,31 @@ class Incominghlp extends CI_Controller
 
 			// Format tanggal masuk
 			$tgl_masuk = $r['in_date'] ? date('j F Y', strtotime($r['in_date'])) : '';
+			$jam_masuk = $r['in_date'] ? date('h.i.s', strtotime($r['in_date'])) : '';
 
 			// Format tanggal keluar
 			$tgl_keluar = $r['out_date'] ? date('j F Y', strtotime($r['out_date'])) : '';
+			$jam_keluar = $r['out_date'] ? date('h.i.s', strtotime($r['out_date'])) : '';
 
 			// Format tanggal terbang
 			$tgl_terbang = $r['tanggal_terbang'] ? date('j F Y', strtotime($r['tanggal_terbang'])) : '';
 
 			$sheet->setCellValue('A' . $rowNum, $nomor);
 			$sheet->setCellValue('B' . $rowNum, $r['smu']);
-			$sheet->setCellValue('C' . $rowNum, $r['asal']);
-			$sheet->setCellValue('D' . $rowNum, $tgl_masuk);
-			$sheet->setCellValue('E' . $rowNum, $tgl_keluar);
-			$sheet->setCellValue('F' . $rowNum, $r['no_pesawat']);
-			$sheet->setCellValue('G' . $rowNum, $r['pesawat']);
-			$sheet->setCellValue('H' . $rowNum, $tgl_terbang);
-			$sheet->setCellValue('I' . $rowNum, $r['jumlah']);
-			$sheet->setCellValue('J' . $rowNum, $r['gross']);
-			$sheet->setCellValue('K' . $rowNum, $r['komoditi']);
-			$sheet->setCellValue('L' . $rowNum, $user_name);
+			$sheet->setCellValue('C' . $rowNum, $r['nama_agent']);
+			$sheet->setCellValue('D' . $rowNum, $r['nama_penerima']);
+			$sheet->setCellValue('E' . $rowNum, $r['asal']);
+			$sheet->setCellValue('F' . $rowNum, $tgl_masuk);
+			$sheet->setCellValue('G' . $rowNum, $jam_masuk);
+			$sheet->setCellValue('H' . $rowNum, $tgl_keluar);
+			$sheet->setCellValue('I' . $rowNum, $jam_keluar);
+			$sheet->setCellValue('J' . $rowNum, $r['no_pesawat']);
+			$sheet->setCellValue('K' . $rowNum, $r['pesawat']);
+			$sheet->setCellValue('L' . $rowNum, $tgl_terbang);
+			$sheet->setCellValue('M' . $rowNum, $r['jumlah']);
+			$sheet->setCellValue('N' . $rowNum, $r['gross']);
+			$sheet->setCellValue('O' . $rowNum, $r['komoditi']);
+			$sheet->setCellValue('P' . $rowNum, $user_name);
 
 			$rowNum++;
 			$nomor++;

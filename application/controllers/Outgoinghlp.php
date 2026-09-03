@@ -4079,8 +4079,9 @@ class Outgoinghlp extends CI_Controller
 		// $this->cb->where('bill_uid', $bil_uid)->update('out_list', ['jaster' => $jaster]);
 
 		// Ambil jaster dari out_list
-		$jaster_row = $this->cb->select('jaster')->where('bill_uid', $bil_uid)->get('out_list')->row();
+		$jaster_row = $this->cb->select('jaster, pesawat')->where('bill_uid', $bil_uid)->get('out_list')->row();
 		$jaster_opt = $jaster_row->jaster ?? 0;
+		$pesawat = $jaster_row->pesawat ?? 0;
 
 		// Ambil kategori billing
 		if ($jaster_opt == '1') {
@@ -4222,7 +4223,18 @@ class Outgoinghlp extends CI_Controller
 
 			// Pastikan fungsi posting tidak mengganggu transaksi
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
-			$this->posting('11505', '41002', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
+			// $this->posting('11505', '41002', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
+
+if($pesawat == 'BATIK'){
+	$kredit = '41010';
+} else if($pesawat == 'CITILINK') {
+	$kredit = '41008';
+} else if($pesawat == 'FLYJAYA'){
+	$kredit = '41013';
+} else{
+	$kredit = '41002';
+}
+			$this->posting('11505', $kredit, $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');
 			redirect('outgoinghlp/daftar_invoice');
@@ -5449,7 +5461,7 @@ class Outgoinghlp extends CI_Controller
 
 			// Pastikan fungsi posting tidak mengganggu transaksi
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
-			$this->posting('11505', '41001', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
+			$this->posting('11505', '41012', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 
 			// echo $keterangan;

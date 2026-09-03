@@ -1351,7 +1351,7 @@ class Incominghlp extends CI_Controller
 		}
 
 		// Sum totals dari in_list
-		$totals = $this->cb->select('SUM(jumlah) as total_pieces, SUM(gross) as total_gross, SUM(chargeable) as total_chargeable, SUM(volume) as total_volume')
+		$totals = $this->cb->select('SUM(jumlah) as total_pieces, SUM(gross) as total_gross, SUM(chargeable) as total_chargeable, SUM(volume) as total_volume, pesawat')
 			->where('bill_uid', $bil_uid)->get('in_list')->row();
 
 		$total_pieces     = (float)($totals->total_pieces ?? 0);
@@ -1359,6 +1359,7 @@ class Incominghlp extends CI_Controller
 		$total_chargeable = (float)($totals->total_chargeable ?? 0);
 		$total_volume     = (float)($totals->total_volume ?? 0);
 
+		$pesawat = $totals->pesawat;
 		// Surcharge Dangerous Goods (DG)
 		$nominal_surcharge_dg = ($opsi_dg == '1') ? ($total_chargeable * 600) : 0;
 
@@ -1429,7 +1430,18 @@ class Incominghlp extends CI_Controller
 
 			// Pastikan fungsi posting tidak mengganggu transaksi
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
-			$this->posting('11505', '41003', $keterangan, $nominal, $tanggal_invoice, '');
+			// $this->posting('11505', '41003', $keterangan, $nominal, $tanggal_invoice, '');
+
+			if ($pesawat == 'BATIK') {
+				$kredit = '41011';
+			} else if ($pesawat == 'CITILINK') {
+				$kredit = '41009';
+			} else if ($pesawat == 'FLYJAYA') {
+				$kredit = '41014';
+			} else {
+				$kredit = '41003';
+			}
+			$this->posting('11505', $kredit, $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 			$this->cb->trans_commit();
 			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');

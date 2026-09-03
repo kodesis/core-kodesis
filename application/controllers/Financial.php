@@ -1292,6 +1292,33 @@ class Financial extends CI_Controller
 		$this->load->view('laba_rugi', $data);
 	}
 
+	// public function coa_report()
+	// {
+	// 	$nip = $this->session->userdata('nip');
+
+	// 	// Fetch counts
+	// 	$result = $this->db->query("SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');")->row()->{'COUNT(Id)'};
+	// 	$result2 = $this->db->query("SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` LIKE '%$nip%') AND activity='1'")->row()->{'COUNT(id)'};
+
+	// 	$data = [
+	// 		'count_inbox' => $result,
+	// 		'count_inbox2' => $result2,
+	// 		'coas' => $this->m_coa->list_coa(),
+	// 	];
+
+	// 	$no_coa = $this->input->post('no_coa');
+
+
+	// 	if ($no_coa) {
+	// 		$this->prepareCoaReport($data, $no_coa);
+	// 	} else {
+	// 		$data['title'] = "Report CoA";
+	// 		// $data['pages'] = "pages/financial/v_report_per_coa";
+
+	// 		$this->load->view('report_per_coa', $data);
+	// 	}
+	// }
+
 	public function coa_report()
 	{
 		$nip = $this->session->userdata('nip');
@@ -1306,17 +1333,29 @@ class Financial extends CI_Controller
 			'coas' => $this->m_coa->list_coa(),
 		];
 
-		$no_coa = $this->input->post('no_coa');
-
+		$no_coa      = $this->input->post('no_coa');
+		$submit_type = $this->input->post('submit_type'); // Menangkap tipe tombol yang diklik
 
 		if ($no_coa) {
 			$this->prepareCoaReport($data, $no_coa);
-		} else {
-			$data['title'] = "Report CoA";
-			// $data['pages'] = "pages/financial/v_report_per_coa";
 
-			$this->load->view('report_per_coa', $data);
+			// Jika tombol 'Export Excel' diklik
+			if ($submit_type == 'excel') {
+				$filename = "Report_CoA_" . $no_coa . ".xls";
+
+				header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+				header("Content-Disposition: attachment; filename=\"$filename\"");
+				header("Pragma: no-cache");
+				header("Expires: 0");
+
+				// Load view khusus untuk format tabel excel
+				$this->load->view('financial/excel_report_per_coa', $data);
+				return;
+			}
 		}
+
+		$data['title'] = "Report CoA";
+		$this->load->view('report_per_coa', $data);
 	}
 
 	private function prepareNeracaReport(&$data)
@@ -1352,55 +1391,7 @@ class Financial extends CI_Controller
 		$from = $this->input->post('tgl_dari');
 		$to = $this->input->post('tgl_sampai');
 		$kode_cabang = $this->session->userdata('kode_cabang');
-		// return $this->cb->where('id_cabang', $kode_cabang);
 
-		// // Saldo awal periode sebelumnya
-		// $last_periode = new DateTime($from);
-		// $last_periode->modify('-1 month');
-		// $last_periode = $last_periode->format('Y-m');
-		// $coaBefore = $this->cb->where('id_cabang', $kode_cabang)
-		//     ->where('periode', $last_periode)
-		//     ->get('saldo_awal')
-		//     ->row_array();
-
-		// $coaBefore = $coaBefore['coa'] ?? null; // Pastikan tidak error jika NULL
-
-		// $coa = json_decode($coaBefore);
-		// $saldo_awal = null;
-
-		// echo '<pre>';
-		// print_r($coa);
-		// echo '</pre>';
-		// exit;
-		// Iterasi untuk mencari saldo awal
-		// if ($coa) {
-		//     foreach ($coa as $item) {
-		//         if ($item->no_sbb == $no_coa) {
-		//             $saldo_awal = $item->saldo_awal;
-		//             break;
-		//         }
-		//     }
-		// }
-
-		// // Hitung transaksi dari 1-14 November
-		// $mid_start = (new DateTime($from))->modify('first day of this month')->format('Y-m-d');
-		// $mid_end = (new DateTime($from))->modify('-1 day')->format('Y-m-d');
-
-		// $transactions_before = $this->m_coa->getCoaReport($no_coa, $mid_start, $mid_end);
-		// foreach ($transactions_before as $trans) {
-		//     if ($trans->akun_debit == $no_coa) {
-		//         $saldo_awal += $trans->jumlah_debit;
-		//     } else {
-		//         $saldo_awal -= $trans->jumlah_kredit;
-		//     }
-		// }
-
-		// Set saldo awal untuk 15 November
-		// $data['saldo_awal'] = ($saldo_awal) ? $saldo_awal : 0;
-		// print_r($saldo_awal);
-		// exit;
-
-		// Hitung transaksi dari 15 November - 31 Desember
 		$data['coa'] = $this->m_coa->getCoaReport($no_coa, $from, $to);
 
 		$data['sum_debit'] = array_sum(array_map(function ($sum) use ($no_coa) {
@@ -1412,8 +1403,6 @@ class Financial extends CI_Controller
 		}, $data['coa']));
 
 		$data['detail_coa'] = $this->m_coa->getCoa($no_coa);
-
-		$this->load->view('report_per_coa', $data);
 	}
 
 	public function ajax_edit_report_coa($id)

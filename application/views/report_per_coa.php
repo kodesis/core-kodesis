@@ -249,8 +249,13 @@
                                                 <label for="tgl_sampai" class="form-label">Sampai</label>
                                                 <input type="date" class="form-control" name="tgl_sampai" value="<?= $this->input->post('tgl_sampai') ?>">
                                             </div>
-                                            <div class="col-md-1 col-xs-12">
-                                                <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Lihat</button>
+                                            <div class="col-md-3 col-xs-12" style="margin-top: 24px;">
+                                                <button type="submit" name="submit_type" value="filter" class="btn btn-primary">
+                                                    <i class="fa fa-search"></i> Lihat
+                                                </button>
+                                                <button type="submit" name="submit_type" value="excel" class="btn btn-success">
+                                                    <i class="fa fa-file-excel-o"></i> Export Excel
+                                                </button>
                                             </div>
                                         </form>
                                     </div>

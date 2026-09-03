@@ -4225,15 +4225,15 @@ class Outgoinghlp extends CI_Controller
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
 			// $this->posting('11505', '41002', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
-if($pesawat == 'BATIK'){
-	$kredit = '41010';
-} else if($pesawat == 'CITILINK') {
-	$kredit = '41008';
-} else if($pesawat == 'FLYJAYA'){
-	$kredit = '41013';
-} else{
-	$kredit = '41002';
-}
+			if ($pesawat == 'BATIK') {
+				$kredit = '41010';
+			} else if ($pesawat == 'CITILINK') {
+				$kredit = '41008';
+			} else if ($pesawat == 'FLYJAYA') {
+				$kredit = '41013';
+			} else {
+				$kredit = '41002';
+			}
 			$this->posting('11505', $kredit, $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');

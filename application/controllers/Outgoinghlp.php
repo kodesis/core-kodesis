@@ -4341,6 +4341,8 @@ class Outgoinghlp extends CI_Controller
 
 			$ket_bank = '';
 
+			$is_bank = false;
+
 			if ($pay_methode == '1') {
 				$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
 					->limit(1)
@@ -4392,7 +4394,7 @@ class Outgoinghlp extends CI_Controller
 					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
 			} else if ($pay_methode == '3' || $pay_methode == '4') {
 				$coa_debit = $coa_bank;
-
+				$is_bank = true;
 				if ($coa_bank == "12001") {
 					$ket_bank = 'Melalui Bank BCA EKS';
 				} else if ($coa_bank == "12002") {
@@ -4453,6 +4455,17 @@ class Outgoinghlp extends CI_Controller
 				'jurnal_status'       => '1',
 				'pay_methode'       => $pay_methode,
 			];
+
+			if ($is_bank) {
+				if ($coa_bank == "12001") {
+					$bank_tujuan = 'BCA EKS';
+				} else if ($coa_bank == "12002") {
+					$bank_tujuan = 'BNI BDT';
+				} else if ($coa_bank == "12004") {
+					$bank_tujuan = 'BNI MBZ';
+				}
+				$update_data['bank_tujuan'] = $bank_tujuan;
+			}
 			$this->cb->where('uid', $billing->uid)->update('out_billing', $update_data);
 			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar. ' . $msg);
 			redirect('outgoinghlp/daftar_invoice');

@@ -4392,7 +4392,7 @@ class Outgoinghlp extends CI_Controller
 				$msg = $cek_saldo > 5000000
 					? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
 					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
-			} else if ($pay_methode == '3' || $pay_methode == '4') {
+			} else if ($pay_methode == '3') {
 				$coa_debit = $coa_bank;
 				$is_bank = true;
 				if ($coa_bank == "12001") {
@@ -4402,6 +4402,8 @@ class Outgoinghlp extends CI_Controller
 				} else if ($coa_bank == "12004") {
 					$ket_bank = 'Melalui Bank BNI MBZ';
 				}
+			} else if ($pay_methode == '4') {
+				$coa_debit = '13010';
 			} else if ($pay_methode == '6') {
 				$coa_debit = '12001';
 			}

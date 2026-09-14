@@ -1600,9 +1600,11 @@ class Incominghlp extends CI_Controller
 				$msg = $cek_saldo > 5000000
 					? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
 					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
-			} else if ($pay_methode == '3' || $pay_methode == '4') {
+			} else if ($pay_methode == '3') {
 				$coa_debit = $coa_bank;
 				$is_bank = true;
+			} else if ($pay_methode == '4') {
+				$coa_debit = '13010';
 			} else if ($pay_methode == '6') {
 				$coa_debit = '12001';
 			}
@@ -1616,7 +1618,6 @@ class Incominghlp extends CI_Controller
 				$is_bank = true;
 				$metode_agent = "TRANSFER";
 			} else if ($pay_methode == '4') {
-				$is_bank = true;
 				$metode_agent = "TAGIHAN";
 			} else if ($pay_methode == '6') {
 				$metode_agent = "QRIS";

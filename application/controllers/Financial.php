@@ -3261,6 +3261,8 @@ class Financial extends CI_Controller
 			$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 			$objWriter->save('php://output');
 			exit;
+		} else if ($button_sbm === "pdf") {
+			$this->load->view('print_pdf_neraca_per_tanggal', $data);
 		} else {
 			$this->load->view('neraca_by_date', $data);
 		}
@@ -3407,6 +3409,8 @@ class Financial extends CI_Controller
 			$objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
 			$objWriter->save('php://output');
 			exit;
+		} else if ($button_sbm === "pdf") {
+			$this->load->view('print_pdf_laba_rugi_per_tanggal', $data);
 		} else {
 			$this->load->view('laba_rugi_by_date', $data);
 		}

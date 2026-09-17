@@ -575,7 +575,7 @@ class Task extends CI_Controller
     $this->form_validation->set_rules('activity', 'activity', 'required|in_list[1,2,3]');
     $this->form_validation->set_error_delimiters('<span class="error text-danger">', '</span>');
 
-    $target_file = '../moc.mlejitoffice.id/upload/task_comment/';
+    $target_file = './upload/task_comment/';
 
     if ($this->form_validation->run() == FALSE) {
       $this->detail_task($this->uri->segment(3));
@@ -668,7 +668,7 @@ class Task extends CI_Controller
     $this->form_validation->set_rules('activity', 'activity', 'required|in_list[1,2,3]');
     $this->form_validation->set_error_delimiters('<span class="error text-danger">', '</span>');
 
-    $target_file = '../moc.mlejitoffice.id/upload/task_comment/';
+    $target_file = './upload/task_comment/';
 
     if ($this->form_validation->run() == FALSE) {
       $this->session->set_flashdata('forbidden', array_values($this->form_validation->error_array())[0]);

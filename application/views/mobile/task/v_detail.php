@@ -390,7 +390,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <div class="modal-body">
-                                    <img src="https://moc.mlejitoffice.id/upload/task_comment/<?= $x ?>" alt="attachment" width="100%">
+                                    <img src="<?= base_url() ?>/upload/task_comment/<?= $x ?>" alt="attachment" width="100%">
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -400,7 +400,7 @@
                             </div>
                           </li>
                         <?php } else { ?>
-                          <li><a href="https://moc.mlejitoffice.id/upload/task_comment/<?= $x ?>" download style="white-space: pre-line;" onclick="PageReload()">File <?= $i++ ?></a></li>
+                          <li><a href="<?= base_url() ?>/upload/task_comment/<?= $x ?>" download style="white-space: pre-line;" onclick="PageReload()">File <?= $i++ ?></a></li>
                       <?php }
                       } ?>
                     </ul>
@@ -441,7 +441,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                <img src="https://moc.mlejitoffice.id/upload/task_comment/<?= $xx ?>" alt="attachment" width="100%">
+                                <img src="<?= base_url() ?>/upload/task_comment/<?= $xx ?>" alt="attachment" width="100%">
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -450,7 +450,7 @@
                           </div>
                         </div>
                       <?php } else { ?>
-                        <li><a style="color: white;" href="https://moc.mlejitoffice.id/<?= $xx ?>" download onclick="PageReload()">
+                        <li><a style="color: white;" href="<?= base_url() ?>/upload/task_comment/<?= $xx ?>" download onclick="PageReload()">
                             File <?= $i++ ?> ||
                           </a></li>
                     <?php }
@@ -476,7 +476,7 @@
                       if ($extension == "png" || $extension == "jpg" || $extension == "jpeg") {
                     ?>
                         <a style="color: black;" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                          File <img src="https://moc.mlejitoffice.id/upload/task_comment/<?= $xx ?>" alt="attachment" width="30px"> ||
+                          File <img src="<?= base_url() ?>/upload/task_comment/<?= $xx ?>" alt="attachment" width="30px"> ||
                         </a>
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -487,7 +487,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                <img src="https://moc.mlejitoffice.id/upload/task_comment/<?= $xx ?>" alt="attachment" width="100%">
+                                <img src="<?= base_url() ?>/upload/task_comment/<?= $xx ?>" alt="attachment" width="100%">
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -496,7 +496,7 @@
                           </div>
                         </div>
                       <?php } else { ?>
-                        <a style="color: black;" href="https://moc.mlejitoffice.id/upload/task_comment/<?= $xx ?>" download onclick="PageReload()">
+                        <a style="color: black;" href="<?= base_url() ?>/upload/task_comment/<?= $xx ?>" download onclick="PageReload()">
                           File <?= $i++ ?> ||
                         </a>
                     <?php

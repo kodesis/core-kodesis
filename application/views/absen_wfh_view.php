@@ -10,10 +10,8 @@
 
 	<link rel="icon" href="<?= $this->session->userdata('icon') ?>" type="image/ico" />
 	<title><?= $this->session->userdata('nama_singkat') ?> | Bussines Development</title>
-	<title>Kodesis | Bussines Development</title>
 	<!-- Bootstrap -->
 	<link href="<?php echo base_url(); ?>src/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-	<!-- <link href="<?php echo base_url(); ?>login_lib/vendor/bootstrap/css/bootstrap-grid.css" rel="stylesheet"> -->
 	<!-- Font Awesome -->
 	<link href="<?php echo base_url(); ?>src/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 	<!-- NProgress -->
@@ -32,7 +30,6 @@
 	<link href="<?php echo base_url(); ?>src/build/css/owl.carousel.min.css" rel="stylesheet">
 	<link href="<?php echo base_url(); ?>src/build/css/owl.theme.default.min.css" rel="stylesheet">
 
-	<!-- <link rel="stylesheet" href="<?= base_url() ?>resources/assets/css/styles.css"> -->
 	<script defer src="<?= base_url() ?>resources/assets/javascript/face_logics/face-api.min.js"></script>
 
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css" rel="stylesheet">
@@ -59,38 +56,40 @@
 			padding-top: 37px;
 		}
 
-
 		.justify-content-center {
 			display: block;
 			justify-content: center;
 		}
 
-
 		/*video*/
-		canvas {
-			position: absolute;
-
-		}
-
 		.video-container {
-			display: flex;
 			align-items: center;
 			justify-content: center;
+		}
+
+		/* Wrapper supaya canvas overlay pas di atas video */
+		.video-wrapper {
+			position: relative;
+			display: inline-block;
+		}
+
+		.video-wrapper canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			pointer-events: none;
 		}
 
 		/* Styles for mobile devices */
 		@media (max-width: 768px) {
 			.video-container {
-				display: block;
-				/* Or you can omit this if you don't want flex behavior */
 				margin-left: 20px;
-				/* Adjust the margin as needed */
 			}
 		}
 
 		#video {
 			border-radius: 10px;
-			box-shadow: #000;
+			background: #000;
 		}
 	</style>
 </head>
@@ -132,7 +131,6 @@
 						</div>
 					</a>
 				</div>
-
 			</div>
 		</div>
 	</div>
@@ -172,10 +170,6 @@
 						<?php $this->load->view('side_menu.php'); ?>
 					</div>
 					<!-- /sidebar menu -->
-
-					<!-- /menu footer buttons -->
-
-					<!-- /menu footer buttons -->
 				</div>
 			</div>
 
@@ -208,7 +202,6 @@
 							</li>
 
 							<li role="presentation" class="dropdown">
-								<!--a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false"-->
 								<a href="<?php echo base_url() . "app/inbox"; ?>" class="dropdown-toggle info-number">
 									<i class="fa fa-envelope-o"></i>
 									<?php if ($count_inbox == 0) { ?>
@@ -217,64 +210,6 @@
 										<span class="badge bg-red"><?php echo $count_inbox; ?></span>
 									<?php } ?>
 								</a>
-								<!--ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
-									<li>
-									<a>
-										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-										<span>
-										<span>John Smith</span>
-										<span class="time">3 mins ago</span>
-										</span>
-										<span class="message">
-										Film festivals used to be do-or-die moments for movie makers. They were where...
-										</span>
-									</a>
-									</li>
-									<li>
-									<a>
-										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-										<span>
-										<span>John Smith</span>
-										<span class="time">3 mins ago</span>
-										</span>
-										<span class="message">
-										Film festivals used to be do-or-die moments for movie makers. They were where...
-										</span>
-									</a>
-									</li>
-									<li>
-									<a>
-										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-										<span>
-										<span>John Smith</span>
-										<span class="time">3 mins ago</span>
-										</span>
-										<span class="message">
-										Film festivals used to be do-or-die moments for movie makers. They were where...
-										</span>
-									</a>
-									</li>
-									<li>
-									<a>
-										<span class="image"><img src="<?php echo base_url(); ?>src/images/img.jpg" alt="Profile Image" /></span>
-										<span>
-										<span>John Smith</span>
-										<span class="time">3 mins ago</span>
-										</span>
-										<span class="message">
-										Film festivals used to be do-or-die moments for movie makers. They were where...
-										</span>
-									</a>
-									</li>
-									<li>
-									<div class="text-center">
-										<a>
-										<strong>See All Alerts</strong>
-										<i class="fa fa-angle-right"></i>
-										</a>
-									</div>
-									</li>
-								</ul-->
 							</li>
 							<?php include 'notif_tello.php' ?>
 
@@ -290,35 +225,27 @@
 					<div class="main--content">
 						<div id="messageDiv" class="messageDiv" style="display:none;"> </div>
 						<h5 id="lokasi_sekarang"></h5>
-						<!-- <button class="btn" id="ShowUser" onclick="getLocation()">Tampilkan Posisi</button> -->
-						<!-- <button class="btn" id="ShowUser" onclick="updateTable()">Tampilkan User</button> -->
 						<div class="attendance-button">
 							<button hidden id="startButton" class="add">Launch Facial Recognition</button>
 							<button id="endButton" class="add" style="display:none">End Attendance Process</button>
 							<button hidden id="endAttendance" class="add">END Attendance Taking</button>
 						</div>
 
-						<div class="video-container" style="display:flex">
-							<video id="video" class="video-class" width="320" height="240" autoplay muted></video>
-							<canvas id="overlay"></canvas>
+						<!-- PENTING untuk iOS: playsinline + muted + autoplay -->
+						<div class="video-container" style="display:none">
+							<div class="video-wrapper">
+								<video id="video" class="video-class" width="320" height="240" autoplay muted playsinline webkit-playsinline></video>
+								<canvas id="overlay" width="320" height="240"></canvas>
+							</div>
 						</div>
 
 						<div class="table-container">
-
-							<div id="studentTableContainer">
-
-							</div>
-
+							<div id="studentTableContainer"></div>
 						</div>
 						<p id="location"></p>
 					</div>
 				</div>
-
 				<!-- /page content -->
-
-				<!-- footer content -->
-
-				<!-- /footer content -->
 			</div>
 		</div>
 	</div>
@@ -365,7 +292,7 @@
 	<script src="<?php echo base_url(); ?>src/build/js/custom.min.js"></script>
 	<script src="<?php echo base_url(); ?>src/build/js/owl.carousel.min.js"></script>
 
-	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<script>
 		$('.owl-carousel').owlCarousel({
@@ -385,20 +312,36 @@
 					items: 1,
 					nav: true,
 					loop: true,
-					autoplay: true,
+					autoplay: true
 				}
 			}
 		})
 	</script>
 	<script>
+		// ============================================================
+		// STATE GLOBAL
+		// ============================================================
 		let isWithinRange = false;
 		let locationName = "";
+		let students = [];
+		let labels = [];
+		let detectedFaces = [];
+		let videoStream = null;
+		let modelsLoaded = false;
+		let faceMatcher = null;
+		let detectionRunning = false;
+		let attendanceDone = false; // cegah absensi terkirim berkali-kali
+
+		const video = document.getElementById("video");
+		const videoContainer = document.querySelector(".video-container");
+		const overlay = document.getElementById("overlay");
+
 		const locations = [
 			<?php
 			if ($lokasi_absensi) {
 				foreach ($lokasi_absensi as $l) {
 					if ($l['id'] == $lokasi_presensi_user->id_lokasi_presensi) { ?> {
-							name: "<?= addslashes($l['nama_lokasi']) ?>", // Ensure the name is properly escaped and quoted
+							name: "<?= addslashes($l['nama_lokasi']) ?>",
 							latitude: <?= $l['latitude'] ?>,
 							longitude: <?= $l['longitude'] ?>,
 							radius: <?= $l['radius'] ?> // Radius in kilometers
@@ -409,40 +352,100 @@
 					name: "Graha Dirgantara",
 					latitude: -6.2559536,
 					longitude: 106.8826187,
-					radius: 0.5 // Radius in kilometers
+					radius: 0.5
 				},
 				{
 					name: "Parkir Bandes",
 					latitude: -6.2586284,
 					longitude: 106.8820789,
-					radius: 0.5 // Radius in kilometers
+					radius: 0.5
 				},
 				{
 					name: "Mlejit",
 					latitude: -6.2638584,
 					longitude: 106.8856266,
-					radius: 0.5 // Radius in kilometers
+					radius: 0.5
 				}
 			<?php } ?>
 		];
 
-
-		function getLocation() {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(showPosition, showError, {
-					enableHighAccuracy: false
-				});
-			} else {
-				Swal.fire('Error', 'Geolocation is not supported by this browser.', 'error');
+		// ============================================================
+		// HELPER LOADING (SweetAlert)
+		// ============================================================
+		function showLoading(title, text) {
+			// Kalau loading sudah tampil, cukup ganti teksnya (tidak berkedip)
+			if (Swal.isVisible() && Swal.isLoading()) {
+				const t = Swal.getTitle();
+				const h = Swal.getHtmlContainer();
+				if (t) t.textContent = title;
+				if (h) {
+					h.textContent = text || '';
+					h.style.display = 'block';
+				}
+				return;
 			}
+			Swal.fire({
+				title: title,
+				text: text || ' ',
+				allowOutsideClick: false,
+				allowEscapeKey: false,
+				showConfirmButton: false,
+				didOpen: () => Swal.showLoading()
+			});
+		}
+
+		// face-api.min.js dimuat dengan "defer", pastikan sudah siap
+		function waitForFaceApi(timeoutMs = 30000) {
+			return new Promise((resolve, reject) => {
+				const start = Date.now();
+				(function check() {
+					if (window.faceapi) return resolve();
+					if (Date.now() - start > timeoutMs) return reject(new Error('Library face-api gagal dimuat. Periksa koneksi internet.'));
+					setTimeout(check, 200);
+				})();
+			});
+		}
+
+		function postJSON(url, body, isJson) {
+			return new Promise((resolve, reject) => {
+				const xhr = new XMLHttpRequest();
+				xhr.open("POST", url, true);
+				xhr.setRequestHeader("Content-Type", isJson ? "application/json" : "application/x-www-form-urlencoded");
+				xhr.timeout = 60000;
+				xhr.onload = function() {
+					if (xhr.status !== 200) return reject(new Error('Server error (HTTP ' + xhr.status + ')'));
+					try {
+						resolve(JSON.parse(xhr.responseText));
+					} catch (e) {
+						reject(new Error('Respon server tidak valid.'));
+					}
+				};
+				xhr.onerror = () => reject(new Error('Koneksi ke server gagal.'));
+				xhr.ontimeout = () => reject(new Error('Koneksi ke server timeout.'));
+				xhr.send(body || null);
+			});
+		}
+
+		// ============================================================
+		// 1. LOKASI
+		// ============================================================
+		function getLocation() {
+			if (!navigator.geolocation) {
+				Swal.fire('Error', 'Geolocation tidak didukung oleh browser ini.', 'error');
+				return;
+			}
+			showLoading('Memeriksa lokasi...', 'Mohon izinkan akses lokasi');
+			navigator.geolocation.getCurrentPosition(showPosition, showError, {
+				enableHighAccuracy: false,
+				timeout: 15000, // iOS kadang menggantung tanpa timeout
+				maximumAge: 60000
+			});
 		}
 
 		function showPosition(position) {
 			const userLatitude = position.coords.latitude;
 			const userLongitude = position.coords.longitude;
 
-
-			// Check each location
 			for (const location of locations) {
 				if (isWithinRadius(userLatitude, userLongitude, location.latitude, location.longitude, location.radius)) {
 					isWithinRange = true;
@@ -453,11 +456,9 @@
 
 			if (isWithinRange) {
 				$('#lokasi_sekarang').text('Lokasi Sekarang ' + locationName);
-				Swal.fire('Success', `You are within range of ${locationName}. Updating table...`, 'success');
-				updateTable();
+				startFaceAttendance();
 			} else {
 				$('#lokasi_sekarang').text('Lokasi Sekarang Di Luar Jangkauan');
-				// Swal.fire('Alert', `You are not within range. Updating table...`, 'warning');
 				Swal.fire({
 					title: 'You are not within range! Ingin Tetap Absen?',
 					icon: 'warning',
@@ -466,7 +467,9 @@
 					cancelButtonText: 'Tidak',
 					reverseButtons: true
 				}).then((result) => {
-					updateTable();
+					if (result.isConfirmed) {
+						startFaceAttendance();
+					}
 				});
 			}
 		}
@@ -474,25 +477,23 @@
 		function showError(error) {
 			switch (error.code) {
 				case error.PERMISSION_DENIED:
-					Swal.fire('Error', 'Permission to access location was denied.', 'error');
+					Swal.fire('Error', 'Izin akses lokasi ditolak. Aktifkan di Pengaturan > Privasi > Layanan Lokasi > Safari.', 'error');
 					break;
 				case error.POSITION_UNAVAILABLE:
-					Swal.fire('Error', 'Location information is unavailable.', 'error');
+					Swal.fire('Error', 'Informasi lokasi tidak tersedia.', 'error');
 					break;
 				case error.TIMEOUT:
-					Swal.fire('Error', 'The request to get your location timed out.', 'error');
+					Swal.fire('Error', 'Permintaan lokasi timeout. Silakan coba lagi.', 'error');
 					break;
-				case error.UNKNOWN_ERROR:
-					Swal.fire('Error', 'An unknown error occurred.', 'error');
+				default:
+					Swal.fire('Error', 'Terjadi kesalahan saat mengambil lokasi.', 'error');
 					break;
 			}
 		}
 
-		// Function to calculate distance between two coordinates
 		function isWithinRadius(lat1, lon1, lat2, lon2, radiusInKm) {
 			const toRadians = (degrees) => degrees * (Math.PI / 180);
 			const earthRadiusKm = 6371;
-
 			const dLat = toRadians(lat2 - lat1);
 			const dLon = toRadians(lon2 - lon1);
 			const a =
@@ -500,430 +501,408 @@
 				Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
 				Math.sin(dLon / 2) * Math.sin(dLon / 2);
 			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-			const distance = earthRadiusKm * c;
-			return distance <= radiusInKm;
+			return earthRadiusKm * c <= radiusInKm;
 		}
 
-		function updateTable() {
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "fetch_user", true);
-			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		// ============================================================
+		// 2. ALUR UTAMA: data -> model -> foto -> kamera -> deteksi
+		// ============================================================
+		async function startFaceAttendance() {
+			try {
+				showLoading('Memuat data pengguna...', 'Langkah 1 dari 4');
+				const response = await postJSON("fetch_user");
 
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					var response = JSON.parse(xhr.responseText);
-					if (response.status === "success") {
+				if (response.status === "No Picture") {
+					Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+					return;
+				}
+				if (response.status !== "success") {
+					throw new Error(response.message || 'Gagal memuat data pengguna.');
+				}
 
-						students = response.data; // Store the student data
-						labels = students.map(student => student.username);
-						console.log(labels);
-						updateOtherElements();
+				students = response.data;
+				labels = students.map(s => s.username);
+				document.getElementById("studentTableContainer").innerHTML = response.html;
 
-						document.getElementById("studentTableContainer").innerHTML = response.html;
+				showLoading('Memuat model pengenalan wajah...', 'Langkah 2 dari 4 (pertama kali bisa agak lama)');
+				await loadModels();
 
+				showLoading('Memproses foto wajah terdaftar...', 'Langkah 3 dari 4');
+				const labeledDescriptors = await getLabeledFaceDescriptions();
+				if (labeledDescriptors.length === 0) {
+					Swal.fire('Alert', 'Wajah tidak terdeteksi pada foto terdaftar. Silakan ambil foto terlebih dahulu.', 'warning');
+					return;
+				}
+				faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.6);
 
-					} else if (response.status === "No Picture") {
-						Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+				showLoading('Membuka kamera...', 'Langkah 4 dari 4');
+				await startWebcam();
 
-					} else {
-						console.error("Error:", response.message);
+				Swal.fire({
+					icon: 'info',
+					title: 'Kamera siap',
+					text: 'Hadapkan wajah Anda ke kamera',
+					timer: 2000,
+					showConfirmButton: false
+				});
+
+				startDetectionLoop();
+			} catch (err) {
+				console.error(err);
+				stopWebcam();
+				Swal.fire('Error', err.message || 'Terjadi kesalahan.', 'error');
+			}
+		}
+
+		async function loadModels() {
+			if (modelsLoaded) return;
+			await waitForFaceApi();
+			try {
+				await Promise.all([
+					faceapi.nets.ssdMobilenetv1.loadFromUri("../models"),
+					faceapi.nets.faceRecognitionNet.loadFromUri("../models"),
+					faceapi.nets.faceLandmark68Net.loadFromUri("../models"),
+				]);
+			} catch (e) {
+				console.error(e);
+				throw new Error('Model gagal dimuat, periksa lokasi folder models.');
+			}
+			modelsLoaded = true;
+			console.log("models loaded successfully");
+		}
+
+		async function getLabeledFaceDescriptions() {
+			const labeledDescriptors = [];
+			const options = new faceapi.SsdMobilenetv1Options({
+				minConfidence: 0.5
+			});
+			const TOTAL_FOTO = 5;
+
+			for (const student of students) {
+				const descriptions = [];
+
+				// Unduh kelima foto secara paralel (lebih cepat daripada satu per satu)
+				const imgs = await Promise.all(
+					Array.from({
+							length: TOTAL_FOTO
+						}, (_, i) =>
+						faceapi.fetchImage(`../resources/labels/${student.username}/${i + 1}.png`)
+						.catch(err => {
+							console.warn(`Gagal memuat ${student.username}/${i + 1}.png`, err);
+							return null;
+						})
+					)
+				);
+
+				// Deteksi dilakukan berurutan (GPU iPhone tidak kuat paralel)
+				for (let i = 0; i < imgs.length; i++) {
+					if (!imgs[i]) continue;
+					showLoading('Memproses foto wajah terdaftar...', `Langkah 3 dari 4 (foto ${i + 1}/${TOTAL_FOTO})`);
+					try {
+						const detection = await faceapi
+							.detectSingleFace(imgs[i], options)
+							.withFaceLandmarks()
+							.withFaceDescriptor();
+						if (detection) {
+							descriptions.push(detection.descriptor);
+						} else {
+							console.log(`No face detected in ${student.username}/${i + 1}.png`);
+						}
+					} catch (error) {
+						console.error(`Error processing ${student.username}/${i + 1}.png:`, error);
 					}
+				}
+
+				if (descriptions.length > 0) {
+					// Label = username (unik), nama ditampilkan saat menggambar kotak
+					labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(student.username, descriptions));
+				}
+			}
+			return labeledDescriptors;
+		}
+
+		async function startWebcam() {
+			if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+				throw new Error('Browser tidak mendukung kamera. Pastikan halaman dibuka melalui HTTPS.');
+			}
+
+			videoContainer.style.display = "flex";
+
+			try {
+				videoStream = await navigator.mediaDevices.getUserMedia({
+					video: {
+						facingMode: "user",
+						width: {
+							ideal: 640
+						},
+						height: {
+							ideal: 480
+						}
+					},
+					audio: false
+				});
+			} catch (error) {
+				console.error("Error accessing webcam:", error);
+				throw new Error('Akses kamera ditolak atau tidak tersedia. Aktifkan izin kamera untuk Safari.');
+			}
+
+			// Wajib untuk iOS Safari
+			video.setAttribute('playsinline', '');
+			video.setAttribute('webkit-playsinline', '');
+			video.muted = true;
+			video.srcObject = videoStream;
+
+			// Tunggu metadata siap lalu play secara eksplisit
+			await new Promise((resolve) => {
+				if (video.readyState >= 1) return resolve();
+				video.onloadedmetadata = () => resolve();
+			});
+
+			try {
+				await video.play();
+			} catch (e) {
+				console.error(e);
+				throw new Error('Video kamera tidak bisa diputar. Coba muat ulang halaman.');
+			}
+		}
+
+		function startDetectionLoop() {
+			if (detectionRunning) return;
+			detectionRunning = true;
+
+			const displaySize = {
+				width: video.width,
+				height: video.height
+			};
+			faceapi.matchDimensions(overlay, displaySize);
+			const ctx = overlay.getContext("2d");
+			const options = new faceapi.SsdMobilenetv1Options({
+				minConfidence: 0.5
+			});
+
+			// Pakai setTimeout berantai, BUKAN setInterval, supaya deteksi tidak menumpuk
+			const loop = async () => {
+				if (!detectionRunning || attendanceDone) return;
+
+				if (video.paused || video.ended || video.readyState < 2) {
+					setTimeout(loop, 300);
+					return;
+				}
+
+				try {
+					const detections = await faceapi
+						.detectAllFaces(video, options)
+						.withFaceLandmarks()
+						.withFaceDescriptors();
+
+					if (!detectionRunning || attendanceDone) return;
+
+					const resizedDetections = faceapi.resizeResults(detections, displaySize);
+					ctx.clearRect(0, 0, overlay.width, overlay.height);
+
+					const results = resizedDetections.map(d => faceMatcher.findBestMatch(d.descriptor));
+
+					results.forEach((result, i) => {
+						const student = students.find(s => s.username === result.label);
+						new faceapi.draw.DrawBox(resizedDetections[i].detection.box, {
+							label: student ? student.nama : 'Tidak dikenal'
+						}).draw(overlay);
+					});
+
+					detectedFaces = results.map(r => r.label).filter(l => l !== 'unknown');
+					if (detectedFaces.length > 0) {
+						markAttendance(detectedFaces);
+					}
+				} catch (e) {
+					console.error('Detection error:', e);
+				}
+
+				if (detectionRunning && !attendanceDone) {
+					setTimeout(loop, 300);
 				}
 			};
 
-			xhr.send();
+			loop();
 		}
 
-		function updateTableMasuk() {
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "fetch_user/masuk", true);
-			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					var response = JSON.parse(xhr.responseText);
-					if (response.status === "success") {
-						document.getElementById("studentTableContainer").innerHTML = response.html;
-						const videoContainer = document.querySelector(".video-container");
-						videoContainer.style.display('none');
-
-						students = response.data; // Store the student data
-						labels = students.map(student => student.username);
-						console.log(labels);
-
-					} else if (response.status === "No Picture") {
-						Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
-
-					} else {
-						console.error("Error:", response.message);
-					}
-				}
-			};
-
-			xhr.send();
-		}
-
-		function updateTablePulang() {
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "fetch_user/pulang", true);
-			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					var response = JSON.parse(xhr.responseText);
-					if (response.status === "success") {
-						document.getElementById("studentTableContainer").innerHTML = response.html;
-						const videoContainer = document.querySelector(".video-container");
-						videoContainer.style.display('none');
-
-						students = response.data; // Store the student data
-						labels = students.map(student => student.username);
-						console.log(labels);
-
-					} else if (response.status === "No Picture") {
-						Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
-
-					} else {
-						console.error("Error:", response.message);
-					}
-				}
-			};
-
-			xhr.send();
-		}
-
-		function updateTableAbsensi() {
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "fetch_user/absensi", true);
-			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					var response = JSON.parse(xhr.responseText);
-					if (response.status === "success") {
-						document.getElementById("studentTableContainer").innerHTML = response.html;
-						const videoContainer = document.querySelector(".video-container");
-						videoContainer.style.display('none');
-
-						students = response.data; // Store the student data
-						labels = students.map(student => student.username);
-						console.log(labels);
-
-					} else if (response.status === "No Picture") {
-						Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
-
-					} else {
-						console.error("Error:", response.message);
-					}
-				}
-			};
-
-			xhr.send();
-		}
-
+		// ============================================================
+		// 3. TANDAI & KIRIM ABSENSI
+		// ============================================================
 		function markAttendance(detectedFaces) {
-			document.querySelectorAll("#studentTableContainer tr").forEach((row) => {
+			if (attendanceDone) return;
 
+			let matched = false;
+
+			document.querySelectorAll("#studentTableContainer tr").forEach((row) => {
+				if (matched || !row.cells[0]) return;
 				const username = row.cells[0].innerText.trim();
 
 				<?php
-
 				date_default_timezone_set('Asia/Jakarta');
 				$current_time = new DateTime();
 				$jam_masuk_plus_two = (new DateTime($data_users->jam_masuk))->modify('+5 minutes');
 				$jam_keluar_plus_two = (new DateTime($data_users->jam_keluar))->modify('+0 hours');
 				?>
 				if (detectedFaces.includes(username)) {
+					matched = true;
+
 					if (isWithinRange) {
-						<?php
-						if ($current_time <= $jam_masuk_plus_two || $current_time >= $jam_keluar_plus_two) {
-						?>
+						<?php if ($current_time <= $jam_masuk_plus_two || $current_time >= $jam_keluar_plus_two) { ?>
 							row.cells[3].innerText = "Present";
 							row.cells[4].innerText = locationName;
-						<?php
-						} else {
-						?>
+						<?php } else { ?>
 							row.cells[3].innerText = "Pending";
 							row.cells[4].innerText = locationName;
-						<?php
-						}
-						?>
+						<?php } ?>
 					} else {
 						row.cells[3].innerText = "Pending";
 						row.cells[4].innerText = "Di Luar";
 					}
-					const currentDate = new Date(); // Get the current date and time (UTC by default)
 
-					// Calculate the time offset for Indonesia (UTC+7 for WIB, UTC+8 for WITA, UTC+9 for WIT)
-					const indonesiaTimeOffset = 7; // Change to 8 or 9 for WITA or WIT, respectively
+					const currentDate = new Date();
+					const indonesiaTimeOffset = 7;
 					const indonesiaTime = new Date(currentDate.getTime() + indonesiaTimeOffset * 60 * 60 * 1000);
-
-					// Format the date and time as "YYYY-MM-DD HH:MM:SS"
 					const formattedDateTime = indonesiaTime.toISOString().replace("T", " ").split(".")[0];
-
-					// Format only the date as "YYYY-MM-DD"
 					const formattedDateOnly = indonesiaTime.toISOString().split("T")[0];
 
-					// Update the element with id='tanggal' to display the full date and time
 					row.cells[5].innerText = formattedDateTime;
-
-					// Update the element with id='tanggalonly' to display only the date
 					row.cells[6].innerText = formattedDateOnly;
-
-					const capturedImage = captureImage(video);
-
-
-					Swal.fire('Success', `Anda Berhasil Melakukan Absensi`, 'success');
-					sendAttendanceDataToServer(capturedImage);
-					const videoContainer = document.querySelector(".video-container");
-					videoContainer.style.display = "none";
-					stopWebcam();
 				}
 			});
+
+			if (!matched) return;
+
+			// Kunci supaya tidak terkirim berulang
+			attendanceDone = true;
+			const capturedImage = captureImage(video);
+			stopWebcam();
+			videoContainer.style.display = "none";
+
+			showLoading('Menyimpan absensi...', 'Mohon tunggu, jangan tutup halaman');
+
+			sendAttendanceDataToServer(capturedImage)
+				.then((response) => {
+					Swal.fire('Success', response.message || 'Anda Berhasil Melakukan Absensi', 'success');
+				})
+				.catch((err) => {
+					console.error(err);
+					Swal.fire('Error', (err.message || 'Gagal menyimpan absensi.') + ' Silakan muat ulang halaman dan coba lagi.', 'error');
+				});
 		}
 
 		function captureImage(video) {
 			const canvas = document.createElement("canvas");
 			canvas.width = video.videoWidth;
 			canvas.height = video.videoHeight;
-			const context = canvas.getContext("2d");
-
-			context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+			canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
 			return canvas.toDataURL("image/png");
-		}
-
-		function updateOtherElements() {
-			const video = document.getElementById("video");
-			const videoContainer = document.querySelector(".video-container");
-			const startButton = document.getElementById("startButton");
-			let webcamStarted = false;
-			let modelsLoaded = false;
-
-			Promise.all([
-					faceapi.nets.ssdMobilenetv1.loadFromUri("../models"),
-					faceapi.nets.faceRecognitionNet.loadFromUri("../models"),
-					faceapi.nets.faceLandmark68Net.loadFromUri("../models"),
-				])
-				.then(() => {
-					modelsLoaded = true;
-					console.log("models loaded successfully");
-					videoContainer.style.display = "flex";
-					if (!webcamStarted && modelsLoaded) {
-						startWebcam();
-						webcamStarted = true;
-					}
-				})
-				.catch(() => {
-					alert("models not loaded, please check your model folder location");
-				});
-			startButton.addEventListener("click", async () => {
-				videoContainer.style.display = "flex";
-				if (!webcamStarted && modelsLoaded) {
-					startWebcam();
-					webcamStarted = true;
-				}
-			});
-
-			function startWebcam() {
-				navigator.mediaDevices.getUserMedia({
-					video: true,
-					audio: false
-				}).then((stream) => {
-					video.srcObject = stream;
-					videoStream = stream;
-				}).catch((error) => {
-					console.error("Error accessing webcam:", error);
-					alert("Please allow webcam access.");
-				});
-
-			}
-
-			async function getLabeledFaceDescriptions() {
-				const labeledDescriptors = [];
-
-				for (const label of labels) {
-					console.log(labels);
-					const descriptions = [];
-					// Find the student matching the username (label)
-					const student = students.find(s => s.username === label);
-
-					if (student) {
-						const nama = student.nama; // Get the student's first name
-						const username = student.username; // Get the registration number
-						for (let i = 1; i <= 5; i++) {
-							try {
-								const img = await faceapi.fetchImage(
-									`../resources/labels/${label}/${i}.png`
-								);
-								const detections = await faceapi
-									.detectSingleFace(img)
-									.withFaceLandmarks()
-									.withFaceDescriptor();
-
-								if (detections) {
-									descriptions.push(detections.descriptor);
-								} else {
-									console.log(`No face detected in ${label}/${i}.png`);
-									Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
-								}
-							} catch (error) {
-								console.error(`Error processing ${label}/${i}.png:`, error);
-							}
-						}
-
-						if (descriptions.length > 0) {
-							labeledDescriptors.push(
-								new faceapi.LabeledFaceDescriptors(nama, descriptions) // Use nama here
-							);
-						}
-					}
-				}
-
-				return labeledDescriptors;
-			}
-
-			video.addEventListener("play", async () => {
-				const labeledFaceDescriptors = await getLabeledFaceDescriptions();
-				const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors);
-
-				const canvas = faceapi.createCanvasFromMedia(video);
-				videoContainer.appendChild(canvas);
-
-				const displaySize = {
-					width: video.width,
-					height: video.height
-				};
-				faceapi.matchDimensions(canvas, displaySize);
-
-				setInterval(async () => {
-					const detections = await faceapi
-						.detectAllFaces(video)
-						.withFaceLandmarks()
-						.withFaceDescriptors();
-
-					const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-					canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-
-					const results = resizedDetections.map((d) => {
-						return faceMatcher.findBestMatch(d.descriptor);
-					});
-
-					// Now map the results to include registration numbers
-					detectedFaces = results.map((result) => {
-						// We are returning the registration number instead of nama
-						const student = students.find(s => s.nama === result.label);
-						return student ? student.username : null;
-					}).filter(Boolean); // Remove any null values
-
-					console.log(detectedFaces); // Here you'll see the registration numbers
-					markAttendance(detectedFaces);
-
-					results.forEach((result, i) => {
-						const box = resizedDetections[i].detection.box;
-						const drawBox = new faceapi.draw.DrawBox(box, {
-							label: result.label, // You can keep nama as label here for visual purposes
-						});
-						drawBox.draw(canvas);
-					});
-				}, 100);
-			});
-
 		}
 
 		function sendAttendanceDataToServer(capturedImage) {
 			const attendanceData = [];
 
-			document
-				.querySelectorAll("#studentTableContainer tr")
-				.forEach((row, index) => {
-					if (index === 0) return;
-					const username = row.cells[0].innerText.trim();
-					const nip = row.cells[1].innerText.trim();
-					const nama = row.cells[2].innerText.trim();
-					const attendanceStatus = row.cells[3].innerText.trim();
-					const lokasiAttendance = row.cells[4].innerText.trim();
-					const tanggalAttendance = row.cells[5].innerText.trim();
-
-					attendanceData.push({
-						username,
-						nip,
-						nama,
-						attendanceStatus,
-						lokasiAttendance,
-						tanggalAttendance,
-						capturedImage
-					});
+			document.querySelectorAll("#studentTableContainer tr").forEach((row, index) => {
+				if (index === 0) return;
+				attendanceData.push({
+					username: row.cells[0].innerText.trim(),
+					nip: row.cells[1].innerText.trim(),
+					nama: row.cells[2].innerText.trim(),
+					attendanceStatus: row.cells[3].innerText.trim(),
+					lokasiAttendance: row.cells[4].innerText.trim(),
+					tanggalAttendance: row.cells[5].innerText.trim(),
+					capturedImage: capturedImage
 				});
+			});
 
-			const xhr = new XMLHttpRequest();
-			xhr.open("POST", "recordAttendance", true);
-			xhr.setRequestHeader("Content-Type", "application/json");
-
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState === 4) {
-					if (xhr.status === 200) {
-						try {
-							const response = JSON.parse(xhr.responseText);
-
-							if (response.status === "success") {
-								showMessage(
-									response.message || "Attendance recorded successfully."
-								);
-							} else {
-								showMessage(
-									response.message ||
-									"An error occurred while recording attendance."
-								);
-							}
-						} catch (e) {
-							showMessage("Error: Failed to parse the response from the server.");
-							console.error(e);
-						}
-					} else {
-						showMessage(
-							"Error: Unable to record attendance. HTTP Status: " + xhr.status
-						);
-						console.error("HTTP Error", xhr.status, xhr.statusText);
-					}
-				}
-			};
-
-			xhr.send(JSON.stringify(attendanceData));
+			return postJSON("recordAttendance", JSON.stringify(attendanceData), true)
+				.then((response) => {
+					if (response.status === "success") return response;
+					throw new Error(response.message || 'Terjadi kesalahan saat menyimpan absensi.');
+				});
 		}
 
 		function showMessage(message) {
-			var messageDiv = document.getElementById("messageDiv");
+			const messageDiv = document.getElementById("messageDiv");
 			messageDiv.style.display = "block";
 			messageDiv.innerHTML = message;
-			console.log(message);
 			messageDiv.style.opacity = 1;
-			setTimeout(function() {
+			setTimeout(() => {
 				messageDiv.style.opacity = 0;
 			}, 5000);
 		}
 
 		function stopWebcam() {
+			detectionRunning = false;
 			if (videoStream) {
-				const tracks = videoStream.getTracks();
-
-				tracks.forEach((track) => {
-					track.stop();
-				});
-
-				video.srcObject = null;
+				videoStream.getTracks().forEach(track => track.stop());
 				videoStream = null;
+			}
+			video.srcObject = null;
+			const ctx = overlay.getContext("2d");
+			ctx.clearRect(0, 0, overlay.width, overlay.height);
+		}
+
+		// iOS tetap menyalakan kamera saat pindah halaman, matikan manual
+		window.addEventListener("pagehide", stopWebcam);
+
+		// ============================================================
+		// 4. TABEL SAJA (SUDAH ABSEN)
+		// ============================================================
+		async function loadTableOnly(url) {
+			try {
+				showLoading('Memuat data absensi...', 'Mohon tunggu');
+				const response = await postJSON(url);
+
+				if (response.status === "success") {
+					document.getElementById("studentTableContainer").innerHTML = response.html;
+					videoContainer.style.display = "none"; // sebelumnya salah: style.display('none')
+					students = response.data;
+					labels = students.map(s => s.username);
+					Swal.close();
+				} else if (response.status === "No Picture") {
+					Swal.fire('Alert', 'Picture Not Found, Please take Picture first', 'warning');
+				} else {
+					throw new Error(response.message || 'Gagal memuat data.');
+				}
+			} catch (err) {
+				console.error(err);
+				Swal.fire('Error', err.message, 'error');
 			}
 		}
 
+		// Swal "sudah absen" ditampilkan setelah tabel selesai dimuat
+		function updateTableMasuk() {
+			loadTableOnly("fetch_user/masuk").then(() => {
+				if (!Swal.isVisible()) Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Masuk', 'warning');
+			});
+		}
+
+		function updateTablePulang() {
+			loadTableOnly("fetch_user/pulang").then(() => {
+				if (!Swal.isVisible()) Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Pulang', 'warning');
+			});
+		}
+
+		function updateTableAbsensi() {
+			loadTableOnly("fetch_user/absensi").then(() => {
+				if (!Swal.isVisible()) Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
+			});
+		}
+
+		// Kompatibilitas dengan kode lama
+		function updateTable() {
+			startFaceAttendance();
+		}
+
 		document.getElementById("endAttendance").addEventListener("click", function() {
-			sendAttendanceDataToServer();
-			const videoContainer = document.querySelector(".video-container");
-			videoContainer.style.display = "none";
 			stopWebcam();
+			videoContainer.style.display = "none";
+			sendAttendanceDataToServer();
 		});
+
+		// ============================================================
+		// 5. INISIALISASI
+		// ============================================================
 		<?php
 		if (empty($data_users)) {
 		?>
@@ -937,34 +916,30 @@
 		?>
 			<?php if ($current_time <= $jam_masuk_plus_two) { ?>
 				<?php if (empty($result1)) { ?>
-					console.log('ada1');
-					getLocation(); // Call function
+					getLocation();
 				<?php } else { ?>
-					Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Masuk', 'warning');
-					updateTableMasuk(); // Call function
+					updateTableMasuk();
 				<?php } ?>
 			<?php } else if ($current_time >= $jam_keluar_plus_two) { ?>
 				<?php if (empty($result2)) { ?>
-					console.log('ada2');
-					getLocation(); // Call function
+					getLocation();
 				<?php } else { ?>
-					Swal.fire('Alert', 'Anda Sudah Melakukan Absensi Pulang', 'warning');
-					updateTablePulang(); // Call function
+					updateTablePulang();
 				<?php } ?>
 			<?php } else { ?>
 				<?php if (empty($result1) && empty($result3)) { ?>
-					console.log('ada2');
-					getLocation(); // Call function
+					getLocation();
 				<?php } else { ?>
-					Swal.fire('Alert', 'Anda Sudah Melakukan Absensi', 'warning');
-					updateTableAbsensi(); // Call function
-				<?php } ?> <?php } ?>
+					updateTableAbsensi();
+				<?php } ?>
+			<?php } ?>
 		<?php } ?>
-		const currentTime = new Date("<?php echo $current_time->format('Y-m-d H:i:s'); ?>");
+
+		// Format dengan "T" agar valid di Safari iOS
+		const currentTime = new Date("<?php echo $current_time->format('Y-m-d\TH:i:s'); ?>");
 		console.log('Current time:', currentTime);
 	</script>
 	<script src='<?= base_url() ?>resources/assets/javascript/active_link.js'></script>
-	<!-- <script src='<?= base_url() ?>resources/assets/javascript/face_logics/script.js'></script> -->
 </body>
 
 </html>

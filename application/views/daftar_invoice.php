@@ -318,6 +318,7 @@
                                                 <th>Chargeable</th>
                                                 <th>Total</th>
                                                 <th>PPH 23</th>
+                                                <th>Metode Pembayaran</th>
                                                 <th>Tanggal</th>
                                                 <th>Jaster</th>
                                                 <th>Kasir</th>
@@ -339,6 +340,7 @@
                                                         <td><?= $row['total_chg'] ?></td>
                                                         <td><?= $row['nominal'] ?></td>
                                                         <td><?= $row['pph'] ?></td>
+                                                        <td><?= $row['metode'] ?></td>
                                                         <td><?= $row['tanggal'] ?></td>
                                                         <td><?= $row['jaster'] ?></td>
                                                         <td><?= $row['warning_topup'] ?></td>

@@ -267,6 +267,7 @@
                                                 <th>Berat Aktual</th>
                                                 <th>Chargeable</th>
                                                 <th>Total</th>
+                                                <th>Metode Pembayaran</th>
                                                 <th>Tanggal Masuk</th>
                                                 <th>Tanggal Keluar</th>
                                                 <th>Days</th>

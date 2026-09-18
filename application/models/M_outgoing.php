@@ -706,43 +706,43 @@ class M_outgoing extends CI_Model
 	}
 
 	private function _base_query_invoice_page($agent = null, $pay = null, $jurnal = null, $search = null)
-{
-    if ($agent !== null && $agent !== '') {
-        $this->cb->where('o.agent_uid', $agent);
-    }
-    if ($pay !== null && $pay !== '') {
-        $this->cb->where('b.pay_status', $pay);
-    }
-    if ($jurnal !== null && $jurnal !== '') {
-        $this->cb->where('b.jurnal_status', $jurnal);
-    }
- 
-    if (!empty($search)) {
-        $this->cb->group_start()
-            ->like('b.invoice_num', $search)
-            ->or_like('b.no_invoice', $search)
-            ->or_like('o.smu', $search)
-            ->or_like('o.nama_agent', $search)
-            ->or_like('o.nama_pengirim', $search)
-            ->or_like('b.total_pieces', $search)
-            ->or_like('b.total_chargeable', $search)
-            ->or_like('b.total', $search)
-            ->or_like('b.tanggal_invoice', $search)
-            ->or_like('b.jaster', $search)
-            ->or_like('u.nama', $search)
-            ->group_end();
-    }
-}
- 
-/**
- * Ambil 1 halaman data saja (LIMIT/OFFSET), untuk ditampilkan di tabel.
- *
- * @param int $per_page  jumlah baris per halaman
- * @param int $offset    posisi awal (halaman ke-berapa dikali per_page)
- */
-public function get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset)
-{
-    $this->cb->select("
+	{
+		if ($agent !== null && $agent !== '') {
+			$this->cb->where('o.agent_uid', $agent);
+		}
+		if ($pay !== null && $pay !== '') {
+			$this->cb->where('b.pay_status', $pay);
+		}
+		if ($jurnal !== null && $jurnal !== '') {
+			$this->cb->where('b.jurnal_status', $jurnal);
+		}
+
+		if (!empty($search)) {
+			$this->cb->group_start()
+				->like('b.invoice_num', $search)
+				->or_like('b.no_invoice', $search)
+				->or_like('o.smu', $search)
+				->or_like('o.nama_agent', $search)
+				->or_like('o.nama_pengirim', $search)
+				->or_like('b.total_pieces', $search)
+				->or_like('b.total_chargeable', $search)
+				->or_like('b.total', $search)
+				->or_like('b.tanggal_invoice', $search)
+				->or_like('b.jaster', $search)
+				->or_like('u.nama', $search)
+				->group_end();
+		}
+	}
+
+	/**
+	 * Ambil 1 halaman data saja (LIMIT/OFFSET), untuk ditampilkan di tabel.
+	 *
+	 * @param int $per_page  jumlah baris per halaman
+	 * @param int $offset    posisi awal (halaman ke-berapa dikali per_page)
+	 */
+	public function get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset)
+	{
+		$this->cb->select("
         o.smu, o.pesawat, o.catg_smu, o.jaster as is_jaster, o.nama_agent as list_agent, o.nama_pengirim as list_pengirim, b.*, u.nama as nama_kasir,
         IF(EXISTS(
             SELECT 1 FROM all_topup t
@@ -759,38 +759,38 @@ public function get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $off
             1, 0
         ) AS is_warning
     ", FALSE)
-        ->from('out_billing b')
-        ->join('out_list o', 'o.bill_uid = b.uid', 'left')
-        ->join($this->db->database . '.users u', 'u.nip = b.user_kasir', 'left');
- 
-    $this->_base_query_invoice_page($agent, $pay, $jurnal, $search);
- 
-    $this->cb->order_by('is_warning', 'DESC');
-    $this->cb->order_by('b.pay_status', 'ASC');
-    $this->cb->order_by('b.jurnal_status', 'ASC');
-    $this->cb->order_by('b.uid', 'DESC');
- 
-    $this->cb->limit($per_page, $offset);
- 
-    return $this->cb->get()->result();
-}
- 
-/**
- * Hitung total baris (untuk hitung jumlah halaman).
- * Query RINGAN: tidak select b.*, tidak ada subquery EXISTS.
- */
-public function count_invoice($agent, $pay, $jurnal, $search)
-{
-    $this->cb->select('b.uid', FALSE)
-        ->from('out_billing b')
-        ->join('out_list o', 'o.bill_uid = b.uid', 'left')
-        ->join($this->db->database . '.users u', 'u.nip = b.user_kasir', 'left');
- 
-    $this->_base_query_invoice_page($agent, $pay, $jurnal, $search);
- 
-    return $this->cb->get()->num_rows();
-}
- 
+			->from('out_billing b')
+			->join('out_list o', 'o.bill_uid = b.uid', 'left')
+			->join($this->db->database . '.users u', 'u.nip = b.user_kasir', 'left');
+
+		$this->_base_query_invoice_page($agent, $pay, $jurnal, $search);
+
+		$this->cb->order_by('is_warning', 'DESC');
+		$this->cb->order_by('b.pay_status', 'ASC');
+		$this->cb->order_by('b.jurnal_status', 'ASC');
+		$this->cb->order_by('b.uid', 'DESC');
+
+		$this->cb->limit($per_page, $offset);
+
+		return $this->cb->get()->result();
+	}
+
+	/**
+	 * Hitung total baris (untuk hitung jumlah halaman).
+	 * Query RINGAN: tidak select b.*, tidak ada subquery EXISTS.
+	 */
+	public function count_invoice($agent, $pay, $jurnal, $search)
+	{
+		$this->cb->select('b.uid', FALSE)
+			->from('out_billing b')
+			->join('out_list o', 'o.bill_uid = b.uid', 'left')
+			->join($this->db->database . '.users u', 'u.nip = b.user_kasir', 'left');
+
+		$this->_base_query_invoice_page($agent, $pay, $jurnal, $search);
+
+		return $this->cb->get()->num_rows();
+	}
+
 
 	// ====================================
 	// DAFTAR BUKTI POTONG

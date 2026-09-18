@@ -997,6 +997,26 @@ class Incominghlp extends CI_Controller
 				$nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
 			}
 
+			if ($r->pay_methode == 1) {
+				if ($r->agent_deposit_uid) {
+					$agent_deposit = $this->cb->where('uid', $r->agent_deposit_uid)->get('all_agent_deposit')->row();
+					$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+				} else {
+					$deposit = $this->cb->where('billing_uid', $r->uid)->where('asal_table', 'in_billing')->get('all_topup')->row();
+					$agent_deposit = $this->cb->where('uid', $deposit->agent_uid)->get('all_agent_deposit')->row();
+					$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+				}
+			} else if ($r->pay_methode == 2) {
+				$metode = "Cash";
+			} else if ($r->pay_methode == 3) {
+				$metode = "Transfer, Bank : " . $r->bank_tujuan;
+			} else if ($r->pay_methode == 4) {
+				$metode = "Tagihan, Bank : " . $r->bank_tujuan;
+			} else if ($r->pay_methode == 6) {
+				$metode = "Qris";
+			} else {
+				$metode = "-";
+			}
 
 			$data[] = [
 				$r->uid,
@@ -1010,6 +1030,7 @@ class Incominghlp extends CI_Controller
 				number_format($r->total_chargeable, 2),
 				// 'Rp. ' . number_format((float)$r->total),
 				$nominal,
+				$metode,
 				$Itanggal_txt,
 				$tanggal_txt,
 				$r->hari,
@@ -1565,7 +1586,7 @@ class Incominghlp extends CI_Controller
 				$saldo_row = $this->cb
 					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
 					->where('agent_uid', $agent_deposit_uid)
-					->where('asal_table', 'in_billing')
+					// ->where('asal_table', 'in_billing')
 					->get('all_topup')
 					->row();
 				$cek_saldo = (float)($saldo_row->saldo ?? 0);
@@ -1656,6 +1677,11 @@ class Incominghlp extends CI_Controller
 				}
 				$update_data['bank_tujuan'] = $bank_tujuan;
 			}
+
+			if ($pay_methode == '1') {
+				$update_data['agent_deposit_uid'] = $agent_deposit_uid;
+			}
+
 			$this->cb->where('uid', $billing->uid)->update('in_billing', $update_data);
 			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar.' . $msg);
 			redirect('incominghlp/daftar_invoice');

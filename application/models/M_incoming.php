@@ -120,11 +120,12 @@ class M_incoming extends CI_Model
 		7  => 'b.total_gross',
 		8  => 'b.total_chargeable',
 		9  => 'total',
-		10 => 'b.in_date',
-		11 => 'b.tanggal_invoice',
-		12 => 'b.hari',
-		13 => 'nama_acc',
-		14 => 'nama_kasir',
+		10 => 'b.pay_methode',
+		11 => 'b.in_date',
+		12 => 'b.tanggal_invoice',
+		13 => 'b.hari',
+		14 => 'nama_acc',
+		15 => 'nama_kasir',
 	];
 
 	private function _base_query_invoice()
@@ -145,6 +146,9 @@ class M_incoming extends CI_Model
         b.post_date,
         b.status,
         b.pay_status,
+        b.pay_methode,
+        b.bank_tujuan,
+        b.agent_deposit_uid,
         b.jurnal_status,
         b.total_gross,
         l.smu,

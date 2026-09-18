@@ -3644,6 +3644,27 @@ class Outgoinghlp extends CI_Controller
 				$nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
 			}
 
+			if ($r->pay_methode == 1) {
+				if ($r->agent_deposit_uid) {
+					$agent_deposit = $this->cb->where('uid', $r->agent_deposit_uid)->get('all_agent_deposit')->row();
+					$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+				} else {
+					$deposit = $this->cb->where('billing_uid', $r->uid)->where('asal_table', 'out_billing')->get('all_topup')->row();
+					$agent_deposit = $this->cb->where('uid', $deposit->agent_uid)->get('all_agent_deposit')->row();
+					$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+				}
+			} else if ($r->pay_methode == 2) {
+				$metode = "Cash";
+			} else if ($r->pay_methode == 3) {
+				$metode = "Transfer, Bank : " . $r->bank_tujuan;
+			} else if ($r->pay_methode == 4) {
+				$metode = "Tagihan, Bank : " . $r->bank_tujuan;
+			} else if ($r->pay_methode == 6) {
+				$metode = "Qris";
+			} else {
+				$metode = "-";
+			}
+
 			$rows[] = [
 				'uid'            => $r->uid,
 				'invoice_num'    => $r->invoice_num,
@@ -3656,6 +3677,7 @@ class Outgoinghlp extends CI_Controller
 				'total_chg'      => $r->total_chargeable ?? '-',
 				'nominal'        => $nominal,
 				'pph'            => $nominal_setelah_pph . "<br>(PPH 23 : " . $nominal_pph . ")",
+				'metode'         => $metode ?? '-',
 				'tanggal'        => $tanggal_txt ?? '-',
 				'jaster'         => $jaster ?? '-',
 				'warning_topup'  => $warning_topup,
@@ -4467,6 +4489,10 @@ class Outgoinghlp extends CI_Controller
 					$bank_tujuan = 'BNI MBZ';
 				}
 				$update_data['bank_tujuan'] = $bank_tujuan;
+			}
+
+			if ($pay_methode == '1') {
+				$update_data['agent_deposit_uid'] = $agent_deposit_uid;
 			}
 			$this->cb->where('uid', $billing->uid)->update('out_billing', $update_data);
 			$this->session->set_flashdata('message_name', 'Invoice ' . $no_invoice . ' Berhasil Di Bayar. ' . $msg);

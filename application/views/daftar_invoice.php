@@ -310,7 +310,7 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>No Invoice</th>
-                                                <th>Kategori SMU</th>
+                                                <!-- <th>Kategori SMU</th> -->
                                                 <th>SMU</th>
                                                 <th>Agent</th>
                                                 <th>Pengirim</th>
@@ -332,7 +332,7 @@
                                                     <tr data-uid="<?= $row['uid'] ?>" style="cursor:pointer;">
                                                         <td><?= $no++ ?></td>
                                                         <td><?= $row['no_invoice'] ?></td>
-                                                        <td><?= $row['catg'] ?></td>
+                                                        <!-- <td><?= $row['catg'] ?></td> -->
                                                         <td><?= $row['smu'] ?></td>
                                                         <td><?= $row['agent'] ?></td>
                                                         <td><?= $row['pengirim'] ?></td>

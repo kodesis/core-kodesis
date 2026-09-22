@@ -23,7 +23,7 @@ class Depositagent extends CI_Controller
         }
 
         $a = $this->session->userdata('level');
-        if (strpos($a, '923') === false) {
+        if (strpos($a, '931') === false) {
             redirect('home');
         }
     }

@@ -270,6 +270,7 @@
                                                 <th>Telepon</th>
                                                 <th>CoA</th>
                                                 <th>User</th>
+                                                <th>PIC</th>
                                                 <th>Post Dates</th>
                                                 <th>Status</th>
                                                 <th>#</th>
@@ -347,14 +348,14 @@
                                 </div>
 
 
-                                <!-- <div class="col-md-6 col-xs-12">
+                                <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
                                         <label class="form-label">PIC</label>
-                                        <select name="pic_agent" id="pic_agent_i" class="form-control select2-pic-coa">
+                                        <select name="pic_agent" id="pic_agent_i" class="form-control select2-pic">
                                             <option value="">:: Pilih User</option>
                                         </select>
                                     </div>
-                                </div> -->
+                                </div>
 
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">
@@ -519,6 +520,32 @@
                     }
                 }
             });
+            $('.select2-pic').select2({
+                placeholder: ':: Pilih Agent',
+                allowClear: true,
+                dropdownParent: $('#tambahCustomer .modal-content'),
+                ajax: {
+                    url: '<?= base_url("depositwh/get_user") ?>', // Mengarah ke method controller baru
+                    type: 'POST',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.nip,
+                                    text: item.nip + ' - ' + item.nama
+                                };
+                            })
+                        };
+                    }
+                }
+            });
 
             $(document).on('click', '.btn-edit', function() {
                 var uid = $(this).data('uid');
@@ -535,6 +562,9 @@
                     $('#telepon_agent_i').val(data.telepon);
                     $('#coa_agent_i').append(
                         new Option(data.coa_sbb + ' - ' + data.nama_perkiraan, data.coa_sbb, true, true)
+                    ).trigger('change');
+                    $('#pic_agent_i').append(
+                        new Option(data.user_pic_nip + ' - ' + data.user_name_pic, data.user_pic_nip, true, true)
                     ).trigger('change');
 
                     $('#myModalLabel').text('Edit Daftar Agent Deposit');

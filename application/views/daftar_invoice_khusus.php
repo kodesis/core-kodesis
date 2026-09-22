@@ -342,88 +342,6 @@
                                 </div>
                             </div>
 
-                            <div class="row" style="display: none;">
-                                <div class="col-md-12 col-xs-12">
-                                    <h5><b>Biaya Gudang</b></h5>
-                                    <table class="table table-bordered table-condensed">
-                                        <tr>
-                                            <td>SUB TOTAL</td>
-                                            <td class="text-right"><b id="inv_sub_total"></b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>CARGO DEVELOPMENT CHARGE</td>
-                                            <td class="text-right" id="inv_total_cdc"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>PPN 11%</td>
-                                            <td class="text-right" id="inv_bg_ppn"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>ADMINISTRASI</td>
-                                            <td class="text-right" id="inv_administrasi"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>MATERAI</td>
-                                            <td class="text-right" id="inv_materai"></td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>SUBTOTAL</b></td>
-                                            <td class="text-right"><b id="inv_bg_total"></b></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="row" style="display: none;">
-                                <div class="col-md-12 col-xs-12">
-                                    <h5><b>Biaya KC</b></h5>
-                                    <table class="table table-bordered table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th>Nama</th>
-                                                <th class="text-right">Charge Weight</th>
-                                                <th class="text-right">Total Harga</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr id="inv_row_jaster" style="display:none;">
-                                                <td>JASTER</td>
-                                                <td class="text-right" id="inv_berat_jaster"></td>
-                                                <td class="text-right" id="inv_total_jaster"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Jasa Terminal Handling</td>
-                                                <td class="text-right" id="inv_berat_kade"></td>
-                                                <td class="text-right" id="inv_total_kade"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>BIAYA CSC</td>
-                                                <td class="text-right" id="inv_berat_csc"></td>
-                                                <td class="text-right" id="inv_total_csc"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>TOTAL</td>
-                                                <td colspan="2" class="text-right" id="inv_kc_sub_total"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>PPN 11%</td>
-                                                <td colspan="2" class="text-right" id="inv_kc_ppn"></td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>SUBTOTAL</b></td>
-                                                <td colspan="2" class="text-right"><b id="inv_kc_total"></b></td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>GRAND TOTAL</th>
-                                                <td colspan="2" class="text-right"><b id="inv_grand_total"></b></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-
                             <div class="row">
 
                                 <!-- <div class="col-md-6 col-xs-12">
@@ -571,8 +489,14 @@
                             <button type="button" class="btn btn-success" id="btnBayarInvoice">
                                 <i class="fa fa-money"></i> Bayar
                             </button>
-                            <button type="button" class="btn btn-danger btn-status-inv" data-val="3" id="btnBatalInvoice">
+                            <!-- <button type="button" class="btn btn-danger btn-status-inv" data-val="3" id="btnBatalInvoice">
                                 <i class="fa fa-times"></i> Batal
+                            </button> -->
+                            <button type="button" class="btn btn-danger btn-status-inv" data-val="4" id="btnBatalCetak">
+                                <i class="fa fa-times"></i> Batal Cetak
+                            </button>
+                            <button type="button" class="btn btn-danger btn-status-inv" data-val="5" id="btnBatalBayar">
+                                <i class="fa fa-times"></i> Batal Bayar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                             <!-- <button type="submit" class="btn btn-success">Simpan</button> -->
@@ -905,19 +829,13 @@
 
                         // Billing totals
                         $('#inv_sub_total').text(r.total_cargo_k);
-                        $('#inv_total_cdc').text(r.total_cdc_k);
-                        $('#inv_bg_ppn').text(r.bg_ppn_k);
-                        $('#inv_administrasi').text(r.administrasi_k);
-                        $('#inv_materai').text(r.materai_k);
-                        $('#inv_bg_total').text(r.bg_total_k);
                         $('#inv_berat_jaster').text(r.total_chargeable_k);
-                        $('#inv_total_jaster').text(r.total_jaster_k);
+                        $('#inv_total_jaster').text(r.total_jasa_ra_k);
                         $('#inv_berat_kade').text(r.total_chargeable_k);
                         $('#inv_total_kade').text(r.total_kade_k);
                         $('#inv_berat_csc').text(r.total_chargeable_k);
                         $('#inv_total_csc').text(r.total_csc_k);
                         $('#inv_kc_sub_total').text(r.kc_sub_total_k);
-                        $('#inv_kc_ppn').text(r.kc_ppn_k);
                         $('#inv_kc_total').text(r.kc_total_k);
                         $('#inv_grand_total').text(r.grand_total_k);
                         $('#inv_total_pieces').text(r.total_pieces_k);
@@ -936,7 +854,7 @@
                                 html += '<td>' + s.tujuan + '</td>';
                                 html += '<td class="text-center">' + s.jumlah + '</td>';
                                 html += '<td class="text-right">' + s.chargeable + '</td>';
-                                html += '<td class="text-right">' + s.sewa_gudang + '</td>';
+                                html += '<td class="text-right">' + Number(s.sewa_gudang).toLocaleString('en-US') + '</td>';
                                 if (r.jurnal_status != '1') {
                                     html += '<td><button type="button" class="btn btn-xs btn-danger btn-batal-smu" data-uid="' + s.uid + '" data-bil="' + r.uid + '">Batal</button></td>';
                                 } else {
@@ -966,23 +884,29 @@
                         }
 
                         if (r.pay_status == '1' && r.jurnal_status == '1') {
-                            console.log('Jurnal Status 1 Masuk');
+                            console.log('Pay Status 1 Masuk');
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', true);
+                            // $('#btnBatalInvoice').prop('disabled', true);
+                            $('#btnBatalCetak').prop('disabled', false);
+                            $('#btnBatalBayar').prop('disabled', false);
                         } else if (r.pay_status == '1' && r.jurnal_status == '0') {
-                            console.log('Jurnal Status 0 Masuk');
+                            console.log('Pay Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', false);
-                            $('#btnBatalInvoice').prop('disabled', true);
+                            // $('#btnBatalInvoice').prop('disabled', true);
+                            $('#btnBatalCetak').prop('disabled', false);
+                            $('#btnBatalBayar').prop('disabled', true);
                         } else {
                             console.log('Pay Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', false);
                             $('#btnCetakInvoice').prop('disabled', false);
                             $('#btnBayarInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', false);
+                            // $('#btnBatalInvoice').prop('disabled', false);
+                            $('#btnBatalCetak').prop('disabled', true);
+                            $('#btnBatalBayar').prop('disabled', true);
                         }
 
                         $('#modalDetailInvoice').modal('show');

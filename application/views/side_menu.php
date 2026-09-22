@@ -290,7 +290,7 @@
 						</li>
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '92') !== false) { ?>
+					if (strpos($a, '921') !== false) { ?>
 						<li>
 							<a>Deposit WH<span class="fa fa-chevron-down"></span></a>
 							<ul class="nav child_menu">
@@ -304,6 +304,10 @@
 								<?php } ?>
 							</ul>
 						</li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '931') !== false) { ?>
+						<li><a href="<?= base_url('depositagent') ?>"><i class="fa fa-money"></i> Deposit Saya</a></li>
 					<?php } ?>
 				</ul>
 			</li>
@@ -448,17 +452,18 @@
 				<li><a href="<?php echo base_url(); ?>login/password">Change Password</a></li>
 			</ul>
 		</li>
-		<li>
-			<a><i class="fa fa-gear"></i>Setting<span class="fa fa-chevron-down"></span></a>
-			<ul class="nav child_menu">
-				<li><a href="<?php echo base_url(); ?>setting">Pengaturan sistem</a></li>
-				<?php $a = $this->session->userdata('level');
-				if (strpos($a, '302') !== false) { ?>
-					<li><a href="<?php echo base_url(); ?>cabang">Cabang</a></li>
-				<?php } ?>
-			</ul>
-		</li>
 
+		<?php $a = $this->session->userdata('level');
+		if (strpos($a, '302') !== false) { ?>
+			<li>
+				<a><i class="fa fa-gear"></i>Setting<span class="fa fa-chevron-down"></span></a>
+				<ul class="nav child_menu">
+					<li><a href="<?php echo base_url(); ?>setting">Pengaturan sistem</a></li>
+					<li><a href="<?php echo base_url(); ?>cabang">Cabang</a></li>
+
+				</ul>
+			</li>
+		<?php } ?>
 	</ul>
 </div>
 

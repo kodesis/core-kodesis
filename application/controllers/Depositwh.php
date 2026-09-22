@@ -17,6 +17,11 @@ class Depositwh extends CI_Controller
 		if (!$this->session->userdata('nip')) {
 			redirect('login');
 		}
+
+		$a = $this->session->userdata('level');
+		if (strpos($a, '921') === false || strpos($a, '922') === false) {
+			redirect('home');
+		}
 	}
 	function convertToNumber($formattedNumber)
 	{
@@ -738,6 +743,24 @@ class Depositwh extends CI_Controller
 		echo json_encode($data);
 	}
 
+	public function get_user()
+	{
+		$search = $this->input->post('search');
+
+		$this->db->select('*');
+		$this->db->from('users');
+		$this->db->like('nama_jabatan', 'Agent');
+		if ($search) {
+			$this->db->like('nama', $search);
+			// $this->cb->or_like('nip', $search);
+		}
+
+		$query = $this->db->get();
+		$data  = $query->result();
+
+		echo json_encode($data);
+	}
+
 	public function getData_agents_deposit()
 	{
 		$results = $this->M_depositwh->get_datatables_agents_deposit();
@@ -789,6 +812,7 @@ class Depositwh extends CI_Controller
 				$r->coa_sbb . ' - ' . $r->nama_perkiraan,
 				// $r->npwp ?? '-',
 				$r->user_name ?? '-',
+				$r->user_name_pic ?? '-',
 				$tanggal_txt ?? '-',
 				$hold ?? '-',
 				$button,
@@ -809,9 +833,10 @@ class Depositwh extends CI_Controller
 
 	public function edit_agent_deposit($uid)
 	{
-		$this->cb->select('a.*, u.nama as nama_pic, coa.nama_perkiraan');
+		$this->cb->select('a.*, u.nama as nama_pic, u1.nama as user_name_pic, u1.nip as user_pic_nip, coa.nama_perkiraan');
 		$this->cb->from('all_agent_deposit a');
-		$this->cb->join($this->db->database . '.users u',      'u.nip = a.user_pic',    'left');
+		$this->cb->join($this->db->database . '.users u',      'u.nip = a.user',    'left');
+		$this->cb->join($this->db->database . '.users u1',     'u1.nip = a.user_pic', 'left');
 		$this->cb->join('t_coa_sbb coa', 'coa.no_sbb = a.coa_sbb', 'left');
 		$this->cb->where('uid', $uid);
 
@@ -834,6 +859,7 @@ class Depositwh extends CI_Controller
 		$alamat = $this->input->post('alamat_agent');
 		$telepon = $this->input->post('telepon_agent');
 		$coa_agent = $this->input->post('coa_agent');
+		$pic_agent = $this->input->post('pic_agent');
 
 		$data = [
 			// 'kode'                          => $kode,
@@ -841,6 +867,7 @@ class Depositwh extends CI_Controller
 			'alamat'                        => $alamat,
 			'telepon'                       => $telepon,
 			'coa_sbb' 							=> $coa_agent,
+			'user_pic' 							=> $pic_agent,
 			// 'npwp'                          => $npwp,
 			// 'post_date'                     => $post_dates,
 			// 'user'                          => $this->session->userdata('nip'),

@@ -151,17 +151,19 @@ class M_depositwh extends CI_Model
 		3  => 'a.telepon',
 		4  => 'a.coa_sbb',
 		5  => 'u.user_name',
-		6  => 'a.post_date',
-		7  => 'a.hold',
+		6  => 'u1.user_name',
+		7  => 'a.post_date',
+		8  => 'a.hold',
 	];
 
 	private function _base_query_agents_deposit()
 	{
 		$this->cb->select("
-        a.*, u.nama as user_name, coa.nama_perkiraan
+        a.*, u.nama as user_name, u1.nama as user_name_pic, coa.nama_perkiraan
     ", FALSE)
 			->from('all_agent_deposit a')
 			->join($this->db->database . '.users u',      'u.nip = a.user',    'left')
+			->join($this->db->database . '.users u1',     'u1.nip = a.user_pic', 'left')
 			->join('t_coa_sbb coa', 'coa.no_sbb = a.coa_sbb', 'left');
 		// ->where('btb_p !=', '1');
 		// ->where('(is_do != 1 OR is_do IS NULL)');
@@ -176,6 +178,7 @@ class M_depositwh extends CI_Model
 				->or_like('a.telepon', $search)
 				// ->or_like('o.npwp', $search)
 				->or_like('u.user_name', $search)
+				->or_like('u1.user_name', $search)
 				->or_like('a.post_date', $search)
 				->or_like('a.hold', $search)
 				// ->or_like('o.koli_smu', $search)

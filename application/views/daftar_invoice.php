@@ -679,8 +679,15 @@
                             <button type="button" class="btn btn-success" id="btnBayarInvoice">
                                 <i class="fa fa-money"></i> Bayar
                             </button>
-                            <button type="button" class="btn btn-danger btn-status-inv" data-val="3" id="btnBatalInvoice">
+                            <!-- <button type="button" class="btn btn-danger btn-status-inv" data-val="3" id="btnBatalInvoice">
                                 <i class="fa fa-times"></i> Batal
+                            </button> -->
+
+                            <button type="button" class="btn btn-danger btn-status-inv" data-val="4" id="btnBatalCetak">
+                                <i class="fa fa-times"></i> Batal Cetak
+                            </button>
+                            <button type="button" class="btn btn-danger btn-status-inv" data-val="5" id="btnBatalBayar">
+                                <i class="fa fa-times"></i> Batal Bayar
                             </button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                             <!-- <button type="submit" class="btn btn-success">Simpan</button> -->
@@ -1075,19 +1082,25 @@
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', true);
+                            // $('#btnBatalInvoice').prop('disabled', true);
+                            $('#btnBatalCetak').prop('disabled', false);
+                            $('#btnBatalBayar').prop('disabled', false);
                         } else if (r.pay_status == '1' && r.jurnal_status == '0') {
                             console.log('Pay Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', true);
                             $('#btnCetakInvoice').prop('disabled', true);
                             $('#btnBayarInvoice').prop('disabled', false);
-                            $('#btnBatalInvoice').prop('disabled', true);
+                            // $('#btnBatalInvoice').prop('disabled', true);
+                            $('#btnBatalCetak').prop('disabled', false);
+                            $('#btnBatalBayar').prop('disabled', true);
                         } else {
                             console.log('Pay Status 0 Masuk');
                             $('#btnUbahInvoice').prop('disabled', false);
                             $('#btnCetakInvoice').prop('disabled', false);
                             $('#btnBayarInvoice').prop('disabled', true);
-                            $('#btnBatalInvoice').prop('disabled', false);
+                            // $('#btnBatalInvoice').prop('disabled', false);
+                            $('#btnBatalCetak').prop('disabled', true);
+                            $('#btnBatalBayar').prop('disabled', true);
                         }
 
                         $('#modalDetailInvoice').modal('show');

@@ -305,12 +305,12 @@
 							</ul>
 						</li>
 					<?php } ?>
-					<?php $a = $this->session->userdata('level');
-					if (strpos($a, '931') !== false) { ?>
-						<li><a href="<?= base_url('depositagent') ?>"><i class="fa fa-money"></i> Deposit Saya</a></li>
-					<?php } ?>
 				</ul>
 			</li>
+		<?php } ?>
+		<?php $a = $this->session->userdata('level');
+		if (strpos($a, '931') !== false) { ?>
+			<li><a href="<?= base_url('depositagent') ?>"><i class="fa fa-money"></i> Deposit Saya</a></li>
 		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '80') !== false) { ?>

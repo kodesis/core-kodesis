@@ -1136,4 +1136,148 @@ class M_incoming extends CI_Model
 	{
 		return $this->cb->where('uid', $uid)->update('in_bill_catg', $data);
 	}
+
+	private $in_tonase_date_expr = "o.in_date";
+
+	/**
+	 * Di incoming, pesawat & agent disimpan sebagai teks bebas (tidak ada uid),
+	 * jadi dinormalisasi: huruf besar + tanpa spasi di awal/akhir.
+	 * "Citilink " dan "CITILINK" dihitung sebagai satu kelompok.
+	 */
+	private $in_pesawat_expr = "UPPER(TRIM(COALESCE(o.pesawat, '')))";
+	private $in_agent_expr   = "UPPER(TRIM(COALESCE(o.nama_agent, '')))";
+
+	private function _in_tonase_sum($col)
+	{
+		return "COALESCE(SUM(CAST(NULLIF(TRIM($col), '') AS DECIMAL(15,2))), 0)";
+	}
+
+	private function _in_tonase_where(array $f)
+	{
+		$d = $this->in_tonase_date_expr;
+
+		$this->cb->where("$d IS NOT NULL AND $d != ''", NULL, FALSE);
+
+		if (!empty($f['tahun'])) {
+			$this->cb->where("LEFT($d, 4) = " . $this->cb->escape($f['tahun']), NULL, FALSE);
+		}
+		if (!empty($f['bulan'])) {
+			$this->cb->where("SUBSTRING($d, 5, 2) = " . $this->cb->escape($f['bulan']), NULL, FALSE);
+		}
+		if (!empty($f['dari'])) {
+			$this->cb->where("LEFT($d, 8) >= " . $this->cb->escape($f['dari']), NULL, FALSE);
+		}
+		if (!empty($f['sampai'])) {
+			$this->cb->where("LEFT($d, 8) <= " . $this->cb->escape($f['sampai']), NULL, FALSE);
+		}
+
+		// null = semua, '' = tanpa pesawat / tanpa agent
+		if ($f['pesawat'] !== null) {
+			$this->cb->where($this->in_pesawat_expr . " = " . $this->cb->escape(strtoupper(trim($f['pesawat']))), NULL, FALSE);
+		}
+		if ($f['agent'] !== null) {
+			$this->cb->where($this->in_agent_expr . " = " . $this->cb->escape(strtoupper(trim($f['agent']))), NULL, FALSE);
+		}
+
+		if (!empty($f['periode'])) {
+			$len = strlen($f['periode']);
+			$this->cb->where("LEFT($d, $len) = " . $this->cb->escape($f['periode']), NULL, FALSE);
+		}
+	}
+
+	/**
+	 * $f['group'] : none | pesawat | agent | both
+	 * $f['per']   : bulan | hari
+	 * jml_smu = jumlah baris SMU (partial dihitung per kedatangan, sama seperti beratnya)
+	 */
+	public function get_rekap_tonase(array $f)
+	{
+		$d   = $this->in_tonase_date_expr;
+		$len = ($f['per'] === 'hari') ? 8 : 6;
+
+		$select = "LEFT($d, $len) AS periode,
+			COUNT(o.uid) AS jml_smu,
+			" . $this->_in_tonase_sum('o.jumlah') . " AS total_koli,
+			" . $this->_in_tonase_sum('o.gross') . " AS total_gross,
+			" . $this->_in_tonase_sum('o.chargeable') . " AS total_chargeable";
+
+		$group = ["LEFT($d, $len)"];
+		$order = ["periode DESC"];
+
+		if (in_array($f['group'], ['pesawat', 'both'], true)) {
+			$select .= ", {$this->in_pesawat_expr} AS pesawat";
+			$group[]  = $this->in_pesawat_expr;
+			$order[]  = "pesawat ASC";
+		}
+		if (in_array($f['group'], ['agent', 'both'], true)) {
+			$select .= ", {$this->in_agent_expr} AS agent";
+			$group[]  = $this->in_agent_expr;
+			$order[]  = "agent ASC";
+		}
+
+		$this->cb->select($select, FALSE)->from('in_list o');
+		$this->_in_tonase_where($f);
+		$this->cb->group_by(implode(', ', $group), FALSE);
+		$this->cb->order_by(implode(', ', $order), '', FALSE);
+
+		return $this->cb->get()->result();
+	}
+
+	/** Daftar SMU di balik satu baris rekap (untuk modal) */
+	public function get_detail_tonase(array $f)
+	{
+		$this->cb->select('o.uid, o.jns_barang, o.smu, o.in_date, o.tanggal_terbang, o.time_datang,
+			o.asal, o.pesawat, o.no_pesawat, o.nama_agent, o.nama_penerima, o.komoditi,
+			o.jumlah, o.gross, o.chargeable, o.out_p, o.fly_p')
+			->from('in_list o');
+		$this->_in_tonase_where($f);
+		$this->cb->order_by('o.in_date', 'ASC');
+		$this->cb->order_by('o.smu', 'ASC');
+
+		return $this->cb->get()->result();
+	}
+
+	/** Data lengkap untuk export Excel */
+	public function get_export_tonase(array $f)
+	{
+		$this->cb->select("o.*, u.nama AS user_nama", FALSE)
+			->from('in_list o')
+			->join($this->db->database . '.users u', 'u.nip = o.user_in', 'left');
+		$this->_in_tonase_where($f);
+		$this->cb->order_by('o.in_date', 'ASC');
+		$this->cb->order_by('o.smu', 'ASC');
+
+		return $this->cb->get()->result_array();
+	}
+
+	/** Tahun yang punya data */
+	public function get_tahun_tonase()
+	{
+		$d = $this->in_tonase_date_expr;
+		return $this->cb->select("DISTINCT LEFT($d, 4) AS tahun", FALSE)
+			->from('in_list o')
+			->where("$d IS NOT NULL AND $d != ''", NULL, FALSE)
+			->order_by('tahun', 'DESC')
+			->get()->result();
+	}
+
+	/** Daftar pesawat yang pernah dipakai di in_list */
+	public function get_pesawat_list_tonase()
+	{
+		return $this->cb->select("DISTINCT {$this->in_pesawat_expr} AS nama", FALSE)
+			->from('in_list o')
+			->where("{$this->in_pesawat_expr} != ''", NULL, FALSE)
+			->order_by('nama', 'ASC')
+			->get()->result();
+	}
+
+	/** Daftar agent yang pernah dipakai di in_list */
+	public function get_agent_list_tonase()
+	{
+		return $this->cb->select("DISTINCT {$this->in_agent_expr} AS nama", FALSE)
+			->from('in_list o')
+			->where("{$this->in_agent_expr} != ''", NULL, FALSE)
+			->order_by('nama', 'ASC')
+			->get()->result();
+	}
 }

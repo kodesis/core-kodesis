@@ -3958,4 +3958,396 @@ class Incominghlp extends CI_Controller
 		}
 		redirect('incominghlp/kategori_harga');
 	}
+
+	public function rekap_tonase()
+	{
+		$nip = $this->session->userdata('nip');
+		$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
+		$res = $this->db->query($sql)->result_array();
+		$data['count_inbox'] = $res[0]['COUNT(Id)'];
+
+		$sql2 = "SELECT COUNT(id) FROM task WHERE (`member` LIKE '%$nip%' or `pic` like '%$nip%') and activity='1'";
+		$res2 = $this->db->query($sql2)->result_array();
+		$data['count_inbox2'] = $res2[0]['COUNT(id)'];
+
+		$data['title']        = "Rekap Tonase Incoming";
+		$data['tahun_list']   = $this->M_incoming->get_tahun_tonase();
+		$data['pesawat_list'] = $this->M_incoming->get_pesawat_list_tonase();
+		$data['agent_list']   = $this->M_incoming->get_agent_list_tonase();
+
+		// Warna badge pesawat dipinjam dari master pesawat outgoing (kalau namanya sama)
+		$data['pesawat_warna'] = [];
+		if ($this->cb->table_exists('out_pesawat')) {
+			foreach ($this->cb->select('nama, warna')->get('out_pesawat')->result() as $p) {
+				if (!empty($p->warna)) {
+					$data['pesawat_warna'][strtoupper(trim($p->nama))] = $p->warna;
+				}
+			}
+		}
+
+		$this->load->view('in_rekap_tonase', $data);
+	}
+
+	/** AJAX: tabel rekap */
+	public function getRekap_tonase()
+	{
+		$f    = $this->_filter_tonase();
+		$rows = $this->M_incoming->get_rekap_tonase($f);
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode(['status' => 'ok', 'rows' => $rows]));
+	}
+
+	/** AJAX: detail SMU untuk baris rekap yang diklik */
+	public function getDetail_tonase()
+	{
+		$f = $this->_filter_tonase();
+		if (!$this->_apply_tonase_keys($f, true)) {
+			$this->output->set_content_type('application/json')
+				->set_output(json_encode(['status' => 'error', 'message' => 'Periode tidak valid.']));
+			return;
+		}
+
+		$rows = $this->M_incoming->get_detail_tonase($f);
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode(['status' => 'ok', 'rows' => $rows]));
+	}
+
+	/** Filter dari POST */
+	private function _filter_tonase()
+	{
+		$toYmd = function ($v) {
+			$v  = (string) $v;
+			$dt = DateTime::createFromFormat('Y-m-d', $v);
+			return ($dt && $dt->format('Y-m-d') === $v) ? $dt->format('Ymd') : '';
+		};
+
+		$tahun   = (string) $this->input->post('tahun');
+		$bulan   = (string) $this->input->post('bulan');
+		$pesawat = trim((string) $this->input->post('pesawat'));
+		$agent   = trim((string) $this->input->post('agent'));
+		$group   = (string) $this->input->post('group');
+
+		return [
+			'tahun'   => preg_match('/^\d{4}$/', $tahun) ? $tahun : '',
+			'bulan'   => (ctype_digit($bulan) && $bulan >= 1 && $bulan <= 12)
+				? str_pad((int) $bulan, 2, '0', STR_PAD_LEFT) : '',
+			'dari'    => $toYmd($this->input->post('dari')),
+			'sampai'  => $toYmd($this->input->post('sampai')),
+			'pesawat' => $pesawat !== '' ? $pesawat : null,  // '' di dropdown = semua
+			'agent'   => $agent !== '' ? $agent : null,
+			'group'   => in_array($group, ['none', 'pesawat', 'agent', 'both'], true) ? $group : 'none',
+			'per'     => $this->input->post('per') === 'hari' ? 'hari' : 'bulan',
+			'periode' => '',
+		];
+	}
+
+	/**
+	 * Terapkan periode + kunci grup dari baris yang diklik.
+	 * Return false jika periode wajib tapi tidak valid.
+	 */
+	private function _apply_tonase_keys(array &$f, $wajib_periode = false)
+	{
+		$periode = (string) $this->input->post('periode');
+		if (preg_match('/^\d{6}(\d{2})?$/', $periode)) {
+			$f['periode'] = $periode;
+		} elseif ($wajib_periode) {
+			return false;
+		}
+		if (isset($_POST['pesawat_key'])) {
+			$f['pesawat'] = (string) $this->input->post('pesawat_key');
+		}
+		if (isset($_POST['agent_key'])) {
+			$f['agent'] = (string) $this->input->post('agent_key');
+		}
+		return true;
+	}
+
+	// ======================================================================
+	//  EXPORT EXCEL
+	// ======================================================================
+	public function export_rekap_tonase()
+	{
+		$f = $this->_filter_tonase();
+		$this->_apply_tonase_keys($f, false);
+
+		$rekap  = $this->M_incoming->get_rekap_tonase($f);
+		$detail = $this->M_incoming->get_export_tonase($f);
+
+		require APPPATH . 'third_party/autoload.php';
+		require APPPATH . 'third_party/psr/simple-cache/src/CacheInterface.php';
+
+		$col = function ($i) {
+			return \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
+		};
+
+		$st_header = [
+			'font'      => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+			'fill'      => ['fillType' => 'solid', 'startColor' => ['rgb' => '2A3F54']],
+			'alignment' => ['horizontal' => 'center', 'vertical' => 'center', 'wrapText' => true],
+		];
+		$st_border = [
+			'borders' => ['allBorders' => ['borderStyle' => 'thin', 'color' => ['rgb' => 'BFBFBF']]],
+		];
+		$st_total = [
+			'font' => ['bold' => true],
+			'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => 'E8F5E9']],
+		];
+
+		$filter_text = $this->_label_filter_tonase($f);
+		$dicetak     = 'Dicetak: ' . date('d-m-Y H:i') . ' oleh ' . $this->session->userdata('nama');
+
+		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+
+		// ==================== SHEET 1 : REKAP ====================
+		$sh = $spreadsheet->getActiveSheet();
+		$sh->setTitle('Rekap Tonase');
+
+		$showP = in_array($f['group'], ['pesawat', 'both'], true);
+		$showA = in_array($f['group'], ['agent', 'both'], true);
+
+		$head = [$f['per'] === 'hari' ? 'Tanggal' : 'Bulan'];
+		if ($showP) $head[] = 'Pesawat';
+		if ($showA) $head[] = 'Agent';
+		$nLabel = count($head);
+		$head   = array_merge($head, ['Jumlah SMU', 'Pieces', 'Gross (kg)', 'Chargeable (kg)', 'Tonase (ton)']);
+		$last   = $col(count($head));
+
+		$cSmu    = $col($nLabel + 1);
+		$cKoli   = $col($nLabel + 2);
+		$cGross  = $col($nLabel + 3);
+		$cCharge = $col($nLabel + 4);
+		$cTon    = $col($nLabel + 5);
+
+		$this->_xls_title($sh, 'REKAP TONASE INCOMING HLP', $last, $filter_text, $dicetak);
+
+		$hr = 5;
+		foreach ($head as $i => $h) {
+			$sh->setCellValue($col($i + 1) . $hr, $h);
+		}
+		$sh->getStyle("A{$hr}:{$last}{$hr}")->applyFromArray($st_header);
+
+		$r = $hr + 1;
+		foreach ($rekap as $row) {
+			$c = 1;
+			$sh->setCellValue($col($c++) . $r, $this->_periode_label($row->periode));
+			if ($showP) $sh->setCellValue($col($c++) . $r, $row->pesawat !== '' ? $row->pesawat : 'Tanpa pesawat');
+			if ($showA) $sh->setCellValue($col($c++) . $r, $row->agent !== '' ? $row->agent : 'Tanpa agent');
+			$sh->setCellValue($cSmu . $r, (int) $row->jml_smu);
+			$sh->setCellValue($cKoli . $r, (float) $row->total_koli);
+			$sh->setCellValue($cGross . $r, (float) $row->total_gross);
+			$sh->setCellValue($cCharge . $r, (float) $row->total_chargeable);
+			$sh->setCellValue($cTon . $r, "={$cGross}{$r}/1000");
+			$r++;
+		}
+		if (!$rekap) {
+			$sh->mergeCells("A{$r}:{$last}{$r}");
+			$sh->setCellValue("A{$r}", 'Tidak ada data untuk filter ini');
+			$sh->getStyle("A{$r}")->getAlignment()->setHorizontal('center');
+			$r++;
+		}
+
+		$first = $hr + 1;
+		$lastD = $r - 1;
+		if ($nLabel > 1) $sh->mergeCells("A{$r}:" . $col($nLabel) . $r);
+		$sh->setCellValue("A{$r}", 'TOTAL');
+		$sh->getStyle("A{$r}")->getAlignment()->setHorizontal('right');
+		foreach ([$cSmu, $cKoli, $cGross, $cCharge] as $c) {
+			$sh->setCellValue($c . $r, "=SUM({$c}{$first}:{$c}{$lastD})");
+		}
+		$sh->setCellValue($cTon . $r, "={$cGross}{$r}/1000");
+		$sh->getStyle("A{$r}:{$last}{$r}")->applyFromArray($st_total);
+
+		$sh->getStyle("A{$hr}:{$last}{$r}")->applyFromArray($st_border);
+		$sh->getStyle("{$cSmu}{$first}:{$cKoli}{$r}")->getNumberFormat()->setFormatCode('#,##0');
+		$sh->getStyle("{$cGross}{$first}:{$cCharge}{$r}")->getNumberFormat()->setFormatCode('#,##0.00');
+		$sh->getStyle("{$cTon}{$first}:{$cTon}{$r}")->getNumberFormat()->setFormatCode('#,##0.000');
+		$sh->freezePane('A' . ($hr + 1));
+		for ($i = 1; $i <= count($head); $i++) {
+			$sh->getColumnDimension($col($i))->setAutoSize(true);
+		}
+
+		// ==================== SHEET 2 : DETAIL ====================
+		$sd = $spreadsheet->createSheet();
+		$sd->setTitle('Detail SMU');
+
+		$dhead = [
+			'No',
+			'Jns Barang',
+			'SMU',
+			'Asal',
+			'Tanggal Masuk',
+			'Jam Masuk',
+			'No Penerbangan',
+			'Pesawat',
+			'Tanggal Terbang',
+			'Waktu Tiba',
+			'Pieces',
+			'Gross (kg)',
+			'Chargeable (kg)',
+			'Tonase (ton)',
+			'Komoditi',
+			'Agent',
+			'Penerima',
+			'User Input',
+			'Status',
+		];
+		$dlast = $col(count($dhead)); // S
+
+		$this->_xls_title($sd, 'DETAIL TONASE SMU INCOMING HLP', $dlast, $filter_text, $dicetak);
+
+		foreach ($dhead as $i => $h) {
+			$sd->setCellValue($col($i + 1) . $hr, $h);
+		}
+		$sd->getStyle("A{$hr}:{$dlast}{$hr}")->applyFromArray($st_header);
+
+		$num = function ($v) {
+			$v = trim((string) $v);
+			return $v === '' ? null : (float) str_replace(',', '.', $v);
+		};
+		$S = \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING;
+
+		$r  = $hr + 1;
+		$no = 1;
+		foreach ($detail as $d) {
+			$in          = $this->_parse_ymdhis($d['in_date'] ?? '');
+			$tgl_terbang = !empty($d['tanggal_terbang']) ? date('d-m-Y', strtotime($d['tanggal_terbang'])) : '';
+
+			if (($d['fly_p'] ?? '') == '1') {
+				$status = 'Sudah Berangkat';
+			} elseif (($d['out_p'] ?? '') == '1') {
+				$status = 'Sudah Ter Invoice';
+			} else {
+				$status = 'Belum Invoice';
+			}
+
+			$sd->setCellValue("A{$r}", $no++);
+			$sd->setCellValue("B{$r}", ($d['jns_barang'] ?? '') == '2' ? 'Partial' : 'Langsung');
+			$sd->setCellValueExplicit("C{$r}", (string) $d['smu'], $S);
+			$sd->setCellValue("D{$r}", $d['asal']);
+			$sd->setCellValue("E{$r}", $in ? $in->format('d-m-Y') : '');
+			$sd->setCellValue("F{$r}", $in ? $in->format('H:i:s') : '');
+			$sd->setCellValueExplicit("G{$r}", (string) $d['no_pesawat'], $S);
+			$sd->setCellValue("H{$r}", $d['pesawat']);
+			$sd->setCellValue("I{$r}", $tgl_terbang);
+			$sd->setCellValueExplicit("J{$r}", (string) ($d['time_datang'] ?? ''), $S);
+			$sd->setCellValue("K{$r}", $num($d['jumlah']));
+			$sd->setCellValue("L{$r}", $num($d['gross']));
+			$sd->setCellValue("M{$r}", $num($d['chargeable']));
+			$sd->setCellValue("N{$r}", "=IF(L{$r}=\"\",\"\",L{$r}/1000)");
+			$sd->setCellValue("O{$r}", $d['komoditi']);
+			$sd->setCellValue("P{$r}", $d['nama_agent']);
+			$sd->setCellValue("Q{$r}", $d['nama_penerima']);
+			$sd->setCellValue("R{$r}", $d['user_nama'] ?? '');
+			$sd->setCellValue("S{$r}", $status);
+			$r++;
+		}
+		if (!$detail) {
+			$sd->mergeCells("A{$r}:{$dlast}{$r}");
+			$sd->setCellValue("A{$r}", 'Tidak ada data untuk filter ini');
+			$sd->getStyle("A{$r}")->getAlignment()->setHorizontal('center');
+			$r++;
+		}
+
+		$first = $hr + 1;
+		$lastD = $r - 1;
+		$sd->mergeCells("A{$r}:J{$r}");
+		$sd->setCellValue("A{$r}", 'TOTAL (' . count($detail) . ' SMU)');
+		$sd->getStyle("A{$r}")->getAlignment()->setHorizontal('right');
+		foreach (['K', 'L', 'M'] as $c) {
+			$sd->setCellValue("{$c}{$r}", "=SUM({$c}{$first}:{$c}{$lastD})");
+		}
+		$sd->setCellValue("N{$r}", "=L{$r}/1000");
+		$sd->getStyle("A{$r}:{$dlast}{$r}")->applyFromArray($st_total);
+
+		$sd->getStyle("A{$hr}:{$dlast}{$r}")->applyFromArray($st_border);
+		$sd->getStyle("K{$first}:K{$r}")->getNumberFormat()->setFormatCode('#,##0');
+		$sd->getStyle("L{$first}:M{$r}")->getNumberFormat()->setFormatCode('#,##0.00');
+		$sd->getStyle("N{$first}:N{$r}")->getNumberFormat()->setFormatCode('#,##0.000');
+		$sd->freezePane('D' . ($hr + 1));
+		foreach (range('A', 'S') as $c) {
+			$sd->getColumnDimension($c)->setAutoSize(true);
+		}
+
+		$spreadsheet->setActiveSheetIndex(0);
+
+		// ---------- Download ----------
+		require APPPATH . 'third_party/autoload_zip.php';
+
+		$suffix   = !empty($f['periode']) ? $f['periode'] : ($f['tahun'] ?: 'semua') . ($f['bulan'] ?: '');
+		$filename = 'rekap_tonase_incoming_HLP_' . $suffix . '_' . date('d-m-Y_His') . '.xlsx';
+
+		if (ob_get_length()) {
+			ob_end_clean();
+		}
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment; filename="' . $filename . '"');
+		header('Cache-Control: max-age=0');
+
+		$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+		$writer->save('php://output');
+		exit();
+	}
+
+	private function _xls_title($sheet, $title, $lastCol, $filter_text, $dicetak)
+	{
+		$sheet->mergeCells("A1:{$lastCol}1");
+		$sheet->setCellValue('A1', $title);
+		$sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+
+		$sheet->mergeCells("A2:{$lastCol}2");
+		$sheet->setCellValue('A2', $filter_text);
+		$sheet->getStyle('A2')->getFont()->setItalic(true);
+
+		$sheet->mergeCells("A3:{$lastCol}3");
+		$sheet->setCellValue('A3', $dicetak);
+		$sheet->getStyle('A3')->getFont()->setSize(9)->getColor()->setRGB('73879C');
+	}
+
+	private function _periode_label($p)
+	{
+		$bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+		$b = $bulan[(int) substr($p, 4, 2) - 1] ?? substr($p, 4, 2);
+		return strlen($p) === 8
+			? substr($p, 6, 2) . ' ' . $b . ' ' . substr($p, 0, 4)
+			: $b . ' ' . substr($p, 0, 4);
+	}
+
+	private function _parse_ymdhis($s)
+	{
+		$s = preg_replace('/\D/', '', (string) $s);
+		if (strlen($s) < 8) return null;
+		$s  = str_pad(substr($s, 0, 14), 14, '0');
+		$dt = DateTime::createFromFormat('YmdHis', $s);
+		return $dt ?: null;
+	}
+
+	private function _label_filter_tonase(array $f)
+	{
+		$bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+		$tgl = function ($ymd) {
+			return $ymd ? substr($ymd, 6, 2) . '-' . substr($ymd, 4, 2) . '-' . substr($ymd, 0, 4) : '...';
+		};
+
+		$p = [];
+		$p[] = 'Tahun: ' . ($f['tahun'] ?: 'Semua');
+		$p[] = 'Bulan: ' . ($f['bulan'] ? $bulan[(int) $f['bulan'] - 1] : 'Semua');
+		if ($f['dari'] || $f['sampai']) {
+			$p[] = 'Tanggal: ' . $tgl($f['dari']) . ' s/d ' . $tgl($f['sampai']);
+		}
+		if (!empty($f['periode'])) {
+			$p[] = 'Periode: ' . $this->_periode_label($f['periode']);
+		}
+		$p[] = 'Pesawat: ' . ($f['pesawat'] === null ? 'Semua' : ($f['pesawat'] !== '' ? strtoupper($f['pesawat']) : 'Tanpa pesawat'));
+		$p[] = 'Agent: ' . ($f['agent'] === null ? 'Semua' : ($f['agent'] !== '' ? strtoupper($f['agent']) : 'Tanpa agent'));
+
+		$grp = ['none' => 'tidak dipisah', 'pesawat' => 'per pesawat', 'agent' => 'per agent', 'both' => 'per pesawat dan agent'];
+		$p[] = 'Rekap per ' . $f['per'] . ', ' . $grp[$f['group']];
+		$p[] = 'Dasar tanggal: Tanggal Masuk';
+
+		return implode('   |   ', $p);
+	}
 }

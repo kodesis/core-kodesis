@@ -2015,4 +2015,141 @@ class M_outgoing extends CI_Model
 			->join('out_list o', 'c.smu_uid = o.uid', 'inner');
 		return $this->cb->count_all_results();
 	}
+
+
+	// =========================================================================
+	// REKAP TONASE (SMU) PER BULAN / PER HARI
+	// =========================================================================
+
+	private $tonase_date_expr = "o.in_date";
+
+	/** Angka aman: string kosong/NULL dianggap 0, lalu di-SUM. */
+	private function _tonase_sum($col)
+	{
+		return "COALESCE(SUM(CAST(NULLIF(TRIM($col), '') AS DECIMAL(15,2))), 0)";
+	}
+
+	/** Semua filter (tahun, bulan, rentang tanggal, pesawat, agent, periode). */
+	private function _tonase_where(array $f)
+	{
+		$d = $this->tonase_date_expr;
+
+		$this->cb->where("$d IS NOT NULL AND $d != ''", NULL, FALSE);
+
+		if (!empty($f['tahun'])) {
+			$this->cb->where("LEFT($d, 4) = " . $this->cb->escape($f['tahun']), NULL, FALSE);
+		}
+		if (!empty($f['bulan'])) {
+			$this->cb->where("SUBSTRING($d, 5, 2) = " . $this->cb->escape($f['bulan']), NULL, FALSE);
+		}
+		if (!empty($f['dari'])) {
+			$this->cb->where("LEFT($d, 8) >= " . $this->cb->escape($f['dari']), NULL, FALSE);
+		}
+		if (!empty($f['sampai'])) {
+			$this->cb->where("LEFT($d, 8) <= " . $this->cb->escape($f['sampai']), NULL, FALSE);
+		}
+
+		// null = semua, '' = SMU yang pesawatnya kosong
+		if ($f['pesawat'] !== null) {
+			$this->cb->where("COALESCE(o.pesawat, '') = " . $this->cb->escape($f['pesawat']), NULL, FALSE);
+		}
+		// null = semua, 0 = SMU tanpa agent
+		if ($f['agent'] !== null) {
+			$this->cb->where("COALESCE(o.agent_uid, 0) = " . (int) $f['agent'], NULL, FALSE);
+		}
+
+		// Periode yang diklik: 6 digit (Ym) atau 8 digit (Ymd)
+		if (!empty($f['periode'])) {
+			$len = strlen($f['periode']);
+			$this->cb->where("LEFT($d, $len) = " . $this->cb->escape($f['periode']), NULL, FALSE);
+		}
+	}
+
+	/**
+	 * Rekap per bulan / per hari, bisa dipisah per pesawat, per agent, atau keduanya.
+	 * $f['group'] : none | pesawat | agent | both
+	 * $f['per']   : bulan | hari
+	 */
+	public function get_rekap_tonase(array $f)
+	{
+		$d   = $this->tonase_date_expr;
+		$len = ($f['per'] === 'hari') ? 8 : 6;
+
+		$select = "LEFT($d, $len) AS periode,
+			COUNT(o.uid) AS jml_smu,
+			" . $this->_tonase_sum('o.jumlah') . " AS total_koli,
+			" . $this->_tonase_sum('o.gross') . " AS total_gross,
+			" . $this->_tonase_sum('o.volume') . " AS total_volume,
+			" . $this->_tonase_sum('o.chargeable') . " AS total_chargeable";
+
+		$group = ["LEFT($d, $len)"];
+		$order = ["periode DESC"];
+
+		if (in_array($f['group'], ['pesawat', 'both'], true)) {
+			$select .= ", COALESCE(o.pesawat, '') AS pesawat";
+			$group[]  = "COALESCE(o.pesawat, '')";
+			$order[]  = "pesawat ASC";
+		}
+		if (in_array($f['group'], ['agent', 'both'], true)) {
+			$select .= ", COALESCE(o.agent_uid, 0) AS agent_uid, MAX(o.nama_agent) AS nama_agent";
+			$group[]  = "COALESCE(o.agent_uid, 0)";
+			$order[]  = "nama_agent ASC";
+		}
+
+		$this->cb->select($select, FALSE)->from('out_list o');
+		$this->_tonase_where($f);
+		$this->cb->group_by(implode(', ', $group), FALSE);
+		$this->cb->order_by(implode(', ', $order), '', FALSE);
+
+		return $this->cb->get()->result();
+	}
+
+	/** Daftar SMU di balik satu baris rekap. */
+	public function get_detail_tonase(array $f)
+	{
+		$this->cb->select('o.uid, o.catg_smu, o.jaster, o.smu, o.in_date, o.tanggal_terbang, o.tujuan, o.pesawat,
+			o.no_pesawat, o.nama_agent, o.nama_pengirim, o.komoditi,
+			o.jumlah, o.gross, o.volume, o.chargeable')
+			->from('out_list o');
+		$this->_tonase_where($f);
+		$this->cb->order_by('o.in_date', 'ASC');
+		$this->cb->order_by('o.smu', 'ASC');
+
+		return $this->cb->get()->result();
+	}
+
+	/** Tahun yang punya data, untuk dropdown. */
+	public function get_tahun_tonase()
+	{
+		$d = $this->tonase_date_expr;
+		return $this->cb->select("DISTINCT LEFT($d, 4) AS tahun", FALSE)
+			->from('out_list o')
+			->where("$d IS NOT NULL AND $d != ''", NULL, FALSE)
+			->order_by('tahun', 'DESC')
+			->get()->result();
+	}
+
+	/**
+	 * Data lengkap untuk export Excel (sheet Detail SMU).
+	 * Memakai filter yang sama persis dengan halaman rekap.
+	 */
+	public function get_export_tonase(array $f)
+	{
+		$this->cb->select("o.*,
+				b.no AS no_btb,
+				COALESCE(NULLIF(a.nama, ''), o.nama_agent) AS agent_nama,
+				u1.nama AS user1_nama,
+				u2.nama AS user2_nama", FALSE)
+			->from('out_list o')
+			->join('out_list_btb b', 'b.uid = o.btb_uid', 'left')
+			->join('out_agent a', 'a.uid = o.agent_uid', 'left')
+			->join($this->db->database . '.users u1', 'u1.nip = o.user_in', 'left')
+			->join($this->db->database . '.users u2', 'u2.nip = o.user_gdg_via_ra', 'left');
+
+		$this->_tonase_where($f);
+		$this->cb->order_by('o.in_date', 'ASC');
+		$this->cb->order_by('o.smu', 'ASC');
+
+		return $this->cb->get()->result_array();
+	}
 }

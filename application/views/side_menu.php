@@ -312,6 +312,23 @@
 		if (strpos($a, '931') !== false) { ?>
 			<li><a href="<?= base_url('depositagent') ?>"><i class="fa fa-money"></i> Deposit Saya</a></li>
 		<?php } ?>
+
+		<?php $a = $this->session->userdata('level');
+		if (strpos($a, '932') !== false || strpos($a, '933') !== false) { ?>
+			<li>
+				<a><i class="fa fa-bar-chart"></i> Rekap Tonase WH<span class="fa fa-chevron-down"></span></a>
+				<ul class="nav child_menu">
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '932') !== false) { ?>
+						<li><a href="<?= base_url('outgoinghlp/rekap_tonase') ?>"> Tonase Outgoing </a></li>
+					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '933') !== false) { ?>
+						<li><a href="<?= base_url('incominghlp/rekap_tonase') ?>"> Tonase Incoming</a></li>
+					<?php } ?>
+				</ul>
+			</li>
+		<?php } ?>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '80') !== false) { ?>
 			<li>

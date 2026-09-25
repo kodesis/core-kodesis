@@ -40,3 +40,11 @@ application/config/database.php
 application/libraries/Api_Whatsapp.php
 application/libraries/Api_Whatsapp.php
 application/libraries/Api_Whatsapp Old.php
+application/controllers/Incominghlp copy.php
+application/controllers/Outgoinghlp copy.php
+application/views/create_memo copy.php
+application/views/daftar_invoice 30-7-2026.php
+application/views/daftar_kemasan_smu copy.php
+application/views/in_daftar_invoice copy.php
+application/views/login_view copy.php
+application/views/print_invoice_incoming aa.php

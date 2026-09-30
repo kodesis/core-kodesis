@@ -3674,7 +3674,7 @@ class Outgoinghlp extends CI_Controller
 				'uid'            => $r->uid,
 				'invoice_num'    => $r->invoice_num,
 				'no_invoice'     => $r->no_invoice,
-				'catg'           => $l_catg_k,
+				// 'catg'           => $l_catg_k,
 				'smu'            => $SMU,
 				'agent'          => $r->list_agent,
 				'pengirim'       => $r->list_pengirim,
@@ -5190,13 +5190,29 @@ class Outgoinghlp extends CI_Controller
 		$catg_csc      = (float)$catg->csc;
 		$catg_jasa_ra  = (float)$catg->jasa_ra;
 
+		// var_dump($total_berat, $catg_sewa, $catg_kade, $catg_csc, $catg_jasa_ra);
+		// exit();
 		$total_sewa    = $billing->total_cargo   > 0 ? (float)$billing->total_cargo   : $total_berat * $catg_sewa;
-		$grand_total   = $billing->grand_total   > 0 ? (float)$billing->grand_total   : $total_sewa;
+		$total_kade    = $billing->total_kade   > 0 ? (float)$billing->total_kade   : $total_berat * $catg_kade;
+		$total_csc     = $billing->total_csc   > 0 ? (float)$billing->total_csc   : $total_berat * $catg_csc;
+
+		$total_jasa_ra = $billing->total_jaster   > 0 ? (float)$billing->total_jaster   : $total_berat * $catg_jasa_ra;
 
 		// Format angka
+		if ($total_sewa < 25000) {
+			$total_sewa = 25000;
+		}
 		$billing->total_pieces_k    = number_format($total_pieces);
 		$billing->total_chargeable_k = number_format($total_berat);
 		$billing->total_cargo_k     = number_format($total_sewa);
+		$billing->total_kade_k     = number_format($total_kade);
+		$billing->total_csc_k     = number_format($total_csc);
+		$billing->total_jasa_ra_k     = number_format($total_jasa_ra);
+
+		$kc_total = $billing->kc_total > 0 ? (float)$billing->kc_total : $total_kade + $total_csc + $total_jasa_ra;
+		$billing->kc_total_k     = number_format($kc_total);
+
+		$grand_total   = $billing->grand_total   > 0 ? (float)$billing->grand_total   : $kc_total + $total_sewa;
 		$billing->grand_total_k     = number_format($grand_total);
 
 		$billing->is_jaster = $jaster_opt;
@@ -5311,7 +5327,7 @@ class Outgoinghlp extends CI_Controller
 
 		// $no_invoice = $this->input->post('no_invoice');
 		$invoice_num = $this->input->post('invoice_num');
-		$adm        = $this->input->post('adm');
+		// $adm        = $this->input->post('adm');
 		$materai    = $this->input->post('materai') ?? 0;
 		$cdc        = $this->input->post('cdc');
 		$telepon    = $this->input->post('telepon');
@@ -5465,9 +5481,9 @@ class Outgoinghlp extends CI_Controller
 		$catg_sewa_gudang = (float)($catg->sewa_gudang ?? 0);
 		$catg_kade        = (float)($catg->kade        ?? 0);
 		$catg_csc         = (float)($catg->csc         ?? 0);
-		$catg_ppn_gdg     = (float)($catg->ppn_gdg     ?? 0);
-		$catg_ppn_ra      = (float)($catg->ppn_ra      ?? 0);
-		$catg_cdc         = (float)($catg->cdc         ?? 0);
+		// $catg_ppn_gdg     = (float)($catg->ppn_gdg     ?? 0);
+		// $catg_ppn_ra      = (float)($catg->ppn_ra      ?? 0);
+		// $catg_cdc         = (float)($catg->cdc         ?? 0);
 		$catg_harga_ra    = (float)($catg->jasa_ra     ?? 0);
 
 		// Update sewa gudang per SMU
@@ -5475,14 +5491,14 @@ class Outgoinghlp extends CI_Controller
 		// foreach ($list_smu as $smu) {
 		$chargeWeight = (float)$smu->chargeable;
 
-		if ($jaster_opt == '1') {
-			$total_harga_sewa = $catg_sewa_gudang + $catg_harga_ra;
-		} else {
-			$total_harga_sewa = $catg_sewa_gudang;
-		}
-		$sewa_baru = (float)$smu->chargeable * $total_harga_sewa;
-		if ($sewa_baru < 25000) $sewa_baru = 25000;
-		$this->cb->where('uid', $smu->uid)->update('out_list', ['sewa_gudang' => $sewa_baru]);
+
+		$total_harga_sewa = $catg_sewa_gudang;
+
+		$total_sewa = (float)$smu->chargeable * $total_harga_sewa;
+		if ($total_sewa < 25000) $total_sewa = 25000;
+
+
+		$this->cb->where('uid', $smu->uid)->update('out_list', ['sewa_gudang' => $total_sewa]);
 		// }
 
 		// Hitung total dari out_list
@@ -5497,10 +5513,17 @@ class Outgoinghlp extends CI_Controller
 
 		// // Hitung biaya
 		$total_cargo = $total_chargeable * $catg_sewa_gudang;
-
 		if ($total_cargo < 25000) $total_cargo = 25000;
 
-		$grand_total_gdg = $total_cargo;
+
+		$total_kade = (float)$smu->chargeable * $catg_kade;
+		$total_csc = (float)$smu->chargeable * $catg_csc;
+		$total_jaster = (float)$smu->chargeable * $catg_harga_ra;
+
+		$jasa_ra = 1;
+
+		$kc_sub_total = $total_kade + $total_csc + $total_jaster;
+		$grand_total_gdg = $total_cargo + $total_kade + $total_csc + $total_jaster;
 
 		// =============================================
 		// STATUS 1 - CETAK
@@ -5524,13 +5547,14 @@ class Outgoinghlp extends CI_Controller
 				'bg_total'         => $grand_total_gdg,
 				// 'cdc'              => $cdc,
 				// 'total_cdc'        => $total_cdc,
-				// 'kade'             => $catg_kade,
-				// 'csc'              => $catg_csc,
-				// 'total_kade'       => $total_kade,
-				// 'total_csc'        => $total_csc,
-				// 'total_jaster'     => $total_jaster,
-				// 'jaster'           => $jasa_ra,
-				// 'kc_sub_total'     => $kc_sub_total,
+				'kade'             => $catg_kade,
+				'csc'              => $catg_csc,
+				'total_kade'       => $total_kade,
+				'total_csc'        => $total_csc,
+				'jasa_ra'     	   => $catg_harga_ra,
+				'total_jaster'     => $total_jaster,
+				'jaster'           => $jasa_ra,
+				'kc_sub_total'     => $kc_sub_total,
 				// 'kc_ppn'           => $kc_ppn,
 				// 'kc_total'         => $kc_total,
 				'grand_total'      => $grand_total_gdg,
@@ -5543,7 +5567,7 @@ class Outgoinghlp extends CI_Controller
 				'user_kasir'       => $this->session->userdata('nip'),
 				'total'            => $grand_total_gdg,
 				'bill_catg_uid'    => $bill_catg,
-				'adm'              => $adm,
+				// 'adm'              => $adm,
 				'post_date'        => $post_dates,
 				'terbilang' => ucwords(trim(terbilang($grand_total_gdg))) . ' Rupiah',
 
@@ -5592,12 +5616,13 @@ class Outgoinghlp extends CI_Controller
 				'bg_total'         => $grand_total_gdg,
 				// 'cdc'              => $cdc,
 				// 'total_cdc'        => $total_cdc,
-				// 'kade'             => $catg_kade,
-				// 'csc'              => $catg_csc,
-				// 'total_kade'       => $total_kade,
-				// 'total_csc'        => $total_csc,
-				// 'total_jaster'     => $total_jaster,
-				// 'jaster'           => $jasa_ra,
+				'kade'             => $catg_kade,
+				'csc'              => $catg_csc,
+				'total_kade'       => $total_kade,
+				'total_csc'        => $total_csc,
+				'jasa_ra'     	   => $catg_harga_ra,
+				'total_jaster'     => $total_jaster,
+				'jaster'           => $jasa_ra,
 				// 'kc_sub_total'     => $kc_sub_total,
 				// 'kc_ppn'           => $kc_ppn,
 				// 'kc_total'         => $kc_total,
@@ -5952,7 +5977,11 @@ class Outgoinghlp extends CI_Controller
 		$data['list_btb']     = $list_btb;
 		$data['agents']     = $jaster_row;
 
-		$this->load->view('print_invoice_khusus', $data);
+		if ($billing->tanggal_invoice >= '20261001000000') {
+			$this->load->view('print_invoice_khusus', $data);
+		} else {
+			$this->load->view('print_invoice_khusus_old', $data);
+		}
 	}
 
 	public function rekap_invoice_khusus()
@@ -8754,6 +8783,7 @@ class Outgoinghlp extends CI_Controller
 
 		redirect('outgoinghlp/daftar_bukti_potong'); // Sesuaikan base_url controller Anda
 	}
+
 
 	public function rekap_tonase()
 	{

@@ -343,6 +343,48 @@
                             </div>
 
                             <div class="row">
+                                <div class="col-md-12 col-xs-12">
+                                    <!-- <h5><b>Biaya KC</b></h5> -->
+                                    <table class="table table-bordered table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama</th>
+                                                <th class="text-right">Charge Weight</th>
+                                                <th class="text-right">Total Harga</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="inv_row_jaster">
+                                                <td>JASTER</td>
+                                                <td class="text-right" id="inv_berat_jaster"></td>
+                                                <td class="text-right" id="inv_total_jaster"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Jasa Terminal Handling</td>
+                                                <td class="text-right" id="inv_berat_kade"></td>
+                                                <td class="text-right" id="inv_total_kade"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>BIAYA CSC</td>
+                                                <td class="text-right" id="inv_berat_csc"></td>
+                                                <td class="text-right" id="inv_total_csc"></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>SUBTOTAL</b></td>
+                                                <td colspan="2" class="text-right"><b id="inv_kc_total"></b></td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>GRAND TOTAL</th>
+                                                <td colspan="2" class="text-right"><b id="inv_grand_total"></b></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row">
 
                                 <!-- <div class="col-md-6 col-xs-12">
                                     <div class="form-group">

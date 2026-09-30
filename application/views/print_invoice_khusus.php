@@ -93,29 +93,70 @@
             <td align="right"><b><?= $total_sewa_gudang_k ?></b></td>
         </tr>
     </table>
+    <?php
+    $billingDate = DateTime::createFromFormat('d-m-Y', $pm_billing_date_txt);
+    $cutoffDate  = DateTime::createFromFormat('d-m-Y', '01-10-2026');
+    if ($billingDate && $billingDate >= $cutoffDate) {
 
-    <!-- BIAYA GUDANG -->
-    <table width="100%" border="1" cellspacing="0" cellpadding="1" class="tbl-smu">
+    ?>
+        <!-- BIAYA GUDANG -->
+        <table width="100%" border="1" cellspacing="0" cellpadding="1" class="tbl-smu">
 
-        <tr>
-            <td align="center">Nama</td>
-            <td align="center">Harga</td>
-            <td align="center">Charge Weight</td>
-            <td align="center">Total Harga</td>
-        </tr>
-        <tr>
-            <td>Biaya Jasa RA dan Gudang</td>
-            <td align="right"><?= $billing->harga_gdg ?></td>
-            <td align="right"><?= $total_chargeable_k ?></td>
-            <td align="right"><?= $total_sewa_gudang_k ?></td>
-        </tr>
-        <tr>
-            <td colspan="2"><b>SUB TOTAL</b></td>
-            <td colspan="2" align="right"><b><?= $bg_total_k ?></b></td>
-        </tr>
-    </table>
-    <br>
+            <tr>
+                <td align="center">Nama</td>
+                <td align="center">Harga</td>
+                <td align="center">Charge Weight</td>
+                <td align="center">Total Harga</td>
+            </tr>
+            <tr>
+                <td>Biaya Jasa RA dan Gudang</td>
+                <td align="right"><?= number_format(floatval($billing->harga_gdg)) ?></td>
+                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= $total_sewa_gudang_k ?></td>
+            </tr>
+        </table>
+        <br>
+        <!-- BIAYA KC -->
+        <table width="100%" border="1" cellspacing="0" cellpadding="3" class="tbl-smu">
+            <?php if ($jaster_opt != '0'): ?>
+                <tr>
+                    <td>JASTER <?= $jaster_opt ?></td>
+                    <td align="right"><?= $jaster_rate_k ?></td>
+                    <td align="right"><?= $total_chargeable_k ?></td>
+                    <td align="right"><?= $total_jaster_k ?></td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <td>Jasa Terminal Handling</td>
+                <td align="right"><?= $kade_k ?></td>
+                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= $total_kade_k ?></td>
+            </tr>
+            <tr>
+                <td>BIAYA CSC</td>
+                <td align="right"><?= $csc_k ?></td>
+                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= $total_csc_k ?></td>
+            </tr>
+            <tr>
+                <td><b>SUBTOTAL</b></td>
+                <td colspan="3" align="right"><b><?= $kc_sub_total_k ?></b></td>
+            </tr>
+            <tr>
+                <th>GRAND TOTAL</th>
+                <td colspan="3" align="right"><b><?= $grand_total_k ?></b></td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Terbilang<br>
+                    <?= $billing->terbilang ?>
+                </td>
+            </tr>
+        </table>
 
+    <?php
+    }
+    ?>
 
     <!-- TTD -->
     <table width="100%" cellspacing="0" cellpadding="3">

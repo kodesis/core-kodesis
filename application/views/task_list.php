@@ -557,6 +557,7 @@
                       $read = $this->db->query($read)->row();
 
                       if (!$read) {
+                        // echo($nip);
                       ?>
                         <i style="color: #fff;" class="fa fa-circle"></i>
                       <?php } ?>
@@ -600,7 +601,15 @@
                         <a href="<?= base_url('task/create_task/' . $data->id) ?>" class="btn btn-xs" style="background-color: black;color:white;"><i class="fa fa-pencil"></i></a>
                       <?php } ?>
 
-                      <i style="color: #fff;" class="fa fa-circle"></i>
+                      <?php
+                      $read = "SELECT id FROM task WHERE task.read LIKE '%$nip%' AND task.id = $data->id";
+                      $read = $this->db->query($read)->row();
+
+                      if (!$read) {
+                        // echo($nip);
+                      ?>
+                        <i style="color: #fff;" class="fa fa-circle"></i>
+                      <?php } ?>
                     </td>
                   </tr>
                 <?php } ?>

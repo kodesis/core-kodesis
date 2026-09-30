@@ -834,7 +834,15 @@
 													} else {
 													?>
 														<a href="<?= base_url('task/task_view/' . $this->uri->segment(3) . '/' . $x->id_detail) ?>" class="btn btn-xs" style="background-color: white;">Detail</a>
-														<i style="color: red;" class="fa fa-circle"></i>
+														<?php
+														$read = "SELECT id_detail FROM task_detail WHERE task_detail.read LIKE '%$nip%' AND task_detail.id_detail = $x->id_detail";
+														$read = $this->db->query($read)->row();
+
+														if (!$read) {
+															// echo($nip);
+														?>
+															<i style="color: red;" class="fa fa-circle"></i>
+														<?php } ?>
 													<?php
 													}
 													?>

@@ -324,7 +324,7 @@
 									<!-- </div> -->
 								</div>
 								<div class="item form-group">
-									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Card Responsible</label>
+									<label style="text-align: left;" class="control-label col-md-3 col-sm-3 col-xs-12">Card Member</label>
 									<!-- <div class="col-md6 col-sm-6 col-xs-12"> -->
 									<div class="col-md-6 col-sm-6 col-xs-12">
 										<select class="form-control js-example-basic-multiple" name="member_task[]" id="member_task" multiple>

@@ -855,7 +855,8 @@ class Task extends CI_Controller
 						'activity'		=> '1',
 						'comment' => $this->input->post('comment'),
 						'pic' => $this->session->userdata('nip'),
-						'date_created' => date('Y-m-d')
+						'date_created' => date('Y-m-d'),
+						'read' => $this->session->userdata('nip'),
 					);
 					$this->session->set_userdata('member_task', $member_task);
 					$this->db->insert('task', $data_update1);
@@ -1190,7 +1191,7 @@ class Task extends CI_Controller
 					"due_date"     => $this->input->post('end'),
 					"activity"     => $this->input->post('activity'),
 					"attachment"   => $file_i,
-					"read"         => 0,
+					"read"         => $nip_session,
 					"comment"      => $this->input->post('comment'),
 				];
 				// $data['member_detail'] = rtrim($member_task, ';');
@@ -1264,7 +1265,7 @@ class Task extends CI_Controller
 					"due_date"     => $this->input->post('end'),
 					"activity"     => $this->input->post('activity'),
 					"attachment"   => $file_i,
-					"read"         => 0,
+					"read"         => $nip_session,
 					"comment"      => $this->input->post('comment'),
 				];
 				// $data['member_detail'] = rtrim($member_task, ';');
@@ -1293,13 +1294,21 @@ class Task extends CI_Controller
 			$user = $this->db->get_where('users', ['nip' => $this->input->post('responsible_task')])->row();
 			$this->api_whatsapp->wa_notif($msg, $user->phone);
 
-			foreach ($member_name as $value) {
-				$user = $this->db->get_where('users', ['nip' => $value])->row();
-				// $msg = "There's a new task\nProject Name:*$task->name*\nTask Name : *$card_name*\n\nCreated By :  *$user->nama*";
+			// foreach ($member_name as $value) {
+			// 	$user = $this->db->get_where('users', ['nip' => $value])->row();
+			// 	// $msg = "There's a new task\nProject Name:*$task->name*\nTask Name : *$card_name*\n\nCreated By :  *$user->nama*";
+			// 	$utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
+
+			// 	if ($utility['notif_wa'] == 1) {
+			// 		$this->api_whatsapp->wa_notif($msg, $user->phone);
+			// 	}
+			// }
+
+			foreach ($phone_member as $p) {
 				$utility = $this->db->get_where('utility', ['Id' => 1])->row_array();
 
 				if ($utility['notif_wa'] == 1) {
-					$this->api_whatsapp->wa_notif($msg, $user->phone);
+					$this->api_whatsapp->wa_notif($msg, $p);
 				}
 			}
 

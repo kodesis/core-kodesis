@@ -1288,11 +1288,8 @@ class Task extends CI_Controller
 			// $arr_member = explode(";", $nip_member);
 			// $card_name = $this->input->post('project_name');
 			// $task = $this->db->get_where('task', ['id' => $id_task])->row();
-			$user = $this->db->get_where('users', ['nip' => $this->input->post('responsible_task')])->row();
 
-			$msg = "There's a new task\nProject Name:*$task->name*\nTask Name : *" . $this->input->post('project_name') . "*\n\nCreated By :  *$user->nama*";
-
-			$this->api_whatsapp->wa_notif($msg, $user->phone);
+			$msg = "There's a new task\nProject Name:*$task->name*\nTask Name : *" . $this->input->post('project_name') . "*\n\nCreated By :  *$user_session->nama*";
 
 			// foreach ($member_name as $value) {
 			// 	$user = $this->db->get_where('users', ['nip' => $value])->row();
@@ -1303,6 +1300,9 @@ class Task extends CI_Controller
 			// 		$this->api_whatsapp->wa_notif($msg, $user->phone);
 			// 	}
 			// }
+
+			$user = $this->db->get_where('users', ['nip' => $this->input->post('responsible_task')])->row();
+			$this->api_whatsapp->wa_notif($msg, $user->phone);
 
 			foreach ($phone_member as $p) {
 				$utility = $this->db->get_where('utility', ['Id' => 1])->row_array();

@@ -5847,6 +5847,10 @@ class Outgoinghlp extends CI_Controller
 		$jaster_opt  = $jaster_row->jaster      ?? 0;
 		$nama_agent  = $jaster_row->nama_agent_list ?? $billing->nama_agent;
 
+		$catg_inv = $this->cb->select('csc as csc_rate, kade as kade_rate, sewa_gudang, jasa_ra as jaster_rate')->from('out_bill_catg_inv_khusus')
+			->where('uid', $billing->bill_catg_uid)->get()->row();
+
+
 		// Kasir
 		$kasir = $this->db->select('nama')->from('users')
 			->where('nip', $billing->user_kasir)->get()->row();
@@ -5877,7 +5881,7 @@ class Outgoinghlp extends CI_Controller
 		$total_chargeable_k  = number_format((float)$billing->total_chargeable);
 		$kade_k              = number_format((float)$billing->kade_rate);
 		$csc_k               = number_format((float)$billing->csc_rate);
-		$jaster_rate_k       = 0;
+		$jaster_rate_k       = number_format((float)$catg_inv->jaster_rate);;
 
 		// List SMU billing
 		$list_billing = $this->cb->where('bill_khusus_uid', $uid)

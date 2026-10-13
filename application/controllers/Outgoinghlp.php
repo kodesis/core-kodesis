@@ -4331,53 +4331,50 @@ class Outgoinghlp extends CI_Controller
 		if ($new_status == '4') {
 			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice;
 			$cek_jurnal1 = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
+			$msg_tambahan = '';
 
 			if ($cek_jurnal1 > 0) {
-				$this->session->set_flashdata('message_error', 'Tidak bisa membatalkan pembayaran, jurnal sudah dibuat.');
-				redirect('outgoinghlp/daftar_invoice');
-				return;
-			} else {
-				$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
-				$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
-
-				if ($cek_jurnal > 0) {
-					$this->session->set_flashdata('message_error', 'Tidak bisa membatalkan pembayaran, jurnal sudah dibuat.');
-					redirect('outgoinghlp/daftar_invoice');
-					return;
-				} else {
-					$update_data = [
-						'pay_status'           => '0',
-						'jurnal_status'           => '0',
-					];
-
-					$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
-
-					$this->session->set_flashdata('message_name', 'Berhasil Membatalkan Pembayaran Invoice.');
-					redirect('outgoinghlp/daftar_invoice');
-					return;
-				}
+				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
+				$msg_tambahan = 'Jurnal Bayar Berhasil dihapus. Dan';
 			}
+
+			$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
+			$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
+
+			if ($cek_jurnal > 0) {
+				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
+				$msg_tambahan =  $msg_tambahan . ' Jurnal Invoice Berhasil dihapus.';
+			}
+			$update_data = [
+				'pay_status'           => '0',
+				'jurnal_status'           => '0',
+			];
+
+			$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
+
+			$this->session->set_flashdata('message_name', $msg_tambahan . 'Berhasil Membatalkan Pembayaran Invoice.');
+			redirect('outgoinghlp/daftar_invoice');
+			return;
 		}
 
 		if ($new_status == '5') {
 			$keterangan = "PEMBAYARAN INVOICE " . $no_invoice;
 			$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
 
+			$msg_tambahan = '';
 			if ($cek_jurnal > 0) {
-				$this->session->set_flashdata('message_error', 'Tidak bisa membatalkan pembayaran, jurnal sudah dibuat.');
-				redirect('outgoinghlp/daftar_invoice');
-				return;
-			} else {
-				$update_data = [
-					'jurnal_status'           => '0',
-				];
-
-				$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
-
-				$this->session->set_flashdata('message_name', 'Berhasil Membatalkan Pembayaran Invoice.');
-				redirect('outgoinghlp/daftar_invoice');
-				return;
+				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
+				$msg_tambahan =  'Jurnal Invoice Berhasil dihapus.';
 			}
+			$update_data = [
+				'jurnal_status'           => '0',
+			];
+
+			$this->cb->where('uid', $bil_uid)->update('out_billing', $update_data);
+
+			$this->session->set_flashdata('message_name', $msg_tambahan . ' Berhasil Membatalkan Pembayaran Invoice.');
+			redirect('outgoinghlp/daftar_invoice');
+			return;
 		}
 	}
 
@@ -5648,54 +5645,49 @@ class Outgoinghlp extends CI_Controller
 
 		if ($new_status == '4') {
 			$keterangan = "PEMBAYARAN INVOICE KHUSUS " . $no_invoice;
+			$cek_jurnal1 = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
+			$msg_tambahan = '';
+			if ($cek_jurnal1 > 0) {
+				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
+				$msg_tambahan = 'Jurnal Bayar Berhasil dihapus. Dan';
+			}
+
+			$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING KHUSUS NO INVOICE :" . $no_invoice;
 			$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
 
 			if ($cek_jurnal > 0) {
-				$this->session->set_flashdata('message_error', 'Tidak bisa membatalkan pembayaran, jurnal sudah dibuat.');
-				redirect('outgoinghlp/daftar_invoice_khusus');
-				return;
-			} else {
-				$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING KHUSUS NO INVOICE :" . $no_invoice;
-				$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
-
-				if ($cek_jurnal > 0) {
-					$this->session->set_flashdata('message_error', 'Tidak bisa membatalkan pembayaran, jurnal sudah dibuat.');
-					redirect('outgoinghlp/daftar_invoice_khusus');
-					return;
-				} else {
-					$update_data = [
-						'pay_status'           => '0',
-						'jurnal_status'           => '0',
-					];
-
-					$this->cb->where('uid', $bil_uid)->update('out_billing_inv_khusus', $update_data);
-
-					$this->session->set_flashdata('message_name', 'Berhasil Membatalkan Pembayaran Invoice.');
-					redirect('outgoinghlp/daftar_invoice_khusus');
-					return;
-				}
+				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
+				$msg_tambahan =  $msg_tambahan . ' Jurnal Invoice Berhasil dihapus.';
 			}
+			$update_data = [
+				'pay_status'           => '0',
+				'jurnal_status'           => '0',
+			];
+
+			$this->cb->where('uid', $bil_uid)->update('out_billing_inv_khusus', $update_data);
+
+			$this->session->set_flashdata('message_name', $msg_tambahan . ' Berhasil Membatalkan Pembayaran Invoice.');
+			redirect('outgoinghlp/daftar_invoice_khusus');
+			return;
 		}
 
 		if ($new_status == '5') {
 			$keterangan = "PEMBAYARAN INVOICE KHUSUS " . $no_invoice;
 			$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
-
+			$msg_tambahan = '';
 			if ($cek_jurnal > 0) {
-				$this->session->set_flashdata('message_error', 'Tidak bisa membatalkan pembayaran, jurnal sudah dibuat.');
-				redirect('outgoinghlp/daftar_invoice_khusus');
-				return;
-			} else {
-				$update_data = [
-					'jurnal_status'           => '0',
-				];
-
-				$this->cb->where('uid', $bil_uid)->update('out_billing_inv_khusus', $update_data);
-
-				$this->session->set_flashdata('message_name', 'Berhasil Membatalkan Pembayaran Invoice.');
-				redirect('outgoinghlp/daftar_invoice_khusus');
-				return;
+				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
+				$msg_tambahan =  $msg_tambahan . ' Jurnal Invoice Berhasil dihapus.';
 			}
+			$update_data = [
+				'jurnal_status'           => '0',
+			];
+
+			$this->cb->where('uid', $bil_uid)->update('out_billing_inv_khusus', $update_data);
+
+			$this->session->set_flashdata('message_name', $msg_tambahan . ' Berhasil Membatalkan Pembayaran Invoice.');
+			redirect('outgoinghlp/daftar_invoice_khusus');
+			return;
 		}
 	}
 

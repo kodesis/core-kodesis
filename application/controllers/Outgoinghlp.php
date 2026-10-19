@@ -6165,7 +6165,7 @@ class Outgoinghlp extends CI_Controller
 			// $sheet->setCellValue('P'  . $startRow, $bg_ppn);
 			// $sheet->setCellValue('Q'  . $startRow, $administrasi);
 			// $sheet->setCellValue('R'  . $startRow, $materai);
-			$sheet->setCellValue('M'  . $startRow, $bg_total);
+			$sheet->setCellValue('M'  . $startRow, $total_cargo);
 			$sheet->setCellValue('N'  . $startRow, $total_kade);
 			$sheet->setCellValue('O'  . $startRow, $total_jaster);
 			$sheet->setCellValue('P'  . $startRow, $total_csc);

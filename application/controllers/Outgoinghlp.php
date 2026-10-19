@@ -6049,16 +6049,16 @@ class Outgoinghlp extends CI_Controller
 			// 'Q'  => 'Administrasi',
 			// 'R'  => 'Materai',
 			'M'  => 'Total Sewa Gudang',
-			// 'T'  => 'Jasa Terminal Handling',
-			// 'U'  => 'Biaya Jaster',
-			// 'V'  => 'Biaya CSC',
+			'N'  => 'Jasa Terminal Handling',
+			'O'  => 'Biaya Jaster',
+			'P'  => 'Biaya CSC',
 			// 'W'  => 'SubTotal KC',
 			// 'X'  => 'PPN KC',
 			// 'Y'  => 'Total KC',
-			'N'  => 'Total',
-			'O' => 'Pembayaran',
-			'P' => 'Keterangan',
-			'Q' => 'Jaster',
+			'Q'  => 'Total',
+			'R' => 'Pembayaran',
+			'S' => 'Keterangan',
+			'T' => 'Jaster',
 		];
 
 		foreach ($headers as $col => $label) {
@@ -6166,16 +6166,16 @@ class Outgoinghlp extends CI_Controller
 			// $sheet->setCellValue('Q'  . $startRow, $administrasi);
 			// $sheet->setCellValue('R'  . $startRow, $materai);
 			$sheet->setCellValue('M'  . $startRow, $bg_total);
-			// $sheet->setCellValue('T'  . $startRow, $total_kade);
-			// $sheet->setCellValue('U'  . $startRow, $total_jaster);
-			// $sheet->setCellValue('V'  . $startRow, $total_csc);
+			$sheet->setCellValue('N'  . $startRow, $total_kade);
+			$sheet->setCellValue('O'  . $startRow, $total_jaster);
+			$sheet->setCellValue('P'  . $startRow, $total_csc);
 			// $sheet->setCellValue('W'  . $startRow, $kc_sub_total);
 			// $sheet->setCellValue('X'  . $startRow, $kc_ppn);
 			// $sheet->setCellValue('Y'  . $startRow, $kc_total);
-			$sheet->setCellValue('N'  . $startRow, $grand_total);
-			$sheet->setCellValue('O' . $startRow, $pay);
-			$sheet->setCellValue('P' . $startRow, $user_name);
-			$sheet->setCellValue('Q' . $startRow, $jaster);
+			$sheet->setCellValue('Q'  . $startRow, $grand_total);
+			$sheet->setCellValue('R' . $startRow, $pay);
+			$sheet->setCellValue('S' . $startRow, $user_name);
+			$sheet->setCellValue('T' . $startRow, $jaster);
 
 			$nomor++;
 		}
@@ -6190,7 +6190,7 @@ class Outgoinghlp extends CI_Controller
 			->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 		$sheet->setCellValue('A' . $totalRow, 'TOTAL');
 
-		foreach (['L', 'M', 'N'] as $col) {
+		foreach (['L', 'M', 'N', 'O', 'P', 'Q'] as $col) {
 			$sheet->setCellValue($col . $totalRow, '=SUM(' . $col . $firstRow . ':' . $col . $lastRow . ')');
 		}
 

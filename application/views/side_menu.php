@@ -63,7 +63,13 @@
 
 				</ul>
 			</li>
+			<!-- <li>
+				<a href="<?php echo base_url(); ?>New_Task"><i class="fa fa-columns"></i>New Tello</a>
+			</li> -->
 		<?php } ?>
+		<li>
+			<a href="<?php echo base_url(); ?>tesseract"><i class="fa fa-search"></i>Tesseract</a>
+		</li>
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '50') !== false) { ?>
 			<li>
@@ -305,6 +311,10 @@
 							</ul>
 						</li>
 					<?php } ?>
+					<?php $a = $this->session->userdata('level');
+					if (strpos($a, '922') !== false) { ?>
+						<li><a href="<?= base_url('xray') ?>"> Xray</a></li>
+					<?php } ?>
 				</ul>
 			</li>
 		<?php } ?>
@@ -312,6 +322,8 @@
 		if (strpos($a, '931') !== false) { ?>
 			<li><a href="<?= base_url('depositagent') ?>"><i class="fa fa-money"></i> Deposit Saya</a></li>
 		<?php } ?>
+
+
 
 		<?php $a = $this->session->userdata('level');
 		if (strpos($a, '932') !== false || strpos($a, '933') !== false) { ?>

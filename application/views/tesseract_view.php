@@ -33,7 +33,6 @@
 	<link href="<?php echo base_url(); ?>src/build/css/owl.theme.default.min.css" rel="stylesheet">
 
 	<!-- <link rel="stylesheet" href="<?= base_url() ?>resources/assets/css/styles.css"> -->
-	<script defer src="<?= base_url() ?>resources/assets/javascript/face_logics/face-api.min.js"></script>
 
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css" rel="stylesheet">
 	<!-- footer menu -->
@@ -81,6 +80,47 @@
 		#video {
 			border-radius: 10px;
 			box-shadow: #000;
+		}
+
+		/* Tesseract OCR */
+		.ocr-dropzone {
+			position: relative;
+			border: 2px dashed #b0bec5;
+			border-radius: 6px;
+			padding: 20px;
+			text-align: center;
+			color: #73879C;
+			margin-bottom: 15px;
+			cursor: pointer;
+			min-height: 160px;
+			transition: border-color .2s, background .2s;
+		}
+
+		.ocr-dropzone.dragover {
+			border-color: #26B99A;
+			background: #f3fbf9;
+		}
+
+		.ocr-dropzone input[type=file] {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			cursor: pointer;
+		}
+
+		.ocr-preview {
+			max-width: 100%;
+			max-height: 260px;
+			border-radius: 4px;
+		}
+
+		.ocr-result {
+			font-family: Consolas, Monaco, monospace;
+			font-size: 13px;
+			resize: vertical;
 		}
 	</style>
 </head>
@@ -277,20 +317,112 @@
 			<!-- page content -->
 			<div class="right_col" role="main">
 				<div class="container">
-					<div class="main--content">
-						<h5>Tesseract OCR</h5>
-						<!-- <button class="btn" id="ShowUser" onclick="getLocation()">Tampilkan Posisi</button> -->
-						<!-- <button class="btn" id="ShowUser" onclick="updateTable()">Tampilkan User</button> -->
-						<div class="attendance-button">
-							<div class="row">
-								<form action="<?= base_url('tesseract/process_image') ?>" id="form_tesseract" style="margin-bottom:10px;" method="post" enctype="multipart/form-data">
-									<div class="col-md-4">
-										<input class="form-control" type="file" name="image" id="image" accept="image/*" required>
-									</div>
-									<button class="btn btn-primary" onclick="submitTesseract()">Submit</button>
+					<div class="main--content ocr-page">
+						<div class="page-title">
+							<div class="title_left">
+								<h3>Tesseract OCR <small>Ekstrak teks dari gambar</small></h3>
+							</div>
+						</div>
+						<div class="clearfix"></div>
 
-								</form>
-								<div class="col-md-4">
+						<?php if (!$server_ready) { ?>
+							<div class="alert alert-warning">
+								<i class="fa fa-info-circle"></i>
+								Binary <b>tesseract</b> belum terpasang di server. OCR akan diproses langsung di browser (Tesseract.js).
+							</div>
+						<?php } ?>
+
+						<div class="row">
+							<!-- form upload -->
+							<div class="col-md-5 col-sm-12">
+								<div class="x_panel">
+									<div class="x_title">
+										<h2><i class="fa fa-upload"></i> Upload Gambar</h2>
+										<div class="clearfix"></div>
+									</div>
+									<div class="x_content">
+										<form id="form_tesseract" method="post" enctype="multipart/form-data">
+											<div id="drop_zone" class="ocr-dropzone">
+												<input type="file" name="image" id="image" accept="image/*" required>
+												<div id="drop_hint">
+													<i class="fa fa-file-image-o fa-3x"></i>
+													<p>Klik atau seret gambar ke sini<br><small>JPG, PNG, BMP, GIF, TIFF, WEBP &middot; maks 5 MB</small></p>
+												</div>
+												<img id="preview" class="ocr-preview" alt="preview" style="display:none;">
+											</div>
+
+											<div class="form-group">
+												<label for="lang">Bahasa</label>
+												<select class="form-control" name="lang" id="lang">
+													<?php foreach ($languages as $code => $label) { ?>
+														<option value="<?= $code ?>" <?= $code == 'ind+eng' ? 'selected' : '' ?>><?= $label ?></option>
+													<?php } ?>
+												</select>
+											</div>
+											<div class="form-group">
+												<label for="psm">Mode Halaman</label>
+												<select class="form-control" name="psm" id="psm">
+													<?php foreach ($psm_modes as $code => $label) { ?>
+														<option value="<?= $code ?>"><?= $label ?></option>
+													<?php } ?>
+												</select>
+											</div>
+
+											<div class="progress" id="ocr_progress" style="display:none;">
+												<div class="progress-bar progress-bar-striped active" role="progressbar" style="width:100%;">Memproses...</div>
+											</div>
+
+											<button type="submit" class="btn btn-primary btn-block" id="btn_submit">
+												<i class="fa fa-magic"></i> Proses OCR
+											</button>
+										</form>
+									</div>
+								</div>
+							</div>
+
+							<!-- hasil -->
+							<div class="col-md-7 col-sm-12">
+								<div class="x_panel">
+									<div class="x_title">
+										<h2><i class="fa fa-file-text-o"></i> Hasil Teks</h2>
+										<div class="pull-right" id="result_meta"></div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="x_content">
+										<textarea id="result_text" class="form-control ocr-result" rows="16" placeholder="Hasil OCR akan tampil di sini..."></textarea>
+										<div style="margin-top:10px;">
+											<button type="button" class="btn btn-default btn-sm" id="btn_copy"><i class="fa fa-copy"></i> Salin</button>
+											<a href="#" class="btn btn-default btn-sm disabled" id="btn_download"><i class="fa fa-download"></i> Download .txt</a>
+											<button type="button" class="btn btn-default btn-sm" id="btn_clear"><i class="fa fa-eraser"></i> Bersihkan</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- riwayat -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="x_panel">
+									<div class="x_title">
+										<h2><i class="fa fa-history"></i> Riwayat OCR</h2>
+										<div class="clearfix"></div>
+									</div>
+									<div class="x_content table-responsive">
+										<table class="table table-striped table-bordered">
+											<thead>
+												<tr>
+													<th>Tanggal</th>
+													<th>File</th>
+													<th>Bahasa</th>
+													<th>Engine</th>
+													<th>Cuplikan</th>
+													<th style="width:150px;">Aksi</th>
+												</tr>
+											</thead>
+											<tbody id="history_body"></tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -371,6 +503,225 @@
 					}
 				}
 			})
+		</script>
+
+		<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+		<script>
+			(function() {
+				var BASE = '<?= base_url('tesseract') ?>';
+				var historyRows = <?= json_encode($history) ?>;
+				var currentId = null;
+
+				function esc(str) {
+					return $('<div>').text(str == null ? '' : str).html();
+				}
+
+				function setLoading(on, label) {
+					$('#btn_submit').prop('disabled', on);
+					$('#ocr_progress').toggle(on);
+					$('#ocr_progress .progress-bar').css('width', '100%').text(label || 'Memproses...');
+				}
+
+				function setProgress(pct, label) {
+					$('#ocr_progress .progress-bar').css('width', pct + '%').text(label + ' ' + pct + '%');
+				}
+
+				function showResult(id, text, meta) {
+					currentId = id;
+					$('#result_text').val(text);
+					$('#result_meta').html(meta || '');
+					$('#btn_download').toggleClass('disabled', !id).attr('href', id ? BASE + '/download/' + id : '#');
+				}
+
+				function renderHistory() {
+					var $body = $('#history_body').empty();
+					if (!historyRows.length) {
+						$body.append('<tr><td colspan="6" class="text-center">Belum ada riwayat.</td></tr>');
+						return;
+					}
+					$.each(historyRows, function(i, row) {
+						$body.append(
+							'<tr>' +
+							'<td>' + esc(row.created_at) + '</td>' +
+							'<td>' + esc(row.original_name || row.file_name) + '</td>' +
+							'<td>' + esc(row.lang) + '</td>' +
+							'<td><span class="label label-' + (row.engine == 'server' ? 'primary' : 'info') + '">' + esc(row.engine) + '</span></td>' +
+							'<td><small>' + esc(row.preview) + '</small></td>' +
+							'<td>' +
+							'<button class="btn btn-xs btn-info btn-view" data-id="' + row.id + '"><i class="fa fa-eye"></i></button> ' +
+							'<a class="btn btn-xs btn-default" href="' + BASE + '/download/' + row.id + '"><i class="fa fa-download"></i></a> ' +
+							'<button class="btn btn-xs btn-danger btn-delete" data-id="' + row.id + '"><i class="fa fa-trash"></i></button>' +
+							'</td>' +
+							'</tr>'
+						);
+					});
+				}
+
+				function reloadHistory() {
+					$.getJSON(BASE + '/history', function(res) {
+						if (res.status) {
+							historyRows = res.data;
+							renderHistory();
+						}
+					});
+				}
+
+				function metaLabel(engine, duration, confidence) {
+					var html = '<span class="label label-' + (engine == 'server' ? 'primary' : 'info') + '">' + engine + '</span>';
+					if (duration) html += ' <small>' + duration + ' detik</small>';
+					if (confidence) html += ' <small>&middot; akurasi ' + Math.round(confidence) + '%</small>';
+					return html;
+				}
+
+				// fallback: OCR di browser dengan Tesseract.js
+				async function processInBrowser(file, uploadedName) {
+					var lang = $('#lang').val();
+					var psm = $('#psm').val();
+					var start = performance.now();
+
+					var worker = await Tesseract.createWorker(lang.split('+'), 1, {
+						logger: function(m) {
+							if (m.status === 'recognizing text') {
+								setProgress(Math.round(m.progress * 100), 'Membaca teks');
+							} else if (m.progress !== undefined) {
+								setProgress(Math.round(m.progress * 100), 'Memuat engine');
+							}
+						}
+					});
+					await worker.setParameters({
+						tessedit_pageseg_mode: String(psm)
+					});
+					var result = await worker.recognize(file);
+					await worker.terminate();
+
+					var text = result.data.text;
+					var confidence = result.data.confidence;
+					var duration = ((performance.now() - start) / 1000).toFixed(2);
+
+					var res = await $.post(BASE + '/save_client_result', {
+						file_name: uploadedName,
+						original_name: file.name,
+						lang: lang,
+						psm: psm,
+						text: text,
+						confidence: confidence,
+						duration: duration
+					});
+
+					showResult(res.status ? res.id : null, text, metaLabel('browser', duration, confidence));
+					reloadHistory();
+				}
+
+				// preview + drag & drop
+				$('#image').on('change', function() {
+					var file = this.files[0];
+					if (!file) return;
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						$('#preview').attr('src', e.target.result).show();
+						$('#drop_hint').hide();
+					};
+					reader.readAsDataURL(file);
+				});
+				$('#drop_zone').on('dragover dragenter', function() {
+					$(this).addClass('dragover');
+				}).on('dragleave drop', function() {
+					$(this).removeClass('dragover');
+				});
+
+				$('#form_tesseract').on('submit', function(e) {
+					e.preventDefault();
+					var file = $('#image')[0].files[0];
+					if (!file) {
+						Swal.fire('Oops', 'Pilih gambar terlebih dahulu.', 'warning');
+						return;
+					}
+
+					setLoading(true, 'Mengupload & memproses...');
+					$.ajax({
+						url: BASE + '/process',
+						type: 'POST',
+						data: new FormData(this),
+						processData: false,
+						contentType: false,
+						dataType: 'json'
+					}).done(function(res) {
+						if (res.status) {
+							showResult(res.id, res.text, metaLabel(res.engine, res.duration));
+							reloadHistory();
+							if (!$.trim(res.text)) Swal.fire('Info', res.message, 'info');
+							setLoading(false);
+						} else if (res.code === 'engine_not_found') {
+							processInBrowser(file, res.file_name)
+								.catch(function(err) {
+									Swal.fire('Gagal', 'OCR di browser gagal: ' + err, 'error');
+								})
+								.finally(function() {
+									setLoading(false);
+								});
+						} else {
+							Swal.fire('Gagal', res.message, 'error');
+							setLoading(false);
+						}
+					}).fail(function(xhr) {
+						var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Terjadi kesalahan pada server.';
+						Swal.fire('Gagal', msg, 'error');
+						setLoading(false);
+					});
+				});
+
+				$('#btn_copy').on('click', function() {
+					var text = $('#result_text').val();
+					if (!text) return;
+					navigator.clipboard.writeText(text).then(function() {
+						Swal.fire({
+							icon: 'success',
+							title: 'Teks disalin',
+							timer: 1200,
+							showConfirmButton: false
+						});
+					});
+				});
+
+				$('#btn_clear').on('click', function() {
+					showResult(null, '', '');
+					$('#form_tesseract')[0].reset();
+					$('#preview').hide();
+					$('#drop_hint').show();
+				});
+
+				$('#history_body').on('click', '.btn-view', function() {
+					$.getJSON(BASE + '/detail/' + $(this).data('id'), function(res) {
+						if (!res.status) return Swal.fire('Gagal', res.message, 'error');
+						var d = res.data;
+						showResult(d.id, d.result_text, metaLabel(d.engine, d.duration, d.confidence));
+						$('#preview').attr('src', d.image_url).show();
+						$('#drop_hint').hide();
+						$('html, body').animate({
+							scrollTop: $('.ocr-page').offset().top
+						}, 300);
+					});
+				});
+
+				$('#history_body').on('click', '.btn-delete', function() {
+					var id = $(this).data('id');
+					Swal.fire({
+						title: 'Hapus riwayat ini?',
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText: 'Hapus',
+						cancelButtonText: 'Batal'
+					}).then(function(r) {
+						if (!r.isConfirmed) return;
+						$.post(BASE + '/delete/' + id, function(res) {
+							if (res.status && currentId == id) showResult(null, '', '');
+							reloadHistory();
+						}, 'json');
+					});
+				});
+
+				renderHistory();
+			})();
 		</script>
 
 		<script src='<?= base_url() ?>resources/assets/javascript/active_link.js'></script>

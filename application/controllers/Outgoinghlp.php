@@ -4338,6 +4338,12 @@ class Outgoinghlp extends CI_Controller
 				$msg_tambahan = 'Jurnal Bayar Berhasil dihapus. Dan';
 			}
 
+			$cek_topup = $this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'out_billing'])->count_all_results('all_topup');
+
+			if ($cek_topup > 0) {
+				$this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'out_billing'])->delete('all_topup');
+			}
+
 			$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
 			$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();
 
@@ -4366,6 +4372,13 @@ class Outgoinghlp extends CI_Controller
 				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
 				$msg_tambahan =  'Jurnal Invoice Berhasil dihapus.';
 			}
+
+			$cek_topup = $this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'out_billing'])->count_all_results('all_topup');
+
+			if ($cek_topup > 0) {
+				$this->cb->where(['billing_uid' => $bil_uid, 'asal_table' => 'out_billing'])->delete('all_topup');
+			}
+
 			$update_data = [
 				'jurnal_status'           => '0',
 			];
@@ -5651,6 +5664,7 @@ class Outgoinghlp extends CI_Controller
 				$this->cb->like('keterangan', $keterangan)->delete('jurnal_neraca');
 				$msg_tambahan = 'Jurnal Bayar Berhasil dihapus. Dan';
 			}
+
 
 			$keterangan = "PENDAPATAN YANG AKAN DI TERIMA. WAREHOUSE OUTGOING KHUSUS NO INVOICE :" . $no_invoice;
 			$cek_jurnal = $this->cb->like('keterangan', $keterangan)->get('jurnal_neraca')->num_rows();

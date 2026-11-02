@@ -13,7 +13,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             height: 100%;
         }
@@ -105,7 +106,7 @@
         }
 
         .header-left img {
-            width: 125px;
+            /* width: 125px; */
             display: block;
             margin-bottom: 3px;
         }
@@ -129,7 +130,8 @@
         }
 
         /* contents of consignment */
-        .contents-table th, .contents-table td {
+        .contents-table th,
+        .contents-table td {
             border: 1px solid #000;
             padding: 3px 6px;
             font-size: 9pt;
@@ -188,7 +190,7 @@
             width: 100%;
         }
 
-        .three-col > div {
+        .three-col>div {
             width: 33.33%;
             border-right: 1px solid #000;
             padding: 3px 6px;
@@ -196,7 +198,7 @@
             font-size: 9pt;
         }
 
-        .three-col > div:last-child {
+        .three-col>div:last-child {
             border-right: none;
         }
 
@@ -269,7 +271,6 @@
             align-items: flex-end;
             justify-content: flex-end;
         }
-
     </style>
 </head>
 
@@ -287,7 +288,7 @@
                 <td style="padding:0;">
                     <div class="header-flex">
                         <div class="header-left">
-                            <img src="<?= base_url('src/images/logo_bdt.jpg') ?>" alt="logo">
+                            <img src="<?= $this->session->userdata('icon') ?>" alt="logo" height="60">
                             <div>Sertifikat Standar : 15052400247180002</div>
                         </div>
                         <div class="header-right">

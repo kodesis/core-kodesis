@@ -231,7 +231,7 @@
                         <tr>
                             <td style="font-size:8pt;">Lembar I</td>
                             <td>:</td>
-                            <td style="font-size:8pt;">PT. Bangun Desa Teknologi</td>
+                            <td style="font-size:8pt;"><?= $this->session->userdata('nama_perusahaan') ?></td>
                         </tr>
                         <tr>
                             <td style="font-size:8pt;">Lembar II</td>

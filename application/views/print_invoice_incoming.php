@@ -42,12 +42,12 @@
         </tr>
         <tr>
             <td width="30%">
-                <?= $corp_logo ?><br>
-                PT. BANGUN DESA TEKNOLOGI<br>
-                BANDARA LANUD HALIM PERDANA KUSUMA<br>
-                Tel: (021) 2280 2395
+                <img src="<?= $this->session->userdata('icon') ?>" border='0' width='100'><br>
+                <?= $this->session->userdata('nama_perusahaan') ?><br>
+                <?= $this->session->userdata('alamat_perusahaan') ?><br>
+                <!-- Tel: (021) 2280 2395 -->
             </td>
-            <td width="30%">
+            <td width=" 30%">
                 <br><br><br>
                 <b>KEPADA YTH. :</b><br>
                 <?= $billing->nama ?><br>
@@ -57,7 +57,7 @@
                 <br><br><br>
                 No. Invoice : <?= $billing->no_invoice ?><br>
                 Tanggal Invoice : <?= $pm_billing_date_txt ?><br>
-                No. NPWP : 03.313.653.2-015.000
+                <!-- No. NPWP : 03.313.653.2-015.000 -->
             </td>
         </tr>
     </table>

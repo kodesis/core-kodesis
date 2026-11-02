@@ -35,7 +35,7 @@
 
     <table border="0" style="width:100%; max-width:240mm;" cellpadding="2">
         <tr>
-            <td colspan="4" align="center"><b>PT. BANGUN DESA TEKNOLOGI</b></td>
+            <td colspan="4" align="center"><b><?= $this->session->userdata('nama_perusahaan') ?></b></td>
         </tr>
         <tr>
             <td colspan="4" align="center">CARGO WAREHOUSE</td>

@@ -408,7 +408,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td align="center"><br><b>BDT</b></td>
+                                            <td align="center"><br><b><?= $this->session->userdata('nama_singkat') ?></b></td>
                                         </tr>
                                     </table>
                                     <br>

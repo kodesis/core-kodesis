@@ -3500,6 +3500,16 @@ class Outgoinghlp extends CI_Controller
 
 	public function daftar_invoice()
 	{
+		// Debug waktu: buka outgoinghlp/daftar_invoice?debug_time=1
+		$debug_time = $this->input->get('debug_time') == '1';
+		$t_list = [];
+		$t0 = $t_last = microtime(true);
+		$tick = function ($label) use (&$t_list, &$t_last) {
+			$now = microtime(true);
+			$t_list[] = [$label, round(($now - $t_last) * 1000, 1)];
+			$t_last = $now;
+		};
+
 		$nip = $this->session->userdata('nip');
 		$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
 		$query = $this->db->query($sql);
@@ -3515,22 +3525,25 @@ class Outgoinghlp extends CI_Controller
 		$data['count_inbox2'] = $result2;
 
 		$data['title'] = "Daftar Invoice";
+		$tick('memo + task (count inbox)');
 
-		// Ambil data COA
-		$coa_12002 = $this->m_coa->getCoaByCode('12002');
-		$coa_12001 = $this->m_coa->getCoaByCode('12001');
+		// Ambil data COA (1 query ke v_coa_all, bukan 5)
+		$coa = $this->m_coa->getCoaByCodes(['12002', '12001', '210', '41002', '13010']);
+		$coa_12002 = $coa['12002'];
+		$coa_12001 = $coa['12001'];
 		$merged_coa_debit_depo = array_merge($coa_12002, $coa_12001);
-		$coa_debit_depo = $this->m_coa->getCoaByCode('210');
+		$coa_debit_depo = $coa['210'];
 		$coa_debit_transfer = $merged_coa_debit_depo;
 
-		$coa_41002 = $this->m_coa->getCoaByCode('41002');
-		$coa_13010 = $this->m_coa->getCoaByCode('13010');
+		$coa_41002 = $coa['41002'];
+		$coa_13010 = $coa['13010'];
 		$merged_coa_kredit_transfer = array_merge($coa_41002, $coa_13010);
 
 		$data['coa_1'] = $coa_debit_depo;
 		$data['coa_2'] = $coa_41002;
 		$data['coa_3'] = $coa_debit_transfer;
 		$data['coa_4'] = $merged_coa_kredit_transfer;
+		$tick('COA (v_coa_all)');
 
 		// ============================================
 		// Filter & search dari GET (form submit biasa, reload halaman)
@@ -3550,6 +3563,7 @@ class Outgoinghlp extends CI_Controller
 			$f_agent_nama = $agent_row->nama ?? null;
 		}
 		$data['f_agent_nama'] = $f_agent_nama;
+		$tick('nama agent filter');
 
 		// ============================================
 		// Pagination server-side
@@ -3562,6 +3576,7 @@ class Outgoinghlp extends CI_Controller
 		$offset = ($page - 1) * $per_page;
 
 		$total_rows  = $this->M_outgoing->count_invoice($agent, $pay, $jurnal, $search);
+		$tick('count_invoice');
 		$total_pages = (int) ceil($total_rows / $per_page);
 		if ($total_pages < 1) {
 			$total_pages = 1;
@@ -3573,6 +3588,7 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		$results = $this->M_outgoing->get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset);
+		$tick('get_page_invoice');
 
 		// Lookup out_pesawat sekali saja (hindari N+1 query)
 		$pesawat_rows = $this->cb->get('out_pesawat')->result();
@@ -3580,6 +3596,43 @@ class Outgoinghlp extends CI_Controller
 		foreach ($pesawat_rows as $p) {
 			$pesawat_map[$p->nama] = $p->warna ?? null;
 		}
+
+		// Prefetch data deposit untuk 1 halaman sekaligus (hindari N+1 query di loop)
+		$topup_by_bill    = [];
+		$agent_deposit_map = [];
+		$deposit_uids     = [];
+		$bill_no_deposit  = [];
+		foreach ($results as $r) {
+			if ($r->pay_methode == 1) {
+				if ($r->agent_deposit_uid) {
+					$deposit_uids[] = $r->agent_deposit_uid;
+				} else {
+					$bill_no_deposit[] = $r->uid;
+				}
+			}
+		}
+		if (!empty($bill_no_deposit)) {
+			$topups = $this->cb->select('billing_uid, agent_uid')
+				->where_in('billing_uid', array_values(array_unique($bill_no_deposit)))
+				->where('asal_table', 'out_billing')
+				->get('all_topup')->result();
+			foreach ($topups as $t) {
+				// sama seperti ->row() sebelumnya: pakai baris pertama
+				if (!isset($topup_by_bill[$t->billing_uid])) {
+					$topup_by_bill[$t->billing_uid] = $t;
+					$deposit_uids[] = $t->agent_uid;
+				}
+			}
+		}
+		$deposit_uids = array_values(array_unique(array_filter($deposit_uids)));
+		if (!empty($deposit_uids)) {
+			$agents = $this->cb->where_in('uid', $deposit_uids)->get('all_agent_deposit')->result();
+			foreach ($agents as $a) {
+				$agent_deposit_map[$a->uid] = $a;
+			}
+		}
+
+		$tick('out_pesawat + prefetch deposit');
 
 		$rows = [];
 		foreach ($results as $r) {
@@ -3651,13 +3704,12 @@ class Outgoinghlp extends CI_Controller
 
 			if ($r->pay_methode == 1) {
 				if ($r->agent_deposit_uid) {
-					$agent_deposit = $this->cb->where('uid', $r->agent_deposit_uid)->get('all_agent_deposit')->row();
-					$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+					$agent_deposit = $agent_deposit_map[$r->agent_deposit_uid] ?? null;
 				} else {
-					$deposit = $this->cb->where('billing_uid', $r->uid)->where('asal_table', 'out_billing')->get('all_topup')->row();
-					$agent_deposit = $this->cb->where('uid', $deposit->agent_uid)->get('all_agent_deposit')->row();
-					$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+					$deposit = $topup_by_bill[$r->uid] ?? null;
+					$agent_deposit = $deposit ? ($agent_deposit_map[$deposit->agent_uid] ?? null) : null;
 				}
+				$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
 			} else if ($r->pay_methode == 2) {
 				$metode = "Cash";
 			} else if ($r->pay_methode == 3) {
@@ -3700,7 +3752,24 @@ class Outgoinghlp extends CI_Controller
 		$data['f_jurnal']     = $jurnal;
 		$data['f_search']     = $search;
 
+		$tick('loop baris');
+
 		$this->load->view('daftar_invoice', $data);
+
+		if ($debug_time) {
+			$tick('render view');
+			$html = "<div style='position:fixed;bottom:0;left:0;z-index:99999;background:#222;color:#0f0;font:12px monospace;padding:8px;max-height:50vh;overflow:auto'>";
+			foreach ($t_list as $t) {
+				$html .= htmlspecialchars($t[0]) . ': <b>' . $t[1] . " ms</b><br>";
+			}
+			$html .= 'TOTAL: <b>' . round((microtime(true) - $t0) * 1000, 1) . ' ms</b><br>';
+			$html .= '<hr>Query terakhir corebank:<br>';
+			foreach (array_slice($this->cb->queries, -12, 12, true) as $i => $q) {
+				$html .= '<b>' . round(($this->cb->query_times[$i] ?? 0) * 1000, 1) . ' ms</b> ' . htmlspecialchars(preg_replace('/\s+/', ' ', $q)) . '<br>';
+			}
+			$html .= '</div>';
+			$this->output->append_output($html);
+		}
 	}
 
 

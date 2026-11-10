@@ -705,11 +705,56 @@ class M_outgoing extends CI_Model
 		return $this->cb->count_all_results($this->table_invoice);
 	}
 
-	private function _base_query_invoice_page($agent = null, $pay = null, $jurnal = null, $search = null)
+	// =====================================================================
+	// DAFTAR INVOICE (versi TANPA JOIN ke out_list)
+	//
+	// out_billing.uid (INT) vs out_list.bill_uid (VARCHAR) beda tipe, sehingga
+	// "LEFT JOIN out_list o ON o.bill_uid = b.uid" tidak bisa pakai index
+	// dan makan ~17 detik. Di sini out_list diambil dengan query terpisah
+	// memakai WHERE bill_uid IN ('...') yang bisa pakai index.
+	// =====================================================================
+
+	/**
+	 * Cari dulu (query terpisah) uid billing yang cocok dengan filter yang
+	 * menyangkut out_list / users. Return:
+	 *   ['agent' => null|array uid, 'ol_search' => array uid, 'nip_search' => array nip]
+	 * PENTING: dipanggil SEBELUM query builder utama dimulai.
+	 */
+	private function _invoice_prefilter($agent, $search)
 	{
+		$pre = ['agent' => null, 'ol_search' => [], 'nip_search' => []];
+
 		if ($agent !== null && $agent !== '') {
-			$this->cb->where('o.agent_uid', $agent);
+			$res = $this->cb->distinct()->select('bill_uid')
+				->where('agent_uid', $agent)
+				->where('bill_uid IS NOT NULL', NULL, FALSE)
+				->get('out_list')->result();
+			$pre['agent'] = array_column($res, 'bill_uid');
 		}
+
+		if ($search !== null && $search !== '') {
+			$res = $this->cb->distinct()->select('bill_uid')
+				->where('bill_uid IS NOT NULL', NULL, FALSE)
+				->group_start()
+				->like('smu', $search)
+				->or_like('nama_agent', $search)
+				->or_like('nama_pengirim', $search)
+				->group_end()
+				->get('out_list')->result();
+			$pre['ol_search'] = array_column($res, 'bill_uid');
+
+			$res = $this->db->select('nip')->like('nama', $search)->get('users')->result();
+			$pre['nip_search'] = array_column($res, 'nip');
+		}
+
+		return $pre;
+	}
+
+	/**
+	 * Pasang WHERE ke query out_billing b (tanpa join apa pun).
+	 */
+	private function _invoice_apply_filter($pre, $pay, $jurnal, $search)
+	{
 		if ($pay !== null && $pay !== '') {
 			$this->cb->where('b.pay_status', $pay);
 		}
@@ -717,78 +762,147 @@ class M_outgoing extends CI_Model
 			$this->cb->where('b.jurnal_status', $jurnal);
 		}
 
-		if (!empty($search)) {
+		if ($pre['agent'] !== null) {
+			if (empty($pre['agent'])) {
+				$this->cb->where('1 = 0', NULL, FALSE); // agent tidak punya invoice
+			} else {
+				$this->cb->where_in('b.uid', $pre['agent']);
+			}
+		}
+
+		if ($search !== null && $search !== '') {
 			$this->cb->group_start()
 				->like('b.invoice_num', $search)
 				->or_like('b.no_invoice', $search)
-				->or_like('o.smu', $search)
-				->or_like('o.nama_agent', $search)
-				->or_like('o.nama_pengirim', $search)
 				->or_like('b.total_pieces', $search)
 				->or_like('b.total_chargeable', $search)
 				->or_like('b.total', $search)
 				->or_like('b.tanggal_invoice', $search)
-				->or_like('b.jaster', $search)
-				->or_like('u.nama', $search)
-				->group_end();
+				->or_like('b.jaster', $search);
+			if (!empty($pre['ol_search'])) {
+				$this->cb->or_where_in('b.uid', $pre['ol_search']);     // smu / agent / pengirim
+			}
+			if (!empty($pre['nip_search'])) {
+				$this->cb->or_where_in('b.user_kasir', $pre['nip_search']); // nama kasir
+			}
+			$this->cb->group_end();
 		}
 	}
 
 	/**
-	 * Ambil 1 halaman data saja (LIMIT/OFFSET), untuk ditampilkan di tabel.
-	 *
-	 * @param int $per_page  jumlah baris per halaman
-	 * @param int $offset    posisi awal (halaman ke-berapa dikali per_page)
+	 * Ambil 1 halaman invoice.
+	 * Pagination per INVOICE (out_billing). Kalau 1 invoice punya beberapa
+	 * baris out_list, tetap ditampilkan beberapa baris seperti sebelumnya.
 	 */
 	public function get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset)
 	{
-		$this->cb->select("
-        o.smu, o.pesawat, o.catg_smu, o.jaster as is_jaster, o.nama_agent as list_agent, o.nama_pengirim as list_pengirim, b.*, u.nama as nama_kasir,
-        IF(EXISTS(
-            SELECT 1 FROM all_topup t
-            WHERE t.billing_uid = b.uid
-            AND t.asal_table = 'out_billing'
-        ), 1, 0) AS has_topup,
-        IF(
-            b.pay_methode = 1
-            AND NOT EXISTS(
-                SELECT 1 FROM all_topup t
-                WHERE t.billing_uid = b.uid
-                AND t.asal_table = 'out_billing'
-            ),
-            1, 0
-        ) AS is_warning
-    ", FALSE)
-			->from('out_billing b')
-			->join('out_list o', 'o.bill_uid = b.uid', 'left')
-			->join($this->db->database . '.users u', 'u.nip = b.user_kasir', 'left');
+		$pre = $this->_invoice_prefilter($agent, $search);
 
-		$this->_base_query_invoice_page($agent, $pay, $jurnal, $search);
+		// 1) Kandidat invoice: kolom kecil saja, tanpa join -> cepat
+		$this->cb->select('b.uid, b.pay_methode, b.pay_status, b.jurnal_status', FALSE)
+			->from('out_billing b');
+		$this->_invoice_apply_filter($pre, $pay, $jurnal, $search);
+		$cand = $this->cb->get()->result();
+		if (empty($cand)) {
+			return [];
+		}
 
-		$this->cb->order_by('is_warning', 'DESC');
-		$this->cb->order_by('b.pay_status', 'ASC');
-		$this->cb->order_by('b.jurnal_status', 'ASC');
-		$this->cb->order_by('b.uid', 'DESC');
+		// 2) Billing yang sudah punya topup (1 query, tanpa join)
+		$tp = $this->cb->distinct()->select('billing_uid')
+			->where('asal_table', 'out_billing')
+			->get('all_topup')->result();
+		$topup_set = array_flip(array_map('strval', array_column($tp, 'billing_uid')));
 
-		$this->cb->limit($per_page, $offset);
+		// 3) Urutan sama seperti sebelumnya:
+		//    is_warning DESC, pay_status ASC, jurnal_status ASC, uid DESC
+		foreach ($cand as $c) {
+			$c->has_topup  = isset($topup_set[(string) $c->uid]) ? 1 : 0;
+			$c->is_warning = ($c->pay_methode == 1 && !$c->has_topup) ? 1 : 0;
+		}
+		usort($cand, function ($a, $b) {
+			return [$b->is_warning, (int) $a->pay_status, (int) $a->jurnal_status, (int) $b->uid]
+				<=> [$a->is_warning, (int) $b->pay_status, (int) $b->jurnal_status, (int) $a->uid];
+		});
 
-		return $this->cb->get()->result();
+		$page = array_slice($cand, (int) $offset, (int) $per_page);
+		if (empty($page)) {
+			return [];
+		}
+		$page_uids = array_map(function ($c) {
+			return (string) $c->uid;
+		}, $page);
+
+		// 4) Data lengkap hanya untuk invoice di halaman ini
+		$bills = [];
+		foreach ($this->cb->where_in('uid', $page_uids)->get('out_billing')->result() as $b) {
+			$bills[(string) $b->uid] = $b;
+		}
+
+		// out_list: WHERE bill_uid IN ('..') -> bisa pakai index (string vs varchar)
+		$lists = [];
+		$ol = $this->cb->select('uid, bill_uid, smu, pesawat, catg_smu, jaster, nama_agent, nama_pengirim')
+			->where_in('bill_uid', $page_uids)
+			->get('out_list')->result();
+		foreach ($ol as $o) {
+			$lists[(string) $o->bill_uid][] = $o;
+		}
+
+		// Nama kasir dari DB utama
+		$nips = array_values(array_unique(array_filter(array_map(function ($b) {
+			return $b->user_kasir;
+		}, $bills))));
+		$kasir_map = [];
+		if (!empty($nips)) {
+			foreach ($this->db->select('nip, nama')->where_in('nip', $nips)->get('users')->result() as $u) {
+				$kasir_map[$u->nip] = $u->nama;
+			}
+		}
+
+		// 5) Gabungkan, urutan kolom meniru SELECT lama:
+		//    o.smu, o.pesawat, ..., b.*, nama_kasir, has_topup, is_warning
+		$rows = [];
+		foreach ($page as $c) {
+			$uid = (string) $c->uid;
+			if (!isset($bills[$uid])) {
+				continue;
+			}
+			$b = $bills[$uid];
+			$ol_rows = $lists[$uid] ?? [null]; // tanpa out_list tetap tampil (seperti LEFT JOIN)
+
+			foreach ($ol_rows as $o) {
+				$row = [
+					'smu'           => $o->smu ?? null,
+					'pesawat'       => $o->pesawat ?? null,
+					'catg_smu'      => $o->catg_smu ?? null,
+					'is_jaster'     => $o->jaster ?? null,
+					'list_agent'    => $o->nama_agent ?? null,
+					'list_pengirim' => $o->nama_pengirim ?? null,
+				];
+				foreach ((array) $b as $k => $v) {
+					$row[$k] = $v; // b.* menimpa kolom bernama sama, seperti SQL lama
+				}
+				$row['nama_kasir'] = $kasir_map[$b->user_kasir] ?? null;
+				$row['has_topup']  = $c->has_topup;
+				$row['is_warning'] = $c->is_warning;
+
+				$rows[] = (object) $row;
+			}
+		}
+
+		return $rows;
 	}
 
 	/**
-	 * Hitung total baris (untuk hitung jumlah halaman).
-	 * Query RINGAN: tidak select b.*, tidak ada subquery EXISTS.
+	 * Total invoice (per out_billing) untuk hitung jumlah halaman. Tanpa join.
 	 */
 	public function count_invoice($agent, $pay, $jurnal, $search)
 	{
-		$this->cb->select('b.uid', FALSE)
-			->from('out_billing b')
-			->join('out_list o', 'o.bill_uid = b.uid', 'left')
-			->join($this->db->database . '.users u', 'u.nip = b.user_kasir', 'left');
+		$pre = $this->_invoice_prefilter($agent, $search);
 
-		$this->_base_query_invoice_page($agent, $pay, $jurnal, $search);
+		$this->cb->from('out_billing b');
+		$this->_invoice_apply_filter($pre, $pay, $jurnal, $search);
 
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results();
 	}
 
 

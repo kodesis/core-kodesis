@@ -156,6 +156,35 @@ class M_coa extends CI_Model
         return $this->cb->get('v_coa_all')->result();
     }
 
+    /**
+     * Ambil COA untuk beberapa prefix sekaligus (1 query ke v_coa_all),
+     * hasilnya dikelompokkan per prefix: ['12002' => [...], '210' => [...]].
+     */
+    public function getCoaByCodes(array $codes)
+    {
+        $grouped = array_fill_keys($codes, []);
+        if (empty($codes)) {
+            return $grouped;
+        }
+
+        $this->apply_cabang_filter();
+        $this->cb->group_start();
+        foreach ($codes as $code) {
+            $this->cb->or_like('no_sbb', $code, 'after');
+        }
+        $this->cb->group_end();
+
+        foreach ($this->cb->get('v_coa_all')->result() as $row) {
+            foreach ($codes as $code) {
+                if (strpos((string) $row->no_sbb, (string) $code) === 0) {
+                    $grouped[$code][] = $row;
+                }
+            }
+        }
+
+        return $grouped;
+    }
+
     public function simpanLaporan($data)
     {
         return $this->cb->insert('t_log_neraca', $data);

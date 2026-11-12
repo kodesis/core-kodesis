@@ -4469,6 +4469,7 @@ class Outgoinghlp extends CI_Controller
 
 		$signdate   = time();
 		$post_date1 = date('Ymd', $signdate);
+		$post_date_jurnal = date('Y-m-d', $signdate);
 		$post_date2 = date('His', $signdate);
 		$post_dates = $post_date1 . $post_date2;
 
@@ -4500,6 +4501,8 @@ class Outgoinghlp extends CI_Controller
 			$ket_bank = '';
 
 			$is_bank = false;
+
+			$tanggal_jurnal = $billing->tanggal_invoice;
 
 			if ($pay_methode == '1') {
 				$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
@@ -4538,6 +4541,7 @@ class Outgoinghlp extends CI_Controller
 					$this->cb->insert('all_topup', $data_topup);
 				}
 
+				$tanggal_jurnal = $post_date_jurnal;
 
 				$saldo_row = $this->cb
 					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
@@ -4593,7 +4597,7 @@ class Outgoinghlp extends CI_Controller
 				// $j1_coa_kredit = "23014";
 				// $j1_coa_debit = $coa_utility['nomor_coa_utang_pph23'];
 				$j1_coa_debit = '99002';
-				$this->posting($coa_debit, $coa_kredit, $keterangan, $billing->total_pph, $billing->tanggal_invoice);
+				$this->posting($coa_debit, $coa_kredit, $keterangan, $billing->total_pph, $tanggal_jurnal);
 
 				$total = $billing->total_setelah_pph;
 			}
@@ -4609,7 +4613,7 @@ class Outgoinghlp extends CI_Controller
 			// $total = $total_nonpph;
 			$nominal = $this->convertToNumberWithComma($total);
 
-			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $billing->tanggal_invoice, '');
+			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal_jurnal, '');
 
 			$update_data = [
 				'jurnal_status'       => '1',

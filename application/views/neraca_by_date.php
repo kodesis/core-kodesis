@@ -79,6 +79,12 @@
             text-align: left;
             vertical-align: middle;
         }
+
+        @media (max-width: 1293px) {
+            .buku_besar {
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -261,7 +267,7 @@
                                                 <button type="submit" name="button_sbm" class="btn btn-primary btn-sm" value="lihat">Lihat</button>
                                                 <!-- <button type="submit" name="button_sbm" class="btn btn-success btn-sm" value="excel"><i class='fa fa-file'></i> Excel</button> -->
                                                 <button type="submit" name="button_sbm" class="btn btn-danger btn-sm" value="pdf"><i class='fa fa-file'></i> PDF</button>
-                                                <button type="submit" name="button_sbm" class="btn btn-info btn-sm" value="buku_besar"><i class='fa fa-file'></i> Buku besar</button>
+                                                <button type="submit" name="button_sbm" class="btn btn-info btn-sm buku_besar" value="buku_besar"><i class='fa fa-file'></i> Buku besar</button>
                                             </div>
                                         </div>
                                     </form>

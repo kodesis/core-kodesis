@@ -481,6 +481,9 @@ $bulan_nama = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', '
 
     <script>
         $(document).ready(function() {
+            // Label jenis barang dari tabel all_ref (grup jns_barang)
+            var JNS_BARANG = <?= json_encode($this->M_warehouse_ref->list_ref('jns_barang')) ?>;
+
             var URL_REKAP = "<?= base_url('incominghlp/getRekap_tonase') ?>";
             var URL_DETAIL = "<?= base_url('incominghlp/getDetail_tonase') ?>";
             var URL_EXPORT = "<?= base_url('incominghlp/export_rekap_tonase') ?>";
@@ -713,7 +716,7 @@ $bulan_nama = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', '
 
                         html += '<tr>' +
                             '<td>' + (i + 1) + '</td>' +
-                            '<td>' + (r.jns_barang == '2' ? 'Partial' : 'Langsung') + '</td>' +
+                            '<td>' + (JNS_BARANG[String(r.jns_barang)] || JNS_BARANG['1'] || '') + '</td>' +
                             '<td>' + colorBadge(r.smu, r.pesawat) + '</td>' +
                             '<td>' + labelTanggal(r.in_date) + '</td>' +
                             '<td>' + labelTglTerbang(r.tanggal_terbang) + '</td>' +

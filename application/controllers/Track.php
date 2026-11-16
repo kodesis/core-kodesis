@@ -25,6 +25,7 @@ class Track extends CI_Controller
     {
         parent::__construct();
         $this->cb = $this->load->database('corebank', TRUE);
+        $this->load->model('M_warehouse_ref');
         // $this->load->helper('terbilang');
     }
 
@@ -45,7 +46,7 @@ class Track extends CI_Controller
                     'shipper'     => $this->kol($row, 'nama_agent'),
                     'consignee'   => $this->kol($row, 'nama_penerima'),
                     // 'origin'      => $this->kol($row, 'asal'),
-                    'origin'      => 'HLP',
+                    'origin'      => $this->M_warehouse_ref->origin(),
                     'destination' => $this->kol($row, 'tujuan'),
                     'origin_kota' => $this->kol($row, 'origin_kota', ''),
                     'dest_kota'   => $this->kol($row, 'dest_kota', ''),

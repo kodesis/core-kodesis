@@ -313,8 +313,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Jenis Barang</label>
                                         <select class="form-control" name="jns_barang" required>
-                                            <option value="1">Langsung (Direct)</option>
-                                            <option value="2">Sebagian (Partial)</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('jns_barang', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -323,9 +322,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Kategori SMU</label>
                                         <select class="form-control" name="catg_smu" required>
-                                            <option value="1">Langsung (Direct)</option>
-                                            <option value="2">Angkut Lanjut (Transhipment)</option>
-                                            <option value="3">Terminal Change (w/o Invoice)</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('catg_smu', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -609,8 +606,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Jenis Barang</label>
                                         <select class="form-control" name="jns_barang" id="d_jns_barang" required>
-                                            <option value="1">Langsung (Direct)</option>
-                                            <option value="2">Sebagian (Partial)</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('jns_barang', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -619,9 +615,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Kategori SMU</label>
                                         <select class="form-control" name="catg_smu" id="d_catg_smu" required>
-                                            <option value="1">Langsung (Direct)</option>
-                                            <option value="2">Angkut Lanjut (Transhipment)</option>
-                                            <option value="3">Terminal Change (w/o Invoice)</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('catg_smu', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -990,6 +984,17 @@
     <!-- DataTables JS -->
     <script src="<?= base_url(); ?>src/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="<?= base_url(); ?>src/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        // Pembagi volume per maskapai dari tabel out_pesawat (kolom pembagi).
+        // Maskapai yang belum diatur memakai setting pembagi_default.
+        var PEMBAGI_PESAWAT = <?= json_encode((object) $this->M_warehouse_ref->pembagi_list('out_pesawat')) ?>;
+        var PEMBAGI_DEFAULT = <?= json_encode($this->M_warehouse_ref->pembagi_default()) ?>;
+
+        function pembagiPesawat(nama) {
+            var key = String(nama || '').trim().toUpperCase();
+            return parseFloat(PEMBAGI_PESAWAT[key]) || PEMBAGI_DEFAULT;
+        }
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -1255,7 +1260,7 @@
 
                     // Tambahkan detail pembagi pesawat
                     var pesawatVal = $(this).val();
-                    var pembagi = pesawatVal == 'BATIK' ? 5000 : 6000;
+                    var pembagi = pembagiPesawat(pesawatVal);
                     $('#d_pembagi_label').text('(Pembagi ' + pembagi + ')');
 
                     // Hitung ulang semua baris dimensi yang ada di edit modal
@@ -1423,7 +1428,7 @@
 
                 // Detail pembagi label
                 var pesawatVal = $('#d_pesawat').val();
-                var pembagi = pesawatVal == 'BATIK' ? 5000 : 6000;
+                var pembagi = pembagiPesawat(pesawatVal);
                 if (pesawatVal) {
                     $('#d_pembagi_label').text('(Pembagi ' + pembagi + ')');
                 }
@@ -1482,7 +1487,7 @@
                 var lebar = parseFloat($('.dim-lebar[data-uid="' + uid + '"]').val()) || 0;
                 var tinggi = parseFloat($('.dim-tinggi[data-uid="' + uid + '"]').val()) || 0;
                 var pieces = parseFloat($('.dim-pieces[data-uid="' + uid + '"]').val()) || 1;
-                var pembagi = pesawat == 'BATIK' ? 5000 : 6000;
+                var pembagi = pembagiPesawat(pesawat);
 
                 if (panjang > 0 && lebar > 0 && tinggi > 0) {
                     var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
@@ -1592,7 +1597,7 @@
                 var lebar = $('.dim-lebar[data-uid="' + uid + '"]').val();
                 var tinggi = $('.dim-tinggi[data-uid="' + uid + '"]').val();
                 var pieces = $('.dim-pieces[data-uid="' + uid + '"]').val();
-                var pembagi = pesawat == 'BATIK' ? 5000 : 6000;
+                var pembagi = pembagiPesawat(pesawat);
                 var volume = (panjang * lebar * tinggi) / pembagi;
                 var total_volume = volume * pieces;
                 var dimensi = panjang + 'x' + lebar + 'x' + tinggi;
@@ -1730,7 +1735,7 @@
 
                     // Tampilkan pembagi dinamis
                     var pesawatVal = $(this).val();
-                    var pembagi = pesawatVal == 'BATIK' ? 5000 : 6000;
+                    var pembagi = pembagiPesawat(pesawatVal);
                     $('#t_pembagi_label').text('(Pembagi ' + pembagi + ')');
 
                     // Recalculate local rows
@@ -1960,7 +1965,7 @@
                 var lebar = parseFloat(row.find('.t-dim-lebar').val()) || 0;
                 var tinggi = parseFloat(row.find('.t-dim-tinggi').val()) || 0;
                 var pieces = parseFloat(row.find('.t-dim-pieces').val()) || 1;
-                var pembagi = pesawat == 'BATIK' ? 5000 : 6000;
+                var pembagi = pembagiPesawat(pesawat);
 
                 console.log('Calculating Row Dimension...');
 

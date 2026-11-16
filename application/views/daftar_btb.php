@@ -401,8 +401,7 @@
                                         <label class="form-label">Status Keamanan</label>
                                         <select name="status_keamanan" class="form-control">
                                             <option value='0'>Pilih Status</option>
-                                            <option value='1'>Passenger Aircraft (SPX)</option>
-                                            <option value='2'>Cargo Aircraft Only (SCO)</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('status_keamanan', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -412,9 +411,7 @@
                                         <label class="form-label">Metode Pemeriksaan</label>
                                         <select name="methode_pemeriksaan" class="form-control">
                                             <option value='0'>Pilih Metode</option>
-                                            <option value='1'>XRAY LINE 1</option>
-                                            <option value='2'>XRAY LINE 2</option>
-                                            <option value='3'>ETD</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('metode_periksa', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -424,8 +421,7 @@
                                         <label class="form-label">Metode Pemeriksaan Opsional</label>
                                         <select name="methode_pemeriksaan_opsional" class="form-control">
                                             <option value='0'>Pilih Metode</option>
-                                            <option value='1'>PERIKSA FISIK</option>
-                                            <option value='2'>ETD</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('metode_opsional', true)) ?>
                                         </select>
                                     </div>
                                 </div>

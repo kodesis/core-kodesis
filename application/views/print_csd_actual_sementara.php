@@ -130,7 +130,7 @@
                                                         </tr>
                                                     </table>
                                                 </td>
-                                                <td><b>HLP</b></td>
+                                                <td><b><?= html_escape($this->M_warehouse_ref->origin()) ?></b></td>
                                             </tr>
                                         </table>
                                     </td>

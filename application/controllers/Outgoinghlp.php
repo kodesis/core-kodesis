@@ -22,6 +22,33 @@ class Outgoinghlp extends CI_Controller
 		if (strpos($a, '90') === false) {
 			redirect('home');
 		}
+
+		// Referensi & setting (tarif, COA, label kode, origin/prefix) dari database
+		$this->load->model('M_warehouse_ref');
+		$this->ref = $this->M_warehouse_ref;
+	}
+
+	/** Gabungan getCoaByCode() untuk daftar kode di all_setting (dipisah koma) */
+	private function coa_by_setting($kunci, $default = '')
+	{
+		$hasil = [];
+		foreach ($this->ref->setting_list($kunci, $default) as $kode) {
+			$hasil = array_merge($hasil, $this->m_coa->getCoaByCode($kode));
+		}
+		return $hasil;
+	}
+
+	/**
+	 * Nomor invoice reguler: <out_prefix_sj><nomor>, contoh HLP.OUT-JASTER-000123.
+	 * Bila out_prefix_sj belum diisi, memakai format lama <origin>.OUT-JASTER-.
+	 */
+	private function format_no_invoice($invoice_num)
+	{
+		$prefix = trim((string) $this->ref->setting('out_prefix_sj', ''));
+		if ($prefix === '') {
+			$prefix = $this->ref->origin() . '.OUT-JASTER-';
+		}
+		return $prefix . $invoice_num;
 	}
 
 	function convertToNumberWithComma($formattedNumber)
@@ -297,29 +324,9 @@ class Outgoinghlp extends CI_Controller
                 ";
 			}
 
-			if ($r->status_keamanan == '1') {
-				$status_keamanan = "Passenger Aircraft (SPX)";
-			} else if ($r->status_keamanan == '0') {
-				$status_keamanan = "Cargo Aircraft Only (SCO)";
-			} else {
-				$status_keamanan = "-";
-			}
-
-			if ($r->methode_pemeriksaan == '1') {
-				$methode_pemeriksaan = "X-Ray";
-			} else if ($r->methode_pemeriksaan == '2') {
-				$methode_pemeriksaan = "Physical Check";
-			} else if ($r->methode_pemeriksaan == '3') {
-				$methode_pemeriksaan = "X-Ray & Physical Check";
-			} else {
-				$methode_pemeriksaan = "-";
-			}
-
-			if ($r->alasan == '1') {
-				$alasan_text = "CLEAR";
-			} else {
-				$alasan_text = "HOLD";
-			}
+			$status_keamanan     = $this->ref->label('status_keamanan', $r->status_keamanan);
+			$methode_pemeriksaan = $this->ref->label('metode_periksa', $r->methode_pemeriksaan);
+			$alasan_text         = $this->ref->label('alasan', $r->alasan, 'HOLD');
 
 			$data[] = [
 				$r->csd_num ?? '-',
@@ -469,7 +476,7 @@ class Outgoinghlp extends CI_Controller
 		if (empty($csd_uid)) {
 			// INSERT Baru
 			$data_csd['smu_uid'] = $smu_uid;
-			$data_csd['branch_code'] = 'CORP_03';
+			$data_csd['branch_code'] = $this->ref->setting('branch_code_csd', 'CORP_03');
 
 			// Menghitung penomoran CSD otomatis
 			$signdate = time();
@@ -480,7 +487,7 @@ class Outgoinghlp extends CI_Controller
 			$next_no = sprintf("%06d", intval($max_no) + 1);
 
 			$data_csd['no'] = $next_no;
-			$data_csd['no_csd'] = "BDT.CSD." . $my . $next_no;
+			$data_csd['no_csd'] = $this->ref->setting('prefix_csd', 'BDT.CSD.') . $my . $next_no;
 			$data_csd['csd_num'] = $next_no;
 
 			$process = $this->cb->insert('ra_csd', $data_csd);
@@ -575,35 +582,10 @@ class Outgoinghlp extends CI_Controller
 			$pesawat = $row->no_pesawat_list;
 		}
 
-		// Logika metode pemeriksaan utama
-		$xray = '';
-		if ($row->methode_pemeriksaan == '1') {
-			$xray = 'XRAY LINE 1';
-		} else if ($row->methode_pemeriksaan == '2') {
-			$xray = 'XRAY LINE 2';
-		} else {
-			$xray = 'ETD';
-		}
-
-		// Logika metode pemeriksaan opsional / tambahan
-		$metode = '';
-		if ($row->methode_pemeriksaan_opsional == '1') {
-			$metode = 'PERIKSA FISIK';
-		} else if ($row->methode_pemeriksaan_opsional == '2') {
-			$metode = 'ETD';
-		} else {
-			$metode = '-';
-		}
-
-		// Logika status alasan diterbitkan
-		$alasan = '';
-		if ($row->alasan == '1') {
-			$alasan = 'CLEAR';
-		} else if ($row->alasan == '2') {
-			$alasan = 'REJECT';
-		} else {
-			$alasan = 'CLEAR';
-		}
+		// Label metode & alasan dari tabel all_ref
+		$xray   = $this->ref->label('metode_periksa', $row->methode_pemeriksaan, 'ETD');
+		$metode = $this->ref->label('metode_opsional', $row->methode_pemeriksaan_opsional, '-');
+		$alasan = $this->ref->label('alasan', $row->alasan, 'CLEAR');
 
 		// Penanganan penanggalan
 		// $tgl_csd_raw = $row->tgl_csd ?: date('Y-m-d');
@@ -685,35 +667,10 @@ class Outgoinghlp extends CI_Controller
 			$pesawat = $row->no_pesawat_list;
 		}
 
-		// Logika metode pemeriksaan utama
-		$xray = '';
-		if ($row->methode_pemeriksaan == '1') {
-			$xray = 'XRAY LINE 1';
-		} else if ($row->methode_pemeriksaan == '2') {
-			$xray = 'XRAY LINE 2';
-		} else {
-			$xray = 'ETD';
-		}
-
-		// Logika metode pemeriksaan opsional / tambahan
-		$metode = '';
-		if ($row->methode_pemeriksaan_opsional == '1') {
-			$metode = 'PERIKSA FISIK';
-		} else if ($row->methode_pemeriksaan_opsional == '2') {
-			$metode = 'ETD';
-		} else {
-			$metode = '-';
-		}
-
-		// Logika status alasan diterbitkan
-		$alasan = '';
-		if ($row->alasan == '1') {
-			$alasan = 'CLEAR';
-		} else if ($row->alasan == '2') {
-			$alasan = 'REJECT';
-		} else {
-			$alasan = 'CLEAR';
-		}
+		// Label metode & alasan dari tabel all_ref
+		$xray   = $this->ref->label('metode_periksa', $row->methode_pemeriksaan, 'ETD');
+		$metode = $this->ref->label('metode_opsional', $row->methode_pemeriksaan_opsional, '-');
+		$alasan = $this->ref->label('alasan', $row->alasan, 'CLEAR');
 
 		// Penanganan penanggalan
 		// Penanganan penanggalan
@@ -797,35 +754,10 @@ class Outgoinghlp extends CI_Controller
 			$pesawat = $row->no_pesawat_list;
 		}
 
-		// Logika metode pemeriksaan utama
-		$xray = '';
-		if ($row->methode_pemeriksaan == '1') {
-			$xray = 'XRAY LINE 1';
-		} else if ($row->methode_pemeriksaan == '2') {
-			$xray = 'XRAY LINE 2';
-		} else {
-			$xray = 'ETD';
-		}
-
-		// Logika metode pemeriksaan opsional / tambahan
-		$metode = '';
-		if ($row->methode_pemeriksaan_opsional == '1') {
-			$metode = 'PERIKSA FISIK';
-		} else if ($row->methode_pemeriksaan_opsional == '2') {
-			$metode = 'ETD';
-		} else {
-			$metode = '-';
-		}
-
-		// Logika status alasan diterbitkan
-		$alasan = '';
-		if ($row->alasan == '1') {
-			$alasan = 'CLEAR';
-		} else if ($row->alasan == '2') {
-			$alasan = 'REJECT';
-		} else {
-			$alasan = 'CLEAR';
-		}
+		// Label metode & alasan dari tabel all_ref
+		$xray   = $this->ref->label('metode_periksa', $row->methode_pemeriksaan, 'ETD');
+		$metode = $this->ref->label('metode_opsional', $row->methode_pemeriksaan_opsional, '-');
+		$alasan = $this->ref->label('alasan', $row->alasan, 'CLEAR');
 
 		// Penanganan penanggalan
 		$wday1 = substr($row->post_date, 0, 4);
@@ -988,7 +920,7 @@ class Outgoinghlp extends CI_Controller
 
 		$this->cb->select('*');
 		$this->cb->from('all_agent_deposit');
-		$this->cb->where('uid', '4');
+		$this->cb->where('uid', $this->ref->setting('agent_deposit_khusus', '4'));
 
 		if ($search) {
 			$this->cb->like('nama', $search);
@@ -1092,7 +1024,7 @@ class Outgoinghlp extends CI_Controller
 			}
 
 			$my = date("my", strtotime($post_dates));
-			$new_no_csd = "BDT.CSD.01.$my$no";
+			$new_no_csd = $this->ref->setting('prefix_csd_lama', 'BDT.CSD.01.') . $my . $no;
 
 			$data['no_csd']  = $new_no_csd;
 			$data['tgl_csd'] = $tgl_csd;
@@ -1154,22 +1086,10 @@ class Outgoinghlp extends CI_Controller
 
 		if (!$row) show_error('Data tidak ditemukan.', 404);
 
-		// Logika metode pemeriksaan
-		$xray = '';
-		if ($row->methode_pemeriksaan == '1')      $xray = 'XRAY LINE 1';
-		else if ($row->methode_pemeriksaan == '2') $xray = 'XRAY LINE 2';
-		else                                        $xray = 'ETD';
-
-		// Logika metode opsional
-		$metode = '';
-		if ($row->methode_pemeriksaan_opsional == '1')      $metode = 'PERIKSA FISIK';
-		else if ($row->methode_pemeriksaan_opsional == '2') $metode = 'ETD';
-
-		// Logika alasan
-		$alasan = '';
-		if ($row->alasan == '1')      $alasan = 'CLEAR';
-		else if ($row->alasan == '2') $alasan = 'REJECT';
-		else $alasan = 'CLEAR';
+		// Label metode & alasan dari tabel all_ref
+		$xray   = $this->ref->label('metode_periksa', $row->methode_pemeriksaan, 'ETD');
+		$metode = $this->ref->label('metode_opsional', $row->methode_pemeriksaan_opsional, '');
+		$alasan = $this->ref->label('alasan', $row->alasan, 'CLEAR');
 
 		// Tanggal
 		$tgl_cetak = date('d/m/Y', strtotime($row->post_date));
@@ -1561,7 +1481,7 @@ class Outgoinghlp extends CI_Controller
 
 		// Proses Download File Excel
 		require APPPATH . 'third_party/autoload_zip.php';
-		$filename = 'rekap_daftar_reject_HLP_' . $dari . '_to_' . $sampai . '.xlsx';
+		$filename = 'rekap_daftar_reject_' . $dari . '_to_' . $sampai . '.xlsx';
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -1815,10 +1735,10 @@ class Outgoinghlp extends CI_Controller
 
 		if ($no_inv > 0) {
 			$noinv         = sprintf("%06d", $no_inv + 1);
-			$no_submission = "BDT." . $noinv . "/" . $date_no;
+			$no_submission = $this->ref->setting('prefix_do', 'BDT.') . $noinv . "/" . $date_no;
 		} else {
 			$noinv         = "000001";
-			$no_submission = "BDT.000001/" . $date_no;
+			$no_submission = $this->ref->setting('prefix_do', 'BDT.') . "000001/" . $date_no;
 		}
 
 		// Ambil no_pol dari truck
@@ -2036,12 +1956,7 @@ class Outgoinghlp extends CI_Controller
 		if (!$header) show_error('Data tidak ditemukan.', 404);
 
 		// Warehouse name
-		$wh_map = [
-			'bdl'    => 'BANGUN DESA TEKNOLOGI',
-			'ardhya' => 'ARDHYA BUMI PERSADA',
-			'jas'    => 'JASA ANGKASA SEMESTA',
-		];
-		$wh = $wh_map[$header->wh_name] ?? $header->wh_name;
+		$wh = $this->ref->label('warehouse', $header->wh_name, $header->wh_name);
 
 		// Format tanggal & jam dari post_date (YmdHis)
 		$post_date = $header->post_date;
@@ -2180,15 +2095,7 @@ class Outgoinghlp extends CI_Controller
 		$no = 0;
 		foreach ($results as $r) {
 
-			if ($r->catg_smu == '1') {
-				$i_catg_k = "Langsung";
-			} else if ($r->catg_smu == '2') {
-				$i_catg_k = "Transhipment";
-			} else if ($r->catg_smu == '3') {
-				$i_catg_k = "Terminal change(w/o inv)";
-			} else {
-				$i_catg_k = "Belum Dipilih";
-			}
+			$i_catg_k = $this->ref->label('catg_smu', $r->catg_smu, 'Belum Dipilih');
 
 			if ($r->jaster == '1') {
 				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
@@ -2883,7 +2790,7 @@ class Outgoinghlp extends CI_Controller
 
 		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 		$sheet       = $spreadsheet->getActiveSheet();
-		$sheet->setTitle('Rekap Tonase SMU Outgoing HLP');
+		$sheet->setTitle('Rekap Tonase SMU Outgoing');
 
 		// Header
 		$headers = [
@@ -2932,7 +2839,7 @@ class Outgoinghlp extends CI_Controller
 			$no_btb = '';
 			if (!empty($r['btb_uid'])) {
 				$btb = $this->cb->select('no')->where('uid', $r['btb_uid'])->get('out_list_btb')->row();
-				$no_btb = $btb ? 'HLPO-' . $btb->no : '';
+				$no_btb = $btb ? $this->ref->prefix() . '-' . $btb->no : '';
 			}
 
 			// Nama agent
@@ -2957,14 +2864,7 @@ class Outgoinghlp extends CI_Controller
 			}
 
 			// Kategori SMU
-			$catg_map = [
-				'1' => 'Langsung(CGU)',
-				'2' => 'Transhipment',
-				'3' => 'Terminal Change w/o Inv',
-				'4' => 'Via RA LJA',
-				'5' => 'Langsung(AAP)',
-			];
-			$catg_smu_txt = $catg_map[$r['catg_smu']] ?? '';
+			$catg_smu_txt = $this->ref->label('catg_smu', $r['catg_smu'], '');
 
 			// Format tanggal masuk
 			$tgl_masuk = $r['in_date'] ? date('j F Y', strtotime($r['in_date'])) : '';
@@ -3035,7 +2935,7 @@ class Outgoinghlp extends CI_Controller
 
 		// Download
 		require APPPATH . 'third_party/autoload_zip.php';
-		$filename = 'rekap_kemasan_outgoing_HLP_' . date('d-m-Y') . '.xlsx';
+		$filename = 'rekap_kemasan_outgoing_' . date('d-m-Y') . '.xlsx';
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -3322,7 +3222,7 @@ class Outgoinghlp extends CI_Controller
 		} else {
 			$no = "000001";
 		}
-		$new_no_invoice = "HLP.OUT-JASTER" . "-" . "$no";
+		$new_no_invoice = $this->format_no_invoice($no);
 
 		// if ($no_inv > 0) {
 		// 	$noinv   = sprintf("%06d", $no_inv + 1);
@@ -3341,14 +3241,9 @@ class Outgoinghlp extends CI_Controller
 
 		// Ambil kategori billing
 
-		$catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra');
-		$this->cb->where('hold !=', '1');
-		// if ($smu->pesawat == "CITILINK") {
-		// 	$this->cb->where('uid', '');
-		// } else {
-		// 	$this->cb->where_not('uid !=', '');
-		// }
-		$this->cb->get('out_bill_catg')->row();
+		$catg = $this->cb->select('uid, csc, kade, sewa_gudang, jasa_ra')
+			->where('hold !=', '1')
+			->get('out_bill_catg')->row();
 
 		if (!$catg) {
 			$this->session->set_flashdata('message_error', 'Kategori billing tidak ditemukan.');
@@ -3500,16 +3395,6 @@ class Outgoinghlp extends CI_Controller
 
 	public function daftar_invoice()
 	{
-		// Debug waktu: buka outgoinghlp/daftar_invoice?debug_time=1
-		$debug_time = $this->input->get('debug_time') == '1';
-		$t_list = [];
-		$t0 = $t_last = microtime(true);
-		$tick = function ($label) use (&$t_list, &$t_last) {
-			$now = microtime(true);
-			$t_list[] = [$label, round(($now - $t_last) * 1000, 1)];
-			$t_last = $now;
-		};
-
 		$nip = $this->session->userdata('nip');
 		$sql = "SELECT COUNT(Id) FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%');";
 		$query = $this->db->query($sql);
@@ -3525,25 +3410,12 @@ class Outgoinghlp extends CI_Controller
 		$data['count_inbox2'] = $result2;
 
 		$data['title'] = "Daftar Invoice";
-		$tick('memo + task (count inbox)');
 
-		// Ambil data COA (1 query ke v_coa_all, bukan 5)
-		$coa = $this->m_coa->getCoaByCodes(['12002', '12001', '210', '41002', '13010']);
-		$coa_12002 = $coa['12002'];
-		$coa_12001 = $coa['12001'];
-		$merged_coa_debit_depo = array_merge($coa_12002, $coa_12001);
-		$coa_debit_depo = $coa['210'];
-		$coa_debit_transfer = $merged_coa_debit_depo;
-
-		$coa_41002 = $coa['41002'];
-		$coa_13010 = $coa['13010'];
-		$merged_coa_kredit_transfer = array_merge($coa_41002, $coa_13010);
-
-		$data['coa_1'] = $coa_debit_depo;
-		$data['coa_2'] = $coa_41002;
-		$data['coa_3'] = $coa_debit_transfer;
-		$data['coa_4'] = $merged_coa_kredit_transfer;
-		$tick('COA (v_coa_all)');
+		// Ambil data COA (daftar kode dari all_setting)
+		$data['coa_1'] = $this->coa_by_setting('coa_list_debit_depo', '210');
+		$data['coa_2'] = $this->coa_by_setting('coa_list_kredit_depo', '41002');
+		$data['coa_3'] = $this->coa_by_setting('coa_list_debit_transfer', '12002,12001');
+		$data['coa_4'] = $this->coa_by_setting('coa_list_kredit_transfer', '41002,13010');
 
 		// ============================================
 		// Filter & search dari GET (form submit biasa, reload halaman)
@@ -3563,7 +3435,6 @@ class Outgoinghlp extends CI_Controller
 			$f_agent_nama = $agent_row->nama ?? null;
 		}
 		$data['f_agent_nama'] = $f_agent_nama;
-		$tick('nama agent filter');
 
 		// ============================================
 		// Pagination server-side
@@ -3576,7 +3447,6 @@ class Outgoinghlp extends CI_Controller
 		$offset = ($page - 1) * $per_page;
 
 		$total_rows  = $this->M_outgoing->count_invoice($agent, $pay, $jurnal, $search);
-		$tick('count_invoice');
 		$total_pages = (int) ceil($total_rows / $per_page);
 		if ($total_pages < 1) {
 			$total_pages = 1;
@@ -3588,7 +3458,6 @@ class Outgoinghlp extends CI_Controller
 		}
 
 		$results = $this->M_outgoing->get_page_invoice($agent, $pay, $jurnal, $search, $per_page, $offset);
-		$tick('get_page_invoice');
 
 		// Lookup out_pesawat sekali saja (hindari N+1 query)
 		$pesawat_rows = $this->cb->get('out_pesawat')->result();
@@ -3596,43 +3465,6 @@ class Outgoinghlp extends CI_Controller
 		foreach ($pesawat_rows as $p) {
 			$pesawat_map[$p->nama] = $p->warna ?? null;
 		}
-
-		// Prefetch data deposit untuk 1 halaman sekaligus (hindari N+1 query di loop)
-		$topup_by_bill    = [];
-		$agent_deposit_map = [];
-		$deposit_uids     = [];
-		$bill_no_deposit  = [];
-		foreach ($results as $r) {
-			if ($r->pay_methode == 1) {
-				if ($r->agent_deposit_uid) {
-					$deposit_uids[] = $r->agent_deposit_uid;
-				} else {
-					$bill_no_deposit[] = $r->uid;
-				}
-			}
-		}
-		if (!empty($bill_no_deposit)) {
-			$topups = $this->cb->select('billing_uid, agent_uid')
-				->where_in('billing_uid', array_values(array_unique($bill_no_deposit)))
-				->where('asal_table', 'out_billing')
-				->get('all_topup')->result();
-			foreach ($topups as $t) {
-				// sama seperti ->row() sebelumnya: pakai baris pertama
-				if (!isset($topup_by_bill[$t->billing_uid])) {
-					$topup_by_bill[$t->billing_uid] = $t;
-					$deposit_uids[] = $t->agent_uid;
-				}
-			}
-		}
-		$deposit_uids = array_values(array_unique(array_filter($deposit_uids)));
-		if (!empty($deposit_uids)) {
-			$agents = $this->cb->where_in('uid', $deposit_uids)->get('all_agent_deposit')->result();
-			foreach ($agents as $a) {
-				$agent_deposit_map[$a->uid] = $a;
-			}
-		}
-
-		$tick('out_pesawat + prefetch deposit');
 
 		$rows = [];
 		foreach ($results as $r) {
@@ -3650,17 +3482,7 @@ class Outgoinghlp extends CI_Controller
 				$tanggal_txt = "";
 			}
 
-			if ($r->catg_smu == '1') {
-				$l_catg_k = "Langsung(Direct)";
-			} else if ($r->catg_smu == '2') {
-				$l_catg_k = "Transhipment";
-			} else if ($r->catg_smu == '3') {
-				$l_catg_k = "Terminal change(w/o inv)";
-			} else if ($r->catg_smu == '4') {
-				$l_catg_k = "Direct from RA";
-			} else {
-				$l_catg_k = '';
-			}
+			$l_catg_k = $this->ref->label('catg_smu', $r->catg_smu, '');
 
 			if ($r->is_jaster == '1') {
 				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
@@ -3702,24 +3524,17 @@ class Outgoinghlp extends CI_Controller
 				$nominal = "<span class='btn btn-sm' style='color:white; background-color:green;'>$nominal</span><span style='color:green;'>Terbayar &#128513;<span>";
 			}
 
+			$metode = $this->ref->pay_label($r->pay_methode, '-');
 			if ($r->pay_methode == 1) {
-				if ($r->agent_deposit_uid) {
-					$agent_deposit = $agent_deposit_map[$r->agent_deposit_uid] ?? null;
-				} else {
-					$deposit = $topup_by_bill[$r->uid] ?? null;
-					$agent_deposit = $deposit ? ($agent_deposit_map[$deposit->agent_uid] ?? null) : null;
+				$agent_deposit_uid = $r->agent_deposit_uid;
+				if (!$agent_deposit_uid) {
+					$deposit = $this->cb->where('billing_uid', $r->uid)->where('asal_table', 'out_billing')->get('all_topup')->row();
+					$agent_deposit_uid = $deposit->agent_uid ?? null;
 				}
-				$metode = "Deposit, Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
-			} else if ($r->pay_methode == 2) {
-				$metode = "Cash";
-			} else if ($r->pay_methode == 3) {
-				$metode = "Transfer, Bank : " . $r->bank_tujuan;
-			} else if ($r->pay_methode == 4) {
-				$metode = "Tagihan, Bank : " . $r->bank_tujuan;
-			} else if ($r->pay_methode == 6) {
-				$metode = "Qris";
-			} else {
-				$metode = "-";
+				$agent_deposit = $agent_deposit_uid ? $this->cb->where('uid', $agent_deposit_uid)->get('all_agent_deposit')->row() : null;
+				$metode .= ", Agent : " . ($agent_deposit ? $agent_deposit->nama : '-');
+			} else if ($r->bank_tujuan) {
+				$metode .= ", Bank : " . $r->bank_tujuan;
 			}
 
 			$rows[] = [
@@ -3752,24 +3567,7 @@ class Outgoinghlp extends CI_Controller
 		$data['f_jurnal']     = $jurnal;
 		$data['f_search']     = $search;
 
-		$tick('loop baris');
-
 		$this->load->view('daftar_invoice', $data);
-
-		if ($debug_time) {
-			$tick('render view');
-			$html = "<div style='position:fixed;bottom:0;left:0;z-index:99999;background:#222;color:#0f0;font:12px monospace;padding:8px;max-height:50vh;overflow:auto'>";
-			foreach ($t_list as $t) {
-				$html .= htmlspecialchars($t[0]) . ': <b>' . $t[1] . " ms</b><br>";
-			}
-			$html .= 'TOTAL: <b>' . round((microtime(true) - $t0) * 1000, 1) . ' ms</b><br>';
-			$html .= '<hr>Query terakhir corebank:<br>';
-			foreach (array_slice($this->cb->queries, -12, 12, true) as $i => $q) {
-				$html .= '<b>' . round(($this->cb->query_times[$i] ?? 0) * 1000, 1) . ' ms</b> ' . htmlspecialchars(preg_replace('/\s+/', ' ', $q)) . '<br>';
-			}
-			$html .= '</div>';
-			$this->output->append_output($html);
-		}
 	}
 
 
@@ -3801,17 +3599,7 @@ class Outgoinghlp extends CI_Controller
 				$tanggal_txt = "";
 			}
 
-			if ($r->catg_smu == '1') {
-				$l_catg_k = "Langsung(Direct)";
-			} else if ($r->catg_smu == '2') {
-				$l_catg_k = "Transhipment";
-			} else if ($r->catg_smu == '3') {
-				$l_catg_k = "Terminal change(w/o inv)";
-			} else if ($r->catg_smu == '4') {
-				$l_catg_k = "Direct from RA";
-			} else {
-				$l_catg_k = '';
-			}
+			$l_catg_k = $this->ref->label('catg_smu', $r->catg_smu, '');
 
 			if ($r->is_jaster == '1') {
 				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
@@ -3938,7 +3726,8 @@ class Outgoinghlp extends CI_Controller
 		$catg_jasa_ra  = (float)$catg->jasa_ra;
 
 		$total_sewa    = $billing->total_cargo   > 0 ? (float)$billing->total_cargo   : $total_berat * $catg_sewa;
-		$bg_ppn        = $billing->bg_ppn        > 0 ? (float)$billing->bg_ppn        : $total_sewa * 0.11;
+		$ppn_rate      = $this->ref->rate('ppn_rate', 0.11);
+		$bg_ppn        = $billing->bg_ppn        > 0 ? (float)$billing->bg_ppn        : $total_sewa * $ppn_rate;
 		$administrasi  = $billing->administrasi  > 0 ? (float)$billing->administrasi  : 0;
 		$materai       = $billing->materai       > 0 ? (float)$billing->materai       : 0;
 		$bg_total      = $billing->bg_total      > 0 ? (float)$billing->bg_total      : $total_sewa + $bg_ppn + $administrasi + $materai;
@@ -3946,7 +3735,7 @@ class Outgoinghlp extends CI_Controller
 		$total_csc     = $billing->total_csc     > 0 ? (float)$billing->total_csc     : $total_berat * $catg_csc;
 		$total_jaster  = $jaster_opt > 0 ? ($billing->total_jaster > 0 ? (float)$billing->total_jaster : $total_berat * $catg_jasa_ra) : 0;
 		$kc_sub_total  = $billing->kc_sub_total  > 0 ? (float)$billing->kc_sub_total  : $total_kade + $total_csc + $total_jaster;
-		$kc_ppn        = $billing->kc_ppn        > 0 ? (float)$billing->kc_ppn        : $kc_sub_total * 0.11;
+		$kc_ppn        = $billing->kc_ppn        > 0 ? (float)$billing->kc_ppn        : $kc_sub_total * $ppn_rate;
 		$kc_total      = $billing->kc_total      > 0 ? (float)$billing->kc_total      : $kc_sub_total + $kc_ppn;
 		$grand_total   = $billing->grand_total   > 0 ? (float)$billing->grand_total   : $kc_total + $bg_total;
 
@@ -3972,15 +3761,11 @@ class Outgoinghlp extends CI_Controller
 		$billing->is_jaster = $jaster_opt;
 
 		// $billing->is_pph_23 =
-		$new_no_invoice = "HLP.OUT-JASTER" . "-" . "$billing->invoice_num";
+		$new_no_invoice = $this->format_no_invoice($billing->invoice_num);
 
 		$billing->no_invoice = $new_no_invoice;
 		$billing->nama_catg = $nama_catg;
-		if ($jenis_billing == '0') {
-			$jenis_billing = 'UMUM';
-		} else if ($jenis_billing == '1') {
-			$jenis_billing = 'TRANSIT';
-		}
+		$jenis_billing = $this->ref->label('jenis_billing', $jenis_billing, $jenis_billing);
 		$billing->jenis_billing = $jenis_billing;
 		$billing->bill_catg_uid = $catg_bill;
 
@@ -4049,12 +3834,15 @@ class Outgoinghlp extends CI_Controller
 	public function get_bill_catg()
 	{
 		$search = $this->input->post('search');
-		$this->cb->select('uid, nama_billing, jenis_billing,
-    IF(jenis_billing = "0", "UMUM", IF(jenis_billing = "1", "TRANSIT", "")) as jenis', FALSE);
+		$this->cb->select('uid, nama_billing, jenis_billing');
 		$this->cb->from('out_bill_catg');
 		$this->cb->where('hold !=', '1');
 		if ($search) $this->cb->like('nama_billing', $search);
-		echo json_encode($this->cb->get()->result());
+		$rows = $this->cb->get()->result();
+		foreach ($rows as $r) {
+			$r->jenis = $this->ref->label('jenis_billing', $r->jenis_billing, '');
+		}
+		echo json_encode($rows);
 	}
 
 	public function update_invoice()
@@ -4194,11 +3982,15 @@ class Outgoinghlp extends CI_Controller
 		$catg_kade        = (float)($catg->kade        ?? 0);
 		$catg_csc         = (float)($catg->csc         ?? 0);
 
+		// Tarif & pajak dari all_setting
+		$min_sewa   = $this->ref->rate('min_sewa_gudang', 25000);
+		$ppn_rate   = $this->ref->rate('ppn_rate', 0.11);
+		$pph23_rate = $this->ref->rate('pph23_rate', 0.02);
+
 		// Update sewa gudang per SMU
 		$list_smu = $this->cb->where('bill_uid', $bil_uid)->get('out_list')->result();
 		foreach ($list_smu as $smu) {
-			$sewa_baru = (float)$smu->chargeable * $catg_sewa_gudang;
-			if ($sewa_baru < 25000) $sewa_baru = 25000;
+			$sewa_baru = max((float)$smu->chargeable * $catg_sewa_gudang, $min_sewa);
 			$this->cb->where('uid', $smu->uid)->update('out_list', ['sewa_gudang' => $sewa_baru]);
 		}
 
@@ -4212,33 +4004,26 @@ class Outgoinghlp extends CI_Controller
 		$total_volume     = (float)($totals->total_volume     ?? 0);
 
 		// Hitung biaya
-		$total_cargo = $total_chargeable * $catg_sewa_gudang;
-		if ($total_cargo < 25000) $total_cargo = 25000;
+		$total_cargo = max($total_chargeable * $catg_sewa_gudang, $min_sewa);
 
-		$administrasi = $adm == '1' ? 20000 : 3000;
+		$administrasi = $this->ref->rate($adm == '1' ? 'biaya_adm_1' : 'biaya_adm_0', $adm == '1' ? 20000 : 3000);
 		$materai      = (float)$materai;
 
-		$total_cdc = 0;
-		if ($cdc == '1') {
-			$total_cdc = $total_cargo * 0;
-			$bg_ppn    = ($total_cargo + $total_cdc) * 0.11;
-			$bg_total  = $total_cargo + $total_cdc + $bg_ppn + $administrasi + $materai;
-		} else {
-			$bg_ppn   = $total_cargo * 0.11;
-			$bg_total = $total_cargo + $bg_ppn + $administrasi + $materai;
-		}
+		$total_cdc = $cdc == '1' ? $total_cargo * $this->ref->rate('cdc_rate', 0) : 0;
+		$bg_ppn    = ($total_cargo + $total_cdc) * $ppn_rate;
+		$bg_total  = $total_cargo + $total_cdc + $bg_ppn + $administrasi + $materai;
 
 		$total_kade    = $total_chargeable * $catg_kade;
 		$total_csc     = $total_chargeable * $catg_csc;
 		$total_jaster  = $total_chargeable * $jasa_ra;
 		$kc_sub_total  = $total_kade + $total_csc + $total_jaster;
-		$kc_ppn        = $kc_sub_total * 0.11;
+		$kc_ppn        = $kc_sub_total * $ppn_rate;
 		$kc_total      = $kc_sub_total + $kc_ppn;
 		$total         = round($bg_total + $kc_total);
 
 		if ($pph_23 == '1') {
 			$sub_total_sebelum_pph = $total_cargo + $total_jaster + $total_kade + $total_csc;
-			$total_pph = $sub_total_sebelum_pph * 0.02;
+			$total_pph = $sub_total_sebelum_pph * $pph23_rate;
 		} else {
 			$total_pph = 0;
 		}
@@ -4303,10 +4088,8 @@ class Outgoinghlp extends CI_Controller
 				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
 
 				$keterangan = "Potongan PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice;
-				$j1_coa_debit = '11505';
-				// $j1_coa_kredit = "23014";
-				// $j1_coa_kredit = $coa_utility['nomor_coa_utang_pph23'];
-				$j1_coa_kredit = '99002';
+				$j1_coa_debit  = $this->ref->setting('coa_piutang', '11505');
+				$j1_coa_kredit = $this->ref->setting('coa_pph23', '99002');
 
 				$this->posting($j1_coa_debit, $j1_coa_kredit, $keterangan, $total_pph, $this->input->post('tanggal_invoice'));
 
@@ -4321,16 +4104,9 @@ class Outgoinghlp extends CI_Controller
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
 			// $this->posting('11505', '41002', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
-			if ($pesawat == 'BATIK') {
-				$kredit = '41010';
-			} else if ($pesawat == 'CITILINK') {
-				$kredit = '41008';
-			} else if ($pesawat == 'FLYJAYA') {
-				$kredit = '41013';
-			} else {
-				$kredit = '41002';
-			}
-			$this->posting('11505', $kredit, $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
+			// COA pendapatan per maskapai dari out_pesawat.coa_pendapatan
+			$kredit = $this->ref->coa_pendapatan($pesawat);
+			$this->posting($this->ref->setting('coa_piutang', '11505'), $kredit, $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 			$this->session->set_flashdata('message_name', 'Invoice dan Jurnal Berhasil Di Cetak.');
 			redirect('outgoinghlp/daftar_invoice');
@@ -4469,7 +4245,6 @@ class Outgoinghlp extends CI_Controller
 
 		$signdate   = time();
 		$post_date1 = date('Ymd', $signdate);
-		$post_date_jurnal = date('Y-m-d', $signdate);
 		$post_date2 = date('His', $signdate);
 		$post_dates = $post_date1 . $post_date2;
 
@@ -4498,11 +4273,18 @@ class Outgoinghlp extends CI_Controller
 		if ($billing->pay_status == '1' && $billing->jurnal_status == '0') {
 			$msg = '';
 
+			$pm = $this->ref->pay_methode($pay_methode);
+			if (!$pm) {
+				$this->session->set_flashdata('message_error', 'Metode pembayaran tidak dikenal.');
+				redirect('outgoinghlp/daftar_invoice');
+				return;
+			}
+			$limit_saldo = $this->ref->rate('limit_saldo_deposit', 5000000);
+			$coa_debit   = $pm->coa_debit;
+
 			$ket_bank = '';
 
 			$is_bank = false;
-
-			$tanggal_jurnal = $billing->tanggal_invoice;
 
 			if ($pay_methode == '1') {
 				$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
@@ -4521,7 +4303,7 @@ class Outgoinghlp extends CI_Controller
 
 				$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
-				$status_saldo = ($cek_saldo > 5000000) ? '1' : '0';
+				$status_saldo = ($cek_saldo > $limit_saldo) ? '1' : '0';
 
 				// Sinkronisasi tabel all_topup
 				$cek_topup = $this->cb->where(['billing_uid' => $billing->uid, 'asal_table' => 'out_billing'])->count_all_results('all_topup');
@@ -4541,7 +4323,6 @@ class Outgoinghlp extends CI_Controller
 					$this->cb->insert('all_topup', $data_topup);
 				}
 
-				$tanggal_jurnal = $post_date_jurnal;
 
 				$saldo_row = $this->cb
 					->select('COALESCE(SUM(topup_saldo), 0) - COALESCE(SUM(usage_saldo), 0) AS saldo', FALSE)
@@ -4551,36 +4332,20 @@ class Outgoinghlp extends CI_Controller
 					->row();
 				$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
-				$msg = $cek_saldo > 5000000
+				$msg = $cek_saldo > $limit_saldo
 					? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
 					: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
 			} else if ($pay_methode == '3') {
+				// Transfer: COA debit = COA bank tujuan, nama bank dari all_bank
+				$bank      = $this->ref->bank($coa_bank);
 				$coa_debit = $coa_bank;
-				$is_bank = true;
-				if ($coa_bank == "12001") {
-					$ket_bank = 'Melalui Bank BCA EKS';
-				} else if ($coa_bank == "12002") {
-					$ket_bank = 'Melalui Bank BNI BDT';
-				} else if ($coa_bank == "12004") {
-					$ket_bank = 'Melalui Bank BNI MBZ';
-				}
-			} else if ($pay_methode == '4') {
-				$coa_debit = '13010';
-			} else if ($pay_methode == '6') {
-				$coa_debit = '12001';
+				$is_bank   = true;
+				$ket_bank  = $bank ? 'Melalui Bank ' . $bank->nama : '';
 			}
+			// Metode lain (Tagihan, QRIS, ...): COA debit dari all_pay_methode.coa_debit
 
-			$coa_kredit = '11505';
-
-			if ($pay_methode == '1') {
-				$metode_agent = "DEPOSIT";
-			} else if ($pay_methode == '3') {
-				$metode_agent = "TRANSFER";
-			} else if ($pay_methode == '4') {
-				$metode_agent = "TAGIHAN";
-			} else if ($pay_methode == '6') {
-				$metode_agent = "QRIS";
-			}
+			$coa_kredit   = $this->ref->setting('coa_piutang', '11505');
+			$metode_agent = $pm->nama;
 
 			$list = $this->cb->where('bill_uid', $billing->uid)
 				->limit(1)
@@ -4593,11 +4358,9 @@ class Outgoinghlp extends CI_Controller
 				$coa_utility = $this->cb->select('nama_coa_ppn_keluaran, nomor_coa_ppn_keluaran, nama_coa_utang_pph23, nomor_coa_utang_pph23')->get('t_utility')->row_array();
 
 				$keterangan = "Pembayaran PPh 23 atas jasa WAREHOUSE OUTGOING NO INVOICE :" . $no_invoice . "; " . $ket_bank;
-				$j1_coa_kredit = '11505';
-				// $j1_coa_kredit = "23014";
-				// $j1_coa_debit = $coa_utility['nomor_coa_utang_pph23'];
-				$j1_coa_debit = '99002';
-				$this->posting($coa_debit, $coa_kredit, $keterangan, $billing->total_pph, $tanggal_jurnal);
+				$j1_coa_kredit = $this->ref->setting('coa_piutang', '11505');
+				$j1_coa_debit  = $this->ref->setting('coa_pph23', '99002');
+				$this->posting($coa_debit, $coa_kredit, $keterangan, $billing->total_pph, $billing->tanggal_invoice);
 
 				$total = $billing->total_setelah_pph;
 			}
@@ -4613,7 +4376,7 @@ class Outgoinghlp extends CI_Controller
 			// $total = $total_nonpph;
 			$nominal = $this->convertToNumberWithComma($total);
 
-			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal_jurnal, '');
+			$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $billing->tanggal_invoice, '');
 
 			$update_data = [
 				'jurnal_status'       => '1',
@@ -4621,14 +4384,7 @@ class Outgoinghlp extends CI_Controller
 			];
 
 			if ($is_bank) {
-				if ($coa_bank == "12001") {
-					$bank_tujuan = 'BCA EKS';
-				} else if ($coa_bank == "12002") {
-					$bank_tujuan = 'BNI BDT';
-				} else if ($coa_bank == "12004") {
-					$bank_tujuan = 'BNI MBZ';
-				}
-				$update_data['bank_tujuan'] = $bank_tujuan;
+				$update_data['bank_tujuan'] = $bank ? $bank->nama : '';
 			}
 
 			if ($pay_methode == '1') {
@@ -4789,7 +4545,7 @@ class Outgoinghlp extends CI_Controller
 			}
 		}
 
-		$btb_no = $btb ? 'HLPO-' . $btb->no : '';
+		$btb_no = $btb ? $this->ref->prefix() . '-' . $btb->no : '';
 
 		$data['btb']          = $btb;
 		$data['btb_no']       = $btb_no;
@@ -4834,16 +4590,8 @@ class Outgoinghlp extends CI_Controller
 		if ($kasir) {
 			$this->cb->where('b.user_kasir', $kasir);
 		}
-		if ($pay_methode == '1') {
-			$this->cb->where('b.pay_methode', '1');
-		} else if ($pay_methode == '2') {
-			$this->cb->where('b.pay_methode', '2');
-		} else if ($pay_methode == '3') {
-			$this->cb->where('b.pay_methode', '3');
-		} else if ($pay_methode == '4') {
-			$this->cb->where('b.pay_methode', '4');
-		} else if ($pay_methode == '5') {
-			$this->cb->where('b.pay_methode', '5');
+		if ($pay_methode !== null && $pay_methode !== '' && $this->ref->pay_methode($pay_methode)) {
+			$this->cb->where('b.pay_methode', $pay_methode);
 		}
 
 		if ($pph_23 == '1') {
@@ -4863,7 +4611,7 @@ class Outgoinghlp extends CI_Controller
 
 		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 		$sheet       = $spreadsheet->getActiveSheet();
-		$sheet->setTitle('Rekap Outgoing HLP');
+		$sheet->setTitle('Rekap Outgoing');
 
 		// Header
 		$headers = [
@@ -4940,8 +4688,7 @@ class Outgoinghlp extends CI_Controller
 			$total_setelah_pph      = $r['total_setelah_pph'];
 
 			// Format pembayaran
-			$pay_map = ['1' => 'Deposit', '2' => 'Cash', '3' => 'Transfer', '4' => 'Tagihan', '5' => 'FOC', '6' => 'QRIS'];
-			$pay     = $pay_map[$pay_methode] ?? '';
+			$pay = $this->ref->pay_label($pay_methode, '');
 
 			// Jaster
 			$jaster = $total_jaster > 0 ? 'JASTER' : 'Non JASTER';
@@ -5052,7 +4799,7 @@ class Outgoinghlp extends CI_Controller
 
 		// Download
 		require APPPATH . 'third_party/autoload_zip.php';
-		$filename = 'rekap_outgoing_HLP_' . date('d-m-Y') . '.xlsx';
+		$filename = 'rekap_outgoing_' . date('d-m-Y') . '.xlsx';
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -5083,34 +4830,11 @@ class Outgoinghlp extends CI_Controller
 		$data['title'] = "Daftar Invoice Khusus";
 
 
-		// Ambil data COA DEPOSIT
-		// Ambil data COA kedua
-		$coa_12002 = $this->m_coa->getCoaByCode('12002');
-		$coa_12001 = $this->m_coa->getCoaByCode('12001');
-
-		$merged_coa_debit_depo = array_merge($coa_12002, $coa_12001);
-
-		$coa_debit_depo = $this->m_coa->getCoaByCode('21040');
-
-
-		$coa_debit_transfer = $merged_coa_debit_depo;
-
-		// $coa_41001 = $this->m_coa->getCoaByCode('41001');
-		$coa_41001 = $this->m_coa->getCoaByCode('41001');
-		// $coa_41003 = $this->m_coa->getCoaByCode('41003');
-		$coa_13010 = $this->m_coa->getCoaByCode('13010');
-
-
-		// $merged_coa_kredit_transfer = array_merge($coa_41001, $coa_41002, $coa_41003, $coa_13010);
-		$merged_coa_kredit_transfer = array_merge($coa_41001,  $coa_13010);
-
-
-		$data['coa_1'] = $coa_debit_depo;
-		// $data['coa_2'] = $coa_kredit_depo;
-		$data['coa_2'] = $coa_41001;
-
-		$data['coa_3'] = $coa_debit_transfer;
-		$data['coa_4'] = $merged_coa_kredit_transfer;
+		// Ambil data COA (daftar kode dari all_setting)
+		$data['coa_1'] = $this->coa_by_setting('coa_list_debit_depo_khusus', '21040');
+		$data['coa_2'] = $this->coa_by_setting('coa_list_kredit_depo_khusus', '41001');
+		$data['coa_3'] = $this->coa_by_setting('coa_list_debit_transfer_khusus', '12002,12001');
+		$data['coa_4'] = $this->coa_by_setting('coa_list_kredit_transfer_khusus', '41001,13010');
 
 		// $data['customers'] = $this->M_outgoing->kemasan_smu();
 
@@ -5140,17 +4864,7 @@ class Outgoinghlp extends CI_Controller
 				$tanggal_txt = "";
 			}
 
-			if ($r->catg_smu == '1') {
-				$l_catg_k = "Langsung(Direct)";
-			} else if ($r->catg_smu == '2') {
-				$l_catg_k = "Transhipment";
-			} else if ($r->catg_smu == '3') {
-				$l_catg_k = "Terminal change(w/o inv)";
-			} else if ($r->catg_smu == '4') {
-				$l_catg_k = "Direct from RA";
-			} else {
-				$l_catg_k = '';
-			}
+			$l_catg_k = $this->ref->label('catg_smu', $r->catg_smu, '');
 
 			if ($r->is_jaster == '1') {
 				$jaster = "<span class='btn btn-sm' style='color:#5cb85c; border:1px solid #5cb85c; background:transparent;'>Jaster</span> ";
@@ -5282,9 +4996,7 @@ class Outgoinghlp extends CI_Controller
 		$total_jasa_ra = $billing->total_jaster   > 0 ? (float)$billing->total_jaster   : $total_berat * $catg_jasa_ra;
 
 		// Format angka
-		if ($total_sewa < 25000) {
-			$total_sewa = 25000;
-		}
+		$total_sewa = max($total_sewa, $this->ref->rate('min_sewa_gudang', 25000));
 		$billing->total_pieces_k    = number_format($total_pieces);
 		$billing->total_chargeable_k = number_format($total_berat);
 		$billing->total_cargo_k     = number_format($total_sewa);
@@ -5300,15 +5012,11 @@ class Outgoinghlp extends CI_Controller
 
 		$billing->is_jaster = $jaster_opt;
 
-		// $new_no_invoice = "HLP.OUT-JASTER" . "-" . "$billing->invoice_num";
+		// $new_no_invoice = $this->format_no_invoice($billing->invoice_num);
 
 		// $billing->no_invoice = $new_no_invoice;
 		$billing->nama_catg = $nama_catg;
-		if ($jenis_billing == '0') {
-			$jenis_billing = 'UMUM';
-		} else if ($jenis_billing == '1') {
-			$jenis_billing = 'TRANSIT';
-		}
+		$jenis_billing = $this->ref->label('jenis_billing', $jenis_billing, $jenis_billing);
 		$billing->jenis_billing = $jenis_billing;
 		$billing->bill_catg_uid = $catg_bill;
 
@@ -5373,12 +5081,15 @@ class Outgoinghlp extends CI_Controller
 	public function get_bill_catg_inv_khusus()
 	{
 		$search = $this->input->post('search');
-		$this->cb->select('uid, nama_billing, jenis_billing,
-    IF(jenis_billing = "0", "UMUM", IF(jenis_billing = "1", "TRANSIT", "")) as jenis', FALSE);
+		$this->cb->select('uid, nama_billing, jenis_billing');
 		$this->cb->from('out_bill_catg_inv_khusus');
 		$this->cb->where('hold !=', '1');
 		if ($search) $this->cb->like('nama_billing', $search);
-		echo json_encode($this->cb->get()->result());
+		$rows = $this->cb->get()->result();
+		foreach ($rows as $r) {
+			$r->jenis = $this->ref->label('jenis_billing', $r->jenis_billing, '');
+		}
+		echo json_encode($rows);
 	}
 
 	public function update_invoice_khusus()
@@ -5436,33 +5147,8 @@ class Outgoinghlp extends CI_Controller
 		$tanggal_bulan   = substr($tanggal_invoice, 5, 2);  // 07
 		$tanggal_tanggal = substr($tanggal_invoice, 8, 2);  // 06
 
-		if ($tanggal_bulan == '01') {
-			$bulan = 'I';
-		} elseif ($tanggal_bulan == '02') {
-			$bulan = 'II';
-		} elseif ($tanggal_bulan == '03') {
-			$bulan = 'III';
-		} elseif ($tanggal_bulan == '04') {
-			$bulan = 'IV';
-		} elseif ($tanggal_bulan == '05') {
-			$bulan = 'V';
-		} elseif ($tanggal_bulan == '06') {
-			$bulan = 'VI';
-		} elseif ($tanggal_bulan == '07') {
-			$bulan = 'VII';
-		} elseif ($tanggal_bulan == '08') {
-			$bulan = 'VIII';
-		} elseif ($tanggal_bulan == '09') {
-			$bulan = 'IX';
-		} elseif ($tanggal_bulan == '10') {
-			$bulan = 'X';
-		} elseif ($tanggal_bulan == '11') {
-			$bulan = 'XI';
-		} elseif ($tanggal_bulan == '12') {
-			$bulan = 'XII';
-		}
-
-		$kop_gdg = 'LJAWH';
+		$bulan   = $this->ref->romawi($tanggal_bulan);
+		$kop_gdg = $this->ref->setting('kop_gdg_khusus', 'LJAWH');
 		$no_invoice = "$invoice_num/$kop_gdg/$bulan/$tanggal_tahun_2dig";
 
 		echo ('Bulan :' . $tanggal_bulan);
@@ -5577,8 +5263,8 @@ class Outgoinghlp extends CI_Controller
 
 		$total_harga_sewa = $catg_sewa_gudang;
 
-		$total_sewa = (float)$smu->chargeable * $total_harga_sewa;
-		if ($total_sewa < 25000) $total_sewa = 25000;
+		$min_sewa   = $this->ref->rate('min_sewa_gudang', 25000);
+		$total_sewa = max((float)$smu->chargeable * $total_harga_sewa, $min_sewa);
 
 
 		$this->cb->where('uid', $smu->uid)->update('out_list', ['sewa_gudang' => $total_sewa]);
@@ -5595,8 +5281,7 @@ class Outgoinghlp extends CI_Controller
 
 
 		// // Hitung biaya
-		$total_cargo = $total_chargeable * $catg_sewa_gudang;
-		if ($total_cargo < 25000) $total_cargo = 25000;
+		$total_cargo = max($total_chargeable * $catg_sewa_gudang, $min_sewa);
 
 
 		$total_kade = (float)$smu->chargeable * $catg_kade;
@@ -5666,7 +5351,7 @@ class Outgoinghlp extends CI_Controller
 
 			// Pastikan fungsi posting tidak mengganggu transaksi
 			// $this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, '', '');
-			$this->posting('11505', '41012', $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
+			$this->posting($this->ref->setting('coa_piutang', '11505'), $this->ref->setting('coa_pendapatan_khusus', '41012'), $keterangan, $nominal, $this->input->post('tanggal_invoice'), '');
 
 
 			// echo $keterangan;
@@ -5814,9 +5499,9 @@ class Outgoinghlp extends CI_Controller
 		// 3. Cegah pembayaran ganda & invoice yang sudah dibatalkan
 		if ($billing->pay_status == '1' && $billing->jurnal_status == '0') {
 
-			// $coa_debit = $agent_deposit->coa_sbb;
-			$coa_debit = 21040;
-			$agent_deposit_uid = 4;
+			$coa_debit         = $this->ref->setting('coa_deposit_khusus', '21040');
+			$agent_deposit_uid = $this->ref->setting('agent_deposit_khusus', '4');
+			$limit_saldo       = $this->ref->rate('limit_saldo_deposit', 5000000);
 
 			$agent_deposit = $this->cb->where('uid', $agent_deposit_uid)
 				->limit(1)
@@ -5831,7 +5516,7 @@ class Outgoinghlp extends CI_Controller
 
 			$cek_saldo = (float)($saldo_row->saldo ?? 0);
 
-			$status_saldo = ($cek_saldo > 5000000) ? '1' : '0';
+			$status_saldo = ($cek_saldo > $limit_saldo) ? '1' : '0';
 
 			// Sinkronisasi tabel all_topup
 			$cek_topup = $this->cb->where(['billing_uid' => $billing->uid, 'asal_table' => 'out_billing_inv_khusus'])->count_all_results('all_topup');
@@ -5851,7 +5536,7 @@ class Outgoinghlp extends CI_Controller
 				$this->cb->insert('all_topup', $data_topup);
 			}
 
-			$coa_kredit = 11505;
+			$coa_kredit = $this->ref->setting('coa_piutang', '11505');
 
 
 			$metode_agent = "DEPOSIT";
@@ -5883,7 +5568,7 @@ class Outgoinghlp extends CI_Controller
 				->row();
 
 			$cek_saldo = (float)($saldo_row->saldo ?? 0);
-			$msg = $cek_saldo > 5000000
+			$msg = $cek_saldo > $limit_saldo
 				? 'Invoice berhasil dicetak. Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo)
 				: 'Peringatan: Sisa saldo ' . $agent_deposit->nama . ' adalah Rp' . number_format($cek_saldo) . '. Harap hubungi agen yang bersangkutan.';
 
@@ -6051,7 +5736,7 @@ class Outgoinghlp extends CI_Controller
 			}
 		}
 
-		$btb_no = $btb ? 'HLPO-' . $btb->no : '';
+		$btb_no = $btb ? $this->ref->prefix() . '-' . $btb->no : '';
 
 		$data['btb']          = $btb;
 		$data['btb_no']       = $btb_no;
@@ -6060,7 +5745,7 @@ class Outgoinghlp extends CI_Controller
 		$data['list_btb']     = $list_btb;
 		$data['agents']     = $jaster_row;
 
-		if ($billing->tanggal_invoice >= '20261001000000') {
+		if ($billing->tanggal_invoice >= $this->ref->setting('tgl_template_khusus', '20261001000000')) {
 			$this->load->view('print_invoice_khusus', $data);
 		} else {
 			$this->load->view('print_invoice_khusus_old', $data);
@@ -6090,16 +5775,8 @@ class Outgoinghlp extends CI_Controller
 		if ($kasir) {
 			$this->cb->where('user_kasir', $kasir);
 		}
-		if ($pay_methode == '1') {
-			$this->cb->where('pay_methode', '1');
-		} else if ($pay_methode == '2') {
-			$this->cb->where('pay_methode', '2');
-		} else if ($pay_methode == '3') {
-			$this->cb->where('pay_methode', '3');
-		} else if ($pay_methode == '4') {
-			$this->cb->where('pay_methode', '4');
-		} else if ($pay_methode == '5') {
-			$this->cb->where('pay_methode', '5');
+		if ($pay_methode !== null && $pay_methode !== '' && $this->ref->pay_methode($pay_methode)) {
+			$this->cb->where('pay_methode', $pay_methode);
 		}
 
 		$this->cb->order_by('no_invoice, tanggal_invoice', 'ASC');
@@ -6113,7 +5790,7 @@ class Outgoinghlp extends CI_Controller
 
 		$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 		$sheet       = $spreadsheet->getActiveSheet();
-		$sheet->setTitle('Rekap Outgoing Inv Khusus HLP');
+		$sheet->setTitle('Rekap Outgoing Inv Khusus');
 
 		// Header
 		$headers = [
@@ -6186,8 +5863,7 @@ class Outgoinghlp extends CI_Controller
 			$grand_total      = $r['grand_total'];
 
 			// Format pembayaran
-			$pay_map = ['1' => 'Deposit', '2' => 'Cash', '3' => 'Transfer', '4' => 'Tagihan', '5' => 'FOC', '6' => 'QRIS'];
-			$pay     = $pay_map[$pay_methode] ?? '';
+			$pay = $this->ref->pay_label($pay_methode, '');
 
 			// Jaster
 			$jaster = $r['jaster'] > 0 ? 'JASTER' : 'Non JASTER';
@@ -6289,7 +5965,7 @@ class Outgoinghlp extends CI_Controller
 
 		// Download
 		require APPPATH . 'third_party/autoload_zip.php';
-		$filename = 'rekap_outgoing_HLP_' . date('d-m-Y') . '.xlsx';
+		$filename = 'rekap_outgoing_' . date('d-m-Y') . '.xlsx';
 
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -6460,7 +6136,7 @@ class Outgoinghlp extends CI_Controller
 			$cek = $total_saldo - $total_pemakaian + $topup_amount1;
 
 			// 5. TENTUKAN STATUS SALDO (Jika > 5.000.000 status menjadi 1, jika tidak 0)
-			$status_saldo = ($cek > 5000000) ? '1' : '0';
+			$status_saldo = ($cek > $this->ref->rate('limit_saldo_deposit', 5000000)) ? '1' : '0';
 
 			// 6. PREPARE DATA UNTUK INSERT
 			$data_insert = [
@@ -8012,13 +7688,7 @@ class Outgoinghlp extends CI_Controller
 				$tanggal_txt = "";
 			}
 
-			if ($r->jenis_billing == "0") {
-				$jenis_billing = 'Umum';
-			} else if ($r->jenis_billing == "1") {
-				$jenis_billing = 'Transit';
-			} else {
-				$jenis_billing = '';
-			}
+			$jenis_billing = ucfirst(strtolower($this->ref->label('jenis_billing', $r->jenis_billing, '')));
 
 
 			if ($r->hold == '1') {
@@ -8209,13 +7879,7 @@ class Outgoinghlp extends CI_Controller
 				$tanggal_txt = "";
 			}
 
-			if ($r->jenis_billing == "0") {
-				$jenis_billing = 'Umum';
-			} else if ($r->jenis_billing == "1") {
-				$jenis_billing = 'Transit';
-			} else {
-				$jenis_billing = '';
-			}
+			$jenis_billing = ucfirst(strtolower($this->ref->label('jenis_billing', $r->jenis_billing, '')));
 
 
 			if ($r->hold == '1') {
@@ -8395,15 +8059,7 @@ class Outgoinghlp extends CI_Controller
 		$no = 0;
 		foreach ($results as $r) {
 
-			if ($r->catg_smu == '1') {
-				$i_catg_k = "Langsung";
-			} else if ($r->catg_smu == '2') {
-				$i_catg_k = "Transhipment";
-			} else if ($r->catg_smu == '3') {
-				$i_catg_k = "Terminal change(w/o inv)";
-			} else {
-				$i_catg_k = "Belum Dipilih";
-			}
+			$i_catg_k = $this->ref->label('catg_smu', $r->catg_smu, 'Belum Dipilih');
 
 			if ($r->fly_p == '1') {
 				$status = "
@@ -8756,7 +8412,8 @@ class Outgoinghlp extends CI_Controller
 		$catg_jasa_ra  = (float)$catg->jasa_ra;
 
 		$total_sewa    = $billing->total_cargo   > 0 ? (float)$billing->total_cargo   : $total_berat * $catg_sewa;
-		$bg_ppn        = $billing->bg_ppn        > 0 ? (float)$billing->bg_ppn        : $total_sewa * 0.11;
+		$ppn_rate      = $this->ref->rate('ppn_rate', 0.11);
+		$bg_ppn        = $billing->bg_ppn        > 0 ? (float)$billing->bg_ppn        : $total_sewa * $ppn_rate;
 		$administrasi  = $billing->administrasi  > 0 ? (float)$billing->administrasi  : 0;
 		$materai       = $billing->materai       > 0 ? (float)$billing->materai       : 0;
 		$bg_total      = $billing->bg_total      > 0 ? (float)$billing->bg_total      : $total_sewa + $bg_ppn + $administrasi + $materai;
@@ -8764,7 +8421,7 @@ class Outgoinghlp extends CI_Controller
 		$total_csc     = $billing->total_csc     > 0 ? (float)$billing->total_csc     : $total_berat * $catg_csc;
 		$total_jaster  = $jaster_opt > 0 ? ($billing->total_jaster > 0 ? (float)$billing->total_jaster : $total_berat * $catg_jasa_ra) : 0;
 		$kc_sub_total  = $billing->kc_sub_total  > 0 ? (float)$billing->kc_sub_total  : $total_kade + $total_csc + $total_jaster;
-		$kc_ppn        = $billing->kc_ppn        > 0 ? (float)$billing->kc_ppn        : $kc_sub_total * 0.11;
+		$kc_ppn        = $billing->kc_ppn        > 0 ? (float)$billing->kc_ppn        : $kc_sub_total * $ppn_rate;
 		$kc_total      = $billing->kc_total      > 0 ? (float)$billing->kc_total      : $kc_sub_total + $kc_ppn;
 		$grand_total   = $billing->grand_total   > 0 ? (float)$billing->grand_total   : $kc_total + $bg_total;
 
@@ -8790,15 +8447,11 @@ class Outgoinghlp extends CI_Controller
 		$billing->is_jaster = $jaster_opt;
 
 		// $billing->is_pph_23 =
-		$new_no_invoice = "HLP.OUT-JASTER" . "-" . "$billing->invoice_num";
+		$new_no_invoice = $this->format_no_invoice($billing->invoice_num);
 
 		$billing->no_invoice = $new_no_invoice;
 		$billing->nama_catg = $nama_catg;
-		if ($jenis_billing == '0') {
-			$jenis_billing = 'UMUM';
-		} else if ($jenis_billing == '1') {
-			$jenis_billing = 'TRANSIT';
-		}
+		$jenis_billing = $this->ref->label('jenis_billing', $jenis_billing, $jenis_billing);
 		$billing->jenis_billing = $jenis_billing;
 		$billing->bill_catg_uid = $catg_bill;
 
@@ -9030,7 +8683,7 @@ class Outgoinghlp extends CI_Controller
 		$cCharge = $col($nLabel + 5);
 		$cTon    = $col($nLabel + 6);
 
-		$this->_xls_title($sh, 'REKAP TONASE OUTGOING HLP', $last, $filter_text, $dicetak);
+		$this->_xls_title($sh, 'REKAP TONASE OUTGOING', $last, $filter_text, $dicetak);
 
 		$hr = 5;
 		foreach ($head as $i => $h) {
@@ -9124,20 +8777,14 @@ class Outgoinghlp extends CI_Controller
 		];
 		$dlast = $col(count($dhead)); // Z
 
-		$this->_xls_title($sd, 'DETAIL TONASE SMU OUTGOING HLP', $dlast, $filter_text, $dicetak);
+		$this->_xls_title($sd, 'DETAIL TONASE SMU OUTGOING', $dlast, $filter_text, $dicetak);
 
 		foreach ($dhead as $i => $h) {
 			$sd->setCellValue($col($i + 1) . $hr, $h);
 		}
 		$sd->getStyle("A{$hr}:{$dlast}{$hr}")->applyFromArray($st_header);
 
-		$catg_map = [
-			'1' => 'Langsung(CGU)',
-			'2' => 'Transhipment',
-			'3' => 'Terminal Change w/o Inv',
-			'4' => 'Via RA LJA',
-			'5' => 'Langsung(AAP)',
-		];
+		$catg_map = $this->ref->list_ref('catg_smu');
 		$num = function ($v) {
 			$v = trim((string) $v);
 			return $v === '' ? null : (float) str_replace(',', '.', $v);
@@ -9153,7 +8800,7 @@ class Outgoinghlp extends CI_Controller
 			$jam_terbang = !empty($d['time_terbang']) ? date('H:i', strtotime($d['time_terbang'])) : '';
 
 			$sd->setCellValue("A{$r}", $no++);
-			$sd->setCellValueExplicit("B{$r}", !empty($d['no_btb']) ? 'HLPO-' . $d['no_btb'] : '', $S);
+			$sd->setCellValueExplicit("B{$r}", !empty($d['no_btb']) ? $this->ref->prefix() . '-' . $d['no_btb'] : '', $S);
 			$sd->setCellValue("C{$r}", $catg_map[$d['catg_smu']] ?? '');
 			$sd->setCellValueExplicit("D{$r}", (string) $d['smu'], $S);
 			$sd->setCellValue("E{$r}", $d['tujuan']);
@@ -9215,7 +8862,7 @@ class Outgoinghlp extends CI_Controller
 		require APPPATH . 'third_party/autoload_zip.php';
 
 		$suffix = !empty($f['periode']) ? $f['periode'] : ($f['tahun'] ?: 'semua') . ($f['bulan'] ?: '');
-		$filename = 'rekap_tonase_HLP_' . $suffix . '_' . date('d-m-Y_His') . '.xlsx';
+		$filename = 'rekap_tonase_' . $suffix . '_' . date('d-m-Y_His') . '.xlsx';
 
 		if (ob_get_length()) {
 			ob_end_clean(); // cegah file xlsx korup karena output lain
@@ -9303,5 +8950,297 @@ class Outgoinghlp extends CI_Controller
 		$p[] = 'Dasar tanggal: Tanggal Masuk';
 
 		return implode('   |   ', $p);
+	}
+
+	// =====================================================================
+	//  MASTER REFERENSI & SETTING OUTGOING
+	//  - Setting, Metode Bayar, Bank : level 905 (keuangan / harga)
+	//  - Referensi Kode, Pesawat     : level 909 (master data)
+	//    kolom COA pendapatan pesawat hanya bisa diubah level 905
+	// =====================================================================
+
+	/** Tolak akses bila level user tidak memuat $lvl */
+	private function cek_level($lvl)
+	{
+		if (strpos((string) $this->session->userdata('level'), $lvl) === false) {
+			$this->session->set_flashdata('message_error', 'Anda tidak memiliki akses ke halaman ini.');
+			redirect('home');
+			exit;
+		}
+	}
+
+	private function punya_level($lvl)
+	{
+		return strpos((string) $this->session->userdata('level'), $lvl) !== false;
+	}
+
+	/** Badge inbox & task di top bar (sama seperti halaman lain) */
+	private function data_header($title)
+	{
+		$nip = $this->db->escape_like_str($this->session->userdata('nip'));
+		$res = $this->db->query("SELECT COUNT(Id) AS jml FROM memo WHERE (nip_kpd LIKE '%$nip%' OR nip_cc LIKE '%$nip%') AND (`read` NOT LIKE '%$nip%')")->row();
+		$res2 = $this->db->query("SELECT COUNT(id) AS jml FROM task WHERE (`member` LIKE '%$nip%' OR `pic` LIKE '%$nip%') AND activity='1'")->row();
+
+		return [
+			'count_inbox'  => $res->jml ?? 0,
+			'count_inbox2' => $res2->jml ?? 0,
+			'title'        => $title,
+		];
+	}
+
+	/** COA harus terdaftar di v_coa_all */
+	private function coa_valid($coa)
+	{
+		$coa = trim((string) $coa);
+		if ($coa === '') return false;
+		return $this->cb->where('no_sbb', $coa)->count_all_results('v_coa_all') > 0;
+	}
+
+	private function flag($v)
+	{
+		return $v == '1' ? '1' : '0';
+	}
+
+	/**
+	 * Kondisi WHERE untuk edit: pakai uid dari form. Bila uid kosong
+	 * (tabel belum punya kolom uid), pakai kunci lama.
+	 */
+	private function where_edit(array $kunci_lama)
+	{
+		$uid = (int) $this->input->post('uid');
+		return $uid > 0 ? ['uid' => $uid] : $kunci_lama;
+	}
+
+	// ---------------------------------------------------------------- all_setting (905)
+	public function master_setting()
+	{
+		$this->cek_level('905');
+		$data = $this->data_header('Pengaturan Tarif & Akun');
+		$data['coa_options'] = $this->ref->coa_options();
+		$data['rows']        = $this->ref->setting_rows(null, $data['coa_options']);
+		$data['bagian']      = $this->ref->setting_bagian();
+		$this->load->view('daftar_all_setting', $data);
+	}
+
+	public function store_setting()
+	{
+		$this->cek_level('905');
+		// Halaman ini hanya mengubah pengaturan yang sudah ada (tidak menambah kunci baru)
+		$hasil = $this->ref->simpan_setting(
+			(int) $this->input->post('uid'),
+			trim((string) $this->input->post('kunci')),
+			$this->input->post('nilai')
+		);
+		$this->session->set_flashdata($hasil['ok'] ? 'message_name' : 'message_error', $hasil['pesan']);
+		redirect('outgoinghlp/master_setting');
+	}
+
+	// ---------------------------------------------------------------- all_ref (909)
+	public function master_ref()
+	{
+		$this->cek_level('909');
+		$data = $this->data_header('Referensi Kode Outgoing');
+		$data['rows'] = $this->cb->order_by('grup', 'ASC')->order_by('urutan', 'ASC')->get('all_ref')->result();
+		$data['coa_options'] = $this->ref->coa_options();
+		$this->load->view('daftar_all_ref', $data);
+	}
+
+	public function store_ref()
+	{
+		$this->cek_level('909');
+		$mode = $this->input->post('mode');
+		$grup = trim((string) $this->input->post('grup'));
+		$kode = trim((string) $this->input->post('kode'));
+		$row  = [
+			'label'       => trim((string) $this->input->post('label')),
+			'urutan'      => (int) $this->input->post('urutan'),
+			'tampil_form' => $this->flag($this->input->post('tampil_form')),
+			'hold'        => $this->flag($this->input->post('hold')),
+		];
+
+		if (!preg_match('/^[a-z0-9_]{2,40}$/', $grup) || $kode === '' || $row['label'] === '') {
+			$this->session->set_flashdata('message_error', 'Grup, Kode dan Label wajib diisi.');
+			redirect('outgoinghlp/master_ref');
+			return;
+		}
+
+		$where = ['grup' => $grup, 'kode' => $kode];
+		$ada   = $this->cb->where($where)->count_all_results('all_ref') > 0;
+		if ($mode === 'edit') {
+			$this->cb->where($this->where_edit($where))->update('all_ref', $row);
+			$this->session->set_flashdata('message_name', 'Referensi ' . $grup . ' / ' . $kode . ' berhasil diupdate.');
+		} elseif ($ada) {
+			$this->session->set_flashdata('message_error', 'Kode ' . $kode . ' pada grup ' . $grup . ' sudah ada.');
+		} else {
+			$this->cb->insert('all_ref', $where + $row);
+			$this->session->set_flashdata('message_name', 'Referensi ' . $grup . ' / ' . $kode . ' berhasil ditambahkan.');
+		}
+		redirect('outgoinghlp/master_ref');
+	}
+
+	// ---------------------------------------------------------------- all_pay_methode (905)
+	public function master_pay_methode()
+	{
+		$this->cek_level('905');
+		$data = $this->data_header('Metode Pembayaran');
+		$data['rows'] = $this->cb->order_by('kode', 'ASC')->get('all_pay_methode')->result();
+		$data['coa_options'] = $this->ref->coa_options();
+		$this->load->view('daftar_all_pay_methode', $data);
+	}
+
+	public function store_pay_methode()
+	{
+		$this->cek_level('905');
+		$mode = $this->input->post('mode');
+		$kode = trim((string) $this->input->post('kode'));
+		$coa  = trim((string) $this->input->post('coa_debit'));
+		$row  = [
+			'nama'         => strtoupper(trim((string) $this->input->post('nama'))),
+			'label'        => trim((string) $this->input->post('label')),
+			'coa_debit'    => $coa !== '' ? $coa : null,
+			'tampil_ubah'  => $this->flag($this->input->post('tampil_ubah')),
+			'tampil_bayar' => $this->flag($this->input->post('tampil_bayar')),
+			'hold'         => $this->flag($this->input->post('hold')),
+		];
+
+		if (!preg_match('/^[0-9]{1,5}$/', $kode) || $row['nama'] === '' || $row['label'] === '') {
+			$this->session->set_flashdata('message_error', 'Kode (angka), Nama dan Label wajib diisi.');
+			redirect('outgoinghlp/master_pay_methode');
+			return;
+		}
+		if ($coa !== '' && !$this->coa_valid($coa)) {
+			$this->session->set_flashdata('message_error', 'COA ' . $coa . ' tidak ditemukan di daftar COA.');
+			redirect('outgoinghlp/master_pay_methode');
+			return;
+		}
+
+		$ada = $this->cb->where('kode', $kode)->count_all_results('all_pay_methode') > 0;
+		if ($mode === 'edit') {
+			$this->cb->where($this->where_edit(['kode' => $kode]))->update('all_pay_methode', $row);
+			$this->session->set_flashdata('message_name', 'Metode bayar ' . $row['label'] . ' berhasil diupdate.');
+		} elseif ($ada) {
+			$this->session->set_flashdata('message_error', 'Kode metode ' . $kode . ' sudah ada.');
+		} else {
+			$this->cb->insert('all_pay_methode', ['kode' => $kode] + $row);
+			$this->session->set_flashdata('message_name', 'Metode bayar ' . $row['label'] . ' berhasil ditambahkan.');
+		}
+		redirect('outgoinghlp/master_pay_methode');
+	}
+
+	// ---------------------------------------------------------------- all_bank (905)
+	public function master_bank()
+	{
+		$this->cek_level('905');
+		$data = $this->data_header('Bank Tujuan Transfer');
+		$data['rows'] = $this->cb->order_by('urutan', 'ASC')->order_by('coa', 'ASC')->get('all_bank')->result();
+		$data['coa_options'] = $this->ref->coa_options();
+		$this->load->view('daftar_all_bank', $data);
+	}
+
+	public function store_bank()
+	{
+		$this->cek_level('905');
+		$mode = $this->input->post('mode');
+		$coa  = trim((string) $this->input->post('coa'));
+		$row  = [
+			'nama'   => strtoupper(trim((string) $this->input->post('nama'))),
+			'urutan' => (int) $this->input->post('urutan'),
+			'hold'   => $this->flag($this->input->post('hold')),
+		];
+
+		if ($coa === '' || $row['nama'] === '') {
+			$this->session->set_flashdata('message_error', 'COA dan Nama Bank wajib diisi.');
+			redirect('outgoinghlp/master_bank');
+			return;
+		}
+		if (!$this->coa_valid($coa)) {
+			$this->session->set_flashdata('message_error', 'COA ' . $coa . ' tidak ditemukan di daftar COA.');
+			redirect('outgoinghlp/master_bank');
+			return;
+		}
+
+		$uid = (int) $this->input->post('uid');
+		if ($mode === 'edit' && $uid > 0) {
+			// Dengan uid, COA bank boleh diganti asal tidak bentrok dengan bank lain
+			$ada = $this->cb->where('coa', $coa)->where('uid !=', $uid)->count_all_results('all_bank') > 0;
+		} else {
+			$ada = $mode !== 'edit' && $this->cb->where('coa', $coa)->count_all_results('all_bank') > 0;
+		}
+		if ($ada) {
+			$this->session->set_flashdata('message_error', 'COA bank ' . $coa . ' sudah dipakai bank lain.');
+		} elseif ($mode === 'edit') {
+			$this->cb->where($this->where_edit(['coa' => $coa]))->update('all_bank', ['coa' => $coa] + $row);
+			$this->session->set_flashdata('message_name', 'Bank ' . $row['nama'] . ' berhasil diupdate.');
+		} else {
+			$this->cb->insert('all_bank', ['coa' => $coa] + $row);
+			$this->session->set_flashdata('message_name', 'Bank ' . $row['nama'] . ' berhasil ditambahkan.');
+		}
+		redirect('outgoinghlp/master_bank');
+	}
+
+	// ---------------------------------------------------------------- out_pesawat (909, COA: 905)
+	public function master_pesawat()
+	{
+		$this->cek_level('909');
+		$data = $this->data_header('Daftar Pesawat');
+		$data['rows']     = $this->cb->order_by('nama', 'ASC')->get('out_pesawat')->result();
+		$data['boleh_coa'] = $this->punya_level('905');
+		$data['pembagi_default'] = $this->ref->pembagi_default();
+		$data['coa_options'] = $this->ref->coa_options();
+		$this->load->view('daftar_out_pesawat', $data);
+	}
+
+	public function store_pesawat()
+	{
+		$this->cek_level('909');
+		$mode = $this->input->post('mode');
+		$nama = strtoupper(trim((string) $this->input->post('nama')));
+
+		if ($nama === '') {
+			$this->session->set_flashdata('message_error', 'Nama pesawat wajib diisi.');
+			redirect('outgoinghlp/master_pesawat');
+			return;
+		}
+
+		$row = [
+			'prefix' => trim((string) $this->input->post('prefix')),
+			// disimpan tanpa '#', karena view memakai background-color:#<warna>
+			'warna'  => ltrim(trim((string) $this->input->post('warna')), '#'),
+			'jaster' => $this->flag($this->input->post('jaster')),
+			'hold'   => $this->flag($this->input->post('hold')),
+		];
+
+		// Pembagi volume (P x L x T / pembagi). Kosong = memakai setting pembagi_default
+		$pembagi = trim((string) $this->input->post('pembagi'));
+		if ($pembagi !== '' && (!ctype_digit($pembagi) || (int) $pembagi <= 0)) {
+			$this->session->set_flashdata('message_error', 'Pembagi volume harus angka bulat lebih dari 0 (contoh 6000).');
+			redirect('outgoinghlp/master_pesawat');
+			return;
+		}
+		$row['pembagi'] = $pembagi !== '' ? (int) $pembagi : null;
+
+		// COA pendapatan hanya boleh diubah oleh level keuangan (905)
+		if ($this->punya_level('905')) {
+			$coa = trim((string) $this->input->post('coa_pendapatan'));
+			if ($coa !== '' && !$this->coa_valid($coa)) {
+				$this->session->set_flashdata('message_error', 'COA ' . $coa . ' tidak ditemukan di daftar COA.');
+				redirect('outgoinghlp/master_pesawat');
+				return;
+			}
+			$row['coa_pendapatan'] = $coa !== '' ? $coa : null;
+		}
+
+		$ada = $this->cb->where('nama', $nama)->count_all_results('out_pesawat') > 0;
+		if ($mode === 'edit') {
+			// Nama tidak boleh diubah: out_list.pesawat menyimpan nama pesawat
+			$this->cb->where('nama', $nama)->update('out_pesawat', $row);
+			$this->session->set_flashdata('message_name', 'Pesawat ' . $nama . ' berhasil diupdate.');
+		} elseif ($ada) {
+			$this->session->set_flashdata('message_error', 'Pesawat ' . $nama . ' sudah ada.');
+		} else {
+			$this->cb->insert('out_pesawat', ['nama' => $nama] + $row);
+			$this->session->set_flashdata('message_name', 'Pesawat ' . $nama . ' berhasil ditambahkan.');
+		}
+		redirect('outgoinghlp/master_pesawat');
 	}
 }

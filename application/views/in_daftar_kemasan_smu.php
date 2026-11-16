@@ -389,8 +389,7 @@
                                                             <td class="text-center nomor-urut" style="vertical-align: middle;">1</td>
                                                             <td>
                                                                 <select class="form-control select-jns-barang" name="jns_barang[]" required>
-                                                                    <option value="1">Langsung</option>
-                                                                    <option value="2">Partial</option>
+                                                                    <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('jns_barang', true)) ?>
                                                                 </select>
                                                             </td>
                                                             <td>
@@ -464,8 +463,7 @@
                                             <div class="form-group">
                                                 <label class="form-label">Jns Barang</label>
                                                 <select class="form-control" name="jns_barang" id="d_jns_barang" required>
-                                                    <option value="1">Langsung (Direct)</option>
-                                                    <option value="2">Sebagian (Partial)</option>
+                                                    <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('jns_barang', true)) ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -937,8 +935,7 @@
                         <td class="text-center nomor-urut" style="vertical-align: middle;">${barisCounter}</td>
                         <td>
                             <select class="form-control select-jns-barang" name="jns_barang[]" required>
-                                <option value="1">Langsung</option>
-                                <option value="2">Partial</option>
+                                <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('jns_barang', true)) ?>
                             </select>
                         </td>
                         <td>

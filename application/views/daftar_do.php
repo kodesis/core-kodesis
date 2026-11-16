@@ -308,9 +308,7 @@
                                         <label class="form-label">Warehouse</label>
                                         <select class="form-control" name="wh_name" id="wh_name" required>
                                             <option value="">:: Pilih Warehouse</option>
-                                            <option value="bdl">BDL</option>
-                                            <option value="ardhya">Ardhya</option>
-                                            <option value="jas">JAS</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('warehouse', true)) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -410,9 +408,7 @@
                                         <label class="form-label">Warehouse</label>
                                         <select class="form-control" name="wh_name" id="edit_wh_name" required>
                                             <option value="">:: Pilih Warehouse</option>
-                                            <option value="bdl">BDL</option>
-                                            <option value="ardhya">Ardhya</option>
-                                            <option value="jas">JAS</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('warehouse', true)) ?>
                                         </select>
                                     </div>
                                 </div>

@@ -244,10 +244,15 @@
 									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_pengirim">- Pengirim</a></li>
 									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_tujuan">- Tujuan</a></li>
 									<li><a href="<?php echo base_url(); ?>outgoinghlp/daftar_avsec">- Avsec</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/master_pesawat">- Maskapai</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/master_ref">- Daftar Pilihan</a></li>
 								<?php } ?>
 								<?php $a = $this->session->userdata('level');
 								if (strpos($a, '905') !== false) { ?>
 									<li><a href="<?php echo base_url(); ?>outgoinghlp/kategori_harga">- Kategori Harga</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/master_setting">- Pengaturan Tarif &amp; Akun</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/master_pay_methode">- Cara Pembayaran</a></li>
+									<li><a href="<?php echo base_url(); ?>outgoinghlp/master_bank">- Rekening Bank</a></li>
 								<?php } ?>
 							</ul>
 						</li>
@@ -287,10 +292,12 @@
 									<!-- <li><a href="<?php echo base_url(); ?>incominghlp/daftar_agents_deposit">- Agents Deposit</a></li> -->
 									<li><a href="<?php echo base_url(); ?>incominghlp/daftar_asal">- Asal</a></li>
 									<li><a href="<?php echo base_url(); ?>incominghlp/daftar_penerima">- Penerima</a></li>
+									<li><a href="<?php echo base_url(); ?>incominghlp/master_pesawat">- Maskapai</a></li>
 								<?php } ?>
 								<?php $a = $this->session->userdata('level');
 								if (strpos($a, '915') !== false) { ?>
 									<li><a href="<?php echo base_url(); ?>incominghlp/kategori_harga">- Kategori Harga</a></li>
+									<li><a href="<?php echo base_url(); ?>incominghlp/master_setting">- Pengaturan Incoming</a></li>
 								<?php } ?>
 							</ul>
 						</li>

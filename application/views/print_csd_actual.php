@@ -130,7 +130,7 @@
                                     <i>Origin</i>
                                 </td>
                                 <td width="20%" align="left" style="vertical-align: middle;">
-                                    <b>HLP</b>
+                                    <b><?= html_escape($this->M_warehouse_ref->origin()) ?></b>
                                 </td>
                                 <td width="15%" align="left">
                                     <b>Tujuan</b><br>
@@ -454,7 +454,7 @@ eof
                                     <i>Origin</i>
                                 </td>
                                 <td width="20%" align="left" style="vertical-align: middle;">
-                                    <b>HLP</b>
+                                    <b><?= html_escape($this->M_warehouse_ref->origin()) ?></b>
                                 </td>
                                 <td width="15%" align="left">
                                     <b>Tujuan</b><br>

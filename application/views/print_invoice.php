@@ -183,7 +183,7 @@
         </tr>
         <tr>
             <td colspan="2" align="right">
-                HLP, <?= $pm_billing_date_txt ?><br><br><br>
+                <?= html_escape($this->M_warehouse_ref->origin()) ?>, <?= $pm_billing_date_txt ?><br><br><br>
                 ( <?= $kasir_name ?> )
             </td>
         </tr>

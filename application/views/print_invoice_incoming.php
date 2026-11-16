@@ -80,7 +80,7 @@
             <tr>
                 <td height="30" align="center"><?= $i + 1 ?></td>
                 <td><?= $s->smu ?></td>
-                <td align="center"><?= $s->asal ?>-HLP</td>
+                <td align="center"><?= $s->asal ?>-<?= html_escape($this->M_warehouse_ref->origin()) ?></td>
                 <td align="center"><?= $s->komoditi ?></td>
                 <td align="center"><?= $s->jumlah ?></td>
                 <td align="right"><?= $s->chargeable ?></td>
@@ -202,7 +202,7 @@
         </tr>
         <tr>
             <td colspan="2" align="right">
-                HLP, <?= $pm_billing_date_txt ?><br><br><br><br><br><br>
+                <?= html_escape($this->M_warehouse_ref->origin()) ?>, <?= $pm_billing_date_txt ?><br><br><br><br><br><br>
                 ( <?= $kasir_name ?> )
             </td>
         </tr>
@@ -268,7 +268,7 @@
             <tr>
                 <td height="30" align="center"><?= $i + 1 ?></td>
                 <td><?= $s->smu ?></td>
-                <td align="center"><?= $s->asal ?>-HLP</td>
+                <td align="center"><?= $s->asal ?>-<?= html_escape($this->M_warehouse_ref->origin()) ?></td>
                 <td align="center"><?= number_format((float)$s->jumlah) ?></td>
                 <td align="right"><?= number_format((float)$s->gross) ?></td>
                 <td align="right"><?= number_format((float)$s->chargeable) ?></td>

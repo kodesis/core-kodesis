@@ -596,13 +596,11 @@ $bulan_nama = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', '
                 return v ? colorBadge(v, v) : '<span class="rt-empty">Tanpa pesawat</span>';
             }
 
+            // Label kategori SMU dari tabel all_ref (grup catg_smu)
+            var KATEGORI_SMU = <?= json_encode($this->M_warehouse_ref->list_ref('catg_smu')) ?>;
+
             function kategoriLabel(c) {
-                if (c == '1') return 'Langsung';
-                if (c == '2') return 'Transhipment';
-                if (c == '3') return 'Terminal change(w/o inv)';
-                if (c == '4') return 'Via RA LJA';
-                if (c == '5') return 'Langsung(AAP)';
-                return 'Belum Dipilih';
+                return KATEGORI_SMU[String(c)] || 'Belum Dipilih';
             }
 
             function jasterBadge(j) {

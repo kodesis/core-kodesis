@@ -146,7 +146,7 @@
                                 <td width="30%" align="center">
                                     <!-- <b>Asal</b><br> -->&nbsp;
                                     <!-- <i>Origin</i> <br> -->&nbsp;
-                                    <b>HLP</b>
+                                    <b><?= html_escape($this->M_warehouse_ref->origin()) ?></b>
                                 </td>
                                 <td width="30%" align="center">
                                     <!-- <b>Tujuan</b><br> -->&nbsp;

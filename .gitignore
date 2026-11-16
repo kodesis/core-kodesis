@@ -48,3 +48,10 @@ application/views/daftar_kemasan_smu copy.php
 application/views/in_daftar_invoice copy.php
 application/views/login_view copy.php
 application/views/print_invoice_incoming aa.php
+application/controllers/Incominghlp aa.php
+application/controllers/Outgoinghlp aa.php
+application/controllers/Track aa.php
+application/models/M_coa copy.php
+application/models/M_incoming aa.php
+application/models/M_outgoing aa.php
+application/models/M_outgoing copy.php

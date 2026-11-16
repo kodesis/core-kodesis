@@ -343,7 +343,7 @@
                                             <td class="text-right" id="inv_total_cdc"></td>
                                         </tr>
                                         <tr>
-                                            <td>PPN 11%</td>
+                                            <td>PPN <?= round($this->M_warehouse_ref->rate('ppn_rate', 0.11) * 100, 2) ?>%</td>
                                             <td class="text-right" id="inv_bg_ppn"></td>
                                         </tr>
                                         <tr>
@@ -394,7 +394,7 @@
                                                 <td colspan="2" class="text-right" id="inv_kc_sub_total"></td>
                                             </tr>
                                             <tr>
-                                                <td>PPN 11%</td>
+                                                <td>PPN <?= round($this->M_warehouse_ref->rate('ppn_rate', 0.11) * 100, 2) ?>%</td>
                                                 <td colspan="2" class="text-right" id="inv_kc_ppn"></td>
                                             </tr>
                                             <tr>
@@ -443,12 +443,7 @@
                                         <label class="form-label">Metode Pembayaran</label>
                                         <select class="form-control" name="pay_methode" id="inv_pay_methode">
                                             <option value="">Pilih Cara Pembayaran</option>
-                                            <option value="1">Deposit</option>
-                                            <option value="2">Cash</option>
-                                            <option selected value="3">Transfer</option>
-                                            <option value="4">Tagihan</option>
-                                            <option value="5">FOC</option>
-                                            <option value="6">QRIS</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->pay_options(), '3') ?>
                                         </select>
                                     </div>
                                 </div> -->
@@ -495,8 +490,8 @@
                                     <div class="form-group">
                                         <label class="form-label">Biaya Administrasi</label>
                                         <select class="form-control" name="adm" id="inv_adm">
-                                            <option value="1">Rp. 20.000</option>
-                                            <option value="2">Rp. 3.000</option>
+                                            <option value="1">Rp. <?= number_format($this->M_warehouse_ref->rate('biaya_adm_1', 20000), 0, ',', '.') ?></option>
+                                            <option value="2">Rp. <?= number_format($this->M_warehouse_ref->rate('biaya_adm_0', 3000), 0, ',', '.') ?></option>
                                         </select>
                                     </div>
                                 </div>
@@ -704,12 +699,7 @@
                                         <label class="form-label">Metode Pembayaran</label>
                                         <select class="form-control" name="pay_methode" id="b_pay_methode">
                                             <option value="">Pilih Cara Pembayaran</option>
-                                            <option value="1">Deposit</option>
-                                            <option value="2">Cash</option>
-                                            <option selected value="3">Transfer</option>
-                                            <option value="4">Tagihan</option>
-                                            <!-- <option value="5">FOC</option> -->
-                                            <option value="6">QRIS</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->pay_options('tampil_bayar'), '3') ?>
                                         </select>
                                     </div>
                                 </div>
@@ -718,8 +708,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Bank</label>
                                         <select name="coa_bank" id="b_bank" class="form-control" required>
-                                            <option value="12001" selected>BANK EKS</option>
-                                            <option value="12002">BANK BDT</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->bank_options()) ?>
                                         </select>
                                     </div>
                                 </div>
@@ -905,7 +894,7 @@
                             $('#inv_no_invoice').val(r.no_invoice);
                         } else {
 
-                            let no_invoice = "HLP.IN-000" + r.no;
+                            let no_invoice = <?= json_encode($this->M_warehouse_ref->origin()) ?> + ".IN-000" + r.no;
                             $('#inv_no_invoice').val(no_invoice);
 
                         }
@@ -953,7 +942,7 @@
                             renderDropdown('#coa_debit', coa3);
 
                             if (payMethode == '3') {
-                                setCoaDefault('#coa_debit', '12001');
+                                setCoaDefault('#coa_debit', '<?= html_escape((string) array_key_first($this->M_warehouse_ref->bank_options())) ?>');
                             }
                         }
 
@@ -1133,7 +1122,7 @@
                     renderDropdown('#coa_debit', coa3);
 
                     if (metode == '3' || metode == '6') {
-                        setCoaDefault('#coa_debit', '12001');
+                        setCoaDefault('#coa_debit', '<?= html_escape((string) array_key_first($this->M_warehouse_ref->bank_options())) ?>');
                     }
                 }
             });
@@ -1463,7 +1452,7 @@
                     $('#b_agent_uid').val('');
                 }
                 if (!showBank) {
-                    $('#b_bank').val('12001');
+                    $('#b_bank').val($('#b_bank option:first').val());
                 }
             }
 
@@ -1473,7 +1462,7 @@
             $('#modalBayar').on('hidden.bs.modal', function() {
                 $('#b_nama_agent').val(null).trigger('change');
                 $('#b_agent_uid').val('');
-                $('#b_bank').val('12001');
+                $('#b_bank').val($('#b_bank option:first').val());
                 $('#b_row_agent, #b_row_bank').hide();
                 $('#b_nama_agent, #b_bank').prop('required', false);
             });

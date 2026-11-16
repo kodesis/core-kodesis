@@ -96,7 +96,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_kemasan_smu()
 	{
 		$this->_base_query_kemasan_smu();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_kemasan_smu()
@@ -171,7 +171,7 @@ class M_incoming extends CI_Model
 			$search = $_POST['search']['value'];
 			$this->cb->group_start()
 				->like('b.no_invoice', $search)
-				->or_like('nama_penerima', $search) // Diubah dari b.nama ke l.nama sesuai select
+				->or_like('b.nama', $search) // nama_penerima = alias dari b.nama (alias tidak boleh dipakai di WHERE)
 				->or_like('l.smu', $search)
 				->or_like('u1.nama', $search) // Menggunakan u1 (kasir) atau u2 (acc) untuk pencarian user
 				->or_like('u2.nama', $search)
@@ -204,7 +204,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_invoice()
 	{
 		$this->_base_query_invoice();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_invoice()
@@ -279,7 +279,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_deposit()
 	{
 		$this->_base_query_deposit();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_deposit()
@@ -416,7 +416,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_agents()
 	{
 		$this->_base_query_agents();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_agents()
@@ -506,7 +506,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_agents_deposit()
 	{
 		$this->_base_query_agents_deposit();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_agents_deposit()
@@ -594,7 +594,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_pengirim()
 	{
 		$this->_base_query_pengirim();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_pengirim()
@@ -679,7 +679,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_asal()
 	{
 		$this->_base_query_asal();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_asal()
@@ -766,7 +766,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_penerima()
 	{
 		$this->_base_query_penerima();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_penerima()
@@ -853,7 +853,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_avsec()
 	{
 		$this->_base_query_avsec();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_avsec()
@@ -941,7 +941,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_driver()
 	{
 		$this->_base_query_driver();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_driver()
@@ -1027,7 +1027,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_truck()
 	{
 		$this->_base_query_truck();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_truck()
@@ -1118,7 +1118,7 @@ class M_incoming extends CI_Model
 	public function count_filtered_kategori_harga()
 	{
 		$this->_base_query_kategori_harga();
-		return $this->cb->get()->num_rows();
+		return (int) $this->cb->count_all_results(); // COUNT(*) di MySQL, bukan tarik semua baris ke PHP
 	}
 
 	public function count_all_kategori_harga()

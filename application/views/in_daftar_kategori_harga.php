@@ -314,8 +314,7 @@
                                         <label class="form-label">Jenis Billing</label>
                                         <select class="form-control" name="jenis_billing" id="jenis_billing_i">
                                             <option value="">Pilih Jenis Billing</option>
-                                            <option value="0">Umum</option>
-                                            <option value="1">Transit</option>
+                                            <?= $this->M_warehouse_ref->options($this->M_warehouse_ref->list_ref('jenis_billing', true)) ?>
                                         </select>
                                     </div>
                                 </div>

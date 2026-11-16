@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        td {
+            font-family: "Verdana", "Arial";
+            font-size: 11pt;
+            color: #000000;
+            text-decoration: none;
+        }
+
+        th {
+            font-family: "Verdana", "Arial";
+            font-size: 12pt;
+            color: #000000;
+            text-decoration: none;
+        }
+
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
+
+        table.tbl-smu {
+            border-collapse: collapse;
+        }
+
+        table.tbl-smu td {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body style="width:235mm; max-width:235mm;">
+
+    <!-- HEADER -->
+    <table border="0" style="width:100%; max-width:235mm;" cellpadding="3">
+        <tr>
+            <td colspan="3" align="center"><b>INVOICE</b></td>
+        </tr>
+        <tr>
+            <td width="30%">
+                <?= $corp_logo_mbz ?><br>
+                CV MAJU BERSAMA ZEJAHTERA<br>
+                Vivo Business Park A30 Jl Pembangunan 3,<br>
+                Kelurahan Karanganyar Kecamatan Neglasari Kota Tangerang<br>
+                Telp : 021-2982 6200
+            </td>
+            <td width="30%">
+                <br><br><br>
+                <b>KEPADA YTH. :</b><br>
+                <?= $nama_agent ?><br>
+                <?= $agents->alamat_agent ?><br>
+                <?= $agents->telepon_agent ?>
+            </td>
+            <td width="40%">
+                <br><br><br>
+                No. Invoice : <?= $billing->no_invoice ?><br>
+                Tanggal Invoice : <?= $pm_billing_date_txt ?><br>
+                No. NPWP : 03.313.653.2-015.000
+            </td>
+        </tr>
+    </table>
+
+    <!-- LIST SMU -->
+    <table width="100%" cellspacing="0" border="1" cellpadding="3" class="tbl-smu">
+        <tr>
+            <td height="40" align="center"><b>No</b></td>
+            <td align="center"><b>SMU</b></td>
+            <td align="center"><b>Tujuan</b></td>
+            <td align="center"><b>Komoditi</b></td>
+            <td align="center"><b>Koli</b></td>
+            <td align="center"><b>Berat (Kg)</b></td>
+            <td align="center"><b>Biaya Gudang</b></td>
+        </tr>
+        <?php foreach ($list_billing as $i => $s): ?>
+            <tr>
+                <td height="30" align="center"><?= $i + 1 ?></td>
+                <td><?= $s->smu ?></td>
+                <td align="center"><?= $s->tujuan ?></td>
+                <td align="center"><?= $s->komoditi ?></td>
+                <td align="center"><?= $s->jumlah ?></td>
+                <td align="right"><?= (float)$s->chargeable ?></td>
+                <td align="right"><?= number_format($s->sewa_gudang) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        <tr>
+            <td colspan="4" height="30" align="center">Total</td>
+            <td align="center"><?= $total_pieces_k ?></td>
+            <td align="right"><?= $total_chargeable_k ?></td>
+            <td align="right"><b><?= $total_sewa_gudang_k ?></b></td>
+        </tr>
+    </table>
+    <?php
+    $billingDate = DateTime::createFromFormat('d-m-Y', $pm_billing_date_txt);
+    $cutoffDate  = DateTime::createFromFormat('d-m-Y', '01-10-2026');
+    if ($billingDate && $billingDate >= $cutoffDate) {
+
+    ?>
+        <!-- BIAYA GUDANG -->
+        <table width="100%" border="1" cellspacing="0" cellpadding="1" class="tbl-smu">
+
+            <tr>
+                <td align="center">Nama</td>
+                <td align="center">Harga</td>
+                <td align="center">Charge Weight</td>
+                <td align="center">Total Harga</td>
+            </tr>
+            <tr>
+                <td>Biaya Jasa RA dan Gudang</td>
+                <td align="right"><?= number_format(floatval($billing->harga_gdg)) ?></td>
+                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= $total_sewa_gudang_k ?></td>
+            </tr>
+        </table>
+        <br>
+        <!-- BIAYA KC -->
+        <table width="100%" border="1" cellspacing="0" cellpadding="3" class="tbl-smu">
+            <?php if ($jaster_opt != '0'): ?>
+                <tr>
+                    <td>JASTER <?= $jaster_opt ?></td>
+                    <td align="right"><?= $jaster_rate_k ?></td>
+                    <td align="right"><?= $total_chargeable_k ?></td>
+                    <td align="right"><?= $total_jaster_k ?></td>
+                </tr>
+            <?php endif; ?>
+            <tr>
+                <td>Jasa Terminal Handling</td>
+                <td align="right"><?= $kade_k ?></td>
+                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= $total_kade_k ?></td>
+            </tr>
+            <tr>
+                <td>BIAYA CSC</td>
+                <td align="right"><?= $csc_k ?></td>
+                <td align="right"><?= $total_chargeable_k ?></td>
+                <td align="right"><?= $total_csc_k ?></td>
+            </tr>
+            <tr>
+                <td><b>SUBTOTAL</b></td>
+                <td colspan="3" align="right"><b><?= $kc_sub_total_k ?></b></td>
+            </tr>
+            <tr>
+                <th>GRAND TOTAL</th>
+                <td colspan="3" align="right"><b><?= $grand_total_k ?></b></td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Terbilang<br>
+                    <?= $billing->terbilang ?>
+                </td>
+            </tr>
+        </table>
+
+    <?php
+    }
+    ?>
+
+    <!-- TTD -->
+    <table width="100%" cellspacing="0" cellpadding="3">
+        <tr>
+            <td colspan="2" height="10"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right">
+                HLP, <?= $pm_billing_date_txt ?><br><br><br><br><br><br>
+                ( <?= $kasir_name ?> )
+            </td>
+        </tr>
+    </table>
+
+    <br><br><br><br><br>
+    <!-- <p>Pembayaran dapat ditransfer melalui No. Rekening Bank Central Asia (BCA) 375-8420-835<br>
+        atas nama PT. Elite Kargo Signature</p> -->
+
+    <?php if ($btb): ?>
+
+        <!-- <div style="page-break-before: always;"></div> -->
+
+        <!-- HEADER BTB -->
+        <table border="0" style="width:100%; max-width:235mm;">
+            <tr>
+                <td colspan="2" align="center">
+                    <b><u>BUKTI TIMBANG BARANG</u></b><br><?= $btb_no ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" height="35">&nbsp;</td>
+            </tr>
+            <tr>
+                <td height="40">
+                    <table>
+                        <tr>
+                            <td>Kepada Yth.</td>
+                            <td>:</td>
+                            <td><?= $nama_agent ?></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- LIST SMU BTB -->
+        <table width="100%" cellspacing="0" border="1" cellpadding="3" class="tbl-smu">
+            <tr>
+                <td height="40" align="center"><b>No</b></td>
+                <td align="center"><b>SMU</b></td>
+                <td align="center"><b>Tujuan</b></td>
+                <td align="center"><b>Flight</b></td>
+                <td align="center"><b>Koli</b></td>
+                <td align="center"><b>Berat (Kg)</b></td>
+                <td align="center"><b>Volume (Kg)</b></td>
+                <td align="center"><b>Dimensi</b></td>
+            </tr>
+            <?php foreach ($list_btb as $i => $s): ?>
+                <tr>
+                    <td height="30" align="center"><?= $i + 1 ?></td>
+                    <td><?= $s->smu ?></td>
+                    <td align="center"><?= $s->tujuan ?></td>
+                    <td><?= $s->no_pesawat ?>/<?= date('d-m-Y', strtotime($s->tanggal_terbang)) ?></td>
+                    <td align="center"><?= $s->jumlah ?></td>
+                    <td align="right"><?= number_format($s->gross) ?></td>
+                    <td align="right"><?= number_format($s->volume) ?></td>
+                    <td>
+                        <?php foreach ($s->dimensi as $d): ?>
+                            <?= $d->dimensi ?>/<?= $d->pieces ?>&nbsp;
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="4" height="30" align="center">Total</td>
+                <td align="center"><?= number_format($btb->total_pieces) ?></td>
+                <td align="right"><?= number_format($btb->total_gross) ?></td>
+                <td align="right"><?= number_format($btb->total_volume) ?></td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <br><br>
+
+        <!-- TTD BTB -->
+        <table style="width:100%; max-width:235mm;">
+            <tr>
+                <td align="left">ACCEPTANCE</td>
+                <td align="right">PENGIRIM</td>
+            </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;<?= $btb_name ?></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="left">----------------------------</td>
+                <td align="right">---------------------</td>
+            </tr>
+        </table>
+
+        <p>Pembayaran dapat ditransfer melalui No. Rekening Bank Central Asia (BCA) 375-8420-835<br>
+            atas nama PT. Elite Kargo Signature</p>
+
+    <?php endif; ?>
+
+    <script>
+        window.print();
+    </script>
+
+</body>
+
+</html>

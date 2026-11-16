@@ -357,7 +357,7 @@
                     <b>Asal</b><br><span class="sublabel">Origin</span>
                 </td>
                 <td style="width:15%;">
-                    <b>HLP</b>
+                    <b><?= html_escape($this->M_warehouse_ref->origin()) ?></b>
                 </td>
                 <td style="width:15%;">
                     <b>Tujuan</b><br><span class="sublabel">Destination</span>

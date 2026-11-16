@@ -51,7 +51,7 @@
         </tr>
         <tr>
             <td colspan="4" align="center" style="font-size: 10px;">
-                <b>HLPO-<?= $row->no ?></b>
+                <b><?= html_escape($this->M_warehouse_ref->prefix()) ?>-<?= $row->no ?></b>
             </td>
         </tr>
         <tr>
@@ -122,7 +122,7 @@
 
     <table border="0" style="width:100%;" cellpadding="2">
         <tr>
-            <td colspan="4" align="center">HLP, <?= $pm_btb_date_txt ?></td>
+            <td colspan="4" align="center"><?= html_escape($this->M_warehouse_ref->origin()) ?>, <?= $pm_btb_date_txt ?></td>
         </tr>
         <tr>
             <td colspan="2" align="center">Acceptance</td>

@@ -175,6 +175,7 @@ class Financial extends CI_Controller
 
 			$no_debit_rows = [];
 			$no_kredit_rows = [];
+			$invalid_date_rows = [];
 			$success_count = 0;
 			$processed = 0;
 
@@ -188,7 +189,9 @@ class Financial extends CI_Controller
 				$tanggal = ($data[3] !== null && $data[3] !== '') ? $this->processDate($data[3]) : null;
 				$keterangan = (string)$data[4];
 
-				if ($this->get_saldo_coa($coa_debit) === null) {
+				if ($tanggal === null) {
+					$invalid_date_rows[] = $rowIndex;
+				} else if ($this->get_saldo_coa($coa_debit) === null) {
 					$no_debit_rows[] = $rowIndex;
 				} else if ($this->get_saldo_coa($coa_kredit) === null) {
 					$no_kredit_rows[] = $rowIndex;
@@ -217,7 +220,8 @@ class Financial extends CI_Controller
 					'total_rows' => $totalRows,
 					'success_count' => $success_count,
 					'no_debit_rows' => $no_debit_rows,
-					'no_kredit_rows' => $no_kredit_rows
+					'no_kredit_rows' => $no_kredit_rows,
+					'invalid_date_rows' => $invalid_date_rows
 				]) . "\n";
 			}
 		} catch (Throwable $e) {
@@ -845,14 +849,28 @@ class Financial extends CI_Controller
 
 	private function processDate($dateValue)
 	{
-		if (is_numeric($dateValue)) {
-			// Handle Excel date integer
-			return DateTime::createFromFormat('U', ($dateValue - 25569) * 86400)->format('Y-m-d');
-		} elseif (DateTime::createFromFormat('m/d/Y', $dateValue) !== false) {
-			// Handle string date format
-			return DateTime::createFromFormat('m/d/Y', $dateValue)->format('Y-m-d');
+		if ($dateValue instanceof DateTimeInterface) {
+			return $dateValue->format('Y-m-d');
 		}
-		// If the date format is not recognized, return null or handle accordingly
+		if (is_numeric($dateValue)) {
+			// Tanggal Excel (serial number)
+			return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($dateValue)->format('Y-m-d');
+		}
+
+		$dateValue = trim((string)$dateValue);
+		// Format teks: dd/mm/yyyy (format Indonesia) dulu, lalu yyyy-mm-dd.
+		// Validasi ketat: tanggal tidak valid (mis. bulan 13) ditolak, bukan digeser ke tahun berikutnya.
+		foreach (['d/m/Y', 'd-m-Y', 'Y-m-d', 'Y/m/d'] as $format) {
+			$date = DateTime::createFromFormat('!' . $format, $dateValue);
+			if ($date !== false && $date->format($format) === $dateValue) {
+				return $date->format('Y-m-d');
+			}
+			// izinkan tanpa nol di depan, mis. 3/1/2023
+			$errors = DateTime::getLastErrors();
+			if ($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
+				return $date->format('Y-m-d');
+			}
+		}
 		return null;
 	}
 

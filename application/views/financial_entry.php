@@ -895,111 +895,108 @@
 
                     if (result.isConfirmed) {
 
-                        var url;
-                        var formData;
-                        url = "<?php echo site_url('financial/upload_financial_entry') ?>";
-
-                        // window.location = url_base;
+                        var url = "<?php echo site_url('financial/upload_financial_entry') ?>";
                         var formData = new FormData($("#upload_file_fe")[0]);
-                        let accumulatedResponse = ""; // Variable to accumulate the response
+                        var parsedLength = 0; // posisi teks respons yang sudah dibaca
+                        var finalResponse = null;
+
+                        Swal.fire({
+                            title: 'Mengirim file...',
+                            html: `
+                                <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
+                                <div id="progressText" style="margin-top: 10px; font-weight: bold;">0%</div>
+                            `,
+                            allowOutsideClick: false,
+                            showConfirmButton: false
+                        });
+
+                        // Baca baris-baris baru dari respons streaming
+                        function readStream(text) {
+                            var lastNewline = text.lastIndexOf('\n');
+                            if (lastNewline < parsedLength) return; // belum ada baris lengkap baru
+                            var chunk = text.substring(parsedLength, lastNewline);
+                            parsedLength = lastNewline + 1;
+
+                            chunk.split('\n').forEach(function(line) {
+                                line = line.trim();
+                                try {
+                                    if (line.indexOf('data: ') === 0) {
+                                        var p = JSON.parse(line.substring(6));
+                                        $('.swal2-title').text('Memproses data...');
+                                        $("#progressBar").val(p.progress);
+                                        $("#progressText").text(`${p.currentRow}/${p.totalRows} Data (${p.progress}%)`);
+                                    } else if (line.indexOf('result: ') === 0) {
+                                        finalResponse = JSON.parse(line.substring(8));
+                                    }
+                                } catch (e) {
+                                    console.error('Gagal parse baris:', line, e);
+                                }
+                            });
+                        }
 
                         $.ajax({
                             url: url,
                             type: "POST",
-                            dataType: "text", // Change to 'text' to handle server-sent events
+                            dataType: "text",
                             data: formData,
                             contentType: false,
                             processData: false,
-                            beforeSend: function() {
-                                // Show the progress dialog before sending the request
-                                Swal.fire({
-                                    title: 'Uploading...',
-                                    html: `
-                <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
-                <div id="progressText" style="margin-top: 10px; font-weight: bold;">0/0 Data</div>
-            `,
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false
-                                });
-                            },
-                            xhrFields: {
-                                onprogress: function(e) {
-                                    // Read the response text for progress updates
-                                    accumulatedResponse += e.currentTarget.responseText; // Accumulate responses
-
-                                    var response = e.currentTarget.responseText.trim().split('\n');
-
-                                    // Loop through each line to find progress data
-                                    response.forEach(function(line) {
-                                        try {
-                                            var progressData = JSON.parse(line.replace("data: ", ""));
-                                            if (progressData.progress) {
-                                                $("#progressBar").val(progressData.progress);
-                                                $("#progressText").text(`${progressData.currentRow}/${progressData.totalRows} Data`);
-                                            }
-                                        } catch (error) {
-                                            console.error("Error parsing progress data:", error);
+                            xhr: function() {
+                                var xhr = new window.XMLHttpRequest();
+                                // Tahap 1: progress pengiriman file ke server
+                                xhr.upload.addEventListener('progress', function(e) {
+                                    if (e.lengthComputable) {
+                                        var pct = Math.round((e.loaded / e.total) * 100);
+                                        $("#progressBar").val(pct);
+                                        $("#progressText").text(`File terkirim ${pct}%`);
+                                        if (pct === 100) {
+                                            $('.swal2-title').text('Membaca file...');
+                                            $("#progressBar").val(0);
+                                            $("#progressText").text('Menyiapkan data...');
                                         }
-                                    });
-                                },
+                                    }
+                                });
+                                // Tahap 2: progress proses baris (dikirim server per baris)
+                                xhr.addEventListener('progress', function() {
+                                    readStream(xhr.responseText);
+                                });
+                                return xhr;
                             },
                             success: function(data) {
-                                try {
-                                    // Attempt to parse the final response
-                                    var finalResponse = JSON.parse(accumulatedResponse.trim().split('\n').pop()); // Get the last line which should be the status
-                                    console.log("Response data:", finalResponse); // Log final response to see its structure
-                                    if (finalResponse.status) {
-                                        const noDebitRows = finalResponse.no_debit_rows ? finalResponse.no_debit_rows.join(', ') : 'Tidak ada';
-                                        const noKreditRows = finalResponse.no_kredit_rows ? finalResponse.no_kredit_rows.join(', ') : 'Tidak ada';
+                                readStream(data + '\n'); // pastikan baris terakhir ikut terbaca
 
-                                        // document.getElementById('rumahadat').reset();
-                                        // $('#add_modal').modal('hide');
-                                        (JSON.stringify(data));
-                                        // alert(data)
-                                        // swal.fire({
-                                        //   customClass: 'slow-animation',
-                                        //   icon: 'success',
-                                        //   showConfirmButton: false,
-                                        //   title: 'Berhasil Menambahkan Data',
-                                        //   timer: 3000
-                                        // });
-                                        // document.getElementById('upload_file_fe').reset(); // Reset the form
-                                        // $('#upload_modal').modal('hide'); // Hide the modal
-                                        // location.reload();
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Proses Selesai',
-                                            html: `
-                                        <b>Berhasil:</b> ${finalResponse.success_count || 0} Data<br>
-                                        <b>COA Debit Tidak Ditemukan:</b> ${finalResponse.no_debit_rows.length || 0} Data<br>
-                                        (Baris: ${noDebitRows})<br><br>
-                                        <b>COA Kredit Tidak Ditemukan:</b> ${finalResponse.no_kredit_rows.length || 0} Data<br>
-                                        (Baris: ${noKreditRows})
-                                    `,
-                                            showConfirmButton: true,
-                                            allowOutsideClick: true
-                                        }).then(() => {
-                                            document.getElementById('upload_file_fe').reset();
-                                            $('#upload_modal').modal('hide');
-                                            // location.reload();
-                                        });
+                                if (!finalResponse) {
+                                    console.error('Respons server:', data);
+                                    swal.fire('Gagal menyimpan data', 'Terjadi kesalahan pada respons server. Cek console.', 'error');
+                                    return;
+                                }
 
-                                    } else {
-
-                                        swal.fire('Gagal menyimpan data', 'error');
-                                    }
-                                } catch (error) {
-                                    // If parsing fails, log the error
-                                    console.error("Error parsing final response:", error);
-                                    // swal.fire('Gagal menyimpan data', 'error');
-                                    swal.fire('Gagal menyimpan data', 'Terjadi kesalahan pada respons server.', 'error');
+                                if (finalResponse.status) {
+                                    const noDebit = finalResponse.no_debit_rows || [];
+                                    const noKredit = finalResponse.no_kredit_rows || [];
+                                    Swal.fire({
+                                        icon: (noDebit.length || noKredit.length) ? 'warning' : 'success',
+                                        title: 'Proses Selesai',
+                                        html: `
+                                            <b>Total:</b> ${finalResponse.total_rows || 0} Data<br>
+                                            <b>Berhasil:</b> ${finalResponse.success_count || 0} Data<br><br>
+                                            <b>COA Debit Tidak Ditemukan:</b> ${noDebit.length} Data<br>
+                                            (Baris: ${noDebit.length ? noDebit.join(', ') : 'Tidak ada'})<br><br>
+                                            <b>COA Kredit Tidak Ditemukan:</b> ${noKredit.length} Data<br>
+                                            (Baris: ${noKredit.length ? noKredit.join(', ') : 'Tidak ada'})
+                                        `,
+                                        showConfirmButton: true,
+                                        allowOutsideClick: true
+                                    }).then(() => {
+                                        document.getElementById('upload_file_fe').reset();
+                                        $('#upload_modal').modal('hide');
+                                    });
+                                } else {
+                                    swal.fire('Gagal menyimpan data', finalResponse.message || '', 'error');
                                 }
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
                                 swal.fire('Operation Failed!', errorThrown, 'error');
-                            },
-                            complete: function() {
-                                console.log('Editing job done');
                             }
                         });
 

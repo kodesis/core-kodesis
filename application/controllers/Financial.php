@@ -125,107 +125,107 @@ class Financial extends CI_Controller
 	{
 		$this->load->library('upload');
 		require APPPATH . 'third_party/autoload.php';
-
-		// Include PhpSpreadsheet from third_party
 		require APPPATH . 'third_party/psr/simple-cache/src/CacheInterface.php';
-
 
 		// Configure upload settings
 		$config['upload_path'] = FCPATH . 'upload/financial_entry';
-		$config['allowed_types'] = 'xls|xlsx|csv'; // Allowed file types
+		$config['allowed_types'] = 'xls|xlsx|csv';
 		$this->upload->initialize($config);
 
 		if (!$this->upload->do_upload('format_data')) {
-			// If the upload fails, show the error
-			$error = $this->upload->display_errors();
-			echo json_encode(['status' => false, 'message' => $error, 'upload_path' => $config['upload_path']]);
+			echo "result: " . json_encode(['status' => false, 'message' => strip_tags($this->upload->display_errors())]) . "\n";
 			return;
 		}
 
-		// File upload success
 		$file_data = $this->upload->data();
 		$file_path = $file_data['full_path'];
 
+		// Siapkan streaming progress: matikan semua output buffer & lepaskan lock session
+		// (session driver 'files' mengunci session selama request berjalan)
+		@set_time_limit(0);
+		header('Content-Type: text/plain; charset=utf-8');
+		header('Cache-Control: no-cache');
+		header('X-Accel-Buffering: no'); // nonaktifkan buffering di nginx
+		while (ob_get_level() > 0) {
+			ob_end_flush();
+		}
+		session_write_close(); // $_SESSION tetap bisa dibaca setelah ini
+
+		$in_trans = false;
 		try {
-			// Load the spreadsheet using PhpSpreadsheet
 			$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file_path);
 			$worksheet = $spreadsheet->getActiveSheet();
 
-			// Get total rows
-			$totalRows = iterator_count($worksheet->getRowIterator());
-			$totalRows -= 2; // Adjust for headers
-			$insertedRows = 0;
+			// Kumpulkan baris data (mulai baris 3), lewati baris kosong
+			$rows = [];
+			$highestRow = $worksheet->getHighestDataRow();
+			for ($rowIndex = 3; $rowIndex <= $highestRow; $rowIndex++) {
+				$data = $worksheet->rangeToArray('A' . $rowIndex . ':E' . $rowIndex, null, false, false, false)[0];
+				if (trim((string)$data[0]) === '' && trim((string)$data[1]) === '' && trim((string)$data[2]) === '') {
+					continue;
+				}
+				$rows[$rowIndex] = $data;
+			}
 
-			// --- Initialize counters ---  
+			$totalRows = count($rows);
+			if ($totalRows === 0) {
+				echo "result: " . json_encode(['status' => false, 'message' => 'File tidak berisi data']) . "\n";
+				return;
+			}
+
 			$no_debit_rows = [];
 			$no_kredit_rows = [];
 			$success_count = 0;
+			$processed = 0;
 
-			// Process rows
-			foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
-				// Skip header rows
-				if ($rowIndex < 3) continue;
+			$this->cb->trans_begin();
+			$in_trans = true;
 
-				$cellIterator = $row->getCellIterator();
-				$cellIterator->setIterateOnlyExistingCells(false);
+			foreach ($rows as $rowIndex => $data) {
+				$coa_debit = trim((string)$data[0]);
+				$coa_kredit = trim((string)$data[1]);
+				$nominal = (string)$data[2];
+				$tanggal = ($data[3] !== null && $data[3] !== '') ? $this->processDate($data[3]) : null;
+				$keterangan = (string)$data[4];
 
-				$data = [];
-				foreach ($cellIterator as $cell) {
-					$data[] = $cell->getValue();
-				}
-
-				// Extract and process row data
-				$coa_debit = isset($data[0]) ? (string)$data[0] : null;
-				$coa_kredit = isset($data[1]) ? (string)$data[1] : null;
-				$nominal = isset($data[2]) ? (string)$data[2] : null;
-				$tanggal = isset($data[3]) ? $this->processDate($data[3]) : null;
-				$keterangan = isset($data[4]) ? $data[4] : null;
-
-				$posting = $this->posting(
-					$coa_debit,
-					$coa_kredit,
-					$keterangan,
-					$nominal,
-					$tanggal,
-					$jenis_fe = 'single'
-				);
-
-				// --- Store row index if an error occurs ---
-				if ($posting == "No Debit") {
+				if ($this->get_saldo_coa($coa_debit) === null) {
 					$no_debit_rows[] = $rowIndex;
-				} else if ($posting == "No Kredit") {
+				} else if ($this->get_saldo_coa($coa_kredit) === null) {
 					$no_kredit_rows[] = $rowIndex;
 				} else {
+					$this->posting($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal);
 					$success_count++;
 				}
 
-				$insertedRows++;
-				$progress = round(($insertedRows / $totalRows) * 100);
-				echo "data: " . json_encode(['progress' => $progress, 'currentRow' => $insertedRows, 'totalRows' => $totalRows]) . "\n\n";
-				ob_flush();
+				$processed++;
+				echo "data: " . json_encode([
+					'progress' => round(($processed / $totalRows) * 100),
+					'currentRow' => $processed,
+					'totalRows' => $totalRows
+				]) . "\n";
 				flush();
 			}
 
-			// Commit transaction
 			if ($this->cb->trans_status() === FALSE) {
 				$this->cb->trans_rollback();
-				echo json_encode(['status' => false, 'message' => 'Database error']);
+				echo "result: " . json_encode(['status' => false, 'message' => 'Database error, semua data dibatalkan']) . "\n";
 			} else {
 				$this->cb->trans_commit();
-				// echo json_encode(['status' => true, 'message' => 'File processed successfully']);
-				echo json_encode([
+				echo "result: " . json_encode([
 					'status' => true,
 					'message' => 'File processed successfully',
+					'total_rows' => $totalRows,
 					'success_count' => $success_count,
 					'no_debit_rows' => $no_debit_rows,
 					'no_kredit_rows' => $no_kredit_rows
-				]);
+				]) . "\n";
 			}
-		} catch (Exception $e) {
-			// Handle exceptions
-			echo json_encode(['status' => false, 'message' => $e->getMessage()]);
+		} catch (Throwable $e) {
+			if ($in_trans) {
+				$this->cb->trans_rollback();
+			}
+			echo "result: " . json_encode(['status' => false, 'message' => $e->getMessage()]) . "\n";
 		} finally {
-			// Cleanup uploaded file
 			if (file_exists($file_path)) unlink($file_path);
 		}
 	}
@@ -906,6 +906,8 @@ class Financial extends CI_Controller
 		} else if ($substr_coa == "4" || $substr_coa == "5" || $substr_coa == "6" || $substr_coa == "7" || $substr_coa == "8" || $substr_coa == "9") {
 			$table = "t_coalr_sbb";
 			$kolom = "no_lr_sbb";
+		} else {
+			return;
 		}
 
 		$query = $this->cb->query(
@@ -948,6 +950,8 @@ class Financial extends CI_Controller
 		} else if ($substr_coa == "4" || $substr_coa == "5" || $substr_coa == "6" || $substr_coa == "7" || $substr_coa == "8" || $substr_coa == "9") {
 			$table = "t_coalr_sbb";
 			$kolom = "no_lr_sbb";
+		} else {
+			return null; // format COA tidak dikenal
 		}
 
 		$row = $this->cb->select('nominal')
@@ -956,7 +960,7 @@ class Financial extends CI_Controller
 			->get($table)
 			->row();
 
-		return $row->nominal;
+		return $row ? $row->nominal : null;
 	}
 
 	private function posting_new($coa_debit, $coa_kredit, $keterangan, $nominal, $tanggal, $id_invoice = NULL)

@@ -320,7 +320,7 @@
 					<?php } ?>
 					<?php $a = $this->session->userdata('level');
 					if (strpos($a, '922') !== false) { ?>
-						<li><a href="<?= base_url('xray') ?>"> Xray</a></li>
+						<!-- <li><a href="<?= base_url('xray') ?>"> Xray</a></li> -->
 					<?php } ?>
 				</ul>
 			</li>
